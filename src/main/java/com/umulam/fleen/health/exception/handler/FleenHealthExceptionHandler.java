@@ -1,12 +1,10 @@
 package com.umulam.fleen.health.exception.handler;
 
-import com.umulam.fleen.health.exception.CountryDuplicateException;
-import com.umulam.fleen.health.exception.CountryNotFoundException;
-import com.umulam.fleen.health.exception.RoleDuplicateException;
-import com.umulam.fleen.health.exception.RoleNotFoundException;
+import com.umulam.fleen.health.exception.*;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -39,7 +37,8 @@ public class FleenHealthExceptionHandler {
   @ResponseStatus
   @ExceptionHandler(value = {
           CountryDuplicateException.class,
-          RoleDuplicateException.class
+          RoleDuplicateException.class,
+          CountryCodeDuplicateException.class
   })
   public Object handleDuplicate(Exception ex) {
     return buildErrorMap(ex.getMessage(), CONFLICT);
@@ -72,35 +71,38 @@ public class FleenHealthExceptionHandler {
   @ResponseStatus(BAD_REQUEST)
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public Object handleDataValidationError(MethodArgumentNotValidException ex) {
-    Map<String, Object> errors = new HashMap<>();
     List<Map<String, Object>> values = new ArrayList<>();
+    ex
+      .getBindingResult()
+      .getFieldErrors()
+      .parallelStream()
+      .map(FieldError::getField)
+      .distinct()
+      .forEach(field -> {
+        Map<String, Object> detail = new HashMap<>();
+        List<String> errors = ex
+                .getFieldErrors(field)
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.toList());
 
-    ex.getBindingResult().getFieldErrors().forEach(fieldError -> {
-      Map<String, Object> detail = new HashMap<>();
-      detail.put("field_name", fieldError.getField());
+        detail.put("field_name", field);
+        detail.put("errors", errors);
+        values.add(detail);
+      });
 
-      List<String> errorMessages = ex
-              .getFieldErrors(fieldError.getField())
-              .stream()
-              .map(DefaultMessageSourceResolvable::getDefaultMessage)
-              .collect(Collectors.toList());
 
-      detail.put("errors", errorMessages);
-      values.add(detail);
-    });
-
-    errors.put("message", INVALID_REQUEST_BODY);
-    errors.put("timestamp", LocalDateTime.now().toString());
-    errors.put("fields", values);
-    errors.put("errorType", "DataValidation");
-    return errors;
+    Map<String, Object> error = new HashMap<>(buildErrorMap(INVALID_REQUEST_BODY, BAD_REQUEST));
+    error.put("fields", values);
+    error.put("type", "DataValidation");
+    return error;
   }
 
-  private Object buildErrorMap(String message, HttpStatus status) {
-    Map<String, Object> errors = new HashMap<>();
-    errors.put("message", message);
-    errors.put("status", status.value());
-    errors.put("timestamp", LocalDateTime.now().toString());
-    return errors;
+  private Map<String, Object> buildErrorMap(String message, HttpStatus status) {
+    Map<String, Object> error = new HashMap<>();
+    error.put("message", message);
+    error.put("status", status.value());
+    error.put("timestamp", LocalDateTime.now().toString());
+    return error;
   }
 }

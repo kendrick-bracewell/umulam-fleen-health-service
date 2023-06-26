@@ -1,16 +1,20 @@
 package com.umulam.fleen.health.service.impl;
 
+import com.umulam.fleen.health.exception.CountryCodeDuplicateException;
 import com.umulam.fleen.health.exception.CountryNotFoundException;
 import com.umulam.fleen.health.model.domain.Country;
-import com.umulam.fleen.health.model.dto.CountryDto;
+import com.umulam.fleen.health.model.dto.country.CountryDto;
+import com.umulam.fleen.health.model.dto.country.UpdateCountryDto;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
 import com.umulam.fleen.health.repository.jpa.CountryJpaRepository;
 import com.umulam.fleen.health.service.CountryService;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -18,15 +22,35 @@ import java.util.stream.Collectors;
 public class CountryServiceImpl implements CountryService {
 
   private final CountryJpaRepository repository;
+  private final ModelMapper modelMapper;
 
-  public CountryServiceImpl(CountryJpaRepository repository) {
+  public CountryServiceImpl(CountryJpaRepository repository,
+                            ModelMapper mapper) {
     this.repository = repository;
+    this.modelMapper = mapper;
   }
 
   @Override
+  @Transactional(readOnly = true)
   public Country getCountry(Integer id) {
     return repository
             .findById(id)
+            .orElseThrow(() -> new CountryNotFoundException(id));
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Country getCountryByCode(String code) {
+    return repository
+            .findByCode(code)
+            .orElseThrow(() -> new CountryNotFoundException(code));
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Country getReference(Integer id) {
+    return Optional
+            .of(repository.getReferenceById(id))
             .orElseThrow(() -> new CountryNotFoundException(id));
   }
 
@@ -44,11 +68,14 @@ public class CountryServiceImpl implements CountryService {
 
   @Override
   @Transactional
-  public Country updateCountry(Integer id, CountryDto dto) {
+  public Country updateCountry(Integer id, UpdateCountryDto dto) {
     getCountry(id);
-    Country country = dto.toCountry();
-    country.setId(id);
+    Country country = getCountryByCode(dto.getCode());
+    if (isCountryExistsByCode(dto.getCode()) && !(country.getId().intValue() == id.intValue())) {
+      throw new CountryCodeDuplicateException(dto.getCode());
+    }
 
+    modelMapper.map(dto, country);
     return repository.save(country);
   }
 
@@ -74,6 +101,13 @@ public class CountryServiceImpl implements CountryService {
   public boolean isCountryExists(Integer id) {
     return repository
             .findById(id)
+            .isPresent();
+  }
+
+  @Override
+  public boolean isCountryExistsByCode(String code) {
+    return repository
+            .findByCode(code)
             .isPresent();
   }
 

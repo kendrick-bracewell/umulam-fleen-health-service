@@ -9,7 +9,7 @@ import javax.validation.ConstraintValidatorContext;
 
 @Slf4j
 @Component
-public class PhoneNumberExistsValidator implements ConstraintValidator<EmailAddressExists, String> {
+public class  PhoneNumberExistsValidator implements ConstraintValidator<EmailAddressExists, String> {
 
   private final MemberService service;
 

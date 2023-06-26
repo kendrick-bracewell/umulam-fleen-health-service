@@ -11,9 +11,9 @@ import javax.validation.ConstraintValidatorContext;
 @Component
 public class CountryExistsValidator implements ConstraintValidator<CountryExists, String> {
 
-  private final CountryService countryService;
-  public CountryExistsValidator(CountryService countryService) {
-    this.countryService = countryService;
+  private final CountryService service;
+  public CountryExistsValidator(CountryService service) {
+    this.service = service;
   }
 
   @Override
@@ -22,7 +22,7 @@ public class CountryExistsValidator implements ConstraintValidator<CountryExists
   @Override
   public boolean isValid(String id, ConstraintValidatorContext context) {
     try {
-      return countryService.isCountryExists(Integer.parseInt(id));
+      return service.isCountryExists(Integer.parseInt(id));
     } catch (Exception ex) {
       log.error(ex.getMessage());
       return false;

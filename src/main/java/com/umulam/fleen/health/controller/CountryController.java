@@ -1,7 +1,7 @@
 package com.umulam.fleen.health.controller;
 
-import com.umulam.fleen.health.model.domain.Country;
-import com.umulam.fleen.health.model.dto.CountryDto;
+import com.umulam.fleen.health.model.dto.country.CountryDto;
+import com.umulam.fleen.health.model.dto.country.UpdateCountryDto;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
 import com.umulam.fleen.health.model.response.other.DeleteResponse;
 import com.umulam.fleen.health.model.view.CountryView;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static com.umulam.fleen.health.model.mapper.CountryMapper.toCountryView;
 import static com.umulam.fleen.health.model.mapper.CountryMapper.toCountryViews;
 
 @Slf4j
@@ -31,28 +32,27 @@ public class CountryController {
   }
 
   @GetMapping(value = "/detail/{id}")
-  public Country findOne(@PathVariable(name = "id") Integer id) {
-    return countryService.getCountry(id);
+  public CountryView findOne(@PathVariable(name = "id") Integer id) {
+    return toCountryView(countryService.getCountry(id));
   }
 
-  @PostMapping(value = "/create/save")
-  public Country save(@Valid @RequestBody CountryDto dto) {
-    return countryService.saveCountry(dto);
+  @PostMapping(value = "/save")
+  public CountryView save(@Valid @RequestBody CountryDto dto) {
+    return toCountryView(countryService.saveCountry(dto));
   }
 
   @PutMapping(value ="/update/{id}")
-  public Country updateCountry(@PathVariable(name = "id") Integer id,  @Valid @RequestBody CountryDto dto) {
-    return countryService.updateCountry(id, dto);
+  public CountryView updateCountry(@PathVariable(name = "id") Integer id, @Valid @RequestBody UpdateCountryDto dto) {
+    return toCountryView(countryService.updateCountry(id, dto));
   }
 
-  @ResponseBody
-  @PostMapping(value ="/delete-many")
+  @DeleteMapping(value ="/delete-many")
   public DeleteResponse deleteMany(@Valid @RequestBody DeleteIdsDto ids) {
     countryService.deleteMany(ids);
     return new DeleteResponse();
   }
 
-  @PostMapping(value ="/delete-all")
+  @DeleteMapping(value ="/delete-all")
   public DeleteResponse deleteAll() {
     countryService.deleteAllCountry();
     return new DeleteResponse();
