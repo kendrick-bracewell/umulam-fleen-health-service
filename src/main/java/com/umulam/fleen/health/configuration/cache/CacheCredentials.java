@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "umulam.fleen.health.cache")
+@ConfigurationProperties(prefix = "fleen.health.cache")
 public class CacheCredentials {
 
   @NotBlank

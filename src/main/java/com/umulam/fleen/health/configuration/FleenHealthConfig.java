@@ -4,10 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
+import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 
 @Configuration
 @PropertySource(value = "classpath:application.properties")
@@ -27,5 +25,13 @@ public class FleenHealthConfig {
     objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     objectMapper.findAndRegisterModules();
     return objectMapper;
+  }
+
+  @Primary
+  @Bean
+  public FreeMarkerConfigurationFactoryBean factoryBean() {
+    FreeMarkerConfigurationFactoryBean bean = new FreeMarkerConfigurationFactoryBean();
+    bean.setTemplateLoaderPath("classpath:/templates");
+    return bean;
   }
 }

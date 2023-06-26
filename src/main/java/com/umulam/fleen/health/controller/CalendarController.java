@@ -1,6 +1,6 @@
 package com.umulam.fleen.health.controller;
 
-import com.umulam.fleen.health.service.CalendarService;
+import com.umulam.fleen.health.service.external.google.CalendarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

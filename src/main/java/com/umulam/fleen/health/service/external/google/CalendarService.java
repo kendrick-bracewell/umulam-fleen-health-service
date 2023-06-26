@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.service;
+package com.umulam.fleen.health.service.external.google;
 
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;

@@ -152,11 +152,45 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-freemarker</artifactId>
+		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/io.awspring.cloud/spring-cloud-starter-aws-ses -->
+		<dependency>
+			<groupId>io.awspring.cloud</groupId>
+			<artifactId>spring-cloud-starter-aws-ses</artifactId>
+			<version>2.4.4</version>
+		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.google.apis/google-api-services-gmail -->
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-gmail</artifactId>
+			<version>v1-rev110-1.25.0</version>
+		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.google.apis/google-api-services-admin-directory -->
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-admin-directory</artifactId>
+			<version>directory_v1-rev118-1.25.0</version>
+		</dependency>
 
 	</dependencies>
+
+		<dependencyManagement>
+            <dependencies>
+                <dependency>
+                    <groupId>io.awspring.cloud</groupId>
+                    <artifactId>spring-cloud-aws-dependencies</artifactId>
+                    <version>2.3.0</version>
+                    <type>pom</type>
+                    <scope>import</scope>
+                </dependency>
+            </dependencies>
+        </dependencyManagement>
 
 	<build>
 		<plugins>
@@ -174,5 +208,7 @@
 			</plugin>
 		</plugins>
 	</build>
+
+
 
 </project>

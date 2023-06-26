@@ -1,13 +1,19 @@
-package com.umulam.fleen.health.configuration.aws.s3;
+package com.umulam.fleen.health.configuration.aws;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
+import io.awspring.cloud.ses.SimpleEmailServiceJavaMailSender;
+import io.awspring.cloud.ses.SimpleEmailServiceMailSender;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.javamail.JavaMailSender;
 
 @Configuration
 public class AwsConfig {
@@ -36,6 +42,25 @@ public class AwsConfig {
       .withCredentials(getAwsCredentials())
       .withRegion(regionName)
       .build();
+  }
+
+  @Bean
+  public AmazonSimpleEmailService emailService() {
+    return AmazonSimpleEmailServiceClientBuilder
+            .standard()
+            .withCredentials(getAwsCredentials())
+            .withRegion(regionName)
+            .build();
+  }
+
+  @Bean
+  public MailSender mailSender() {
+    return new SimpleEmailServiceMailSender(emailService());
+  }
+
+  @Bean
+  public JavaMailSender javaMailSender() {
+    return new SimpleEmailServiceJavaMailSender(emailService());
   }
 
 }
