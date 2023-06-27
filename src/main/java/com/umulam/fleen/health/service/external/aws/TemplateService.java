@@ -6,6 +6,8 @@ import com.umulam.fleen.health.model.dto.mail.EmailTemplateDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Slf4j
 @Component
 public class TemplateService {
@@ -45,6 +47,16 @@ public class TemplateService {
     if (result.getSdkHttpMetadata().getHttpStatusCode() != 200) {
       log.error("{}", result.getSdkResponseMetadata().toString());
     }
+  }
+
+  public List<TemplateMetadata> list() {
+    ListTemplatesResult listTemplatesResult = simpleEmailService.listTemplates(new ListTemplatesRequest());
+    return listTemplatesResult.getTemplatesMetadata();
+  }
+
+  public Template getTemplate(String templateName) {
+    GetTemplateResult templateResult = simpleEmailService.getTemplate(new GetTemplateRequest().withTemplateName(templateName));
+    return templateResult.getTemplate();
   }
 
   private Template createSesTemplate(EmailTemplateDto dto) {

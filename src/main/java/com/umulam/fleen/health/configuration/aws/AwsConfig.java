@@ -7,6 +7,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import io.awspring.cloud.ses.SimpleEmailServiceJavaMailSender;
 import io.awspring.cloud.ses.SimpleEmailServiceMailSender;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +49,15 @@ public class AwsConfig {
   @Bean
   public AmazonSimpleEmailService emailService() {
     return AmazonSimpleEmailServiceClientBuilder
+            .standard()
+            .withCredentials(getAwsCredentials())
+            .withRegion(regionName)
+            .build();
+  }
+
+  @Bean
+  public AmazonSNS getSnsClient() {
+    return AmazonSNSClientBuilder
             .standard()
             .withCredentials(getAwsCredentials())
             .withRegion(regionName)
