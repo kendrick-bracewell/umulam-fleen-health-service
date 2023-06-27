@@ -11,12 +11,9 @@ import lombok.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class JwtTokenDetails {
 
-    private String sub;
-
-    private String[] roles;
-
-    private Object memberId;
-
-    private String memberType;
+  private String sub;
+  private String[] roles;
+  private Object userId;
+  private String userType;
 
 }

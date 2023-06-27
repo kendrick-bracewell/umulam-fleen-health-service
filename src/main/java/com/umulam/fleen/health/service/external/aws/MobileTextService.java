@@ -41,6 +41,7 @@ public class MobileTextService {
               .withMessageAttributes(smsAttributes)
               .withSdkRequestTimeout(timeoutPeriod));
       log.debug(String.valueOf(request));
+      System.out.println("Any body here");
 
     } catch (RuntimeException ex) {
       log.error(ex.getMessage(), ex);
@@ -69,5 +70,12 @@ public class MobileTextService {
       System.exit(1);
     }
     return "";
+  }
+
+  public String sendSMSMessageToTopic(String topicArn, String message) {
+    PublishResult result = service.publish(new PublishRequest()
+            .withTopicArn(topicArn)
+            .withMessage(message));
+    return result.getMessageId();
   }
 }

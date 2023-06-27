@@ -7,7 +7,8 @@ public enum RoleType {
 
   SUPER_ADMINISTRATOR("SuperAdministrator"),
   ADMINISTRATOR("Administrator"),
-  MEMBER("Member");
+  PROFESSIONAL("Professional"),
+  USER("User");
 
   private final String value;
 

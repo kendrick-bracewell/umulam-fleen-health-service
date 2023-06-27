@@ -1,6 +1,5 @@
 package com.umulam.fleen.health.util;
 
-import com.umulam.fleen.health.model.response.SignInResponse;
 import com.umulam.fleen.health.service.impl.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanWrapper;
@@ -11,7 +10,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 
@@ -29,7 +27,7 @@ import java.util.stream.Stream;
 public class FleenHealthUtil {
 
   private final UserDetailsServiceImpl userDetailsService;
-  private final JwtUtil jwtUtil;
+  private final JwtProvider jwtProvider;
 
   public static String[] getNullPropertyNames(Object source) {
     final BeanWrapper wrappedSource = new BeanWrapperImpl(source);
@@ -67,12 +65,4 @@ public class FleenHealthUtil {
     return PageRequest.of(pageNo, pageSize, sort);
   }
 
-  public Object generateSignInToken(String emailAddress) {
-    final UserDetails userDetails = userDetailsService
-          .loadUserByUsername(emailAddress);
-
-    final String token = jwtUtil.generateToken(userDetails);
-    final String refreshToken = jwtUtil.generateRefreshToken(emailAddress);
-    return new SignInResponse(token, refreshToken);
-  }
 }

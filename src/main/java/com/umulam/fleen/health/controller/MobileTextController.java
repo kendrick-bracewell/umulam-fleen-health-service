@@ -19,7 +19,7 @@ public class MobileTextController {
 
   @GetMapping
   public boolean test() {
-    service.sendSms("+2347040643797", "Hello World");
+    service.sendSms("2347040643797", "Hello World");
     return true;
   }
 }

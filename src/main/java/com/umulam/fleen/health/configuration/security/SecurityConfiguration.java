@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.configuration.security;
 
+import com.umulam.fleen.health.configuration.security.provider.CustomAuthenticationProvider;
 import com.umulam.fleen.health.filter.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -15,59 +16,69 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@EnableGlobalMethodSecurity(
+        prePostEnabled = true,
+        securedEnabled = true,
+        jsr250Enabled = true)
 @AllArgsConstructor
 public class SecurityConfiguration {
 
   private final UserDetailsService userDetailsService;
   private final JwtAuthenticationFilter authenticationFilter;
+  private final CustomAuthenticationProvider authenticationProvider;
 
   private static final String[] WHITELIST = {
+    "/auth/**",
     "/v2/api-docs",
     "/swagger-resources",
     "/swagger-resources/**",
     "/swagger-ui.html",
     "/v3/api-docs/**",
     "/swagger-ui/**",
-    "/auth/public/**",
-    "/actuator/health",
-    "/auth/**",
-          "/**"
+    "/actuator/health"
   };
 
   @Bean
-  public static PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-  @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+    http.httpBasic().disable();
+    http.formLogin().disable();
+    http.csrf().disable();
+    http.sessionManagement().sessionCreationPolicy(STATELESS);
     http
-      .csrf()
-            .disable()
-            .authorizeRequests()
-      .antMatchers(WHITELIST)
-        .permitAll();
+        .headers()
+        .frameOptions()
+        .sameOrigin();
 
     http
-      .headers()
-      .frameOptions()
-       .sameOrigin();
+      .authorizeRequests()
+      .antMatchers(WHITELIST).permitAll();
+
+    http
+      .addFilterBefore(
+        authenticationFilter,
+        UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }
 
   @Bean
+  public static PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
+
+  @Bean
   public AuthenticationManager authenticationManagerBean(HttpSecurity http) throws Exception {
     AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-    authenticationManagerBuilder
-      .userDetailsService(userDetailsService)
-      .passwordEncoder(passwordEncoder());
+    authenticationManagerBuilder.authenticationProvider(authenticationProvider);
 
     return authenticationManagerBuilder.build();
   }

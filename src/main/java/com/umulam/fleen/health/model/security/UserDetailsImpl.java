@@ -8,10 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -30,7 +27,7 @@ public class UserDetailsImpl implements UserDetails {
   private Set<Role> roles;
   private Collection<? extends GrantedAuthority> authorities;
   private String fullName;
-  private String avatar;
+  private String profilePhoto;
 
   public UserDetailsImpl(Integer id, String emailAddress, String password,
                          Collection<? extends GrantedAuthority> authorities) {
@@ -40,8 +37,9 @@ public class UserDetailsImpl implements UserDetails {
     this.authorities = authorities;
   }
 
-  public static UserDetailsImpl build(Member member) {
-    List<GrantedAuthority> authorities = member.getRoles()
+  public static UserDetailsImpl fromMember(Member member) {
+    List<GrantedAuthority> authorities = member
+            .getRoles()
             .stream()
             .map(role -> new SimpleGrantedAuthority("ROLE_".concat(role.getCode())))
             .collect(Collectors.toList());
@@ -49,16 +47,18 @@ public class UserDetailsImpl implements UserDetails {
     var details = new UserDetailsImpl(member.getId(), member.getEmailAddress(), member.getPassword(), authorities);
     details.setRoles(member.getRoles());
     details.setFullName((member.getFirstName().concat(" ").concat(member.getLastName())));
-    details.setAvatar(member.getProfilePhoto());
+    details.setProfilePhoto(member.getProfilePhoto());
     return details;
   }
 
-  public static UserDetailsImpl buildFromTokenDetails(JwtTokenDetails tokenDetails) {
-    List<GrantedAuthority> authorities = Arrays.stream(tokenDetails.getRoles())
+  public static UserDetailsImpl fromToken(JwtTokenDetails tokenDetails) {
+    List<GrantedAuthority> authorities =
+            Arrays
+            .stream(tokenDetails.getRoles())
             .map(role -> new SimpleGrantedAuthority("ROLE_".concat(role)))
             .collect(Collectors.toList());
 
-    var details = new UserDetailsImpl((Integer) tokenDetails.getMemberId(), tokenDetails.getSub(), null, authorities);
+    var details = new UserDetailsImpl((Integer) tokenDetails.getUserId(), tokenDetails.getSub(), null, authorities);
     var roles = Arrays.stream(tokenDetails.getRoles())
                     .map((role) -> Role.builder().code(role).build())
                     .collect(Collectors.toSet());
@@ -66,6 +66,7 @@ public class UserDetailsImpl implements UserDetails {
     details.setRoles(roles);
     return details;
   }
+
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

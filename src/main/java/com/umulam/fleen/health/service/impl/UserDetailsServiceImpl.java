@@ -11,9 +11,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
-import java.util.Optional;
-
 @Service
 @Primary
 @AllArgsConstructor
@@ -25,17 +22,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   @Transactional(readOnly = true)
   public UserDetails loadUserByUsername(String emailAddress) throws UsernameNotFoundException {
 
-    if (Objects.isNull(emailAddress)) {
-      throw new UsernameNotFoundException("Unknown");
-    }
+    Member member = repository
+            .findByEmailAddress(emailAddress)
+            .orElseThrow(() -> new UsernameNotFoundException(emailAddress));
 
-    Optional<Member> member = repository.findByEmailAddress(emailAddress);
-
-    if (member.isEmpty()) {
-      throw new UsernameNotFoundException(emailAddress);
-    }
-
-    return UserDetailsImpl.build(member.get());
+    return UserDetailsImpl.fromMember(member);
   }
 
 

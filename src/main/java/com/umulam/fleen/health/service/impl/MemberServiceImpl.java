@@ -31,6 +31,13 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
+  public Member getMemberByEmailAddress(String emailAddress) {
+    return memberJpaRepository
+            .findByEmailAddress(emailAddress)
+            .orElse(null);
+  }
+
+  @Override
   @Transactional
   public Member signup(SignUpDto dto) {
     Role role = roleService.getRoleByCode(null);

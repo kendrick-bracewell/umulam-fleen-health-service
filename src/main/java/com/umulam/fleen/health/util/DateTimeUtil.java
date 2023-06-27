@@ -2,6 +2,7 @@ package com.umulam.fleen.health.util;
 
 import java.time.*;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class DateTimeUtil {
   public static Date asDate(LocalDate localDate) {
@@ -26,6 +27,11 @@ public class DateTimeUtil {
       return zonedDateTime.toInstant().toEpochMilli();
     }
     return 0;
+  }
+
+  public static long toHours(Date date1, Date date2) {
+    long diffInMillis = Math.abs(date2.getTime() - date1.getTime());
+    return TimeUnit.HOURS.convert(diffInMillis, TimeUnit.MILLISECONDS);
   }
 
   public static long toMilliseconds(LocalDateTime dateTime) {
