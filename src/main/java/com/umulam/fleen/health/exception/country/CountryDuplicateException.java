@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.exception;
+package com.umulam.fleen.health.exception.country;
 
 import com.umulam.fleen.health.exception.base.FleenHealthException;
 

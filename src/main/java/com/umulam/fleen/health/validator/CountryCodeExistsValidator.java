@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import static java.util.Objects.*;
 
 @Slf4j
 @Component
@@ -20,7 +21,10 @@ public class CountryCodeExistsValidator implements ConstraintValidator<CountryCo
 
   @Override
   public boolean isValid(String code, ConstraintValidatorContext context) {
-    return !service.isCountryExistsByCode(code);
+    if (!isNull(code)) {
+      return !service.isCountryExistsByCode(code);
+    }
+    return false;
   }
   
 }

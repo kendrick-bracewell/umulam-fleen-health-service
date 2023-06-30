@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.model.domain;
 
+import com.umulam.fleen.health.constant.authentication.MfaType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -34,7 +35,7 @@ public class Member {
   @Column(name = "email_address", nullable = false, length = 150)
   private String emailAddress;
 
-  @Column(name = "phone_number", nullable = false, length = 150)
+  @Column(name = "phone_number", nullable = false, length = 15)
   private String phoneNumber;
 
   @Column(name = "password_hash", nullable = false, length = 500)
@@ -48,11 +49,26 @@ public class Member {
 
   @Builder.Default
   @Column(name ="email_address_verified")
-  private Boolean emailAddressVerified = false;
+  private boolean emailAddressVerified = false;
 
   @Builder.Default
   @Column(name ="phone_number_verified")
-  private Boolean phoneNumberVerified = false;
+  private boolean phoneNumberVerified = false;
+
+  @Builder.Default
+  @Column(name = "mfa_enabled")
+  private boolean mfaEnabled = false;
+
+  @Column(name = "mfa_secret")
+  private String mfaSecret;
+
+  @Column(name = "mfa_type")
+  @Enumerated(EnumType.STRING)
+  private MfaType mfaType;
+
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "member_status_id")
+  private MemberStatus memberStatus;
 
   @Builder.Default
   @ManyToMany(fetch = FetchType.LAZY)

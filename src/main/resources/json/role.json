@@ -14,5 +14,25 @@
   {
     "title": "User",
     "code": "USER"
+  },
+  {
+    "title": "Pre Verified User",
+    "code": "PRE_VERIFIED_USER"
+  },
+  {
+    "title": "Pre Authenticated User",
+    "code": "PRE_AUTHENTICATED_USER"
+  },
+  {
+    "title": "Pre Auth",
+    "code": "PRE_AUTH"
+  },
+  {
+    "title": "PreOtpAuthenticatedUser",
+    "code": "PRE_OTP_AUTHENTICATED_USER"
+  },
+  {
+    "title": "Refresh Token",
+    "code": "REFRESH_TOKEN"
   }
 ]

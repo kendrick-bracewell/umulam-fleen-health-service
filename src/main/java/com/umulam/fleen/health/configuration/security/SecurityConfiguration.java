@@ -61,6 +61,9 @@ public class SecurityConfiguration {
     http
       .authorizeRequests()
       .antMatchers(WHITELIST).permitAll();
+    http
+      .authorizeRequests()
+      .anyRequest().authenticated();
 
     http
       .addFilterBefore(
@@ -71,7 +74,7 @@ public class SecurityConfiguration {
   }
 
   @Bean
-  public static PasswordEncoder passwordEncoder() {
+  public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 

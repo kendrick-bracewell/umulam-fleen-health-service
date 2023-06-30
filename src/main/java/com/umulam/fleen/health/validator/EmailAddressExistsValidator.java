@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import static java.util.Objects.isNull;
+
 @Slf4j
 @Component
 public class EmailAddressExistsValidator implements ConstraintValidator<EmailAddressExists, String> {
@@ -22,7 +24,10 @@ public class EmailAddressExistsValidator implements ConstraintValidator<EmailAdd
 
   @Override
   public boolean isValid(String emailAddress, ConstraintValidatorContext context) {
-    return !(service.isMemberExists(emailAddress));
+    if (!isNull(emailAddress)) {
+      return !(service.isEmailAddressExists(emailAddress.trim().toLowerCase()));
+    }
+    return true;
   }
 }
 

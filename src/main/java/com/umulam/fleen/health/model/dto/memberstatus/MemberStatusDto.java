@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.model.dto;
+package com.umulam.fleen.health.model.dto.memberstatus;
 
 import com.umulam.fleen.health.model.domain.MemberStatus;
 import lombok.*;

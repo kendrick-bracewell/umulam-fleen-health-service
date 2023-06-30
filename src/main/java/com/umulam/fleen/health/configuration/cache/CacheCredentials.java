@@ -30,4 +30,13 @@ public class CacheCredentials {
 
   @NotBlank
   private Integer ttl;
+
+  @NotBlank
+  private Integer maxIdle;
+
+  @NotBlank
+  private Integer maxActive;
+
+  @NotBlank
+  private Integer maxTotal;
 }

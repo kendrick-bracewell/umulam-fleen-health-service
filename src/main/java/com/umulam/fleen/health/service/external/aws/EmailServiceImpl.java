@@ -4,6 +4,7 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umulam.fleen.health.exception.base.FleenHealthException;
 import com.umulam.fleen.health.model.dto.mail.EmailDetails;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -23,6 +24,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import static com.umulam.fleen.health.constant.ExceptionConstant.FAILED_MAIL_DELIVERY;
+import static com.umulam.fleen.health.constant.FleenHealthConstant.LOGO_FILE_NAME;
 
 @Slf4j
 @Component
@@ -56,17 +60,35 @@ public class EmailServiceImpl {
   }
 
   public boolean sendMessage(EmailDetails emailDetails) {
-    this.sesService.sendMessage(createMailMessage(emailDetails));
+    sesService.sendMessage(createMailMessage(emailDetails));
     return true;
+  }
+
+  public void sendHtmlMessage(EmailDetails details) {
+    try {
+      MimeMessage message = mailSender.createMimeMessage();
+      MimeMessageHelper helper = initMimeMessageHelper(message, details);
+      if (Objects.isNull(helper)) {
+        throw new FleenHealthException(FAILED_MAIL_DELIVERY);
+      }
+
+      InputStreamSource data =
+              new ByteArrayResource("".getBytes());
+      helper.addAttachment(LOGO_FILE_NAME, data);
+      mailSender.send(message);
+    } catch (MessagingException ex) {
+      log.error(ex.getMessage(), ex);
+      throw new FleenHealthException(FAILED_MAIL_DELIVERY);
+    }
   }
 
   public boolean sendMessageWithAttachment(EmailDetails details, List<File> files) {
     try {
       MimeMessage message = mailSender.createMimeMessage();
-      MimeMessageHelper helper = new MimeMessageHelper(
-              message,
-              MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-              StandardCharsets.UTF_8.name());
+      MimeMessageHelper helper = initMimeMessageHelper(message, details);
+      if (Objects.isNull(helper)) {
+        throw new FleenHealthException(FAILED_MAIL_DELIVERY);
+      }
 
       for (File file : files) {
         helper.addAttachment(file.getName(), file);
@@ -78,13 +100,14 @@ public class EmailServiceImpl {
       helper.setSubject(details.getSubject());
       InputStreamSource data =
               new ByteArrayResource("".getBytes());
-      helper.addAttachment("logo.png", data);
+      helper.addAttachment(LOGO_FILE_NAME, data);
       mailSender.send(message);
 
     } catch (MessagingException ex) {
      log.error(ex.getMessage(), ex);
+      throw new FleenHealthException(FAILED_MAIL_DELIVERY);
     }
-    return false;
+    return true;
   }
 
   public boolean sendTemplatedMessage(SimpleMailMessage mailMessage, String templateName, Map<String, Object> data) {
@@ -111,7 +134,7 @@ public class EmailServiceImpl {
     try {
       Template template = configuration.getTemplate(templateName);
       return FreeMarkerTemplateUtils.processTemplateIntoString(template, data);
-    } catch (IOException | TemplateException ex) {
+    } catch (TemplateException | IOException ex) {
       log.error(ex.getMessage(), ex);
     }
     return null;
@@ -136,6 +159,24 @@ public class EmailServiceImpl {
       log.error(ex.getMessage(), ex);
     }
     return false;
+  }
+
+  private MimeMessageHelper initMimeMessageHelper(MimeMessage message, EmailDetails details) {
+    try {
+      MimeMessageHelper helper = new MimeMessageHelper(
+              message,
+              MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+              StandardCharsets.UTF_8.name());
+
+      helper.setFrom(details.getFrom());
+      helper.setTo(details.getTo());
+      helper.setText(details.getBody(), true);
+      helper.setSubject(details.getSubject());
+      return helper;
+    } catch (MessagingException ex) {
+      log.error(ex.getMessage(), ex);
+    }
+    return null;
   }
 
 

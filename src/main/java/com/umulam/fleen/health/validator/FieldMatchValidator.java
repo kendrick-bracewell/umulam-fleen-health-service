@@ -1,11 +1,16 @@
 package com.umulam.fleen.health.validator;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.lang.reflect.Field;
 
+
+@Slf4j
+@Component
 public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Object> {
 
   private String firstFieldName;
@@ -28,7 +33,9 @@ public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Obje
       final Object secondObj = getFieldValue(object, secondFieldName);
       valid =  firstObj == null && secondObj == null || firstObj != null && firstObj.equals(secondObj);
     }
-    catch (final Exception ignore) { }
+    catch (Exception ex) {
+      log.error(ex.getMessage(), ex);
+    }
 
     if (!valid) {
       context.buildConstraintViolationWithTemplate(message)

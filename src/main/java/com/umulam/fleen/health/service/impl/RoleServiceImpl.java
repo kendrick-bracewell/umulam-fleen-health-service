@@ -1,6 +1,6 @@
 package com.umulam.fleen.health.service.impl;
 
-import com.umulam.fleen.health.exception.RoleNotFoundException;
+import com.umulam.fleen.health.exception.role.RoleNotFoundException;
 import com.umulam.fleen.health.model.domain.Role;
 import com.umulam.fleen.health.model.dto.RoleDto;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;

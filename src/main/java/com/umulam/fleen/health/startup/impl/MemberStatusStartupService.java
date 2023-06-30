@@ -1,8 +1,5 @@
 package com.umulam.fleen.health.startup.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.model.domain.MemberStatus;
 import com.umulam.fleen.health.repository.jpa.MemberStatusJpaRepository;
 import com.umulam.fleen.health.startup.StartupService;
@@ -13,42 +10,47 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
-
-import static com.umulam.fleen.health.util.FleenHealthUtil.readResourceFile;
 
 @Slf4j
 @Service
 @AllArgsConstructor
-public class MemberStatusStartupService implements StartupService {
+public class MemberStatusStartupService implements StartupService<MemberStatus> {
 
   private final MemberStatusJpaRepository jpaRepository;
-  private final ObjectMapper objectMapper;
-  private static final String FILE_PATH = "json/member-status.json";
 
   @Override
   @Transactional
   @EventListener(ApplicationReadyEvent.class)
   public void seedRecords() {
     try {
-      for (MemberStatus memberStatus : getRecords()) {
-        Optional<MemberStatus> countryExists = jpaRepository.findByCode(memberStatus.getCode());
-        if (countryExists.isPresent()) {
+      if (true) {
+        return;
+      }
+      for (MemberStatus status : getRecords()) {
+        Optional<MemberStatus> entry = jpaRepository.findByCode(status.getCode());
+        if (entry.isPresent()) {
           continue;
         }
 
-        MemberStatus newMemberStatus = MemberStatus.builder()
-                .title(memberStatus.getTitle())
-                .code(memberStatus.getCode())
+        MemberStatus newEntry = MemberStatus.builder()
+                .title(status.getTitle())
+                .code(status.getCode())
                 .build();
-        jpaRepository.save(newMemberStatus);
+        jpaRepository.save(newEntry);
       }
-    } catch (Exception ignored) { }
+    } catch (Exception ex) {
+      log.error(ex.getMessage(), ex);
+    }
   }
 
-  public List<MemberStatus> getRecords() throws JsonProcessingException {
-    String value = readResourceFile(FILE_PATH);
-    return objectMapper.readValue(value, new TypeReference<>() {});
+  @Override
+  public String getFilePath() {
+    return "json/member-status.json";
+  }
+
+  @Override
+  public Class<MemberStatus> getClazz() {
+    return MemberStatus.class;
   }
 }

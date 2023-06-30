@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Objects.isNull;
+
 public class EnumValidValidator implements ConstraintValidator<EnumValid, CharSequence> {
   private List<String> acceptedValues;
 
@@ -18,10 +20,10 @@ public class EnumValidValidator implements ConstraintValidator<EnumValid, CharSe
 
   @Override
   public boolean isValid(CharSequence value, ConstraintValidatorContext context) {
-    if (value == null) {
-      return true;
+    if (!isNull(value)) {
+      return acceptedValues.contains(value.toString());
     }
-    return acceptedValues.contains(value.toString());
+    return false;
   }
 
 }

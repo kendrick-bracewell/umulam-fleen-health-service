@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.constant;
+package com.umulam.fleen.health.constant.authentication;
 
 import lombok.Getter;
 

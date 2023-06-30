@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.configuration.cache;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,13 +65,20 @@ public class CacheConfig {
   @Primary
   public RedisTemplate<String, Object> redisTemplate(JedisConnectionFactory connectionFactory) {
     RedisTemplate<String, Object> template = new RedisTemplate<>();
+    configurePool(connectionFactory);
     template.setConnectionFactory(connectionFactory);
     template.setKeySerializer(stringSerializer());
     template.setValueSerializer(jackson2JsonSerializer());
     template.setHashValueSerializer(jdkSerializer());
-    template.setEnableTransactionSupport(true);
 
     return template;
+  }
+
+  private void configurePool(JedisConnectionFactory connectionFactory) {
+    if (connectionFactory.getPoolConfig() != null) {
+      connectionFactory.getPoolConfig().setMaxTotal(credentials.getMaxTotal());
+      connectionFactory.getPoolConfig().setMaxIdle(credentials.getMaxIdle());
+    }
   }
 
   @Bean

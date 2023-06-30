@@ -1,7 +1,7 @@
 package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.model.domain.Member;
-import com.umulam.fleen.health.model.security.UserDetailsImpl;
+import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.repository.jpa.MemberJpaRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
@@ -26,8 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             .findByEmailAddress(emailAddress)
             .orElseThrow(() -> new UsernameNotFoundException(emailAddress));
 
-    return UserDetailsImpl.fromMember(member);
+    return FleenUser.fromMember(member);
   }
-
 
 }

@@ -24,7 +24,7 @@ public class CountryExistsValidator implements ConstraintValidator<CountryExists
     try {
       return service.isCountryExists(Integer.parseInt(id));
     } catch (Exception ex) {
-      log.error(ex.getMessage());
+      log.error(ex.getMessage(), ex);
       return false;
     }
   }

@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.configuration.security.provider;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,8 +19,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
   private final UserDetailsService userDetailsService;
   private final PasswordEncoder passwordEncoder;
 
-  public CustomAuthenticationProvider(UserDetailsService userDetailsService,
-                                      PasswordEncoder passwordEncoder) {
+  public CustomAuthenticationProvider(@Lazy UserDetailsService userDetailsService,
+                                      @Lazy PasswordEncoder passwordEncoder) {
     this.userDetailsService = userDetailsService;
     this.passwordEncoder = passwordEncoder;
   }
@@ -28,6 +29,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
     String emailAddress = authentication.getName();
     String password = authentication.getCredentials().toString();
+
     try {
       UserDetails detail = userDetailsService.loadUserByUsername(emailAddress);
       if (passwordEncoder.matches(password, detail.getPassword())) {
@@ -36,7 +38,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     } catch (UsernameNotFoundException ex) {
       log.error(ex.getMessage(), ex);
     }
-    return null;
+    return new UsernamePasswordAuthenticationToken(emailAddress, password);
   }
 
   @Override

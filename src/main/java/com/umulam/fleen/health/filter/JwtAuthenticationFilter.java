@@ -1,8 +1,8 @@
 package com.umulam.fleen.health.filter;
 
-import com.umulam.fleen.health.constant.TokenType;
+import com.umulam.fleen.health.constant.authentication.TokenType;
 import com.umulam.fleen.health.model.dto.authentication.JwtTokenDetails;
-import com.umulam.fleen.health.model.security.UserDetailsImpl;
+import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.service.CacheService;
 import com.umulam.fleen.health.util.JwtProvider;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -27,7 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.umulam.fleen.health.constant.AuthenticationConstant.*;
+import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.AUTH_HEADER_PREFIX;
+import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.TOKEN_TYPE_KEY;
 import static com.umulam.fleen.health.service.impl.AuthenticationServiceImpl.getAuthCacheKey;
 
 @Slf4j
@@ -49,11 +50,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                   FilterChain filterChain)
             throws ServletException, IOException {
+    final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-    final String header = request.getHeader(AUTH_HEADER_KEY);
-    final String authValue = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-    if (header == null || !StringUtils.startsWith(authValue, AUTH_HEADER_PREFIX)) {
+    if (header == null || !StringUtils.startsWithIgnoreCase(header, AUTH_HEADER_PREFIX)) {
         filterChain.doFilter(request, response);
         return;
     }
@@ -83,9 +82,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     try {
       if (SecurityContextHolder.getContext().getAuthentication() == null) {
         JwtTokenDetails details = jwtProvider.getBasicDetails(token);
-        UserDetails userDetails = UserDetailsImpl.fromToken(details);
+        UserDetails userDetails = FleenUser.fromToken(details);
         String key = getAuthCacheKey(details.getSub());
         String savedToken = (String) cacheService.get(key);
+        log.info("Authenticated User {}", userDetails);
 
         if (jwtProvider.isTokenValid(token, userDetails)) {
           if (cacheService.exists(key) && savedToken != null) {

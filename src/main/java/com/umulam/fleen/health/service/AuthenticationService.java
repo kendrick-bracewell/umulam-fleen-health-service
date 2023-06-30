@@ -1,26 +1,36 @@
 package com.umulam.fleen.health.service;
 
+import com.umulam.fleen.health.model.dto.authentication.ResendVerificationCodeDto;
 import com.umulam.fleen.health.model.dto.authentication.SignInDto;
 import com.umulam.fleen.health.model.dto.authentication.SignUpDto;
-import com.umulam.fleen.health.model.response.SignInResponse;
-import com.umulam.fleen.health.model.security.UserDetailsImpl;
+import com.umulam.fleen.health.model.dto.authentication.VerificationCodeDto;
+import com.umulam.fleen.health.model.response.FleenHealthResponse;
+import com.umulam.fleen.health.model.response.authentication.SignInResponse;
+import com.umulam.fleen.health.model.response.authentication.SignUpResponse;
+import com.umulam.fleen.health.model.security.FleenUser;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface AuthenticationService {
 
-  SignInResponse signUp(SignUpDto dto);
+  SignUpResponse signUp(SignUpDto dto);
 
-  void logout(String username);
+  @Transactional
+  SignUpResponse completeSignUp(VerificationCodeDto verificationCodeDto, FleenUser fleenUser);
+
+  FleenHealthResponse resendVerificationCode(ResendVerificationCodeDto dto, FleenUser fleenUser);
+
+  void signOut(String username);
 
   String getLoggedInUserEmailAddress();
 
   Authentication authenticate(String username, String password);
 
-  SignInResponse login(SignInDto dto);
+  SignInResponse signIn(SignInDto dto);
 
-  String createAccessToken(UserDetailsImpl user);
+  String createAccessToken(FleenUser user);
 
-  String createRefreshToken(UserDetailsImpl user);
+  String createRefreshToken(FleenUser user);
 
   void saveToken(String subject, String token);
 

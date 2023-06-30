@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.model.response.other;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +17,8 @@ public class DeleteResponse {
 
   private final String message;
   private final String timestamp;
+
+  @JsonProperty("status_code")
   private Integer statusCode;
 
   public DeleteResponse(String message, boolean status) {

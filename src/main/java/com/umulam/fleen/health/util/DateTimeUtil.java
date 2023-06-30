@@ -2,6 +2,7 @@ package com.umulam.fleen.health.util;
 
 import java.time.*;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class DateTimeUtil {
@@ -42,6 +43,11 @@ public class DateTimeUtil {
   }
 
   public static Long getTimeInMillis(int seconds, int minutes, int hours, int days) {
-    return (long) 1000 * seconds * minutes * hours * days;
+    List<Integer> times = List.of(1000, seconds, minutes, hours, days);
+    return times
+            .stream()
+            .filter(time -> time > 0)
+            .reduce(1, Math::multiplyExact)
+            .longValue();
   }
 }

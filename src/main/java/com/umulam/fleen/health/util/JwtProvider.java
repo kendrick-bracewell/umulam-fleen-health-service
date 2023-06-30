@@ -1,24 +1,28 @@
 package com.umulam.fleen.health.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umulam.fleen.health.constant.TokenType;
+import com.umulam.fleen.health.constant.authentication.TokenType;
 import com.umulam.fleen.health.model.domain.Role;
 import com.umulam.fleen.health.model.dto.authentication.JwtTokenDetails;
-import com.umulam.fleen.health.model.security.UserDetailsImpl;
+import com.umulam.fleen.health.model.security.FleenUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
-import static com.umulam.fleen.health.constant.AuthenticationConstant.*;
+import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.*;
 
 @Slf4j
 @Component
@@ -28,6 +32,12 @@ import static com.umulam.fleen.health.constant.AuthenticationConstant.*;
 public class JwtProvider {
 
   private final ObjectMapper mapper;
+
+  @Value("${umulam.fleen.health.jwt.issuer}")
+  public String JWT_ISSUER;
+
+  @Value("${umulam.fleen.health.jwt.secret}")
+  public String JWT_SECRET;
 
   public JwtProvider(ObjectMapper objectMapper) {
     this.mapper = objectMapper;
@@ -72,10 +82,9 @@ public class JwtProvider {
     return expiration.before(new Date());
   }
 
-  public String generateToken(UserDetailsImpl user, TokenType tokenType) {
+  public String generateToken(FleenUser user, TokenType tokenType) {
     Map<String, Object> claims = buildClaims(user);
     claims.put(TOKEN_TYPE_KEY, tokenType.getValue());
-
     return createToken(user.getUsername(), claims, ACCESS_TOKEN_VALIDITY);
   }
 
@@ -101,7 +110,7 @@ public class JwtProvider {
     return (username.equals(details.getUsername()) && !isTokenExpired(token));
   }
 
-  public Map<String, Object> buildClaims(UserDetailsImpl user) {
+  public Map<String, Object> buildClaims(FleenUser user) {
     Map<String, Object> claims = new HashMap<>();
 
     claims.put("userId", user.getId());
@@ -118,26 +127,6 @@ public class JwtProvider {
             .stream()
             .map(Role::getCode)
             .toArray(String[]::new);
-  }
-
-  private void setMemberType(UserDetails userDetails, Map<String, Object> claimsMap) {
-    UserDetailsImpl details = (UserDetailsImpl) userDetails;
-    String memberType = null;
-    for (Role role : details.getRoles()) {
-          if (role.getCode().equals("SuperAdministrator")) {
-              memberType = role.getCode();
-              break;
-          }
-          else if (role.getCode().equals("Administrator")) {
-            memberType = role.getCode();
-            break;
-          }
-          else if (role.getCode().equals("Member")) {
-            memberType = role.getCode();
-            break;
-          }
-      }
-    claimsMap.put("memberType", memberType);
   }
 
 }

@@ -1,7 +1,6 @@
-package com.umulam.fleen.health.constant;
+package com.umulam.fleen.health.constant.authentication;
 
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
@@ -12,13 +11,10 @@ import static com.umulam.fleen.health.util.DateTimeUtil.getTimeInMillis;
 @PropertySource("classpath:application.properties")
 public final class AuthenticationConstant {
 
-  @Value("${umulam.fleen.health.jwt.secret}")
-  public static String JWT_SECRET;
-
-  @Value("${umulam.fleen.health.jwt.issuer}")
-  public static String JWT_ISSUER;
-
+  public static final String MFA_SECRET_LABEL = "start@fleenhealth.com";
+  public static final String MFA_SECRET_ISSUER = "Fleen Health";
   public static final String AUTH_CACHE_PREFIX = "JWT_TOKEN:";
+  public static final String PRE_VERIFICATION_PREFIX = "PRE_VERIFICATION:";
   public static final String AUTH_HEADER_KEY = "Authorization";
   public static final String REFRESH_TOKEN_HEADER_KEY = "REFRESH_TOKEN";
   public static final String AUTH_HEADER_PREFIX = "BEARER";

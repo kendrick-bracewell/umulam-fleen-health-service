@@ -1,7 +1,7 @@
 package com.umulam.fleen.health.service.impl;
 
-import com.umulam.fleen.health.exception.CountryCodeDuplicateException;
-import com.umulam.fleen.health.exception.CountryNotFoundException;
+import com.umulam.fleen.health.exception.country.CountryCodeDuplicateException;
+import com.umulam.fleen.health.exception.country.CountryNotFoundException;
 import com.umulam.fleen.health.model.domain.Country;
 import com.umulam.fleen.health.model.dto.country.CountryDto;
 import com.umulam.fleen.health.model.dto.country.UpdateCountryDto;
