@@ -41,6 +41,7 @@ public class MfaServiceImpl implements MfaService {
   public String getQrCode(String secret) {
     QrData data = new QrData
             .Builder()
+            .secret(secret)
             .label(MFA_SECRET_LABEL)
             .issuer(MFA_SECRET_ISSUER)
             .algorithm(HashingAlgorithm.SHA256)

@@ -17,6 +17,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -68,15 +69,15 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
-  public boolean reEnableMfa(Integer memberId) {
+  @Transactional
+  public void reEnableMfa(Integer memberId) {
     memberJpaRepository.reEnableTwoFa(memberId);
-    return true;
   }
 
   @Override
-  public boolean disableMfa(Integer memberId) {
+  @Transactional
+  public void disableMfa(Integer memberId) {
     memberJpaRepository.disableTwoFa(memberId);
-    return true;
   }
 
   @Override
@@ -90,17 +91,26 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
+  @Transactional
   public MfaDetail setupMfa(Integer memberId, MfaTypeDto mfaTypeDto) {
     MfaType mfaType = MfaType.valueOf(mfaTypeDto.getMfaType());
     Member member = memberJpaRepository
             .findById(memberId)
             .orElseThrow(() -> new InvalidAuthenticationException(String.valueOf(memberId)));
     MfaDetail mfaDetail = new MfaDetail();
+
+    if (member.getMfaType() == mfaType && mfaType != MfaType.AUTHENTICATOR) {
+      mfaDetail.setEnabled(true);
+      mfaDetail.setMfaType(mfaType.name());
+      return mfaDetail;
+    }
+
     switch (mfaType) {
       case SMS:
 
       case EMAIL:
         member.setMfaType(mfaType);
+        member.setMfaSecret(null);
         member.setMfaEnabled(true);
         mfaDetail.setEnabled(true);
         mfaDetail.setMfaType(mfaType.name());
@@ -116,22 +126,21 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
+  @Transactional
   public boolean confirmMfa(String username, ConfirmMfaDto dto) {
     MfaType mfaType = MfaType.valueOf(dto.getMfaType());
     Member member = getMemberByEmailAddress(username);
     if (Objects.isNull(member)) {
       throw new VerificationFailedException();
     }
-    if (mfaType == MfaType.AUTHENTICATOR && initAuthenticatorMfa(member.getMfaSecret(), dto.getCode())) {
-      member.setMfaEnabled(true);
-      return true;
-    }
-    return true;
-  }
 
-  private boolean initAuthenticatorMfa(String secret, String code) {
-    if (mfaService.verifyOtp(code, secret)) {
-      throw new InvalidVerificationCodeException(code);
+    if (mfaType == MfaType.AUTHENTICATOR) {
+      if (mfaService.verifyOtp(dto.getCode(), member.getMfaSecret())) {
+        member.setMfaEnabled(true);
+        save(member);
+      } else {
+        throw new InvalidVerificationCodeException(dto.getCode());
+      }
     }
     return true;
   }

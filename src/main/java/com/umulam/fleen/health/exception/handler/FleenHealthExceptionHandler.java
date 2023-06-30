@@ -8,11 +8,15 @@ import com.umulam.fleen.health.exception.memberstatus.MemberStatusCodeDuplicateE
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusNotFoundException;
 import com.umulam.fleen.health.exception.role.RoleDuplicateException;
 import com.umulam.fleen.health.exception.role.RoleNotFoundException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -68,6 +72,16 @@ public class FleenHealthExceptionHandler {
   public Object handleUnauthorized(Exception ex) {
     log.error(ex.getMessage(), ex);
     return buildErrorMap(ex.getMessage(), UNAUTHORIZED);
+  }
+
+  @ResponseStatus(value = UNAUTHORIZED)
+  @ExceptionHandler(value = {
+          ExpiredJwtException.class,
+          MalformedJwtException.class,
+          SignatureException.class
+  })
+  public Object handleUnauthorized() {
+    return buildErrorMap(INVALID_USER, UNAUTHORIZED);
   }
 
   @ResponseStatus(value = FORBIDDEN)

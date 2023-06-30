@@ -12,6 +12,7 @@ import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamSource;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -76,7 +77,7 @@ public class EmailServiceImpl {
               new ByteArrayResource("".getBytes());
       helper.addAttachment(LOGO_FILE_NAME, data);
       mailSender.send(message);
-    } catch (MessagingException ex) {
+    } catch (MessagingException | MailSendException ex) {
       log.error(ex.getMessage(), ex);
       throw new FleenHealthException(FAILED_MAIL_DELIVERY);
     }

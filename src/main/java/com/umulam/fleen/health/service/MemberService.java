@@ -5,6 +5,7 @@ import com.umulam.fleen.health.model.dto.authentication.ConfirmMfaDto;
 import com.umulam.fleen.health.model.dto.authentication.MfaTypeDto;
 import com.umulam.fleen.health.model.security.MfaDetail;
 import lombok.NonNull;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface MemberService {
 
@@ -20,13 +21,17 @@ public interface MemberService {
 
   boolean enableMfa(Integer memberId, String secret);
 
-  boolean reEnableMfa(Integer memberId);
+  @Transactional
+  void reEnableMfa(Integer memberId);
 
-  boolean disableMfa(Integer memberId);
+  @Transactional
+  void disableMfa(Integer memberId);
 
+  @Transactional
   MfaDetail setupMfa(Integer memberId, MfaTypeDto mfaTypeDto);
 
   String getTwoFaSecret(Integer memberId);
 
+  @Transactional
   boolean confirmMfa(String username, ConfirmMfaDto dto);
 }

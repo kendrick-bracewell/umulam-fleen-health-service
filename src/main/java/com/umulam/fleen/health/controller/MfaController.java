@@ -32,7 +32,7 @@ public class MfaController {
 
   @PutMapping(value = "/confirm-mfa")
   public FleenHealthResponse confirmMfa(@AuthenticationPrincipal FleenUser user, @Valid @RequestBody ConfirmMfaDto dto) {
-    boolean mfaEnabled = memberService.confirmMfa(user.getUsername(), dto);
+    memberService.confirmMfa(user.getUsername(), dto);
     return new FleenHealthResponse("Success");
   }
 

@@ -63,8 +63,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     String emailAddress = null;
     try {
       emailAddress = jwtProvider.getUsernameFromToken(token);
-    } catch (IllegalArgumentException | ExpiredJwtException | MalformedJwtException | SignatureException e) {
-      resolver.resolveException(request, response, null, e);
+    } catch (IllegalArgumentException | ExpiredJwtException | MalformedJwtException | SignatureException ex) {
+      log.error(ex.getMessage(), ex);
+      resolver.resolveException(request, response, null, ex);
       return;
     }
 
