@@ -13,7 +13,7 @@ public class JwtTokenDetails {
 
   private String sub;
   private String[] roles;
-  private Object userId;
-  private String userType;
+  private String[] authorities;
+  private Integer userId;
 
 }

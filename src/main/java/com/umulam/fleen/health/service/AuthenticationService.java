@@ -1,9 +1,6 @@
 package com.umulam.fleen.health.service;
 
-import com.umulam.fleen.health.model.dto.authentication.ResendVerificationCodeDto;
-import com.umulam.fleen.health.model.dto.authentication.SignInDto;
-import com.umulam.fleen.health.model.dto.authentication.SignUpDto;
-import com.umulam.fleen.health.model.dto.authentication.VerificationCodeDto;
+import com.umulam.fleen.health.model.dto.authentication.*;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.response.authentication.SignInResponse;
 import com.umulam.fleen.health.model.response.authentication.SignUpResponse;
@@ -21,6 +18,8 @@ public interface AuthenticationService {
   FleenHealthResponse resendVerificationCode(ResendVerificationCodeDto dto, FleenUser fleenUser);
 
   void signOut(String username);
+
+  SignInResponse validateMfa(FleenUser fleenUser, ConfirmMfaDto dto);
 
   String getLoggedInUserEmailAddress();
 

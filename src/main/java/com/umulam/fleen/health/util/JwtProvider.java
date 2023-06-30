@@ -13,16 +13,15 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.*;
+import static com.umulam.fleen.health.util.FleenAuthorities.getRefreshTokenAuthorities;
 
 @Slf4j
 @Component
@@ -85,13 +84,17 @@ public class JwtProvider {
   public String generateToken(FleenUser user, TokenType tokenType) {
     Map<String, Object> claims = buildClaims(user);
     claims.put(TOKEN_TYPE_KEY, tokenType.getValue());
+
     return createToken(user.getUsername(), claims, ACCESS_TOKEN_VALIDITY);
   }
 
-  public String generateRefreshToken(String subject, TokenType tokenType) {
+  public String generateRefreshToken(FleenUser user, TokenType tokenType) {
     Map<String, Object> claims = new HashMap<>();
     claims.put(TOKEN_TYPE_KEY, tokenType.getValue());
-    return createToken(subject, claims, REFRESH_TOKEN_VALIDITY);
+    claims.put("userId", user.getId());
+    claims.put("authorities", authoritiesToList(getRefreshTokenAuthorities()));
+
+    return createToken(user.getUsername(), claims, REFRESH_TOKEN_VALIDITY);
   }
 
   public String createToken(String subject, Map<String, Object> claims, long expirationPeriod) {
@@ -114,7 +117,7 @@ public class JwtProvider {
     Map<String, Object> claims = new HashMap<>();
 
     claims.put("userId", user.getId());
-    claims.put("roles", rolesToList(user.getRoles()));
+    claims.put("authorities", authoritiesToList(user.getAuthorities()));
     claims.put("fullName", user.getFullName());
     claims.put("emailAddress", user.getEmailAddress());
     claims.put("profilePhoto", user.getProfilePhoto());
@@ -122,10 +125,10 @@ public class JwtProvider {
     return claims;
   }
 
-  public String[] rolesToList(Set<Role> roles) {
-    return roles
+  public String[] authoritiesToList(Collection<? extends GrantedAuthority> authorities) {
+    return authorities
             .stream()
-            .map(Role::getCode)
+            .map(GrantedAuthority::getAuthority)
             .toArray(String[]::new);
   }
 

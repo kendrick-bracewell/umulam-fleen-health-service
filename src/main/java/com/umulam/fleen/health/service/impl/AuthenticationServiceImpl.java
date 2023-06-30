@@ -3,9 +3,8 @@ package com.umulam.fleen.health.service.impl;
 import com.umulam.fleen.health.constant.EmailMessageSource;
 import com.umulam.fleen.health.constant.MemberStatusType;
 import com.umulam.fleen.health.constant.MessageType;
-import com.umulam.fleen.health.constant.authentication.AuthenticationStatus;
+import com.umulam.fleen.health.constant.authentication.MfaType;
 import com.umulam.fleen.health.constant.authentication.RoleType;
-import com.umulam.fleen.health.constant.authentication.TokenType;
 import com.umulam.fleen.health.constant.authentication.VerificationType;
 import com.umulam.fleen.health.exception.authentication.ExpiredVerificationCodeException;
 import com.umulam.fleen.health.exception.authentication.InvalidAuthenticationException;
@@ -25,9 +24,6 @@ import com.umulam.fleen.health.service.*;
 import com.umulam.fleen.health.service.external.aws.EmailServiceImpl;
 import com.umulam.fleen.health.service.external.aws.MobileTextService;
 import com.umulam.fleen.health.util.JwtProvider;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -46,7 +42,16 @@ import java.util.*;
 import static com.umulam.fleen.health.constant.FleenHealthConstant.*;
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.AUTH_CACHE_PREFIX;
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.PRE_VERIFICATION_PREFIX;
+import static com.umulam.fleen.health.constant.authentication.AuthenticationStatus.COMPLETED;
+import static com.umulam.fleen.health.constant.authentication.AuthenticationStatus.IN_PROGRESS;
+import static com.umulam.fleen.health.constant.authentication.MfaType.EMAIL;
+import static com.umulam.fleen.health.constant.authentication.MfaType.SMS;
+import static com.umulam.fleen.health.constant.authentication.RoleType.PRE_VERIFIED_USER;
+import static com.umulam.fleen.health.constant.authentication.TokenType.ACCESS_TOKEN;
+import static com.umulam.fleen.health.constant.authentication.TokenType.REFRESH_TOKEN;
 import static com.umulam.fleen.health.util.DateTimeUtil.toHours;
+import static com.umulam.fleen.health.util.FleenAuthorities.getPreAuthenticatedAuthorities;
+import static com.umulam.fleen.health.util.FleenAuthorities.getPreVerifiedAuthorities;
 
 @Slf4j
 @Service
@@ -97,12 +102,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     FleenUser user = (FleenUser) authentication.getPrincipal();
     Role role = new ArrayList<>(user.getRoles()).get(0);
-    String accessToken = createAccessToken(user);
-    String refreshToken = createAccessToken(user);
-    setContext(authentication);
+    String accessToken;
+    String refreshToken;
+
+    SignInResponse signInResponse = SignInResponse.builder()
+            .emailAddress(user.getEmailAddress())
+            .authenticationStatus(IN_PROGRESS)
+            .build();
 
     if (MemberStatusType.INACTIVE.name().equals(user.getStatus())
-        && RoleType.PRE_VERIFIED_USER.name().equals(role.getCode())) {
+        && PRE_VERIFIED_USER.name().equals(role.getCode())) {
       String otp = mfaService.generateVerificationOtp(6);
       PreVerificationDto preVerification = PreVerificationDto.builder()
               .code(otp)
@@ -114,12 +123,58 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       initPreVerification(preVerification, verificationType);
       cacheService.set(getPreVerificationCacheKey(user.getUsername()), otp, Duration.ofMinutes(1));
 
+      user.setAuthorities(getPreVerifiedAuthorities());
+      Authentication authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+      accessToken = createAccessToken(user);
+      refreshToken = createRefreshToken(user);
+      setContext(authenticationToken);
+
       saveToken(user.getUsername(), accessToken);
-      return new SignInResponse(accessToken, refreshToken, user.getEmailAddress(), null, AuthenticationStatus.IN_PROGRESS);
+      signInResponse.setEmailAddress(user.getEmailAddress());
+      signInResponse.setAccessToken(accessToken);
+      signInResponse.setRefreshToken(refreshToken);
+      return signInResponse;
     }
 
+    if (user.isMfaEnabled()) {
+      if (SMS == user.getMfaType() || EMAIL == user.getMfaType()) {
+        String otp = mfaService.generateVerificationOtp(6);
+        PreVerificationDto preVerification = PreVerificationDto.builder()
+                .code(otp)
+                .phoneNumber(user.getPhoneNumber())
+                .emailAddress(dto.getEmailAddress())
+                .build();
+
+        VerificationType verificationType = VerificationType.valueOf(user.getMfaType().name());
+        initPreVerification(preVerification, verificationType);
+      }
+
+      user.setAuthorities(getPreAuthenticatedAuthorities());
+      Authentication authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+      accessToken = createAccessToken(user);
+      refreshToken = createRefreshToken(user);
+      setContext(authenticationToken);
+
+      signInResponse.setMfaEnabled(true);
+      signInResponse.setMfaType(user.getMfaType());
+      signInResponse.setAccessToken(accessToken);
+      signInResponse.setRefreshToken(refreshToken);
+      signInResponse.setPhoneNumber(user.getPhoneNumber());
+
+      saveToken(user.getUsername(), accessToken);
+      return signInResponse;
+    }
+
+    accessToken = createAccessToken(user);
+    refreshToken = createRefreshToken(user);
+    setContext(authentication);
+
+    signInResponse.setAccessToken(accessToken);
+    signInResponse.setRefreshToken(refreshToken);
+    signInResponse.setAuthenticationStatus(COMPLETED);
+
     saveToken(user.getUsername(), accessToken);
-    return new SignInResponse(accessToken, refreshToken, user.getEmailAddress(), user.getPhoneNumber(), AuthenticationStatus.COMPLETED);
+    return signInResponse;
   }
 
   @Override
@@ -127,7 +182,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   public SignUpResponse signUp(SignUpDto dto) {
     Member member = dto.toMember();
 
-    Role role = roleService.getRoleByCode(RoleType.PRE_VERIFIED_USER.name());
+    Role role = roleService.getRoleByCode(PRE_VERIFIED_USER.name());
     member.setPassword(passwordEncoder.encode(member.getPassword().trim()));
     member.setRoles(Set.of(role));
 
@@ -137,7 +192,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     FleenUser user = initAuthentication(member);
     String accessToken = createAccessToken(user);
-    String refreshToken = createAccessToken(user);
+    String refreshToken = createRefreshToken(user);
 
     String otp = mfaService.generateVerificationOtp(6);
     PreVerificationDto preVerification = PreVerificationDto.builder()
@@ -151,22 +206,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     cacheService.set(getPreVerificationCacheKey(user.getUsername()), otp, Duration.ofMinutes(1));
 
     saveToken(user.getUsername(), accessToken);
-    return new SignUpResponse(accessToken, refreshToken, AuthenticationStatus.IN_PROGRESS, verificationType);
+    return new SignUpResponse(accessToken, refreshToken, IN_PROGRESS, verificationType);
   }
 
   @Override
   @Transactional
-  public SignUpResponse completeSignUp(VerificationCodeDto verificationCodeDto, FleenUser fleenUser) {
+  public SignUpResponse completeSignUp(VerificationCodeDto dto, FleenUser fleenUser) {
     String username = fleenUser.getUsername();
     String verificationKey = getPreVerificationCacheKey(username);
-    if (!cacheService.exists(verificationKey)) {
-      throw new ExpiredVerificationCodeException();
-    }
+    String code = dto.getCode();
 
-    String code = verificationCodeDto.getCode();
-    if (!cacheService.get(verificationKey).equals(code)) {
-      throw new InvalidVerificationCodeException(code);
-    }
+    validateSmsAndEmailMfa(verificationKey, code);
 
     Member member = memberService.getMemberByEmailAddress(username);
     if (Objects.isNull(member)) {
@@ -179,7 +229,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     if (MemberStatusType.ACTIVE.getValue().equals(member.getMemberStatus().getCode())) {
       saveToken(user.getUsername(), accessToken);
-      return new SignUpResponse(accessToken, refreshToken, AuthenticationStatus.COMPLETED, null);
+      return new SignUpResponse(accessToken, refreshToken, COMPLETED, null);
     }
 
     Role role = roleService.getRoleByCode(RoleType.USER.name());
@@ -192,7 +242,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     memberService.save(member);
 
     saveToken(user.getUsername(), accessToken);
-    return new SignUpResponse(accessToken, refreshToken, AuthenticationStatus.COMPLETED, null);
+    return new SignUpResponse(accessToken, refreshToken, COMPLETED, null);
   }
 
   @Override
@@ -231,9 +281,43 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
   }
 
-  public boolean validateTwoFa(String code, Integer memberId) {
-    String secret = memberService.getTwoFaSecret(memberId);
-    return mfaService.verifyOtp(code, secret);
+  @Override
+  public SignInResponse validateMfa(FleenUser fleenUser, ConfirmMfaDto dto) {
+    String username = fleenUser.getUsername();
+    MfaType mfaType = MfaType.valueOf(dto.getMfaType());
+    String code = dto.getCode();
+
+    if (SMS == mfaType || EMAIL == mfaType) {
+      String verificationKey = getPreVerificationCacheKey(username);
+      validateSmsAndEmailMfa(verificationKey, code);
+    }
+
+    Member member = memberService.getMemberByEmailAddress(username);
+    if (Objects.isNull(member)) {
+      throw new VerificationFailedException();
+    }
+
+    FleenUser user = initAuthentication(member);
+    String accessToken = createAccessToken(user);
+    String refreshToken = createRefreshToken(user);
+
+    String secret = memberService.getTwoFaSecret(fleenUser.getId());
+    mfaService.verifyOtp(code, secret);
+    return SignInResponse.builder()
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .authenticationStatus(COMPLETED)
+            .build();
+  }
+
+  private void validateSmsAndEmailMfa(String verificationKey, String code) {
+    if (!cacheService.exists(verificationKey)) {
+      throw new ExpiredVerificationCodeException();
+    }
+
+    if (!cacheService.get(verificationKey).equals(code)) {
+      throw new InvalidVerificationCodeException(code);
+    }
   }
 
   @Override
@@ -247,7 +331,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   @Override
   public Authentication authenticate(String emailAddress, String password) {
-    UsernamePasswordAuthenticationToken authenticationToken =
+    Authentication authenticationToken =
             new UsernamePasswordAuthenticationToken(emailAddress.trim().toLowerCase(), password);
 
     return authenticationManager.authenticate(authenticationToken);
@@ -261,31 +345,33 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   @Override
-  public SignInResponse refreshToken(String token) {
-    String username = null;
-    try {
-      username = jwtProvider.getUsernameFromToken(token);
-      signOut(username);
-      FleenUser user = (FleenUser) userDetailsService.loadUserByUsername(username);
+  public SignInResponse refreshToken(String username) {
+    signOut(username);
+    FleenUser user = (FleenUser) userDetailsService.loadUserByUsername(username);
 
-      String accessToken = createAccessToken(user);
-      String refreshToken = createRefreshToken(user);
-      saveToken(username, accessToken);
-      return new SignInResponse(accessToken, refreshToken, user.getEmailAddress(), user.getPhoneNumber(), AuthenticationStatus.COMPLETED);
-    } catch (ExpiredJwtException | MalformedJwtException | SignatureException ex) {
-      log.error(ex.getMessage(), ex);
-      throw new InvalidAuthenticationException(username);
-    }
+    String accessToken = createAccessToken(user);
+    String refreshToken = createRefreshToken(user);
+    Authentication authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+    setContext(authenticationToken);
+
+    saveToken(username, accessToken);
+    return SignInResponse.builder()
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .emailAddress(user.getEmailAddress())
+            .phoneNumber(user.getPhoneNumber())
+            .authenticationStatus(COMPLETED)
+            .build();
   }
 
   @Override
   public String createAccessToken(FleenUser user) {
-    return jwtProvider.generateToken(user, TokenType.ACCESS_TOKEN);
+    return jwtProvider.generateToken(user, ACCESS_TOKEN);
   }
 
   @Override
   public String createRefreshToken(FleenUser user) {
-    return jwtProvider.generateRefreshToken(user.getUsername(), TokenType.REFRESH_TOKEN);
+    return jwtProvider.generateRefreshToken(user, REFRESH_TOKEN);
   }
 
   @Override

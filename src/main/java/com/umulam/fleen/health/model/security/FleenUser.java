@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.model.security;
 
+import com.umulam.fleen.health.constant.authentication.MfaType;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Role;
 import com.umulam.fleen.health.model.dto.authentication.JwtTokenDetails;
@@ -35,6 +36,8 @@ public class FleenUser implements UserDetails {
   private String profilePhoto;
   private Set<Role> roles;
   private String status;
+  private boolean mfaEnabled;
+  private MfaType mfaType;
 
   public FleenUser(Integer id, String emailAddress, String password,
                    Collection<? extends GrantedAuthority> authorities) {
@@ -61,12 +64,14 @@ public class FleenUser implements UserDetails {
     user.setFullName(fullName);
     user.setProfilePhoto(member.getProfilePhoto());
     user.setRoles(member.getRoles());
+    user.setMfaEnabled(member.isMfaEnabled());
+    user.setMfaType(member.getMfaType());
     return user;
   }
 
-  public static FleenUser fromToken(JwtTokenDetails tokenDetails) {
-    List<GrantedAuthority> authorities = buildAuthorities(Arrays.asList(tokenDetails.getRoles()));
-    return new FleenUser((Integer) tokenDetails.getUserId(), tokenDetails.getSub(), null, authorities);
+  public static FleenUser fromToken(JwtTokenDetails details) {
+    List<GrantedAuthority> authorities = buildAuthorities(Arrays.asList(details.getAuthorities()));
+    return new FleenUser(details.getUserId(), details.getSub(), null, authorities);
   }
 
   @Override
@@ -98,4 +103,8 @@ public class FleenUser implements UserDetails {
   public boolean isEnabled() {
         return true;
     }
+
+  public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+    this.authorities = authorities;
+  }
 }

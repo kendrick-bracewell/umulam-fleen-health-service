@@ -74,19 +74,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       return;
     }
 
-    String tokenType = (String) jwtProvider.getClaim(token, TOKEN_TYPE_KEY);
-    if (TokenType.REFRESH_TOKEN.getValue().equals(tokenType)) {
-      filterChain.doFilter(request, response);
-      return;
-    }
-
     try {
       if (SecurityContextHolder.getContext().getAuthentication() == null) {
         JwtTokenDetails details = jwtProvider.getBasicDetails(token);
         UserDetails userDetails = FleenUser.fromToken(details);
         String key = getAuthCacheKey(details.getSub());
         String savedToken = (String) cacheService.get(key);
-        log.info("Authenticated User {}", userDetails);
 
         if (jwtProvider.isTokenValid(token, userDetails)) {
           if (cacheService.exists(key) && savedToken != null) {
