@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.model.dto.authentication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.constant.authentication.VerificationType;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.validator.*;
@@ -59,6 +60,10 @@ public class SignUpDto {
   @EnumValid(enumClass = VerificationType.class, message = "{verification.type}")
   private String verificationType;
 
+  @JsonProperty("profile_type")
+  @EnumValid(enumClass = ProfileType.class, message = "{platform.entity.type.type}")
+  private String profileType;
+
   public Member toMember() {
     return Member.builder()
             .firstName(firstName)
@@ -66,6 +71,7 @@ public class SignUpDto {
             .emailAddress(emailAddress)
             .phoneNumber(phoneNumber)
             .password(password)
+            .userType(ProfileType.valueOf(profileType))
             .build();
   }
 }

@@ -1,5 +1,7 @@
 package com.umulam.fleen.health.model.domain;
 
+import com.umulam.fleen.health.constant.base.ProfileType;
+import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.constant.authentication.MfaType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -66,6 +68,14 @@ public class Member {
   @Enumerated(EnumType.STRING)
   private MfaType mfaType;
 
+  @Column(name = "verification_status")
+  @Enumerated(EnumType.STRING)
+  private ProfileVerificationStatus verificationStatus;
+
+  @Column(name = "user_type")
+  @Enumerated(EnumType.STRING)
+  private ProfileType userType;
+
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "member_status_id")
   private MemberStatus memberStatus;
@@ -82,7 +92,7 @@ public class Member {
   private Set<Role> roles = new HashSet<>();
 
   @CreationTimestamp
-  @Column(name = "created_on")
+  @Column(name = "created_on", updatable = false)
   private LocalDateTime createdOn;
 
   @UpdateTimestamp

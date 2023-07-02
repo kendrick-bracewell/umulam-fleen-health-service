@@ -12,7 +12,6 @@ import lombok.*;
 public class JwtTokenDetails {
 
   private String sub;
-  private String[] roles;
   private String[] authorities;
   private Integer userId;
 

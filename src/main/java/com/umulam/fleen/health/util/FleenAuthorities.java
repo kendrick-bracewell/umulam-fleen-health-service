@@ -9,22 +9,33 @@ import java.util.stream.Collectors;
 
 public class FleenAuthorities {
 
-  public static List<GrantedAuthority> getPreVerifiedAuthorities() {
-    return List.of(new SimpleGrantedAuthority("ROLE_".concat(RoleType.PRE_VERIFIED_USER.name())));
+  public static final String ROLE_PREFIX = "ROLE_";
+
+  public static List<GrantedAuthority> getUserPreVerifiedAuthorities() {
+    return List.of(new SimpleGrantedAuthority(ROLE_PREFIX.concat(RoleType.PRE_VERIFIED_USER.name())));
+  }
+
+  public static List<GrantedAuthority> getProfessionalPreVerifiedAuthorities() {
+    return List.of(new SimpleGrantedAuthority(ROLE_PREFIX.concat(RoleType.PRE_VERIFIED_PROFESSIONAL.name())));
+  }
+
+  public static List<GrantedAuthority> getBusinessPreVerifiedAuthorities() {
+    return List.of(new SimpleGrantedAuthority(ROLE_PREFIX.concat(RoleType.PRE_VERIFIED_BUSINESS.name())));
   }
 
   public static List<GrantedAuthority> getRefreshTokenAuthorities() {
-    return List.of(new SimpleGrantedAuthority("ROLE_".concat(RoleType.REFRESH_TOKEN.name())));
+    return List.of(new SimpleGrantedAuthority(ROLE_PREFIX.concat(RoleType.REFRESH_TOKEN.name())));
   }
 
   public static List<GrantedAuthority> getPreAuthenticatedAuthorities() {
-    return List.of(new SimpleGrantedAuthority("ROLE_".concat(RoleType.PRE_AUTHENTICATED_USER.name())));
+    return List.of(new SimpleGrantedAuthority(ROLE_PREFIX.concat(RoleType.PRE_AUTHENTICATED_USER.name())));
   }
 
   public static List<GrantedAuthority> buildAuthorities(List<String> roles) {
     return roles
             .stream()
-            .map(role -> new SimpleGrantedAuthority("ROLE_".concat(role)))
+            .map(role -> new SimpleGrantedAuthority(ROLE_PREFIX.concat(role)))
             .collect(Collectors.toList());
   }
+
 }

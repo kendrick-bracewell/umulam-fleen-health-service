@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.AUTH_HEADER_PREFIX;
+import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.REFRESH_TOKEN_HEADER_KEY;
+
 @Slf4j
 @RestController
 @RequestMapping(value = "verification")
@@ -27,14 +30,14 @@ public class VerificationController {
   }
 
   @PostMapping(value = "/confirm-sign-up")
-  @PreAuthorize("hasRole('PRE_VERIFIED_USER')")
-  public SignUpResponse confirmVerification(@AuthenticationPrincipal FleenUser user,
-                                            @Valid @RequestBody VerificationCodeDto dto) {
+  @PreAuthorize("hasAnyRole('PRE_VERIFIED_USER', 'PRE_VERIFIED_PROFESSIONAL', 'PRE_VERIFIED_BUSINESS')")
+  public SignUpResponse completeSignUp(@AuthenticationPrincipal FleenUser user,
+                                       @Valid @RequestBody VerificationCodeDto dto) {
     return authenticationService.completeSignUp(dto, user);
   }
 
   @PostMapping(value = "/resend-verification-code")
-  @PreAuthorize("hasRole('PRE_VERIFIED_USER')")
+  @PreAuthorize("hasAnyRole('PRE_VERIFIED_USER', 'PRE_VERIFIED_PROFESSIONAL', 'PRE_VERIFIED_BUSINESS')")
   public FleenHealthResponse resendVerificationCode(@AuthenticationPrincipal FleenUser user,
                                                     @Valid @RequestBody ResendVerificationCodeDto dto) {
     return authenticationService.resendVerificationCode(dto, user);
@@ -42,8 +45,9 @@ public class VerificationController {
 
   @GetMapping(value = "/refresh-token")
   @PreAuthorize("hasRole('REFRESH_TOKEN')")
-  public SignInResponse refreshToken(@AuthenticationPrincipal FleenUser user) {
-    return authenticationService.refreshToken(user.getUsername());
+  public SignInResponse refreshToken(@AuthenticationPrincipal FleenUser user, @RequestHeader(value = REFRESH_TOKEN_HEADER_KEY) String token) {
+    token = token.replace(AUTH_HEADER_PREFIX, "");
+    return authenticationService.refreshToken(user.getUsername(), token);
   }
 
   @PostMapping(value = "/validate-mfa")

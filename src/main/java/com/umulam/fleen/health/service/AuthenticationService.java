@@ -21,19 +21,19 @@ public interface AuthenticationService {
 
   SignInResponse validateMfa(FleenUser fleenUser, ConfirmMfaDto dto);
 
-  String getLoggedInUserEmailAddress();
-
   Authentication authenticate(String username, String password);
 
   SignInResponse signIn(SignInDto dto);
 
-  String createAccessToken(FleenUser user);
+  abstract String createAccessToken(FleenUser user);
 
-  String createRefreshToken(FleenUser user);
+  abstract String createRefreshToken(FleenUser user);
 
   void saveToken(String subject, String token);
 
   void setContext(Authentication authentication);
 
-  SignInResponse refreshToken(String token);
+  SignInResponse refreshToken(String username, String token);
+
+  void saveRefreshToken(String subject, String token);
 }

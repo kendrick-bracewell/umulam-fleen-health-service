@@ -6,5 +6,9 @@
   {
     "title": "Inactive",
     "code": "INACTIVE"
+  },
+  {
+    "title": "Disabled",
+    "code": "DISABLED"
   }
 ]

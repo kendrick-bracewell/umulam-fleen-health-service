@@ -7,7 +7,7 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Component;
 
-import static com.umulam.fleen.health.constant.ExceptionConstant.FAILED_MAIL_DELIVERY;
+import static com.umulam.fleen.health.constant.base.ExceptionConstant.FAILED_MAIL_DELIVERY;
 
 @Slf4j
 @Component

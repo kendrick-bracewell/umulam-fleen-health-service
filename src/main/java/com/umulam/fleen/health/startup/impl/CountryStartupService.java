@@ -17,7 +17,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CountryStartupService implements StartupService<Country> {
 
-  private final CountryJpaRepository jpaRepository;
+  private final CountryJpaRepository repository;
 
   @Override
   @Transactional
@@ -28,7 +28,7 @@ public class CountryStartupService implements StartupService<Country> {
         return;
       }
       for (Country country : getRecords()) {
-        Optional<Country> entry = jpaRepository.findByCode(country.getCode());
+        Optional<Country> entry = repository.findByCode(country.getCode());
         if (entry.isPresent()) {
           continue;
         }
@@ -37,7 +37,7 @@ public class CountryStartupService implements StartupService<Country> {
                 .title(country.getTitle())
                 .code(country.getCode())
                 .build();
-        jpaRepository.save(newEntry);
+        repository.save(newEntry);
       }
     } catch (Exception ex) {
       log.error(ex.getMessage(), ex);

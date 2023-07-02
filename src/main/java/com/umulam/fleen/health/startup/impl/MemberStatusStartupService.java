@@ -17,7 +17,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class MemberStatusStartupService implements StartupService<MemberStatus> {
 
-  private final MemberStatusJpaRepository jpaRepository;
+  private final MemberStatusJpaRepository repository;
 
   @Override
   @Transactional
@@ -28,7 +28,7 @@ public class MemberStatusStartupService implements StartupService<MemberStatus> 
         return;
       }
       for (MemberStatus status : getRecords()) {
-        Optional<MemberStatus> entry = jpaRepository.findByCode(status.getCode());
+        Optional<MemberStatus> entry = repository.findByCode(status.getCode());
         if (entry.isPresent()) {
           continue;
         }
@@ -37,7 +37,7 @@ public class MemberStatusStartupService implements StartupService<MemberStatus> 
                 .title(status.getTitle())
                 .code(status.getCode())
                 .build();
-        jpaRepository.save(newEntry);
+        repository.save(newEntry);
       }
     } catch (Exception ex) {
       log.error(ex.getMessage(), ex);

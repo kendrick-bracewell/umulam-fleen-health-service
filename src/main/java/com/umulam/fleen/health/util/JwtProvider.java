@@ -131,5 +131,4 @@ public class JwtProvider {
             .map(GrantedAuthority::getAuthority)
             .toArray(String[]::new);
   }
-
 }

@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.constant;
+package com.umulam.fleen.health.constant.base;
 
 public class PagingConstant {
   public static final String DEFAULT_PAGE_NUMBER = "0";

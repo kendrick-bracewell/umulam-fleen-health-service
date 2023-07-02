@@ -17,18 +17,18 @@ import java.util.Optional;
 @AllArgsConstructor
 public class RoleStartupService implements StartupService<Role> {
 
-  private final RoleJpaRepository jpaRepository;
+  private final RoleJpaRepository repository;
 
   @Override
   @Transactional
   @EventListener(ApplicationReadyEvent.class)
   public void seedRecords() {
     try {
-      if (true) {
-        return;
-      }
+//      if (true) {
+//        return;
+//      }
       for (Role role : getRecords()) {
-        Optional<Role> entry = jpaRepository.findByCode(role.getCode());
+        Optional<Role> entry = repository.findByCode(role.getCode());
         if (entry.isPresent()) {
           continue;
         }
@@ -37,7 +37,7 @@ public class RoleStartupService implements StartupService<Role> {
                 .title(role.getTitle())
                 .code(role.getCode())
                 .build();
-        jpaRepository.save(newEntry);
+        repository.save(newEntry);
       }
     } catch (Exception ex) {
       log.error(ex.getMessage(), ex);

@@ -31,9 +31,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     String password = authentication.getCredentials().toString();
 
     try {
-      UserDetails detail = userDetailsService.loadUserByUsername(emailAddress);
-      if (passwordEncoder.matches(password, detail.getPassword())) {
-        return new UsernamePasswordAuthenticationToken(detail, null, detail.getAuthorities());
+      UserDetails user = userDetailsService.loadUserByUsername(emailAddress);
+      if (passwordEncoder.matches(password, user.getPassword())) {
+        return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
       }
     } catch (UsernameNotFoundException ex) {
       log.error(ex.getMessage(), ex);

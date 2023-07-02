@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.model.domain;
 
+import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -13,24 +14,29 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "role", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"code"})
-})
-public class Role {
+@Table(name = "profile_verification_message")
+public class ProfileVerificationMessage {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   private Integer id;
 
-  @Column(name = "title", nullable = false, length = 100)
+  @Column(name = "title", nullable = false)
   private String title;
 
-  @Column(name = "code", nullable = false, length = 100)
-  private String code;
+  @Column(name = "verification_message_type", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private ProfileVerificationMessageType verificationMessageType;
 
-  @Column(name = "description", length = 1000)
-  private String description;
+  @Column(name = "message", nullable = false)
+  private String message;
+
+  @Column(name = "html_message", nullable = false)
+  private String htmlMessage;
+
+  @Column(name = "plain_text", nullable = false)
+  private String plainText;
 
   @CreationTimestamp
   @Column(name = "created_on", updatable = false)

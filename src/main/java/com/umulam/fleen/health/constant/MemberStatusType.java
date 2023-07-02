@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum MemberStatusType {
 
   ACTIVE("Active"),
-  INACTIVE("Inactive");
+  INACTIVE("Inactive"),
+  DISABLED("Disabled");
 
   private final String value;
 

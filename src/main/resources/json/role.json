@@ -16,10 +16,6 @@
     "code": "USER"
   },
   {
-    "title": "Pre Verified User",
-    "code": "PRE_VERIFIED_USER"
-  },
-  {
     "title": "Pre Authenticated User",
     "code": "PRE_AUTHENTICATED_USER"
   },
@@ -34,5 +30,33 @@
   {
     "title": "Refresh Token",
     "code": "REFRESH_TOKEN"
+  },
+  {
+    "title": "Pre Verified User",
+    "code": "PRE_VERIFIED_USER"
+  },
+  {
+    "title": "Pre Verified Professional",
+    "code": "PRE_VERIFIED_PROFESSIONAL"
+  },
+  {
+    "title": "Pre Approved Professional",
+    "code": "PRE_APPROVED_PROFESSIONAL"
+  },
+  {
+    "title": "Pre Verified Business",
+    "code": "PRE_VERIFIED_BUSINESS"
+  },
+  {
+    "title": "Pre Approved Business",
+    "code": "PRE_APPROVED_BUSINESS"
+  },
+  {
+    "title": "Pre Verified Employee",
+    "code": "PRE_VERIFIED_EMPLOYEE"
+  },
+  {
+    "title": "Pre Approved Employee",
+    "code": "PRE_APPROVED_EMPLOYEE"
   }
 ]

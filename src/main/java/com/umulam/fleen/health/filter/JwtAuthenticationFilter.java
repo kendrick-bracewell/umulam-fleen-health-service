@@ -57,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return;
     }
 
-    int index = Math.addExact(AUTH_HEADER_PREFIX.length(), 1);
+    int index = AUTH_HEADER_PREFIX.length();
     final String token = header.substring(index);
 
     String emailAddress = null;

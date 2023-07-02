@@ -16,7 +16,6 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -35,7 +34,7 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
-import static com.umulam.fleen.health.constant.ExceptionConstant.*;
+import static com.umulam.fleen.health.constant.base.ExceptionConstant.*;
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
@@ -58,7 +57,7 @@ public class FleenHealthExceptionHandler {
           CountryDuplicateException.class,
           RoleDuplicateException.class,
           CountryCodeDuplicateException.class,
-          MemberStatusCodeDuplicateException.class
+          MemberStatusCodeDuplicateException.class,
   })
   public Object handleDuplicate(Exception ex) {
     log.error(ex.getMessage(), ex);
@@ -100,7 +99,9 @@ public class FleenHealthExceptionHandler {
           VerificationFailedException.class,
           ExpiredVerificationCodeException.class,
           InvalidVerificationCodeException.class,
-          MfaGenerationFailedException.class
+          MfaGenerationFailedException.class,
+          AlreadySignedUpException.class,
+          DisabledAccountException.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);

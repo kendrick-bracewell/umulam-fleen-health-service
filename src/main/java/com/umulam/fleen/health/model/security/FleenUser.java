@@ -8,12 +8,10 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.umulam.fleen.health.util.FleenAuthorities.ROLE_PREFIX;
 import static com.umulam.fleen.health.util.FleenAuthorities.buildAuthorities;
 
 @Builder
@@ -34,7 +32,6 @@ public class FleenUser implements UserDetails {
   private Collection<? extends GrantedAuthority> authorities;
   private String fullName;
   private String profilePhoto;
-  private Set<Role> roles;
   private String status;
   private boolean mfaEnabled;
   private MfaType mfaType;
@@ -48,7 +45,11 @@ public class FleenUser implements UserDetails {
   }
 
   public static FleenUser fromMember(Member member) {
-    List<String> roles = member.getRoles().stream().map(Role::getCode).collect(Collectors.toList());
+    List<String> roles = member
+            .getRoles()
+            .stream()
+            .map(Role::getCode)
+            .collect(Collectors.toList());
     List<GrantedAuthority> authorities = buildAuthorities(roles);
 
     var user = FleenUser.builder()
@@ -63,7 +64,6 @@ public class FleenUser implements UserDetails {
     String fullName = member.getFirstName() + " " + member.getLastName();
     user.setFullName(fullName);
     user.setProfilePhoto(member.getProfilePhoto());
-    user.setRoles(member.getRoles());
     user.setMfaEnabled(member.isMfaEnabled());
     user.setMfaType(member.getMfaType());
     return user;
@@ -72,6 +72,19 @@ public class FleenUser implements UserDetails {
   public static FleenUser fromToken(JwtTokenDetails details) {
     List<GrantedAuthority> authorities = buildAuthorities(Arrays.asList(details.getAuthorities()));
     return new FleenUser(details.getUserId(), details.getSub(), null, authorities);
+  }
+
+  public List<Role> authoritiesToRoles() {
+    return authorities
+            .stream()
+            .filter(Objects::nonNull)
+            .map(authority -> Role
+                    .builder()
+                    .code(authority
+                            .getAuthority()
+                            .replace(ROLE_PREFIX, ""))
+                    .build())
+            .collect(Collectors.toList());
   }
 
   @Override

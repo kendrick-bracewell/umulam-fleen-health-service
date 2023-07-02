@@ -26,8 +26,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import static com.umulam.fleen.health.constant.ExceptionConstant.FAILED_MAIL_DELIVERY;
-import static com.umulam.fleen.health.constant.FleenHealthConstant.LOGO_FILE_NAME;
+import static com.umulam.fleen.health.constant.base.ExceptionConstant.FAILED_MAIL_DELIVERY;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.LOGO_FILE_NAME;
 
 @Slf4j
 @Component
@@ -172,6 +172,7 @@ public class EmailServiceImpl {
       helper.setFrom(details.getFrom());
       helper.setTo(details.getTo());
       helper.setText(details.getBody(), true);
+      helper.setText(details.getPlainText(), details.getBody());
       helper.setSubject(details.getSubject());
       return helper;
     } catch (MessagingException ex) {

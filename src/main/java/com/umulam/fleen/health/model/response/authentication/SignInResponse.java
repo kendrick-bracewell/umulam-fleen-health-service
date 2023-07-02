@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.constant.authentication.AuthenticationStatus;
 import com.umulam.fleen.health.constant.authentication.MfaType;
+import com.umulam.fleen.health.constant.authentication.NextAuthentication;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,5 +38,8 @@ public class SignInResponse {
 
   @JsonProperty("mfa_enabled")
   private Boolean mfaEnabled;
+
+  @JsonProperty("next_authentication")
+  private NextAuthentication nextAuthentication;
 
 }

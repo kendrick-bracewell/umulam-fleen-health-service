@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import static com.umulam.fleen.health.service.impl.AuthenticationServiceImpl.getAuthRefreshCacheKey;
+
 @Slf4j
 @RestController
 @RequestMapping(value = "member")

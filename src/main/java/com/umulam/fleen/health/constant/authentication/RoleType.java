@@ -10,8 +10,14 @@ public enum RoleType {
   PROFESSIONAL("Professional"),
   REFRESH_TOKEN("RefreshToken"),
   PRE_VERIFIED_USER("PreVerifiedUser"),
+  PRE_VERIFIED_PROFESSIONAL("PreVerifiedProfessional"),
+  PRE_VERIFIED_BUSINESS("PreVerifiedBusiness"),
+  PRE_APPROVED_PROFESSIONAL("PreApprovedProfessional"),
+  PRE_APPROVED_BUSINESS("PreApprovedBusiness"),
   PRE_AUTHENTICATED_USER("PreAuthenticatedUser"),
   USER("User"),
+  BUSINESS("Business"),
+  EMPLOYEE("Employee"),
   PRE_AUTH("PreAuth"),
   PRE_OTP_AUTHENTICATED_USER("PreOtpAuthenticatedUser");
 
