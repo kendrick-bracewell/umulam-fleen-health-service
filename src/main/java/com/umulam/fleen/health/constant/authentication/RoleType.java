@@ -8,7 +8,7 @@ public enum RoleType {
   SUPER_ADMINISTRATOR("SuperAdministrator"),
   ADMINISTRATOR("Administrator"),
   PROFESSIONAL("Professional"),
-  REFRESH_TOKEN("RefreshToken"),
+  REFRESH_TOKEN_USER("RefreshTokenUser"),
   PRE_VERIFIED_USER("PreVerifiedUser"),
   PRE_VERIFIED_PROFESSIONAL("PreVerifiedProfessional"),
   PRE_VERIFIED_BUSINESS("PreVerifiedBusiness"),
