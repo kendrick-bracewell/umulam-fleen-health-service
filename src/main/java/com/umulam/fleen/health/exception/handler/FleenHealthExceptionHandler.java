@@ -64,6 +64,20 @@ public class FleenHealthExceptionHandler {
     return buildErrorMap(ex.getMessage(), CONFLICT);
   }
 
+  @ResponseStatus(value = BAD_REQUEST)
+  @ExceptionHandler(value = {
+          VerificationFailedException.class,
+          ExpiredVerificationCodeException.class,
+          InvalidVerificationCodeException.class,
+          MfaGenerationFailedException.class,
+          AlreadySignedUpException.class,
+          DisabledAccountException.class
+  })
+  public Object handleInvalid(Exception ex) {
+    log.error(ex.getMessage(), ex);
+    return buildErrorMap(ex.getMessage(), BAD_REQUEST);
+  }
+
   @ResponseStatus(value = UNAUTHORIZED)
   @ExceptionHandler(value = {
           InvalidAuthenticationException.class
@@ -92,20 +106,6 @@ public class FleenHealthExceptionHandler {
     var map = buildErrorMap(FORBIDDEN_ACCESS, FORBIDDEN);
     map.put(PATH_URL, request.getServletPath());
     return map;
-  }
-
-  @ResponseStatus(value = BAD_REQUEST)
-  @ExceptionHandler(value = {
-          VerificationFailedException.class,
-          ExpiredVerificationCodeException.class,
-          InvalidVerificationCodeException.class,
-          MfaGenerationFailedException.class,
-          AlreadySignedUpException.class,
-          DisabledAccountException.class
-  })
-  public Object handleInvalid(Exception ex) {
-    log.error(ex.getMessage(), ex);
-    return buildErrorMap(ex.getMessage(), BAD_REQUEST);
   }
 
   @ResponseStatus(value = BAD_REQUEST)
