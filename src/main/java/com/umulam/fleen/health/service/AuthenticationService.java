@@ -13,13 +13,13 @@ public interface AuthenticationService {
   SignUpResponse signUp(SignUpDto dto);
 
   @Transactional
-  SignUpResponse completeSignUp(VerificationCodeDto verificationCodeDto, FleenUser fleenUser);
+  SignUpResponse completeSignUp(VerificationCodeDto dto, FleenUser user);
 
-  FleenHealthResponse resendVerificationCode(ResendVerificationCodeDto dto, FleenUser fleenUser);
+  FleenHealthResponse resendVerificationCode(ResendVerificationCodeDto dto, FleenUser user);
 
   void signOut(String username);
 
-  SignInResponse validateMfa(FleenUser fleenUser, ConfirmMfaDto dto);
+  SignInResponse validateMfa(FleenUser user, ConfirmMfaDto dto);
 
   Authentication authenticate(String username, String password);
 
