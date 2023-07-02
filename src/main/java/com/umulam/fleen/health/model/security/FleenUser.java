@@ -71,7 +71,13 @@ public class FleenUser implements UserDetails {
 
   public static FleenUser fromToken(JwtTokenDetails details) {
     List<GrantedAuthority> authorities = buildAuthorities(Arrays.asList(details.getAuthorities()));
-    return new FleenUser(details.getUserId(), details.getSub(), null, authorities);
+    return FleenUser
+            .builder()
+            .emailAddress(details.getSub())
+            .authorities(authorities)
+            .id(details.getUserId())
+            .status(details.getStatus())
+            .build();
   }
 
   public List<Role> authoritiesToRoles() {

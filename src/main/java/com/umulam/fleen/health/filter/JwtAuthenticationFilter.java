@@ -1,6 +1,5 @@
 package com.umulam.fleen.health.filter;
 
-import com.umulam.fleen.health.constant.authentication.TokenType;
 import com.umulam.fleen.health.model.dto.authentication.JwtTokenDetails;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.service.CacheService;
@@ -26,9 +25,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.AUTH_HEADER_PREFIX;
-import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.TOKEN_TYPE_KEY;
 import static com.umulam.fleen.health.service.impl.AuthenticationServiceImpl.getAuthCacheKey;
 
 @Slf4j
@@ -53,14 +52,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 
     if (header == null || !StringUtils.startsWithIgnoreCase(header, AUTH_HEADER_PREFIX)) {
-        filterChain.doFilter(request, response);
-        return;
+      filterChain.doFilter(request, response);
+      return;
     }
 
-    int index = AUTH_HEADER_PREFIX.length();
+    int index = AUTH_HEADER_PREFIX.length() + 1;
     final String token = header.substring(index);
 
-    String emailAddress = null;
+    String emailAddress;
     try {
       emailAddress = jwtProvider.getUsernameFromToken(token);
     } catch (IllegalArgumentException | ExpiredJwtException | MalformedJwtException | SignatureException ex) {
@@ -82,7 +81,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String savedToken = (String) cacheService.get(key);
 
         if (jwtProvider.isTokenValid(token, userDetails)) {
-          if (cacheService.exists(key) && savedToken != null) {
+          if (cacheService.exists(key) && Objects.nonNull(savedToken)) {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails,
                     null,

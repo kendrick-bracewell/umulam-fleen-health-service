@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.AUTH_HEADER_PREFIX;
-import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.REFRESH_TOKEN_HEADER_KEY;
+import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.*;
 
 @Slf4j
 @RestController
@@ -45,8 +44,8 @@ public class VerificationController {
 
   @GetMapping(value = "/refresh-token")
   @PreAuthorize("hasRole('REFRESH_TOKEN')")
-  public SignInResponse refreshToken(@AuthenticationPrincipal FleenUser user, @RequestHeader(value = REFRESH_TOKEN_HEADER_KEY) String token) {
-    token = token.replace(AUTH_HEADER_PREFIX, "");
+  public SignInResponse refreshToken(@AuthenticationPrincipal FleenUser user, @RequestHeader(value = AUTH_HEADER_KEY) String token) {
+    token = token.replace(AUTH_HEADER_PREFIX.concat(" "), "");
     return authenticationService.refreshToken(user.getUsername(), token);
   }
 

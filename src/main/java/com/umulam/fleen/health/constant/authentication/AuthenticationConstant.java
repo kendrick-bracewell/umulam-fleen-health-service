@@ -18,8 +18,7 @@ public final class AuthenticationConstant {
   public static final String PRE_VERIFICATION_PREFIX = "PRE_VERIFICATION:";
   public static final String PRE_AUTHENTICATION_PREFIX = "PRE_AUTHENTICATION:";
   public static final String AUTH_HEADER_KEY = "Authorization";
-  public static final String REFRESH_TOKEN_HEADER_KEY = "REFRESH_TOKEN";
-  public static final String AUTH_HEADER_PREFIX = "BEARER ";
+  public static final String AUTH_HEADER_PREFIX = "Bearer";
   public static final String TOKEN_TYPE_KEY = "tokenType";
   public static final long ACCESS_TOKEN_VALIDITY = getTimeInMillis(60, 60, 5, 0);
   public static final long REFRESH_TOKEN_VALIDITY = getTimeInMillis(60, 60, 24, 2);
