@@ -457,13 +457,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   @Override
   public FleenHealthResponse resendVerificationCode(ResendVerificationCodeDto dto, FleenUser user) {
     String username = user.getUsername();
-    String verificationKey = getPreVerificationCacheKey(username);
-
-    /*
-        if (cacheService.exists(verificationKey)) {
-          throw new VerificationCodeAlreadySentException();
-        }
-    */
 
     VerificationType verificationType = VerificationType.valueOf(dto.getVerificationType());
     String otp = mfaService.generateVerificationOtp(6);
