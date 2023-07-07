@@ -23,20 +23,25 @@ import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Objects;
 
-@Configuration
+import static com.google.api.services.admin.directory.DirectoryScopes.ADMIN_DIRECTORY_USER;
+import static com.google.api.services.admin.directory.DirectoryScopes.ADMIN_DIRECTORY_USER_ALIAS;
+import static com.google.api.services.calendar.CalendarScopes.CALENDAR;
+import static com.google.api.services.calendar.CalendarScopes.CALENDAR_EVENTS;
+import static com.google.api.services.gmail.GmailScopes.GMAIL_SETTINGS_BASIC;
+import static com.google.api.services.gmail.GmailScopes.GMAIL_SETTINGS_SHARING;
+
+//@Configuration
 public class GoogleWorkspaceAdapter {
 
   private static final String APPLICATION_NAME = "Lam Health";
   private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
   private static final List<String> SCOPES = List.of(
-          CalendarScopes.CALENDAR,
-          CalendarScopes.CALENDAR_EVENTS,
-          DirectoryScopes.ADMIN_DIRECTORY_USER_ALIAS,
-          GmailScopes.GMAIL_SETTINGS_BASIC,
-          GmailScopes.GMAIL_SETTINGS_SHARING);
+          CALENDAR, CALENDAR_EVENTS,
+          ADMIN_DIRECTORY_USER, ADMIN_DIRECTORY_USER_ALIAS,
+          GMAIL_SETTINGS_BASIC, GMAIL_SETTINGS_SHARING);
   private static final String SERVICE_CREDENTIALS_FILE_PATH = "/secret/service-credential.json";
 
-  @Bean
+//  @Bean
   public Calendar getCalendar() throws GeneralSecurityException, IOException {
     final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
     return new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpCredentialsAdapter(getServiceCredential()))
@@ -44,7 +49,7 @@ public class GoogleWorkspaceAdapter {
             .build();
   }
 
-  @Bean
+//  @Bean
   public Directory getDirectory() throws IOException, GeneralSecurityException {
     final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
     return new Directory.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpCredentialsAdapter(getServiceCredential()))
@@ -52,7 +57,7 @@ public class GoogleWorkspaceAdapter {
             .build();
   }
 
-  @Bean
+//  @Bean
   public Gmail getGmail() throws IOException, GeneralSecurityException {
     final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
     return new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpCredentialsAdapter(getServiceCredential()))

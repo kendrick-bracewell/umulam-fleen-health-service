@@ -3,21 +3,39 @@ package com.umulam.fleen.health.service.external.google;
 import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.admin.directory.model.Alias;
 import com.google.api.services.admin.directory.model.User;
-import com.google.api.services.admin.directory.model.Users;
+import com.google.api.services.admin.directory.model.UserName;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Collections;
+
+;
 
 @Slf4j
-@Component
+//@Component
 public class DirectoryService {
   private final Directory service;
   private static final String domainName = "volunux.com";
 
   public DirectoryService(Directory service) {
     this.service = service;
+  }
+
+  public Object createUserWithForwarding() {
+    try {
+      User user = new User();
+      user.setPrimaryEmail("therapist2@volunux.com");
+      user.setName(new UserName().setGivenName("Therapist").setFamilyName("One"));
+      user.setPassword("Password123");
+      user.setChangePasswordAtNextLogin(true);
+      user.setAliases(Collections.singletonList("volunuxent@gmail.com"));
+      service.users().insert(user).execute();
+
+    } catch (IOException ex) {
+      log.error(ex.getMessage(), ex);
+    }
+    return null;
   }
 
   public Object createUser(@NonNull String userEmail) {
@@ -50,5 +68,7 @@ public class DirectoryService {
     }
     return null;
   }
+
+
 
 }

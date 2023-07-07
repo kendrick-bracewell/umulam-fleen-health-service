@@ -36,14 +36,6 @@ public class FleenUser implements UserDetails {
   private boolean mfaEnabled;
   private MfaType mfaType;
 
-  public FleenUser(Integer id, String emailAddress, String password,
-                   Collection<? extends GrantedAuthority> authorities) {
-    this.id = id;
-    this.emailAddress = emailAddress;
-    this.password = password;
-    this.authorities = authorities;
-  }
-
   public static FleenUser fromMember(Member member) {
     List<String> roles = member
             .getRoles()

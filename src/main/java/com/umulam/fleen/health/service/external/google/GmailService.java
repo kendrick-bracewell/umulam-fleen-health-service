@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Slf4j
-@Component
+//@Component
 public class GmailService {
 
   private final Gmail service;

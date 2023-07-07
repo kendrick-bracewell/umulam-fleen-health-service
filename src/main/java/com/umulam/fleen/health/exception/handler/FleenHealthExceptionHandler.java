@@ -4,6 +4,7 @@ import com.umulam.fleen.health.exception.authentication.*;
 import com.umulam.fleen.health.exception.country.CountryCodeDuplicateException;
 import com.umulam.fleen.health.exception.country.CountryDuplicateException;
 import com.umulam.fleen.health.exception.country.CountryNotFoundException;
+import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusCodeDuplicateException;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusNotFoundException;
 import com.umulam.fleen.health.exception.role.RoleDuplicateException;
@@ -71,7 +72,9 @@ public class FleenHealthExceptionHandler {
           InvalidVerificationCodeException.class,
           MfaGenerationFailedException.class,
           AlreadySignedUpException.class,
-          DisabledAccountException.class
+          DisabledAccountException.class,
+          UserNotFoundException.class,
+          VerificationCodeAlreadySentException.class,
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);
@@ -80,7 +83,8 @@ public class FleenHealthExceptionHandler {
 
   @ResponseStatus(value = UNAUTHORIZED)
   @ExceptionHandler(value = {
-          InvalidAuthenticationException.class
+          InvalidAuthenticationException.class,
+          InvalidAuthenticationToken.class
   })
   public Object handleUnauthorized(Exception ex) {
     log.error(ex.getMessage(), ex);

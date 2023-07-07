@@ -1,5 +1,7 @@
 package com.umulam.fleen.health.service.impl;
 
+import com.umulam.fleen.health.adapter.google.recaptcha.ReCaptchaAdapter;
+import com.umulam.fleen.health.adapter.google.recaptcha.model.response.ReCaptchaResponse;
 import com.umulam.fleen.health.constant.EmailMessageSource;
 import com.umulam.fleen.health.constant.MemberStatusType;
 import com.umulam.fleen.health.constant.MessageType;
@@ -11,11 +13,15 @@ import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.authentication.*;
-import com.umulam.fleen.health.model.SaveProfileVerificationMessageRequest;
+import com.umulam.fleen.health.exception.base.FleenHealthException;
+import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.model.domain.*;
 import com.umulam.fleen.health.model.dto.authentication.*;
 import com.umulam.fleen.health.model.dto.mail.EmailDetails;
 import com.umulam.fleen.health.model.json.SmsMessage;
+import com.umulam.fleen.health.model.request.ForgotPasswordRequest;
+import com.umulam.fleen.health.model.request.PreVerificationRequest;
+import com.umulam.fleen.health.model.request.SaveProfileVerificationMessageRequest;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.response.authentication.SignInResponse;
 import com.umulam.fleen.health.model.response.authentication.SignUpResponse;
@@ -39,6 +45,7 @@ import javax.servlet.ServletResponse;
 import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.*;
 import static com.umulam.fleen.health.constant.authentication.AuthenticationStatus.COMPLETED;
@@ -47,7 +54,9 @@ import static com.umulam.fleen.health.constant.authentication.MfaType.*;
 import static com.umulam.fleen.health.constant.authentication.RoleType.*;
 import static com.umulam.fleen.health.constant.authentication.TokenType.ACCESS_TOKEN;
 import static com.umulam.fleen.health.constant.authentication.TokenType.REFRESH_TOKEN;
+import static com.umulam.fleen.health.constant.base.ExceptionConstant.FORGOT_PASSWORD_PROCESS_FAILED;
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.*;
+import static com.umulam.fleen.health.util.DateTimeUtil.addMinutesFromNow;
 import static com.umulam.fleen.health.util.DateTimeUtil.toHours;
 import static com.umulam.fleen.health.util.FleenAuthorities.*;
 
@@ -67,6 +76,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private final EmailServiceImpl emailService;
   private final VerificationHistoryService verificationHistoryService;
   private final ProfileVerificationMessageService profileVerificationMessageService;
+  private final ProfileTokenService profileTokenService;
+  private final ReCaptchaAdapter reCaptchaAdapter;
 
   public AuthenticationServiceImpl(AuthenticationManager authenticationManager,
                                    MemberService memberService,
@@ -79,7 +90,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                                    MobileTextService mobileTextService,
                                    EmailServiceImpl emailService,
                                    VerificationHistoryService verificationHistoryService,
-                                   ProfileVerificationMessageService profileVerificationMessageService) {
+                                   ProfileVerificationMessageService profileVerificationMessageService,
+                                   ProfileTokenService profileTokenService,
+                                   ReCaptchaAdapter reCaptchaAdapter) {
     this.authenticationManager = authenticationManager;
     this.memberService = memberService;
     this.memberStatusService = memberStatusService;
@@ -92,6 +105,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     this.emailService = emailService;
     this.verificationHistoryService = verificationHistoryService;
     this.profileVerificationMessageService = profileVerificationMessageService;
+    this.profileTokenService = profileTokenService;
+    this.reCaptchaAdapter = reCaptchaAdapter;
   }
 
   /**
@@ -101,7 +116,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    *
    * <p>An entity's (user) authentication status can be {@link com.umulam.fleen.health.constant.authentication.AuthenticationStatus#IN_PROGRESS In Progress}
    * for several reasons for example when the user's profile is yet to complete the registration process initiated at {@link #signUp(SignUpDto) signUp} or be
-   * activated. Another reason could be because the user profile has a Multi-Factor Authentication (MFA) enabled. This status works in tandem with
+   * activated. Another reason could be because the user profile has a Multi-Factor Authentication (MFA_OR_PRE_AUTHENTICATION) enabled. This status works in tandem with
    * {@link NextAuthentication} so that the consumer of the API would be able to know what other authentication needs to be completed and decide what view or
    * UI to display.</p>
    * <br/>
@@ -109,7 +124,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    * <p>A user is not allowed to access the application features or functionalities if their account or profile is disabled.</p>
    * <br/>
    *
-   * <p>If the user has completed the registration and has no MFA enabled on their profile, the authentication status is assumed to be completed and
+   * <p>If the user has completed the registration and has no MFA_OR_PRE_AUTHENTICATION enabled on their profile, the authentication status is assumed to be completed and
    * and will be allowed to access and use the features of the application as allowed and specified by the role associated with their profile.</p>
    * <br/>
    *
@@ -133,26 +148,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    * {@link com.umulam.fleen.health.filter.JwtAuthenticationFilter#doFilter(ServletRequest, ServletResponse, FilterChain) JwtAuthenticationFilter}.</p>
    * <br/>
    *
-   * <p>In cases where the MFA enabled on the user's profile is type {@link VerificationType#SMS SMS} or {@link VerificationType#EMAIL EMAIL}. A OTP is sent to
+   * <p>In cases where the MFA_OR_PRE_AUTHENTICATION enabled on the user's profile is type {@link VerificationType#SMS SMS} or {@link VerificationType#EMAIL EMAIL}. A OTP is sent to
    * the email address or phone number found on their profile, the process of delivering the SMS or EMAIL message is handled and performed by
-   * {@link #initPreVerificationOrAuthentication(PreVerificationDto, VerificationType) initPreVerificationOrAuthentication}.</p>
+   * {@link #initPreVerificationOrAuthentication(PreVerificationRequest, VerificationType) initPreVerificationOrAuthentication}.</p>
    * <br/>
    *
-   * <p>When MFA is enabled on the profile, setting the refresh token to 'NULL' is important and necessary else if the refresh token is set, the user will be able to
+   * <p>When MFA_OR_PRE_AUTHENTICATION is enabled on the profile, setting the refresh token to 'NULL' is important and necessary else if the refresh token is set, the user will be able to
    * get a new access token that contains the complete details of the user including the authorities that can be used
-   * to access the application features or perform actions on the API.</p>
+   * to access the application features or perform actions on the API without completing the authentication process if MFA_OR_PRE_AUTHENTICATION is enabled on the user's profile.</p>
    * <br/>
    *
    * <p>Other details are set on the {@link SignInResponse} object to allow the consumer of the API or response decide the next action or process to
-   * perform. For example, if the user has {@link MfaType MFA} enabled on their profile; they will have to submit a code one sent to their
-   * email address or phone number or get the code or OTP from an Authenticator app such as Google Authenticator which is going
+   * perform. For example, if the user has {@link MfaType MFA_OR_PRE_AUTHENTICATION} enabled on their profile; they will have to submit a code or OTP sent to their
+   * email address or phone number or get the code or OTP from an Authenticator app such as Google or Microsoft Authenticator which is going
    * to be used to complete the authentication process they initiated or started.</p>
    * <br/>
    *
    * @param dto contains a possible user-registered email address and password
    * @return {@link SignInResponse} if the authentication and validation of the user credential is successful.
    * Also contains access token that can be used to access features of the application or API and also the
-   * refresh token to use to get a new access token when the previous one has expired.
+   * refresh token to use to get a new access token when the previous access token has expired.
    * @throws InvalidAuthenticationException if the authentication and validation of the user credential is unsuccessful
    */
   @Override
@@ -185,7 +200,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             PRE_VERIFIED_PROFESSIONAL == roleType ||
             PRE_VERIFIED_BUSINESS == roleType)) {
       String otp = mfaService.generateVerificationOtp(6);
-      PreVerificationDto preVerification = PreVerificationDto
+      PreVerificationRequest preVerification = PreVerificationRequest
               .builder()
               .code(otp)
               .phoneNumber(user.getPhoneNumber())
@@ -214,7 +229,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     if (user.isMfaEnabled()) {
       if (SMS == user.getMfaType() || EMAIL == user.getMfaType()) {
         String otp = mfaService.generateVerificationOtp(6);
-        PreVerificationDto preVerification = PreVerificationDto.builder()
+        PreVerificationRequest preVerification = PreVerificationRequest.builder()
                 .code(otp)
                 .phoneNumber(user.getPhoneNumber())
                 .emailAddress(dto.getEmailAddress())
@@ -228,10 +243,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       user.setAuthorities(getPreAuthenticatedAuthorities());
       Authentication authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
       accessToken = createAccessToken(user);
+
       setContext(authenticationToken);
       saveToken(user.getUsername(), accessToken);
 
-      signInResponse.setNextAuthentication(NextAuthentication.MFA);
+      signInResponse.setNextAuthentication(NextAuthentication.MFA_OR_PRE_AUTHENTICATION);
       signInResponse.setMfaEnabled(true);
       signInResponse.setMfaType(user.getMfaType());
       signInResponse.setAccessToken(accessToken);
@@ -243,9 +259,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     accessToken = createAccessToken(user);
     refreshToken = createRefreshToken(user);
 
+    setContext(authentication);
     saveToken(user.getUsername(), accessToken);
     saveRefreshToken(user.getUsername(), refreshToken);
-    setContext(authentication);
 
     signInResponse.setAccessToken(accessToken);
     signInResponse.setRefreshToken(refreshToken);
@@ -276,7 +292,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    * <br/>
    *
    * <p>The user will complete the registration process by using a OTP delivered to their phone number or email address through
-   * {@link #initPreVerificationOrAuthentication(PreVerificationDto, VerificationType) initPreVerificationOrAuthentication}</p>
+   * {@link #initPreVerificationOrAuthentication(PreVerificationRequest, VerificationType) initPreVerificationOrAuthentication}</p>
    * <br/>
    *
    * @param dto contains basic details that allow a registration on the platform
@@ -290,22 +306,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     Member member = dto.toMember();
     ProfileType userType = ProfileType.valueOf(dto.getProfileType());
 
-    Role role = null;
-    switch (userType) {
-      case USER:
-        role = roleService.getRoleByCode(PRE_VERIFIED_USER.name());
-        break;
-
-      case PROFESSIONAL:
-        role = roleService.getRoleByCode(PRE_VERIFIED_PROFESSIONAL.name());
-        break;
-
-      case BUSINESS:
-        role = roleService.getRoleByCode(PRE_VERIFIED_BUSINESS.name());
-        break;
-    }
-
-    member.setPassword(passwordEncoder.encode(member.getPassword().trim()));
+    Role role = setNewUserRole(userType);
     Set<Role> roles = new HashSet<>();
     roles.add(role);
     member.setRoles(roles);
@@ -315,6 +316,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     member.setMemberStatus(memberStatus);
     member.setVerificationStatus(verificationStatus);
     member.setUserType(userType);
+    member.setPassword(passwordEncoder.encode(member.getPassword()));
     memberService.save(member);
 
     ProfileVerificationMessage verificationMessage = profileVerificationMessageService.getProfileVerificationMessageByType(ProfileVerificationMessageType.PENDING);
@@ -335,7 +337,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     String refreshToken = createRefreshToken(user);
 
     String otp = mfaService.generateVerificationOtp(6);
-    PreVerificationDto preVerification = PreVerificationDto.builder()
+    PreVerificationRequest preVerification = PreVerificationRequest.builder()
             .code(otp)
             .phoneNumber(dto.getPhoneNumber())
             .emailAddress(dto.getEmailAddress())
@@ -362,12 +364,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    * certificate and in some cases tax identification certificate if deemed necessary.</p>
    * <br/>
    *
-   * <p>All profile are set to active using {@link MemberStatusType#ACTIVE Active} if the registration process is completed successfully.</p>
+   * <p>All profiles are set to active using {@link MemberStatusType#ACTIVE Active} if the registration process is completed successfully.</p>
    *
    * @param dto contains verification code to use to complete the user registration process
    * @param fleenUser the authenticated user after the user successfully started the registration or sign-up process.
-   * @return {@link SignUpResponse} contains access token and refresh token
-   * that can be used to access the application or API feature
+   * @return {@link SignUpResponse} contains access token and refresh token that can be used to access the application or API feature
    * @throws VerificationFailedException if the user's email address does not exist
    * @throws ExpiredVerificationCodeException if the OTP has already expired and is deleted from the cache at {@link CacheService}
    * @throws InvalidVerificationCodeException if the OTP is not equal to what is currently available in the cache at {@link CacheService}
@@ -457,13 +458,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   public FleenHealthResponse resendVerificationCode(ResendVerificationCodeDto dto, FleenUser user) {
     String username = user.getUsername();
     String verificationKey = getPreVerificationCacheKey(username);
-    if (cacheService.exists(verificationKey)) {
-      throw new VerificationFailedException();
-    }
+
+    /*
+        if (cacheService.exists(verificationKey)) {
+          throw new VerificationCodeAlreadySentException();
+        }
+    */
 
     VerificationType verificationType = VerificationType.valueOf(dto.getVerificationType());
     String otp = mfaService.generateVerificationOtp(6);
-    PreVerificationDto preVerification = PreVerificationDto.builder()
+    PreVerificationRequest preVerification = PreVerificationRequest.builder()
             .code(otp)
             .phoneNumber(dto.getPhoneNumber())
             .emailAddress(dto.getEmailAddress())
@@ -502,17 +506,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     if (cacheService.exists(refreshAuthKey)) {
       cacheService.delete(refreshAuthKey);
     }
+    SecurityContextHolder.getContext().setAuthentication(null);
     SecurityContextHolder.clearContext();
   }
 
   /**
-   * <p>When a user has {@link MfaType MFA} enabled on their profile, they are required to pass through this process before they are fully authenticated and
+   * <p>When a user has {@link MfaType MFA_OR_PRE_AUTHENTICATION} enabled on their profile, they are required to pass through this process before they are fully authenticated and
    * can access the feature of the application as designated by their roles.</p>
    * <br/>
    *
-   * <p>The {@link ConfirmMfaDto#getMfaType() MfaType} will be used to decide what service to validate the OTP or code against. For example, if the user
-   * has enabled the {@link MfaType#AUTHENTICATOR Authenticator} type of MFA on their profile, the code will be validated through
-   * {@link MfaService#verifyOtp(String, String) verifyOtp} by retrieving the secret associated with the user's profile. If the MFA type is for example
+   * <p>The {@link ConfirmMfaDto#getMfaType() MfaType} will be used to decide what service to deliver the and validate the OTP or code against. For example, if the user
+   * has enabled the {@link MfaType#AUTHENTICATOR Authenticator} type of MFA_OR_PRE_AUTHENTICATION on their profile, the code will be validated through
+   * {@link MfaService#verifyAuthenticatorOtp(String, String) verifyAuthenticatorOtp} by retrieving the secret associated with the user's profile. If the MFA_OR_PRE_AUTHENTICATION type is for example
    * {@link MfaType#EMAIL EMAIL}, the code will be validated through {@link #validateSmsAndEmailMfa(String, String) validateSmsAndEmailMfa}.</p>
    * <br/>
    *
@@ -533,9 +538,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       String verificationKey = getPreAuthenticationCacheKey(username);
       validateSmsAndEmailMfa(verificationKey, code);
     }
-    else if (AUTHENTICATOR == mfaType)  {
+    else if (AUTHENTICATOR == mfaType) {
       String secret = memberService.getTwoFaSecret(fleenUser.getId());
-      boolean valid = mfaService.verifyOtp(code, secret);
+      boolean valid = mfaService.verifyAuthenticatorOtp(code, secret);
       if (!valid) {
         throw new InvalidVerificationCodeException(code);
       }
@@ -569,7 +574,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    */
   private void validateSmsAndEmailMfa(String verificationKey, String code) {
     if (!cacheService.exists(verificationKey)) {
-      throw new ExpiredVerificationCodeException();
+      throw new ExpiredVerificationCodeException(code);
     }
 
     if (!cacheService.get(verificationKey).equals(code)) {
@@ -612,7 +617,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    * <br/>
    *
    * @param user the authenticated user
-   * @param roleType the role will be used to decide the authorities to associate with the user during the authentication process
+   * @param roleType the role of the user that will be used to decide the authorities to associate with the user during the authentication process
    */
   private void setPreVerificationAuthorities(FleenUser user, RoleType roleType) {
     switch (roleType) {
@@ -643,11 +648,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     String verificationKey = getAuthRefreshCacheKey(username);
 
     if (!cacheService.exists(verificationKey)) {
-      throw new InvalidAuthenticationException(username);
+      throw new InvalidAuthenticationToken();
     }
 
     if (!cacheService.get(verificationKey).equals(token)) {
-      throw new InvalidAuthenticationException(username);
+      throw new InvalidAuthenticationToken();
     }
 
     signOut(username);
@@ -730,7 +735,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    * <p>Save the user's pre-verification otp.</p>
    * <br/>
    *
-   * @param username the user's identifier to associate with the pre-verification top or code
+   * @param username the user's identifier to associate with the pre-verification otp or code
    * @param otp a random code associated with the user's identifier during the pre-verification process
    */
   private void savePreVerificationOtp(String username, String otp) {
@@ -793,6 +798,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   /**
+   * <p>Prefix a user's identifier with a predefined key used to save a reset password token or OTP or code.</p>
+   * <br/>
+   *
+   * @param username a user identifier found on the system or is to be registered on the system
+   * @return a string concatenation of a predefined prefix and the user's identifier
+   */
+  private String getResetPasswordCacheKey(String username) {
+    return RESET_PASSWORD_CACHE_PREFIX.concat(username);
+  }
+
+  /**
    * <p>An email message interpolated with data or details for pre-verification purpose sent to user's email address.</p>
    * <br/>
    *
@@ -804,6 +820,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   /**
+   * <p>An email message interpolated with data or details for forgot password purpose sent to user's email address.</p>
+   * <br/>
+   *
+   * @param data contains data like unique random code of prefix length to bind with the email template
+   * @return an email message that has been prepared from a template and interpolated with all the data required in the message
+   */
+  private String getForgotPasswordTemplate(Map<String, Object> data) {
+    return emailService.processAndReturnTemplate(FORGOT_PASSWORD_TEMPLATE_NAME, data);
+  }
+
+  /**
    * <p>When a user is registering or signing up on the platform, the user is required to complete a verification in which an OTP is sent
    * to the email address or phone number they're planning to use on the platform to confirm their ownership. The OTP will be sent to either of
    * two channels depending on the system or user preference.</p>
@@ -811,9 +838,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    *
    * @param dto contains details like the email address or phone number to send the OTP code to and the code itself
    *            to send to the email address or phone number
-   * @param verificationType contains the type of pre-verification as decided by the system or user and where to send the OTP or code to
+   * @param verificationType contains the type of verification as decided by the system or user and where to send the OTP or code to
    */
-  private void initPreVerificationOrAuthentication(PreVerificationDto dto, VerificationType verificationType) {
+  private void initPreVerificationOrAuthentication(PreVerificationRequest dto, VerificationType verificationType) {
     if (Objects.requireNonNull(verificationType) == VerificationType.SMS) {
       sendSmsPreVerificationCode(dto);
     } else {
@@ -825,20 +852,42 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    * <p>When a user has not completed the registration or sign-up process, an OTP or random code of a fixed length as defined
    * by the system will be sent to the user's email address which will be use to complete the verification found at
    * {@link #completeSignUp(VerificationCodeDto, FleenUser) completeSignUp} and there exists a similar method but only delivers
-   * an SMS message of the OTP to a specified phone number found at {@link #sendSmsPreVerificationCode(PreVerificationDto) sendSmsPreVerificationCode}</p>
+   * an SMS message of the OTP to a specified phone number found at {@link #sendSmsPreVerificationCode(PreVerificationRequest) sendSmsPreVerificationCode}</p>
    * <br/>
    *
-   * @param dto contains details like the email address to send the OTP code to and the code itself to send to the email address
+   * @param request contains details like the email address to send the OTP code to and the code itself to send to the email address
    */
-  private void sendEmailPreVerificationCode(PreVerificationDto dto) {
-    String emailBody = getPreVerificationTemplate(Map.of(PRE_VERIFICATION_OTP_KEY, dto.getCode()));
+  private void sendEmailPreVerificationCode(PreVerificationRequest request) {
+    String emailBody = getPreVerificationTemplate(Map.of(VERIFICATION_CODE_KEY, request.getCode()));
     if (emailBody == null) {
       throw new VerificationFailedException();
     }
     EmailDetails emailDetails = EmailDetails.builder()
             .from(EmailMessageSource.BASE.getValue())
-            .to(dto.getEmailAddress())
+            .to(request.getEmailAddress())
             .subject(PRE_VERIFICATION_EMAIL_SUBJECT)
+            .body(emailBody)
+            .build();
+    emailService.sendHtmlMessage(emailDetails);
+  }
+
+  /**
+   * <p>When a user forget the password or credential to use to sign in to the application, a random code of a fixed length as defined
+   * by the system will be sent to the user's email address which will be use to complete the reset of the password found at
+   * {@link #completeSignUp(VerificationCodeDto, FleenUser) completeSignUp}</p>
+   * <br/>
+   *
+   * @param request contains details like the email address to send the code to and the code itself to send to the email address
+   */
+  private void sendForgotPasswordEmail(ForgotPasswordRequest request) {
+    String emailBody = getForgotPasswordTemplate(Map.of(VERIFICATION_CODE_KEY, request.getCode()));
+    if (emailBody == null) {
+      throw new FleenHealthException(FORGOT_PASSWORD_PROCESS_FAILED);
+    }
+    EmailDetails emailDetails = EmailDetails.builder()
+            .from(EmailMessageSource.BASE.getValue())
+            .to(request.getEmailAddress())
+            .subject(FORGOT_PASSWORD_EMAIL_SUBJECT)
             .body(emailBody)
             .build();
     emailService.sendHtmlMessage(emailDetails);
@@ -880,12 +929,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    * <p>When a user has not completed the registration or sign-up process, an OTP or random code of a fixed length as defined
    * by the system will be sent to the user's phone number which will be use to complete the verification found at
    * {@link #completeSignUp(VerificationCodeDto, FleenUser) completeSignUp} and there exists a similar method but only delivers
-   * an email message of the OTP to a specified email address found at {@link #sendEmailPreVerificationCode(PreVerificationDto) sendEmailPreVerificationCode}</p>
+   * an email message of the OTP to a specified email address found at {@link #sendEmailPreVerificationCode(PreVerificationRequest) sendEmailPreVerificationCode}</p>
    * <br/>
    *
    * @param dto contains details like the phone number to send the OTP code to and the code itself to send to the phone number
    */
-  private void sendSmsPreVerificationCode(PreVerificationDto dto) {
+  private void sendSmsPreVerificationCode(PreVerificationRequest dto) {
     Optional<SmsMessage> verificationTemplate = mobileTextService.getPreVerificationSmsMessage(MessageType.PRE_VERIFICATION);
     if (verificationTemplate.isEmpty()) {
       throw new VerificationFailedException();
@@ -893,4 +942,133 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     String verificationMessage = MessageFormat.format(verificationTemplate.get().getMessage(), dto.getCode());
     mobileTextService.sendSms(dto.getPhoneNumber(), verificationMessage);
   }
+
+  /**
+   * <p>A way for the user to be able to recover their lost or forgotten credentials so that they can regain access to the system</p>
+   * @param dto contains details including email address or username of the user whose account is being recovered
+   */
+  @Override
+  public void forgotPassword(ForgotPasswordDto dto) {
+    Member member = memberService.getMemberByEmailAddress(dto.getEmailAddress());
+    if (Objects.isNull(member)) {
+      throw new UserNotFoundException(dto.getEmailAddress());
+    }
+
+    int code = ThreadLocalRandom.current().nextInt(100000, 1000000);
+    String codeStr = String.valueOf(code);
+    ProfileToken profileToken = ProfileToken.builder()
+            .member(member)
+            .resetPasswordToken(codeStr)
+            .resetPasswordTokenExpiryDate(addMinutesFromNow(10))
+            .build();
+    profileTokenService.save(profileToken);
+
+    ForgotPasswordRequest request = ForgotPasswordRequest.builder()
+          .firstName(member.getFirstName())
+          .lastName(member.getLastName())
+          .phoneNumber(member.getPhoneNumber())
+          .emailAddress(member.getEmailAddress())
+          .code(codeStr)
+          .build();
+    sendForgotPasswordEmail(request);
+  }
+
+  /**
+   * <p>Validate the OTP or code sent to the user's email address before allowing them to change their password</p>
+   * <br/>
+   *
+   * @param dto contains details including the identity of user whose account is being recovered and the code to validate the process
+   * @return {@link InitiatePasswordChangeResponse} contains a token that allows a user to call change their password
+   */
+  @Override
+  public InitiatePasswordChangeResponse validateResetPasswordCode(ResetPasswordDto dto) {
+    Member member = memberService.getMemberByEmailAddress(dto.getEmailAddress());
+    if (Objects.isNull(member)) {
+      throw new UserNotFoundException(dto.getEmailAddress());
+    }
+
+    Optional<ProfileToken> profileTokenExists = profileTokenService.findByEmailAddress(dto.getEmailAddress());
+    if (profileTokenExists.isEmpty()) {
+      throw new ResetPasswordCodeInvalidException();
+    }
+
+    ProfileToken profileToken = profileTokenExists.get();
+    if (Objects.isNull(profileToken.getResetPasswordToken())) {
+      throw new ResetPasswordCodeInvalidException();
+    }
+
+    if (!(profileToken.getResetPasswordToken().equals(dto.getCode()))) {
+      throw new ResetPasswordCodeInvalidException();
+    }
+
+    Calendar calendar = Calendar.getInstance();
+    if (profileToken.getResetPasswordTokenExpiryDate().before(calendar.getTime())) {
+      throw new ResetPasswordCodeExpiredException();
+    }
+
+    FleenUser user = initAuthentication(member);
+    String token = jwtProvider.generateResetPasswordToken(user);
+    saveToken(user.getUsername(), token);
+    return InitiatePasswordChangeResponse.builder()
+            .accessToken(token)
+            .build();
+  }
+
+  @Override
+  @Transactional
+  public void changePassword(String username, ChangePasswordDto dto) {
+    Member member = memberService.getMemberByEmailAddress(username);
+    if (Objects.isNull(member)) {
+      throw new UserNotFoundException(username);
+    }
+
+    Optional<ProfileToken> profileTokenExists = profileTokenService.findByEmailAddress(username);
+    if (profileTokenExists.isPresent() && Objects.nonNull(profileTokenExists.get().getResetPasswordToken())) {
+      ProfileToken profileToken = profileTokenExists.get();
+      profileToken.setResetPasswordToken(null);
+      profileToken.setResetPasswordTokenExpiryDate(null);
+      profileTokenService.save(profileToken);
+    }
+
+    member.setPassword(passwordEncoder.encode(dto.getPassword()));
+    memberService.save(member);
+  }
+
+  /**
+   * It verifies the validity of the reCaptcha details
+   *
+   * @param reCaptchaToken the token to check and validate in the ReCaptcha service
+   * @return the results of the token verification
+   */
+  @Override
+  public ReCaptchaResponse verifyReCaptcha(String reCaptchaToken) {
+    return reCaptchaAdapter.verifyRecaptcha(reCaptchaToken);
+  }
+
+  /**
+   * <p>When a new user register, it is assigned a role by default that allows them to access basic
+   * functionalities of the application.</p>
+   * <br/>
+   *
+   * @param profileType the type of user
+   * @return {@link Role} a user role with an authority or authorities
+   */
+  private Role setNewUserRole(ProfileType profileType) {
+    Role role = null;
+    switch (profileType) {
+      case USER:
+        role = roleService.getRoleByCode(PRE_VERIFIED_USER.name());
+        break;
+
+      case PROFESSIONAL:
+        role = roleService.getRoleByCode(PRE_VERIFIED_PROFESSIONAL.name());
+        break;
+
+      case BUSINESS:
+        role = roleService.getRoleByCode(PRE_VERIFIED_BUSINESS.name());
+        break;
+    }
+    return role;
+  }
+
 }

@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.controller;
 
+import com.umulam.fleen.health.model.dto.authentication.ChangePasswordDto;
 import com.umulam.fleen.health.model.dto.authentication.ConfirmMfaDto;
 import com.umulam.fleen.health.model.dto.authentication.ResendVerificationCodeDto;
 import com.umulam.fleen.health.model.dto.authentication.VerificationCodeDto;
@@ -57,5 +58,13 @@ public class VerificationController {
   public SignInResponse validateMfa(@AuthenticationPrincipal FleenUser user,
                                     @Valid @RequestBody ConfirmMfaDto dto) {
     return authenticationService.validateMfa(user, dto);
+  }
+
+  @PostMapping(value = "/change-password")
+  @PreAuthorize("hasRole('RESET_PASSWORD')")
+  public FleenHealthResponse changePassword(@AuthenticationPrincipal FleenUser user,
+                                            @Valid @RequestBody ChangePasswordDto dto) {
+    authenticationService.changePassword(user.getUsername(), dto);
+    return new FleenHealthResponse("Success");
   }
 }

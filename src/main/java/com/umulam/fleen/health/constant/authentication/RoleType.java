@@ -19,7 +19,8 @@ public enum RoleType {
   BUSINESS("Business"),
   EMPLOYEE("Employee"),
   PRE_AUTH("PreAuth"),
-  PRE_OTP_AUTHENTICATED_USER("PreOtpAuthenticatedUser");
+  PRE_OTP_AUTHENTICATED_USER("PreOtpAuthenticatedUser"),
+  RESET_PASSWORD("ResetPassword");
 
   private final String value;
 

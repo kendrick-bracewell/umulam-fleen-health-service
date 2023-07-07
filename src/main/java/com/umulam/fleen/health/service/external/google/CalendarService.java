@@ -4,7 +4,6 @@ import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -16,7 +15,7 @@ import static com.umulam.fleen.health.util.DateTimeUtil.asDate;
 import static com.umulam.fleen.health.util.DateTimeUtil.toMilliseconds;
 
 @Slf4j
-@Component
+//@Component
 public class CalendarService {
 
   private final Calendar calendar;

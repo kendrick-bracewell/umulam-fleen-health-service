@@ -12,10 +12,11 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MfaDetail {
 
-  @JsonProperty("qr_code")
-  private String qrCode;
   private String secret;
   private boolean enabled;
+
+  @JsonProperty("qr_code")
+  private String qrCode;
 
   @JsonProperty("mfa_type")
   private String mfaType;

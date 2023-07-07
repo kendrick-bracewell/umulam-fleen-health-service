@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.util;
 
 import java.time.*;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -49,5 +50,19 @@ public class DateTimeUtil {
             .filter(time -> time > 0)
             .reduce(1, Math::multiplyExact)
             .longValue();
+  }
+
+  public static Date addHoursFromNow(int hour) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(new Date());
+    cal.add(Calendar.HOUR_OF_DAY, hour);
+    return cal.getTime();
+  }
+
+  public static Date addMinutesFromNow(int minute) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(new Date());
+    cal.add(Calendar.MINUTE, minute);
+    return cal.getTime();
   }
 }

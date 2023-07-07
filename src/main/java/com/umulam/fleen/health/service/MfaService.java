@@ -6,7 +6,7 @@ public interface MfaService {
 
   String getQrCode(final String secret);
 
-  boolean verifyOtp(final String code, final String secret);
+  boolean verifyAuthenticatorOtp(final String code, final String secret);
 
   String generateVerificationOtp(int length);
 }

@@ -22,6 +22,7 @@ import java.util.function.Function;
 
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.*;
 import static com.umulam.fleen.health.util.FleenAuthorities.getRefreshTokenAuthorities;
+import static com.umulam.fleen.health.util.FleenAuthorities.getResetPasswordAuthorities;
 
 @Slf4j
 @Component
@@ -95,6 +96,15 @@ public class JwtProvider {
     claims.put("authorities", authoritiesToList(getRefreshTokenAuthorities()));
 
     return createToken(user.getUsername(), claims, REFRESH_TOKEN_VALIDITY);
+  }
+
+  public String generateResetPasswordToken(FleenUser user) {
+    Map<String, Object> claims = new HashMap<>();
+    claims.put(TOKEN_TYPE_KEY, TokenType.RESET_PASSWORD);
+    claims.put("userId", user.getId());
+    claims.put("authorities", authoritiesToList(getResetPasswordAuthorities()));
+
+    return createToken(user.getUsername(), claims, RESET_PASSWORD_TOKEN_VALIDITY);
   }
 
   public String createToken(String subject, Map<String, Object> claims, long expirationPeriod) {

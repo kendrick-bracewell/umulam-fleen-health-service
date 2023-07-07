@@ -60,7 +60,7 @@ public class MfaServiceImpl implements MfaService {
   }
 
   @Override
-  public boolean verifyOtp(String code, String secret) {
+  public boolean verifyAuthenticatorOtp(String code, String secret) {
     return codeVerifier.isValidCode(secret, code);
   }
 

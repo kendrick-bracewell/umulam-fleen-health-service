@@ -33,6 +33,11 @@ public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
   @Query("SELECT m.mfaSecret FROM Member m WHERE m.id = :id")
   String getTwoFaSecret(@Param("id") Integer memberId);
 
+  @Modifying
+  @Transactional
+  @Query("UPDATE Member m SET m.password = :password WHERE m.id = :id")
+  void updatePassword(@Param("id") Integer memberId, String password);
+
   boolean existsByEmailAddress(String emailAddress);
 
   boolean existsByPhoneNumber(String phoneNumber);

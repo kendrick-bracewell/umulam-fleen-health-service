@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.model.dto.authentication;
+package com.umulam.fleen.health.model.request;
 
 import lombok.*;
 
@@ -7,9 +7,11 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PreVerificationDto {
+public class ForgotPasswordRequest {
 
   private String code;
+  private String firstName;
+  private String lastName;
   private String emailAddress;
   private String phoneNumber;
 }

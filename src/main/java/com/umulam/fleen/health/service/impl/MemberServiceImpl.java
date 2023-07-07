@@ -5,14 +5,16 @@ import com.umulam.fleen.health.exception.authentication.InvalidAuthenticationExc
 import com.umulam.fleen.health.exception.authentication.InvalidVerificationCodeException;
 import com.umulam.fleen.health.exception.authentication.MfaGenerationFailedException;
 import com.umulam.fleen.health.exception.authentication.VerificationFailedException;
+import com.umulam.fleen.health.exception.member.UpdatePasswordFailedException;
+import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.dto.authentication.ConfirmMfaDto;
 import com.umulam.fleen.health.model.dto.authentication.MfaTypeDto;
+import com.umulam.fleen.health.model.dto.authentication.UpdatePasswordDto;
 import com.umulam.fleen.health.model.security.MfaDetail;
 import com.umulam.fleen.health.repository.jpa.MemberJpaRepository;
 import com.umulam.fleen.health.service.MemberService;
 import com.umulam.fleen.health.service.MfaService;
-import com.umulam.fleen.health.service.RoleService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,16 +29,13 @@ public class MemberServiceImpl implements MemberService {
 
   private final MemberJpaRepository memberJpaRepository;
   private final MfaService mfaService;
-  private final RoleService roleService;
   private final PasswordEncoder passwordEncoder;
 
   public MemberServiceImpl(MemberJpaRepository memberJpaRepository,
                            MfaService mfaService,
-                           RoleService roleService,
                            PasswordEncoder passwordEncoder) {
     this.memberJpaRepository = memberJpaRepository;
     this.mfaService = mfaService;
-    this.roleService = roleService;
     this.passwordEncoder = passwordEncoder;
   }
 
@@ -117,8 +116,9 @@ public class MemberServiceImpl implements MemberService {
         break;
 
       case AUTHENTICATOR:
-        member.setMfaType(mfaType);
         mfaDetail = generateAuthenticatorSecret();
+        member.setMfaType(mfaType);
+        member.setMfaEnabled(true);
         member.setMfaSecret(mfaDetail.getSecret());
     }
     save(member);
@@ -135,7 +135,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     if (mfaType == MfaType.AUTHENTICATOR) {
-      if (mfaService.verifyOtp(dto.getCode(), member.getMfaSecret())) {
+      if (mfaService.verifyAuthenticatorOtp(dto.getCode(), member.getMfaSecret())) {
         member.setMfaEnabled(true);
         save(member);
       } else {
@@ -151,6 +151,25 @@ public class MemberServiceImpl implements MemberService {
     if (qrCode == null) {
       throw new MfaGenerationFailedException();
     }
-    return new MfaDetail(qrCode, secret, false, MfaType.AUTHENTICATOR.name());
+    return MfaDetail.builder()
+            .qrCode(qrCode)
+            .secret(secret)
+            .enabled(false)
+            .mfaType(MfaType.AUTHENTICATOR.name())
+            .build();
+  }
+
+  @Override
+  public void updatePassword(String username, UpdatePasswordDto dto) {
+    Member member = getMemberByEmailAddress(username);
+    if (Objects.isNull(member)) {
+      throw new UserNotFoundException(username);
+    }
+
+    if (passwordEncoder.matches(dto.getOldPassword(), member.getPassword())) {
+      throw new UpdatePasswordFailedException();
+    }
+
+    memberJpaRepository.updatePassword(member.getId(), passwordEncoder.encode(dto.getPassword()));
   }
 }

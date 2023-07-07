@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class InvalidAuthenticationException extends FleenHealthException {
 
-  private static final String message = "The authentication details is invalid. ID: %s";
+  private static final String message = "The username or password credential is invalid. ID: %s";
 
   public InvalidAuthenticationException(String emailAddress) {
     super(String.format(message, Objects.toString(emailAddress, "Unknown")));

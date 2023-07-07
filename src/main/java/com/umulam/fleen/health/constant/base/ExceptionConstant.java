@@ -9,4 +9,5 @@ public class ExceptionConstant {
   public static final String FAILED_MAIL_DELIVERY = "Mail delivery failed";
   public static final String INVALID_USER = "Invalid User";
   public static final String PATH_URL = "path";
+  public static final String FORGOT_PASSWORD_PROCESS_FAILED = "Unable to complete forgot password operation";
 }

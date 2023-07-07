@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.model;
+package com.umulam.fleen.health.model.request;
 
 import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;

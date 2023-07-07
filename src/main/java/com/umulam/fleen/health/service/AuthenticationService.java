@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.service;
 
+import com.umulam.fleen.health.adapter.google.recaptcha.model.response.ReCaptchaResponse;
 import com.umulam.fleen.health.model.dto.authentication.*;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.response.authentication.SignInResponse;
@@ -36,4 +37,12 @@ public interface AuthenticationService {
   SignInResponse refreshToken(String username, String token);
 
   void saveRefreshToken(String subject, String token);
+
+  void forgotPassword(ForgotPasswordDto dto);
+
+  InitiatePasswordChangeResponse validateResetPasswordCode(ResetPasswordDto dto);
+
+  void changePassword(String username, ChangePasswordDto dto);
+
+  ReCaptchaResponse verifyReCaptcha(String reCaptchaToken);
 }

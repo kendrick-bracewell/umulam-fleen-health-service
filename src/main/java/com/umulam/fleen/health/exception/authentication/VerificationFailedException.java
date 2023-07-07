@@ -9,8 +9,4 @@ public class VerificationFailedException extends FleenHealthException {
   public VerificationFailedException() {
     super(message);
   }
-
-  public VerificationFailedException(String message) {
-    super(message);
-  }
 }

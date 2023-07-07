@@ -7,7 +7,7 @@ public enum NextAuthentication {
 
   NONE("None"),
   PRE_VERIFICATION("Pre Verification"),
-  MFA("MFA");
+  MFA_OR_PRE_AUTHENTICATION("Mfa or Pre Authentication");
 
   private final String value;
 

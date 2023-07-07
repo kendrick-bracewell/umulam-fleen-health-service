@@ -1,7 +1,7 @@
 package com.umulam.fleen.health.controller;
 
 import com.umulam.fleen.health.service.external.google.CalendarService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.umulam.fleen.health.service.external.google.DirectoryService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,8 +13,15 @@ import java.util.List;
 @RequestMapping(value = "calendar")
 public class CalendarController {
 
-  @Autowired
   public CalendarService calendarService;
+
+  public DirectoryService directoryService;
+
+  @GetMapping(value = "/get1")
+  public Object hello1() {
+    directoryService.createUserWithForwarding();
+    return "Hello World";
+  }
 
   @GetMapping(value = "/get")
   public Object hello() {

@@ -32,6 +32,10 @@ public class FleenAuthorities {
     return List.of(new SimpleGrantedAuthority(ROLE_PREFIX.concat(PRE_AUTHENTICATED_USER.name())));
   }
 
+  public static List<GrantedAuthority> getResetPasswordAuthorities() {
+    return List.of(new SimpleGrantedAuthority(ROLE_PREFIX.concat(RESET_PASSWORD.name())));
+  }
+
   public static List<GrantedAuthority> buildAuthorities(List<String> roles) {
     return roles
             .stream()
