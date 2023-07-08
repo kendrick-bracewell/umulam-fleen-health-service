@@ -1123,6 +1123,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     return request;
   }
 
+  /**
+   * <p>When a user completes a sign up process, the profile of the user is initialized with some basic details</p>
+   * <br/>
+   *
+   * @param member the details of the user that is about to complete a sign up process
+   * @return {@link CompleteUserSignUpRequest} details including the member about to complete the sign up process and its basic details
+   */
   private CompleteUserSignUpRequest createCompleteUserSignUpRequest(Member member) {
     CompleteUserSignUpRequest request = CompleteUserSignUpRequest.builder().build();
     switch (member.getUserType()) {
