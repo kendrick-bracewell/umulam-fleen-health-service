@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.constant;
+package com.umulam.fleen.health.adapter;
 
 /**
  * <p>The ExternalSystemType is a composition of different types of external service type for which data is obtained from the

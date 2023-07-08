@@ -1,6 +1,6 @@
 package com.umulam.fleen.health.constant.authentication;
 
-import com.umulam.fleen.health.constant.ExternalSystemType;
+import com.umulam.fleen.health.adapter.ExternalSystemType;
 import lombok.extern.slf4j.Slf4j;
 
 /**

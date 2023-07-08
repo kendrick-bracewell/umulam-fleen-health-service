@@ -3,7 +3,6 @@ package com.umulam.fleen.health.adapter.base;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.adapter.ApiParameter;
-import com.umulam.fleen.health.adapter.BaseEndpointBlock;
 import com.umulam.fleen.health.adapter.EndpointBlock;
 import com.umulam.fleen.health.util.AuthUtil;
 import lombok.extern.slf4j.Slf4j;
