@@ -14,5 +14,9 @@ public class FleenHealthConstant {
   public static final String FORGOT_PASSWORD_TEMPLATE_NAME = "forgot-password.ftl";
   public static final String FAIL_MAIL_DELIVERY = "Mail Delivery failed";
   public static final String PASSWORD_CHANGED_UPDATED = "Password changed and updated successfully";
+  public static final String MFA_SET_SUCCESSFULLY = "Multi-Factor Authentication (MFA) set successfully";
+  public static final String MFA_RE_ENABLED = "Multi-Factor Authentication (MFA) is enabled";
+  public static final String MFA_DISABLED = "Multi-Factor Authentication (MFA) is disabled";
+  public static final String SIGN_OUT = "Sign out successful";
 
 }

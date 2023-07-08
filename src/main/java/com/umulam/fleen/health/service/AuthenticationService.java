@@ -20,7 +20,7 @@ public interface AuthenticationService {
 
   void signOut(String username);
 
-  SignInResponse validateMfa(FleenUser user, ConfirmMfaDto dto);
+  SignInResponse validateSignInMfa(FleenUser user, ConfirmMfaDto dto);
 
   Authentication authenticate(String username, String password);
 

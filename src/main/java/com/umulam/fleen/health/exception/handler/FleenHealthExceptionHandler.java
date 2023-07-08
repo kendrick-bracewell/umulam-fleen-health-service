@@ -75,7 +75,8 @@ public class FleenHealthExceptionHandler {
           DisabledAccountException.class,
           UserNotFoundException.class,
           VerificationCodeAlreadySentException.class,
-          ResetPasswordCodeInvalidException.class
+          ResetPasswordCodeInvalidException.class,
+          MfaVerificationFailed.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);

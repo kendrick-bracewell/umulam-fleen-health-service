@@ -54,16 +54,16 @@ public class VerificationController {
     return authenticationService.refreshToken(user.getUsername(), token);
   }
 
-  @PostMapping(value = "/validate-mfa")
+  @PostMapping(value = "/validate-sign-in-mfa")
   @PreAuthorize("hasRole('PRE_AUTHENTICATED_USER')")
-  public SignInResponse validateMfa(@AuthenticationPrincipal FleenUser user,
+  public SignInResponse validateSignInMfa(@AuthenticationPrincipal FleenUser user,
                                     @Valid @RequestBody ConfirmMfaDto dto) {
-    return authenticationService.validateMfa(user, dto);
+    return authenticationService.validateSignInMfa(user, dto);
   }
 
-  @PostMapping(value = "/change-password")
+  @PostMapping(value = "/reset-change-password")
   @PreAuthorize("hasRole('RESET_PASSWORD_USER')")
-  public FleenHealthResponse changePassword(@AuthenticationPrincipal FleenUser user,
+  public FleenHealthResponse resetAndChangePassword(@AuthenticationPrincipal FleenUser user,
                                             @Valid @RequestBody ChangePasswordDto dto) {
     authenticationService.changePassword(user.getUsername(), dto);
     return new FleenHealthResponse(PASSWORD_CHANGED_UPDATED);

@@ -20,8 +20,6 @@ public interface MemberService {
 
   Member save(Member member);
 
-  boolean enableMfa(Integer memberId, String secret);
-
   @Transactional
   void reEnableMfa(Integer memberId);
 
@@ -34,7 +32,7 @@ public interface MemberService {
   String getTwoFaSecret(Integer memberId);
 
   @Transactional
-  boolean confirmMfa(String username, ConfirmMfaDto dto);
+  boolean confirmMfaSetup(String username, ConfirmMfaDto dto);
 
   void updatePassword(String username, UpdatePasswordDto dto);
 }

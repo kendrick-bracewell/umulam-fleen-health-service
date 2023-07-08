@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.*;
+
 @Slf4j
 @RestController
 @RequestMapping(value = "mfa")
@@ -25,26 +27,26 @@ public class MfaController {
     this.memberService = memberService;
   }
 
-  @PutMapping(value = "/enable")
-  public MfaDetail enableTwoFa(@AuthenticationPrincipal FleenUser user, @Valid @RequestBody MfaTypeDto dto) {
+  @PutMapping(value = "/setup")
+  public MfaDetail setupMfa(@AuthenticationPrincipal FleenUser user, @Valid @RequestBody MfaTypeDto dto) {
     return memberService.setupMfa(user.getId(), dto);
   }
 
-  @PutMapping(value = "/confirm-mfa")
-  public FleenHealthResponse confirmMfa(@AuthenticationPrincipal FleenUser user, @Valid @RequestBody ConfirmMfaDto dto) {
-    memberService.confirmMfa(user.getUsername(), dto);
-    return new FleenHealthResponse("Success");
+  @PutMapping(value = "/confirm-mfa-setup")
+  public FleenHealthResponse confirmMfaSetup(@AuthenticationPrincipal FleenUser user, @Valid @RequestBody ConfirmMfaDto dto) {
+    memberService.confirmMfaSetup(user.getUsername(), dto);
+    return new FleenHealthResponse(MFA_SET_SUCCESSFULLY);
   }
 
   @PutMapping(value = "/re-enable")
-  public FleenHealthResponse reEnableTwoFa(@AuthenticationPrincipal FleenUser user) {
+  public FleenHealthResponse reEnableMfa(@AuthenticationPrincipal FleenUser user) {
     memberService.reEnableMfa(user.getId());
-    return new FleenHealthResponse("Success");
+    return new FleenHealthResponse(MFA_RE_ENABLED);
   }
 
   @PutMapping(value = "/disable")
-  public FleenHealthResponse disableTwoFa(@AuthenticationPrincipal FleenUser user) {
+  public FleenHealthResponse disableMfa(@AuthenticationPrincipal FleenUser user) {
     memberService.disableMfa(user.getId());
-    return new FleenHealthResponse("Success");
+    return new FleenHealthResponse(MFA_DISABLED);
   }
 }

@@ -1,10 +1,8 @@
 package com.umulam.fleen.health.service.impl;
 
+import com.umulam.fleen.health.constant.authentication.MfaSetupStatus;
 import com.umulam.fleen.health.constant.authentication.MfaType;
-import com.umulam.fleen.health.exception.authentication.InvalidAuthenticationException;
-import com.umulam.fleen.health.exception.authentication.InvalidVerificationCodeException;
-import com.umulam.fleen.health.exception.authentication.MfaGenerationFailedException;
-import com.umulam.fleen.health.exception.authentication.VerificationFailedException;
+import com.umulam.fleen.health.exception.authentication.*;
 import com.umulam.fleen.health.exception.member.UpdatePasswordFailedException;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.model.domain.Member;
@@ -62,12 +60,6 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
-  public boolean enableMfa(Integer memberId, String secret) {
-    memberJpaRepository.enableTwoFa(memberId, secret);
-    return true;
-  }
-
-  @Override
   @Transactional
   public void reEnableMfa(Integer memberId) {
     memberJpaRepository.reEnableTwoFa(memberId);
@@ -85,6 +77,7 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
+  @Transactional
   public Member save(Member member) {
     return memberJpaRepository.save(member);
   }
@@ -95,7 +88,7 @@ public class MemberServiceImpl implements MemberService {
     MfaType mfaType = MfaType.valueOf(mfaTypeDto.getMfaType());
     Member member = memberJpaRepository
             .findById(memberId)
-            .orElseThrow(() -> new InvalidAuthenticationException(String.valueOf(memberId)));
+            .orElseThrow(() -> new UserNotFoundException(String.valueOf(memberId)));
     MfaDetail mfaDetail = new MfaDetail();
 
     if (member.getMfaType() == mfaType && mfaType != MfaType.AUTHENTICATOR) {
@@ -112,14 +105,16 @@ public class MemberServiceImpl implements MemberService {
         member.setMfaSecret(null);
         member.setMfaEnabled(true);
         mfaDetail.setEnabled(true);
+        mfaDetail.setMfaSetupStatus(MfaSetupStatus.COMPLETE);
         mfaDetail.setMfaType(mfaType.name());
         break;
 
       case AUTHENTICATOR:
         mfaDetail = generateAuthenticatorSecret();
         member.setMfaType(mfaType);
-        member.setMfaEnabled(true);
+        member.setMfaEnabled(mfaDetail.isEnabled());
         member.setMfaSecret(mfaDetail.getSecret());
+        break;
     }
     save(member);
     return mfaDetail;
@@ -127,11 +122,11 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   @Transactional
-  public boolean confirmMfa(String username, ConfirmMfaDto dto) {
+  public boolean confirmMfaSetup(String username, ConfirmMfaDto dto) {
     MfaType mfaType = MfaType.valueOf(dto.getMfaType());
     Member member = getMemberByEmailAddress(username);
     if (Objects.isNull(member)) {
-      throw new VerificationFailedException();
+      throw new MfaVerificationFailed();
     }
 
     if (mfaType == MfaType.AUTHENTICATOR) {
@@ -156,6 +151,7 @@ public class MemberServiceImpl implements MemberService {
             .secret(secret)
             .enabled(false)
             .mfaType(MfaType.AUTHENTICATOR.name())
+            .mfaSetupStatus(MfaSetupStatus.IN_PROGRESS)
             .build();
   }
 

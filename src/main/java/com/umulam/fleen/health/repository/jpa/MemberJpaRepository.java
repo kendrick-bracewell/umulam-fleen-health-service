@@ -17,11 +17,6 @@ public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
 
   @Modifying
   @Transactional
-  @Query("UPDATE Member m SET m.mfaEnabled = true, m.mfaSecret = :secret WHERE m.id = :id")
-  void enableTwoFa(@Param("id") Integer memberId, String secret);
-
-  @Modifying
-  @Transactional
   @Query("UPDATE Member m SET m.mfaEnabled = true WHERE m.id = :id")
   void reEnableTwoFa(@Param("id") Integer memberId);
 

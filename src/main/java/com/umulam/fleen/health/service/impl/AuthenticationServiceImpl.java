@@ -137,7 +137,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    *
    * <p>During the login or sign-in process, a access and refresh token with predefined authorities or roles is registered in the authentication context
    * of the user and will be replaced with the original authorities in the DB or store associated with the user's profile after successfully completing
-   * the authentication and its stages at {@link com.umulam.fleen.health.controller.VerificationController#validateMfa(FleenUser, ConfirmMfaDto) validateMfa}.
+   * the authentication and its stages at {@link com.umulam.fleen.health.controller.VerificationController#validateMfa(FleenUser, ConfirmMfaDto) validateSignInMfa}.
    * This predefined authorities assigned to the authentication context during the sign-in process is to make sure that the user is not allowed to perform
    * actions or access security protected features of the application if the authentication process is yet to be completed.</p>
    * <br/>
@@ -522,7 +522,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    * @throws InvalidVerificationCodeException if the OTP is not equal to what is currently available in the cache at {@link CacheService#get(String) get}
    */
   @Override
-  public SignInResponse validateMfa(FleenUser fleenUser, ConfirmMfaDto dto) {
+  @Transactional(readOnly = true)
+  public SignInResponse validateSignInMfa(FleenUser fleenUser, ConfirmMfaDto dto) {
     String username = fleenUser.getUsername();
     MfaType mfaType = MfaType.valueOf(dto.getMfaType());
     String code = dto.getCode();
@@ -1027,7 +1028,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       profileToken = profileTokenExists.get();
     }
 
-    System.out.println("Checking time " + addMinutesFromNow(10));
     profileToken.setResetPasswordToken(codeStr);
     profileToken.setResetPasswordTokenExpiryDate(addMinutesFromNow(10));
     profileToken.setCreatedOn(LocalDateTime.now());
