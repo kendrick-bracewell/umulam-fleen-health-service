@@ -29,6 +29,7 @@ import java.util.Objects;
 
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.AUTH_HEADER_PREFIX;
 import static com.umulam.fleen.health.service.impl.AuthenticationServiceImpl.getAuthCacheKey;
+import static com.umulam.fleen.health.util.FleenAuthorities.isAuthorityWhitelisted;
 
 @Slf4j
 @Component
@@ -81,13 +82,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String savedToken = (String) cacheService.get(key);
 
         if (jwtProvider.isTokenValid(token, userDetails)) {
-          if (cacheService.exists(key) && Objects.nonNull(savedToken)) {
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    null,
-                    userDetails.getAuthorities());
+          UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                  userDetails,
+                  null,
+                  userDetails.getAuthorities());
+          authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+          if (cacheService.exists(key) && Objects.nonNull(savedToken)) {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+          } else if (isAuthorityWhitelisted(userDetails.getAuthorities())) {
             SecurityContextHolder.getContext().setAuthentication(authentication);
           }
         }

@@ -12,6 +12,6 @@ public class EmailDetails {
   private String from;
   private String to;
   private String subject;
-  private String body;
+  private String htmlText;
   private String plainText;
 }

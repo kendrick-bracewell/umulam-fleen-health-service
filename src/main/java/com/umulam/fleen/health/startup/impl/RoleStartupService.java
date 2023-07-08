@@ -24,9 +24,9 @@ public class RoleStartupService implements StartupService<Role> {
   @EventListener(ApplicationReadyEvent.class)
   public void seedRecords() {
     try {
-//      if (true) {
-//        return;
-//      }
+      if (true) {
+        return;
+      }
       for (Role role : getRecords()) {
         Optional<Role> entry = repository.findByCode(role.getCode());
         if (entry.isPresent()) {

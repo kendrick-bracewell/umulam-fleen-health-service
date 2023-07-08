@@ -1,7 +1,9 @@
 package com.umulam.fleen.health.model.dto.authentication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.umulam.fleen.health.constant.authentication.VerificationType;
 import com.umulam.fleen.health.validator.EmailAddressExists;
+import com.umulam.fleen.health.validator.EnumValid;
 import lombok.*;
 
 import javax.validation.constraints.Email;
@@ -20,4 +22,9 @@ public class ForgotPasswordDto {
   @Email(message = "{signUp.emailAddress.format}")
   @JsonProperty("email_address")
   private String emailAddress;
+
+  @JsonProperty("verification_type")
+  @EnumValid(enumClass = VerificationType.class, message = "{verification.type}")
+  private String verificationType;
+
 }

@@ -105,4 +105,11 @@ public class MobileTextService {
             .findFirst();
   }
 
+  public Optional<SmsMessage> getForgotPasswordSmsMessage(MessageType messageType) {
+    return getSmsMessages()
+            .stream()
+            .filter(message -> message.getTitle().equals(messageType))
+            .findFirst();
+  }
+
 }

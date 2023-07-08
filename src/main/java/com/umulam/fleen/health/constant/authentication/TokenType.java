@@ -7,7 +7,7 @@ public enum TokenType {
 
   ACCESS_TOKEN("ACCESS_TOKEN"),
   REFRESH_TOKEN("REFRESH_TOKEN"),
-  RESET_PASSWORD("RESET_PASSWORD");
+  RESET_PASSWORD("RESET_PASSWORD_USER");
 
   private final String value;
 

@@ -23,5 +23,7 @@ public final class AuthenticationConstant {
   public static final String TOKEN_TYPE_KEY = "tokenType";
   public static final long ACCESS_TOKEN_VALIDITY = getTimeInMillis(60, 60, 5, 0);
   public static final long REFRESH_TOKEN_VALIDITY = getTimeInMillis(60, 60, 24, 2);
-  public static final long RESET_PASSWORD_TOKEN_VALIDITY = getTimeInMillis(0, 15, 0, 0);
+  public static final long RESET_PASSWORD_TOKEN_VALIDITY = getTimeInMillis(60, 15, 0, 0);
+  public static final String CLAIMS_USER_ID_KEY = "userId";
+  public static final String CLAIMS_AUTHORITY_KEY = "authorities";
 }

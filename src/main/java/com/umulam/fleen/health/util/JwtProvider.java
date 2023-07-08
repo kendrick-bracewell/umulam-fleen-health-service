@@ -2,7 +2,6 @@ package com.umulam.fleen.health.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.constant.authentication.TokenType;
-import com.umulam.fleen.health.model.domain.Role;
 import com.umulam.fleen.health.model.dto.authentication.JwtTokenDetails;
 import com.umulam.fleen.health.model.security.FleenUser;
 import io.jsonwebtoken.Claims;
@@ -17,7 +16,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.*;
@@ -92,8 +94,7 @@ public class JwtProvider {
   public String generateRefreshToken(FleenUser user, TokenType tokenType) {
     Map<String, Object> claims = new HashMap<>();
     claims.put(TOKEN_TYPE_KEY, tokenType.getValue());
-    claims.put("userId", user.getId());
-    claims.put("authorities", authoritiesToList(getRefreshTokenAuthorities()));
+    setBasicUserClaims(claims, user.getId(), authoritiesToList(getRefreshTokenAuthorities()));
 
     return createToken(user.getUsername(), claims, REFRESH_TOKEN_VALIDITY);
   }
@@ -101,8 +102,7 @@ public class JwtProvider {
   public String generateResetPasswordToken(FleenUser user) {
     Map<String, Object> claims = new HashMap<>();
     claims.put(TOKEN_TYPE_KEY, TokenType.RESET_PASSWORD);
-    claims.put("userId", user.getId());
-    claims.put("authorities", authoritiesToList(getResetPasswordAuthorities()));
+    setBasicUserClaims(claims, user.getId(), authoritiesToList(getResetPasswordAuthorities()));
 
     return createToken(user.getUsername(), claims, RESET_PASSWORD_TOKEN_VALIDITY);
   }
@@ -125,14 +125,18 @@ public class JwtProvider {
 
   public Map<String, Object> buildClaims(FleenUser user) {
     Map<String, Object> claims = new HashMap<>();
+    setBasicUserClaims(claims, user.getId(), authoritiesToList(user.getAuthorities()));
 
-    claims.put("userId", user.getId());
-    claims.put("authorities", authoritiesToList(user.getAuthorities()));
     claims.put("fullName", user.getFullName());
     claims.put("emailAddress", user.getEmailAddress());
     claims.put("profilePhoto", user.getProfilePhoto());
 
     return claims;
+  }
+
+  private void setBasicUserClaims(Map<String, Object> claims, Integer userId, String[] authorities) {
+    claims.put(CLAIMS_USER_ID_KEY, userId);
+    claims.put(CLAIMS_AUTHORITY_KEY, authorities);
   }
 
   public String[] authoritiesToList(Collection<? extends GrantedAuthority> authorities) {

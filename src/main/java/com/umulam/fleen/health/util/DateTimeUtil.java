@@ -52,17 +52,11 @@ public class DateTimeUtil {
             .longValue();
   }
 
-  public static Date addHoursFromNow(int hour) {
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(new Date());
-    cal.add(Calendar.HOUR_OF_DAY, hour);
-    return cal.getTime();
+  public static LocalDateTime addHoursFromNow(int hour) {
+    return LocalDateTime.now().plusHours(hour);
   }
 
-  public static Date addMinutesFromNow(int minute) {
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(new Date());
-    cal.add(Calendar.MINUTE, minute);
-    return cal.getTime();
+  public static LocalDateTime addMinutesFromNow(int minute) {
+    return LocalDateTime.now().plusMinutes(minute);
   }
 }

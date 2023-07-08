@@ -5,5 +5,6 @@ import lombok.Getter;
 @Getter
 public enum MessageType {
 
-  PRE_VERIFICATION;
+  PRE_VERIFICATION,
+  FORGOT_PASSWORD;
 }

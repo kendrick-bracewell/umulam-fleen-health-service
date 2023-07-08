@@ -3,6 +3,7 @@ package com.umulam.fleen.health.util;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,14 +34,22 @@ public class FleenAuthorities {
   }
 
   public static List<GrantedAuthority> getResetPasswordAuthorities() {
-    return List.of(new SimpleGrantedAuthority(ROLE_PREFIX.concat(RESET_PASSWORD.name())));
+    return List.of(new SimpleGrantedAuthority(ROLE_PREFIX.concat(RESET_PASSWORD_USER.name())));
   }
 
   public static List<GrantedAuthority> buildAuthorities(List<String> roles) {
     return roles
             .stream()
-            .map(role -> new SimpleGrantedAuthority(ROLE_PREFIX.concat(role)))
+            .map(role -> new SimpleGrantedAuthority(role.startsWith(ROLE_PREFIX) ? role : ROLE_PREFIX.concat(role)))
             .collect(Collectors.toList());
+  }
+
+  public static boolean isAuthorityWhitelisted(Collection<? extends GrantedAuthority> authorities) {
+    List<String> whitelistedAuthorities = List.of(RESET_PASSWORD_USER.name(), REFRESH_TOKEN_USER.name());
+    return authorities
+            .stream()
+            .map(role -> role.getAuthority().replace(ROLE_PREFIX, ""))
+            .anyMatch(whitelistedAuthorities::contains);
   }
 
 }

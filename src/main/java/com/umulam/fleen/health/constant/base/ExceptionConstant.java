@@ -10,4 +10,5 @@ public class ExceptionConstant {
   public static final String INVALID_USER = "Invalid User";
   public static final String PATH_URL = "path";
   public static final String FORGOT_PASSWORD_PROCESS_FAILED = "Unable to complete forgot password operation";
+  public static final String NO_EMAIL_FORGOT_PASSWORD_PROCESS_FAILED = "Unable to complete forgot password operation, no email provided.";
 }

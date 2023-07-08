@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "mail")
 public class EmailController {
 
-  public final EmailServiceImpl emailService;
+/*  public final EmailServiceImpl emailService;
   private final DirectoryService directoryService;
   private final GmailService gmailService;
 
@@ -50,5 +50,5 @@ public class EmailController {
   @GetMapping(value = "/forward")
   public Object forward() {
     return gmailService.enableEmailForwarding("umulam@volunux.com", "volunux@gmail.com");
-  }
+  }*/
 }

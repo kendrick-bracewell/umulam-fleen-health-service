@@ -19,6 +19,7 @@ import javax.validation.Valid;
 
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.AUTH_HEADER_KEY;
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.AUTH_HEADER_PREFIX;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.PASSWORD_CHANGED_UPDATED;
 
 @Slf4j
 @RestController
@@ -38,18 +39,18 @@ public class VerificationController {
     return authenticationService.completeSignUp(dto, user);
   }
 
-  @PostMapping(value = "/resend-verification-code")
+  @PostMapping(value = "/resend-pre-verification-code")
   @PreAuthorize("hasAnyRole('PRE_VERIFIED_USER', 'PRE_VERIFIED_PROFESSIONAL', 'PRE_VERIFIED_BUSINESS')")
-  public FleenHealthResponse resendVerificationCode(@AuthenticationPrincipal FleenUser user,
+  public FleenHealthResponse resendPreVerificationCode(@AuthenticationPrincipal FleenUser user,
                                                     @Valid @RequestBody ResendVerificationCodeDto dto) {
-    return authenticationService.resendVerificationCode(dto, user);
+    return authenticationService.resendPreVerificationCode(dto, user);
   }
 
   @GetMapping(value = "/refresh-token")
   @PreAuthorize("hasRole('REFRESH_TOKEN_USER')")
   public SignInResponse refreshToken(@AuthenticationPrincipal FleenUser user,
                                      @RequestHeader(value = AUTH_HEADER_KEY) String token) {
-    token = StringUtils.removeStartIgnoreCase(token, AUTH_HEADER_PREFIX.concat(""));
+    token = StringUtils.removeStartIgnoreCase(token, AUTH_HEADER_PREFIX.concat(" "));
     return authenticationService.refreshToken(user.getUsername(), token);
   }
 
@@ -61,10 +62,10 @@ public class VerificationController {
   }
 
   @PostMapping(value = "/change-password")
-  @PreAuthorize("hasRole('RESET_PASSWORD')")
+  @PreAuthorize("hasRole('RESET_PASSWORD_USER')")
   public FleenHealthResponse changePassword(@AuthenticationPrincipal FleenUser user,
                                             @Valid @RequestBody ChangePasswordDto dto) {
     authenticationService.changePassword(user.getUsername(), dto);
-    return new FleenHealthResponse("Success");
+    return new FleenHealthResponse(PASSWORD_CHANGED_UPDATED);
   }
 }

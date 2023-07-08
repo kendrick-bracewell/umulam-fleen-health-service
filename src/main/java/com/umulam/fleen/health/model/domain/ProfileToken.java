@@ -6,7 +6,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Builder
 @Getter
@@ -26,8 +25,7 @@ public class ProfileToken {
   private String resetPasswordToken;
 
   @Column(name = "reset_password_token_expiry_date")
-  @Temporal(TemporalType.DATE)
-  private Date resetPasswordTokenExpiryDate;
+  private LocalDateTime resetPasswordTokenExpiryDate;
 
   @OneToOne(targetEntity = Member.class, fetch = FetchType.EAGER)
   @JoinColumn(name = "member_id", nullable = false)

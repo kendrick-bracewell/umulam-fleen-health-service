@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static com.umulam.fleen.health.constant.base.ExceptionConstant.FAILED_MAIL_DELIVERY;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.FAIL_MAIL_DELIVERY;
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.LOGO_FILE_NAME;
 
 @Slf4j
@@ -56,7 +57,7 @@ public class EmailServiceImpl {
     mailMessage.setFrom(details.getFrom());
     mailMessage.setTo(details.getTo());
     mailMessage.setSubject(details.getSubject());
-    mailMessage.setText(details.getBody());
+    mailMessage.setText(details.getPlainText());
     return mailMessage;
   }
 
@@ -97,11 +98,9 @@ public class EmailServiceImpl {
 
       helper.setFrom(details.getFrom());
       helper.setTo(details.getTo());
-      helper.setText(details.getBody(), true);
       helper.setSubject(details.getSubject());
-      InputStreamSource data =
-              new ByteArrayResource("".getBytes());
-      helper.addAttachment(LOGO_FILE_NAME, data);
+
+      setEmailBody(helper, details);
       mailSender.send(message);
 
     } catch (MessagingException ex) {
@@ -171,9 +170,8 @@ public class EmailServiceImpl {
 
       helper.setFrom(details.getFrom());
       helper.setTo(details.getTo());
-      helper.setText(details.getBody(), true);
-      helper.setText(details.getPlainText(), details.getBody());
       helper.setSubject(details.getSubject());
+      setEmailBody(helper, details);
       return helper;
     } catch (MessagingException ex) {
       log.error(ex.getMessage(), ex);
@@ -181,5 +179,20 @@ public class EmailServiceImpl {
     return null;
   }
 
-
+  private void setEmailBody(MimeMessageHelper helper, EmailDetails details) {
+    try {
+      if (Objects.nonNull(details.getPlainText())
+          && Objects.nonNull(details.getHtmlText())) {
+        helper.setText(details.getPlainText(), details.getHtmlText());
+      } else if (Objects.nonNull(details.getHtmlText())) {
+        helper.setText(details.getHtmlText(), true);
+      } else if (Objects.nonNull(details.getPlainText())) {
+        helper.setText(details.getPlainText());
+      }
+      return;
+    } catch (MessagingException ex) {
+      log.error(ex.getMessage(), ex);
+    }
+    throw new MailSendException(FAIL_MAIL_DELIVERY);
+  }
 }

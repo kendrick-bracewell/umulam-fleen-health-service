@@ -22,11 +22,12 @@ public class PhoneNumberValidator implements ConstraintValidator<MobilePhoneNumb
   public boolean isValid(String number, ConstraintValidatorContext context) {
     if (!isNull(number)) {
       PhoneNumberUtil util = PhoneNumberUtil.getInstance();
-      PhoneNumber phoneNumber = null;
+      PhoneNumber phoneNumber;
       try {
         phoneNumber = util.parse(number, null);
       } catch (NumberParseException ex) {
         log.error(ex.getMessage(), ex);
+        return false;
       }
       return util.isValidNumber(phoneNumber);
     }

@@ -11,6 +11,8 @@ public class FleenHealthConstant {
   public static final String PRE_VERIFICATION_TEMPLATE_NAME = "pre-verification.ftl";
   public static final String LOGO_FILE_NAME = "logo.png";
   public static final String VERIFICATION_CODE_MESSAGE = "Verification code sent";
-
   public static final String FORGOT_PASSWORD_TEMPLATE_NAME = "forgot-password.ftl";
+  public static final String FAIL_MAIL_DELIVERY = "Mail Delivery failed";
+  public static final String PASSWORD_CHANGED_UPDATED = "Password changed and updated successfully";
+
 }

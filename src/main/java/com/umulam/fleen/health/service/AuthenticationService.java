@@ -16,7 +16,7 @@ public interface AuthenticationService {
   @Transactional
   SignUpResponse completeSignUp(VerificationCodeDto dto, FleenUser user);
 
-  FleenHealthResponse resendVerificationCode(ResendVerificationCodeDto dto, FleenUser user);
+  FleenHealthResponse resendPreVerificationCode(ResendVerificationCodeDto dto, FleenUser user);
 
   void signOut(String username);
 

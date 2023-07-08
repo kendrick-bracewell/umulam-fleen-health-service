@@ -22,9 +22,9 @@ public class ProfileVerificationMessageStartupService implements StartupService<
   @EventListener(ApplicationReadyEvent.class)
   public void seedRecords() {
     try {
-//      if (true) {
-//        return;
-//      }
+      if (true) {
+        return;
+      }
       for (ProfileVerificationMessage verificationMessage : getRecords()) {
 
         ProfileVerificationMessage entry = ProfileVerificationMessage.builder()

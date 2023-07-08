@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.repository.jpa;
 
+import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.ProfileToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
