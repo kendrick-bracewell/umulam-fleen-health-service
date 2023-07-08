@@ -30,7 +30,8 @@ public class FleenUser implements UserDetails {
   private String phoneNumber;
   private String password;
   private Collection<? extends GrantedAuthority> authorities;
-  private String fullName;
+  private String firstName;
+  private String lastName;
   private String profilePhoto;
   private String status;
   private boolean mfaEnabled;
@@ -53,8 +54,8 @@ public class FleenUser implements UserDetails {
             .status(member.getMemberStatus().getCode())
             .build();
 
-    String fullName = member.getFirstName() + " " + member.getLastName();
-    user.setFullName(fullName);
+    user.setFirstName(member.getFirstName());
+    user.setLastName(member.getLastName());
     user.setProfilePhoto(member.getProfilePhoto());
     user.setMfaEnabled(member.isMfaEnabled());
     user.setMfaType(member.getMfaType());

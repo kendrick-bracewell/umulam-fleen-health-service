@@ -127,7 +127,8 @@ public class JwtProvider {
     Map<String, Object> claims = new HashMap<>();
     setBasicUserClaims(claims, user.getId(), authoritiesToList(user.getAuthorities()));
 
-    claims.put("fullName", user.getFullName());
+    claims.put("firstName", user.getFirstName());
+    claims.put("lastName", user.getLastName());
     claims.put("emailAddress", user.getEmailAddress());
     claims.put("profilePhoto", user.getProfilePhoto());
 

@@ -15,5 +15,7 @@ public class JwtTokenDetails {
   private String[] authorities;
   private Integer userId;
   private String status;
+  private String firstName;
+  private String lastName;
 
 }

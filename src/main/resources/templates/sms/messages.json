@@ -1,10 +1,10 @@
 [
   {
     "title": "PRE_VERIFICATION",
-    "message": "Hi, kindly use this code {0} to complete the verification process"
+    "body": "Hi, kindly use this code {0} to complete the verification process"
   },
   {
     "title": "FORGOT_PASSWORD",
-    "message": "Hi, kindly use this code {0} to complete the reset your password. If you didn't initiate this process, kindly ignore this message."
+    "body": "Hi, kindly use this code {0} to complete the reset your password. If you didn't initiate this process, kindly ignore this message."
   }
 ]

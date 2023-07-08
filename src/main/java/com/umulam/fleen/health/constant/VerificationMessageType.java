@@ -3,8 +3,9 @@ package com.umulam.fleen.health.constant;
 import lombok.Getter;
 
 @Getter
-public enum MessageType {
+public enum VerificationMessageType {
 
   PRE_VERIFICATION,
-  FORGOT_PASSWORD;
+  FORGOT_PASSWORD,
+  PRE_AUTHENTICATION;
 }

@@ -5,7 +5,7 @@ import com.amazonaws.services.sns.model.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umulam.fleen.health.constant.MessageType;
+import com.umulam.fleen.health.constant.VerificationMessageType;
 import com.umulam.fleen.health.model.json.SmsMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -98,17 +98,10 @@ public class MobileTextService {
     return Collections.emptyList();
   }
 
-  public Optional<SmsMessage> getPreVerificationSmsMessage(MessageType messageType) {
+  public Optional<SmsMessage> getVerificationSmsMessage(VerificationMessageType verificationMessageType) {
     return getSmsMessages()
             .stream()
-            .filter(message -> message.getTitle().equals(messageType))
-            .findFirst();
-  }
-
-  public Optional<SmsMessage> getForgotPasswordSmsMessage(MessageType messageType) {
-    return getSmsMessages()
-            .stream()
-            .filter(message -> message.getTitle().equals(messageType))
+            .filter(message -> message.getTitle().equals(verificationMessageType))
             .findFirst();
   }
 
