@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface AuthenticationService {
 
+  @Transactional
   SignUpResponse signUp(SignUpDto dto);
 
   @Transactional
@@ -20,17 +21,19 @@ public interface AuthenticationService {
 
   FleenHealthResponse resendPreAuthenticationCode(ResendVerificationCodeDto dto, FleenUser user);
 
+  @Transactional(readOnly = true)
   void signOut(String username);
 
   SignInResponse validateSignInMfa(FleenUser user, ConfirmMfaDto dto);
 
   Authentication authenticate(String username, String password);
 
+  @Transactional
   SignInResponse signIn(SignInDto dto);
 
-  abstract String createAccessToken(FleenUser user);
+  String createAccessToken(FleenUser user);
 
-  abstract String createRefreshToken(FleenUser user);
+  String createRefreshToken(FleenUser user);
 
   void saveToken(String subject, String token);
 
@@ -40,10 +43,13 @@ public interface AuthenticationService {
 
   void saveRefreshToken(String subject, String token);
 
+  @Transactional
   void forgotPassword(ForgotPasswordDto dto);
 
+  @Transactional(readOnly = true)
   InitiatePasswordChangeResponse validateResetPasswordCode(ResetPasswordDto dto);
 
+  @Transactional
   void changePassword(String username, ChangePasswordDto dto);
 
   ReCaptchaResponse verifyReCaptcha(String reCaptchaToken);
