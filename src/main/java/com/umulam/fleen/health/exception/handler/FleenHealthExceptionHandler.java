@@ -10,6 +10,7 @@ import com.umulam.fleen.health.exception.memberstatus.MemberStatusNotFoundExcept
 import com.umulam.fleen.health.exception.role.RoleDuplicateException;
 import com.umulam.fleen.health.exception.role.RoleNotFoundException;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import lombok.extern.slf4j.Slf4j;
@@ -21,11 +22,13 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,7 +102,8 @@ public class FleenHealthExceptionHandler {
           MalformedJwtException.class,
           SignatureException.class
   })
-  public Object handleUnauthorized() {
+  public Object handleUnauthorized(JwtException ex) {
+    log.error(ex.getMessage(), ex);
     return buildErrorMap(INVALID_USER, UNAUTHORIZED);
   }
 
@@ -116,20 +120,31 @@ public class FleenHealthExceptionHandler {
 
   @ResponseStatus(value = BAD_REQUEST)
   @ExceptionHandler(value = { HttpMediaTypeNotSupportedException.class })
-  public Object handleUnsupportedMediaType() {
+  public Object handleUnsupportedMediaType(HttpMediaTypeNotSupportedException ex) {
+    log.error(ex.getMessage(), ex);
     return buildErrorMap(UNSUPPORTED_CONTENT_TYPE, BAD_REQUEST);
   }
 
   @ResponseStatus(value = BAD_REQUEST)
   @ExceptionHandler(value = { HttpRequestMethodNotSupportedException.class })
-  public Object handleUnsupportedRequestMethod() {
+  public Object handleUnsupportedRequestMethod(HttpRequestMethodNotSupportedException ex) {
+    log.error(ex.getMessage(), ex);
     return buildErrorMap(UNSUPPORTED_HTTP_REQUEST_METHOD, BAD_REQUEST);
   }
 
   @ResponseStatus(value = BAD_REQUEST)
   @ExceptionHandler(value = { HttpMessageNotReadableException.class })
-  public Object handleNotReadable() {
+  public Object handleNotReadable(HttpMessageNotReadableException ex) {
+    log.error(ex.getMessage(), ex);
     return buildErrorMap(INVALID_REQUEST_BODY, BAD_REQUEST);
+  }
+
+  @ResponseStatus(value = BAD_REQUEST)
+  @ExceptionHandler(value = { MissingServletRequestParameterException.class })
+  public Object handleMissingParameter(MissingServletRequestParameterException ex) {
+    log.error(ex.getMessage(), ex);
+    String message = MessageFormat.format(MISSING_HTTP_REQUEST_PARAMETERS, ex.getParameterName(), ex.getParameterType());
+    return buildErrorMap(message, BAD_REQUEST);
   }
 
   @ResponseStatus(value = INTERNAL_SERVER_ERROR)

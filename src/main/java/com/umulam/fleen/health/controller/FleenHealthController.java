@@ -5,6 +5,7 @@ import com.umulam.fleen.health.model.response.authentication.CreateEncodedPasswo
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.service.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +31,8 @@ public class FleenHealthController {
     return new FleenHealthResponse(SIGN_OUT);
   }
 
-  @GetMapping
+  @GetMapping(value = "/get-encoded-password")
+//  @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'SUPER_ADMINISTRATOR')")
   public CreateEncodedPasswordResponse createEncodedPassword(@RequestParam(name = "password") String password) {
     String encodedPassword = authenticationService.createEncodedPassword(password);
     return new CreateEncodedPasswordResponse(encodedPassword, password);
