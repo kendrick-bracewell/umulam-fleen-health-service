@@ -11,7 +11,7 @@ public class ExceptionConstant {
   public static final String FAILED_MAIL_DELIVERY = "Mail delivery failed";
   public static final String INVALID_USER = "Invalid User";
   public static final String PATH_URL = "path";
-  public static final String MISSING_HTTP_REQUEST_PARAMETERS = "Required parameter '{0}' of type '{1}' is missing";
+  public static final String MISSING_HTTP_REQUEST_PARAMETERS = "Required parameter '%s' of type '%s' is missing";
 
 
 }

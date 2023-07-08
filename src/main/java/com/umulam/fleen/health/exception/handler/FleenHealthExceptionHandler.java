@@ -143,7 +143,7 @@ public class FleenHealthExceptionHandler {
   @ExceptionHandler(value = { MissingServletRequestParameterException.class })
   public Object handleMissingParameter(MissingServletRequestParameterException ex) {
     log.error(ex.getMessage(), ex);
-    String message = MessageFormat.format(MISSING_HTTP_REQUEST_PARAMETERS, ex.getParameterName(), ex.getParameterType());
+    String message = String.format(MISSING_HTTP_REQUEST_PARAMETERS, ex.getParameterName(), ex.getParameterType());
     return buildErrorMap(message, BAD_REQUEST);
   }
 
