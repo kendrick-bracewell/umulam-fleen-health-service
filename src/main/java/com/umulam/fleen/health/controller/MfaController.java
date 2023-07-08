@@ -7,11 +7,9 @@ import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
 import com.umulam.fleen.health.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -20,6 +18,7 @@ import static com.umulam.fleen.health.constant.base.FleenHealthConstant.*;
 @Slf4j
 @RestController
 @RequestMapping(value = "mfa")
+@PreAuthorize("hasAnyRole('USER', 'PROFESSIONAL', 'BUSINESS')")
 public class MfaController {
 
   private final MemberService memberService;
