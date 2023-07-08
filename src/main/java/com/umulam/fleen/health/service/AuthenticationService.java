@@ -18,6 +18,8 @@ public interface AuthenticationService {
 
   FleenHealthResponse resendPreVerificationCode(ResendVerificationCodeDto dto, FleenUser user);
 
+  FleenHealthResponse resendPreAuthenticationCode(ResendVerificationCodeDto dto, FleenUser user);
+
   void signOut(String username);
 
   SignInResponse validateSignInMfa(FleenUser user, ConfirmMfaDto dto);

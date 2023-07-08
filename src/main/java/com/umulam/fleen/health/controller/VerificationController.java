@@ -61,6 +61,13 @@ public class VerificationController {
     return authenticationService.validateSignInMfa(user, dto);
   }
 
+  @PostMapping(value = "/resend-pre-authentication-code")
+  @PreAuthorize("hasAnyRole('PRE_AUTHENTICATED_USER')")
+  public FleenHealthResponse resendPreAuthenticationCode(@AuthenticationPrincipal FleenUser user,
+                                                       @Valid @RequestBody ResendVerificationCodeDto dto) {
+    return authenticationService.resendPreAuthenticationCode(dto, user);
+  }
+
   @PostMapping(value = "/reset-change-password")
   @PreAuthorize("hasRole('RESET_PASSWORD_USER')")
   public FleenHealthResponse resetAndChangePassword(@AuthenticationPrincipal FleenUser user,

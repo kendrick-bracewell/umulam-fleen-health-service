@@ -55,7 +55,8 @@ import static com.umulam.fleen.health.constant.authentication.MfaType.*;
 import static com.umulam.fleen.health.constant.authentication.RoleType.*;
 import static com.umulam.fleen.health.constant.authentication.TokenType.ACCESS_TOKEN;
 import static com.umulam.fleen.health.constant.authentication.TokenType.REFRESH_TOKEN;
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.*;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.VERIFICATION_CODE_KEY;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.VERIFICATION_CODE_MESSAGE;
 import static com.umulam.fleen.health.util.DateTimeUtil.addMinutesFromNow;
 import static com.umulam.fleen.health.util.DateTimeUtil.toHours;
 import static com.umulam.fleen.health.util.FleenAuthorities.*;
@@ -439,6 +440,31 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     sendVerificationMessage(preVerification, verificationType);
     savePreVerificationOtp(user.getUsername(), otp);
+    return new FleenHealthResponse(VERIFICATION_CODE_MESSAGE);
+  }
+
+  /**
+   * <p>User can request for a new OTP if they are unable to complete the sign-in for example because the OTP they want to use to complete the sign-in
+   * {@link #validateSignInMfa(FleenUser, ConfirmMfaDto) validateSignInMfa} has expired.</p>
+   * <br/>
+   *
+   * <p>Where the OTP will be sent will be decided by the {@link ResendVerificationCodeDto#getVerificationType() verificationType} and this can be through
+   * {@link VerificationType#EMAIL EMAIL} or {@link VerificationType#SMS SMS}.</p>
+   * <br/>
+   *
+   * @param dto contains phone number or email address to send OTP to, to complete the verification process
+   * @param user the user wanting to complete the verification process
+   * @return {@link FleenHealthResponse} if the code has been sent successfully
+   * @throws VerificationFailedException if there's already an existing OTP associated with the user profile
+   */
+  @Override
+  public FleenHealthResponse resendPreAuthenticationCode(ResendVerificationCodeDto dto, FleenUser user) {
+    VerificationType verificationType = VerificationType.valueOf(dto.getVerificationType());
+    String otp = mfaService.generateVerificationOtp(6);
+    PreVerificationOrAuthenticationRequest preVerification = createPreAuthenticationRequest(otp, user);
+
+    sendVerificationMessage(preVerification, verificationType);
+    savePreAuthenticationOtp(user.getUsername(), otp);
     return new FleenHealthResponse(VERIFICATION_CODE_MESSAGE);
   }
 
