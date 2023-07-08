@@ -307,7 +307,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     member.setMemberStatus(memberStatus);
     member.setVerificationStatus(verificationStatus);
     member.setUserType(userType);
-    member.setPassword(passwordEncoder.encode(member.getPassword()));
+    member.setPassword(createEncodedPassword(member.getPassword()));
     memberService.save(member);
 
     FleenUser user = initAuthentication(member);
@@ -1025,7 +1025,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       profileTokenService.save(profileToken);
     }
 
-    member.setPassword(passwordEncoder.encode(dto.getPassword()));
+    member.setPassword(createEncodedPassword(dto.getPassword()));
     memberService.save(member);
   }
 
@@ -1127,8 +1127,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    * <p>When a user completes a sign up process, the profile of the user is initialized with some basic details</p>
    * <br/>
    *
-   * @param member the details of the user that is about to complete a sign up process
-   * @return {@link CompleteUserSignUpRequest} details including the member about to complete the sign up process and its basic details
+   * @param member the details of the user that is about to complete a sign-up process
+   * @return {@link CompleteUserSignUpRequest} details including the member about to complete the sign-up process and its basic details
    */
   private CompleteUserSignUpRequest createCompleteUserSignUpRequest(Member member) {
     CompleteUserSignUpRequest request = CompleteUserSignUpRequest.builder().build();
@@ -1151,4 +1151,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     return request;
   }
 
+  @Override
+  public String createEncodedPassword(String rawPassword) {
+    return passwordEncoder.encode(rawPassword);
+  }
 }

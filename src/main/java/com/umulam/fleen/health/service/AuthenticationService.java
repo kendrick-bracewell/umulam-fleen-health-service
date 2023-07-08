@@ -45,4 +45,6 @@ public interface AuthenticationService {
   void changePassword(String username, ChangePasswordDto dto);
 
   ReCaptchaResponse verifyReCaptcha(String reCaptchaToken);
+
+  String createEncodedPassword(String rawPassword);
 }
