@@ -76,14 +76,15 @@ public class BusinessServiceImpl implements BusinessService {
     if (businessExists.isPresent()) {
       Business existingBusiness = businessExists.get();
       business.setId(existingBusiness.getId());
-    } else {
       business.setMember(member);
+      business.setCountry(existingBusiness.getCountry());
+    } else {
+      Country country = countryService.getCountry(business.getCountry().getId());
+      business.setMember(member);
+      business.setCountry(country);
     }
 
-    Business savedBusiness = repository.save(business);
-    Country country = countryService.getCountry(business.getCountry().getId());
-    business.setCountry(country);
-    return savedBusiness;
+    return repository.save(business);
   }
 
   @Override

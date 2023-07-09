@@ -27,6 +27,7 @@ public class MemberMapper {
             .userType(entry.getUserType().name())
             .emailAddressVerified(entry.isEmailAddressVerified())
             .phoneNumberVerified(entry.isPhoneNumberVerified())
+            .profileVerificationStatus(entry.getVerificationStatus().name())
             .build();
   }
 
