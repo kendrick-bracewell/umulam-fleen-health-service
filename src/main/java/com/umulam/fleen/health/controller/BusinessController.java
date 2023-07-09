@@ -31,7 +31,7 @@ public class BusinessController {
   }
 
   @PutMapping(value = "/verification/update-details")
-  public BusinessView updateDetails(@Valid @RequestBody UpdateBusinessDetailDto dto, @AuthenticationPrincipal FleenUser user) {
+  public Object updateDetails(@Valid @RequestBody UpdateBusinessDetailDto dto, @AuthenticationPrincipal FleenUser user) {
     Business business = businessService.updateDetails(dto, user);
     BusinessView businessView = businessService.toBusinessView(business);
     businessService.setVerificationDocument(businessView);

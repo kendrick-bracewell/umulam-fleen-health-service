@@ -13,22 +13,25 @@ public class MemberMapper {
 
   private MemberMapper() {}
 
-  public static MemberView toMemberView(@NonNull Member entry) {
-    return MemberView.builder()
-            .id(entry.getId())
-            .firstName(entry.getFirstName())
-            .lastName(entry.getLastName())
-            .emailAddress(entry.getEmailAddress())
-            .phoneNumber(entry.getPhoneNumber())
-            .memberStatus(MemberStatusMapper.toMemberStatusView(entry.getMemberStatus()))
-            .mfaType(entry.getMfaType().name())
-            .mfaEnabled(entry.isMfaEnabled())
-            .profilePhoto(entry.getProfilePhoto())
-            .userType(entry.getUserType().name())
-            .emailAddressVerified(entry.isEmailAddressVerified())
-            .phoneNumberVerified(entry.isPhoneNumberVerified())
-            .profileVerificationStatus(entry.getVerificationStatus().name())
-            .build();
+  public static MemberView toMemberView(Member entry) {
+    if (Objects.nonNull(entry)) {
+      return MemberView.builder()
+              .id(entry.getId())
+              .firstName(entry.getFirstName())
+              .lastName(entry.getLastName())
+              .emailAddress(entry.getEmailAddress())
+              .phoneNumber(entry.getPhoneNumber())
+              .memberStatus(MemberStatusMapper.toMemberStatusView(entry.getMemberStatus()))
+              .mfaType(entry.getMfaType().name())
+              .mfaEnabled(entry.isMfaEnabled())
+              .profilePhoto(entry.getProfilePhoto())
+              .userType(entry.getUserType().name())
+              .emailAddressVerified(entry.isEmailAddressVerified())
+              .phoneNumberVerified(entry.isPhoneNumberVerified())
+              .profileVerificationStatus(entry.getVerificationStatus().name())
+              .build();
+    }
+    return null;
   }
 
   public static List<MemberView> toMemberViews(List<Member> entries) {

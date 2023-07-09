@@ -13,15 +13,18 @@ public class VerificationDocumentMapper {
 
   private VerificationDocumentMapper() {}
 
-  public static VerificationDocumentView toVerificationDocumentView(@NonNull VerificationDocument entry) {
-    return VerificationDocumentView.builder()
-            .id(entry.getId())
-            .documentType(entry.getVerificationDocumentType().name())
-            .filename(entry.getFilename())
-            .link(entry.getLink())
-            .createdOn(entry.getCreatedOn())
-            .updatedOn(entry.getUpdatedOn())
-            .build();
+  public static VerificationDocumentView toVerificationDocumentView(VerificationDocument entry) {
+    if (Objects.nonNull(entry)) {
+      return VerificationDocumentView.builder()
+              .id(entry.getId())
+              .documentType(entry.getVerificationDocumentType().name())
+              .filename(entry.getFilename())
+              .link(entry.getLink())
+              .createdOn(entry.getCreatedOn())
+              .updatedOn(entry.getUpdatedOn())
+              .build();
+    }
+    return null;
   }
 
   public static List<VerificationDocumentView> toVerificationDocumentViews(List<VerificationDocument> entries) {
