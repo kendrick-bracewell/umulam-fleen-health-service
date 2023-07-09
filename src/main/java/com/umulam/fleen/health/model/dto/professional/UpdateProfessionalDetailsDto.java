@@ -28,13 +28,14 @@ public class UpdateProfessionalDetailsDto {
   @JsonProperty("years_of_experience")
   private String yearsOfExperience;
 
+  @NotNull(message = "{professional.areaOfExpertise.notEmpty}")
   @Size(max = 2500, message = "{professional.areaOfExpertise.size}")
   @JsonProperty("area_of_expertise")
   private String areaOfExpertise;
 
-  @NotBlank(message = "{business.country.notEmpty}")
-  @IsNumber(message = "{business.country.isNumber}")
-  @CountryExists(message = "{business.country.exists}")
+  @NotBlank(message = "{professional.country.notEmpty}")
+  @IsNumber(message = "{professional.country.isNumber}")
+  @CountryExists(message = "{professional.country.exists}")
   private String country;
 
   public Professional toProfessional() {
