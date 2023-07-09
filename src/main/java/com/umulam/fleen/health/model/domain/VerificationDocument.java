@@ -32,8 +32,8 @@ public class VerificationDocument {
   @Column(name = "link", nullable = false, length = 500)
   private String link;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "member_id", referencedColumnName = "id")
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "member_id", referencedColumnName = "id", nullable = false)
   private Member member;
 
   @CreationTimestamp

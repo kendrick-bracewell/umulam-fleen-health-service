@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.service;
 
+import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.dto.authentication.ConfirmMfaDto;
 import com.umulam.fleen.health.model.dto.authentication.MfaTypeDto;
@@ -35,4 +36,6 @@ public interface MemberService {
   boolean confirmMfaSetup(String username, ConfirmMfaDto dto);
 
   void updatePassword(String username, UpdatePasswordDto dto);
+
+  ProfileVerificationStatus getVerificationStatus(Integer memberId);
 }

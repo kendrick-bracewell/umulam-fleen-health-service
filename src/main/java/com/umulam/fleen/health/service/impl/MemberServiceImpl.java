@@ -2,6 +2,7 @@ package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.constant.authentication.MfaSetupStatus;
 import com.umulam.fleen.health.constant.authentication.MfaType;
+import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.authentication.*;
 import com.umulam.fleen.health.exception.member.UpdatePasswordFailedException;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
@@ -25,68 +26,68 @@ import java.util.Objects;
 @Service
 public class MemberServiceImpl implements MemberService {
 
-  private final MemberJpaRepository memberJpaRepository;
+  private final MemberJpaRepository repository;
   private final MfaService mfaService;
   private final PasswordEncoder passwordEncoder;
 
-  public MemberServiceImpl(MemberJpaRepository memberJpaRepository,
+  public MemberServiceImpl(MemberJpaRepository repository,
                            MfaService mfaService,
                            PasswordEncoder passwordEncoder) {
-    this.memberJpaRepository = memberJpaRepository;
+    this.repository = repository;
     this.mfaService = mfaService;
     this.passwordEncoder = passwordEncoder;
   }
 
   @Override
   public Member getMemberByEmailAddress(String emailAddress) {
-    return memberJpaRepository
+    return repository
             .findByEmailAddress(emailAddress)
             .orElse(null);
   }
 
   @Override
   public boolean isMemberExists(@NonNull String emailAddress) {
-    return memberJpaRepository.findByEmailAddress(emailAddress).isPresent();
+    return repository.findByEmailAddress(emailAddress).isPresent();
   }
 
   @Override
   public boolean isEmailAddressExists(String emailAddress) {
-    return memberJpaRepository.existsByEmailAddress(emailAddress);
+    return repository.existsByEmailAddress(emailAddress);
   }
 
   @Override
   public boolean isPhoneNumberExists(String phoneNumber) {
-    return memberJpaRepository.existsByPhoneNumber(phoneNumber);
+    return repository.existsByPhoneNumber(phoneNumber);
   }
 
   @Override
   @Transactional
   public void reEnableMfa(Integer memberId) {
-    memberJpaRepository.reEnableTwoFa(memberId);
+    repository.reEnableTwoFa(memberId);
   }
 
   @Override
   @Transactional
   public void disableMfa(Integer memberId) {
-    memberJpaRepository.disableTwoFa(memberId);
+    repository.disableTwoFa(memberId);
   }
 
   @Override
   public String getTwoFaSecret(Integer memberId) {
-    return memberJpaRepository.getTwoFaSecret(memberId);
+    return repository.getTwoFaSecret(memberId);
   }
 
   @Override
   @Transactional
   public Member save(Member member) {
-    return memberJpaRepository.save(member);
+    return repository.save(member);
   }
 
   @Override
   @Transactional
   public MfaDetail setupMfa(Integer memberId, MfaTypeDto mfaTypeDto) {
     MfaType mfaType = MfaType.valueOf(mfaTypeDto.getMfaType());
-    Member member = memberJpaRepository
+    Member member = repository
             .findById(memberId)
             .orElseThrow(() -> new UserNotFoundException(String.valueOf(memberId)));
     MfaDetail mfaDetail = new MfaDetail();
@@ -166,6 +167,11 @@ public class MemberServiceImpl implements MemberService {
       throw new UpdatePasswordFailedException();
     }
 
-    memberJpaRepository.updatePassword(member.getId(), passwordEncoder.encode(dto.getPassword()));
+    repository.updatePassword(member.getId(), passwordEncoder.encode(dto.getPassword()));
+  }
+
+  @Override
+  public ProfileVerificationStatus getVerificationStatus(Integer memberId) {
+    return repository.getProfileVerificationStatus(memberId);
   }
 }

@@ -21,5 +21,6 @@ public class FleenHealthConstant {
   public static final String MFA_DISABLED = "Multi-Factor Authentication (MFA) is disabled";
   public static final String SIGN_OUT = "Sign out successful";
   public static final String VERIFICATION_DOCUMENT_UPDATED = "Verification documents updated";
+  public static final String REQUEST_FOR_VERIFICATION = "Request for verification In Progress";
 
 }

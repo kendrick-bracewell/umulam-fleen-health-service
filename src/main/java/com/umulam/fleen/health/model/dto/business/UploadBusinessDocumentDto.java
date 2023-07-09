@@ -64,7 +64,7 @@ public class UploadBusinessDocumentDto {
 
     if (Objects.nonNull(taxIdentification)) {
       UpdateVerificationDocumentRequest request = new UpdateVerificationDocumentRequest();
-      request.setDocumentLink(registrationDocument);
+      request.setDocumentLink(taxIdentification);
       request.setVerificationDocumentType(VerificationDocumentType.BUSINESS_TAX_IDENTIFICATION);
       documents.add(request);
     }

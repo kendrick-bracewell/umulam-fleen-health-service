@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.service;
 
+import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.model.domain.Business;
 import com.umulam.fleen.health.model.dto.business.UpdateBusinessDetailDto;
 import com.umulam.fleen.health.model.dto.business.UploadBusinessDocumentDto;
@@ -19,9 +20,10 @@ public interface BusinessService {
   @Transactional
   void uploadDocuments(UploadBusinessDocumentDto dto, FleenUser user);
 
-  Object checkVerificationStatus();
+  ProfileVerificationStatus checkVerificationStatus(FleenUser user);
 
-  Object requestForVerification(FleenUser user);
+  @Transactional
+  void requestForVerification(FleenUser user);
 
   @Transactional(readOnly = true)
   BusinessView toBusinessView(Business entry);

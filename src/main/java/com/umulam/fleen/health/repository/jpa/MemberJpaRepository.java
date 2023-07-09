@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.repository.jpa;
 
+import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.model.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -32,6 +33,9 @@ public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
   @Transactional
   @Query("UPDATE Member m SET m.password = :password WHERE m.id = :id")
   void updatePassword(@Param("id") Integer memberId, String password);
+
+  @Query("SELECT m.verificationStatus FROM Member m WHERE m.id = :id")
+  ProfileVerificationStatus getProfileVerificationStatus(@Param("id") Integer memberId);
 
   boolean existsByEmailAddress(String emailAddress);
 

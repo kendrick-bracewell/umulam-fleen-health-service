@@ -1,6 +1,9 @@
 package com.umulam.fleen.health.model.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.umulam.fleen.health.model.view.CountryView;
+import com.umulam.fleen.health.model.view.MemberView;
+import com.umulam.fleen.health.model.view.VerificationDocumentView;
 import lombok.*;
 
 import java.time.LocalDateTime;

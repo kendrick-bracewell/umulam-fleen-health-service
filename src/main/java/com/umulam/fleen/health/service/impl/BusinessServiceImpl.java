@@ -97,6 +97,8 @@ public class BusinessServiceImpl implements BusinessService {
 
     List<VerificationDocument> existingDocuments = verificationDocumentService.getVerificationDocumentsByMember(member);
     List<VerificationDocument> newOrUpdatedDocument = setVerificationDocument(dto.toUpdateVerificationDocumentRequest(), existingDocuments);
+    newOrUpdatedDocument.forEach(document -> document.setMember(member));
+
     verificationDocumentService.saveMany(newOrUpdatedDocument);
   }
 
@@ -116,26 +118,33 @@ public class BusinessServiceImpl implements BusinessService {
 
     for (VerificationDocument existingVerificationDocument: existingVerificationDocuments) {
       VerificationDocument verificationDocument = verificationDocumentMap.get(existingVerificationDocument.getVerificationDocumentType());
-      existingVerificationDocument.setFilename(verificationDocument.getFilename());
-      existingVerificationDocument.setLink(verificationDocument.getLink());
-      verificationDocumentMap.put(verificationDocument.getVerificationDocumentType(), existingVerificationDocument);
+      if (Objects.nonNull(verificationDocument)) {
+        existingVerificationDocument.setFilename(verificationDocument.getFilename());
+        existingVerificationDocument.setLink(verificationDocument.getLink());
+        verificationDocumentMap.put(verificationDocument.getVerificationDocumentType(), existingVerificationDocument);
+      }
     }
     return new ArrayList<>(verificationDocumentMap.values());
   }
 
   @Override
-  public Object requestForVerification(FleenUser user) {
+  @Transactional
+  public void requestForVerification(FleenUser user) {
     Member member = memberService.getMemberByEmailAddress(user.getEmailAddress());
     if (Objects.isNull(member)) {
       throw new UserNotFoundException(user.getEmailAddress());
     }
     member.setVerificationStatus(ProfileVerificationStatus.IN_PROGRESS);
-    return "Success";
+    memberService.save(member);
   }
 
   @Override
-  public Object checkVerificationStatus() {
-    return null;
+  public ProfileVerificationStatus checkVerificationStatus(FleenUser user) {
+    Member member = memberService.getMemberByEmailAddress(user.getEmailAddress());
+    if (Objects.isNull(member)) {
+      throw new UserNotFoundException(user.getEmailAddress());
+    }
+    return memberService.getVerificationStatus(user.getId());
   }
 
   @Override
