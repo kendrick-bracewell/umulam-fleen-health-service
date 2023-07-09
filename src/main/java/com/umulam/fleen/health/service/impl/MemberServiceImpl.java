@@ -1,20 +1,18 @@
 package com.umulam.fleen.health.service.impl;
 
-import com.umulam.fleen.health.constant.CommonEmailMessageTemplateDetails;
-import com.umulam.fleen.health.constant.VerificationMessageType;
 import com.umulam.fleen.health.constant.authentication.MfaSetupStatus;
 import com.umulam.fleen.health.constant.authentication.MfaType;
 import com.umulam.fleen.health.constant.authentication.VerificationType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
-import com.umulam.fleen.health.exception.authentication.*;
+import com.umulam.fleen.health.exception.authentication.InvalidVerificationCodeException;
+import com.umulam.fleen.health.exception.authentication.MfaGenerationFailedException;
+import com.umulam.fleen.health.exception.authentication.MfaVerificationFailed;
 import com.umulam.fleen.health.exception.member.UpdatePasswordFailedException;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.dto.authentication.ConfirmMfaDto;
 import com.umulam.fleen.health.model.dto.authentication.MfaTypeDto;
 import com.umulam.fleen.health.model.dto.authentication.UpdatePasswordDto;
-import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequest;
-import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
 import com.umulam.fleen.health.repository.jpa.MemberJpaRepository;
 import com.umulam.fleen.health.service.AuthenticationService;
@@ -22,13 +20,12 @@ import com.umulam.fleen.health.service.MemberService;
 import com.umulam.fleen.health.service.MfaService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.auth.AUTH;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @Service
@@ -41,7 +38,7 @@ public class MemberServiceImpl implements MemberService {
 
   public MemberServiceImpl(MemberJpaRepository repository,
                            MfaService mfaService,
-                           AuthenticationService authenticationService,
+                           @Lazy AuthenticationService authenticationService,
                            PasswordEncoder passwordEncoder) {
     this.repository = repository;
     this.mfaService = mfaService;
@@ -149,20 +146,24 @@ public class MemberServiceImpl implements MemberService {
         member.setMfaEnabled(true);
         member.setMfaType(MfaType.AUTHENTICATOR);
         save(member);
+        return true;
       } else {
         throw new InvalidVerificationCodeException(dto.getCode());
       }
-    } else if (mfaType == MfaType.SMS) {
-      member.setMfaSecret(null);
-      member.setMfaEnabled(true);
+    }
+
+    authenticationService.validateMfaSetupCode(username, dto.getCode());
+    if (mfaType == MfaType.SMS) {
       member.setPhoneNumberVerified(true);
       member.setMfaType(MfaType.SMS);
     } else {
-      member.setMfaSecret(null);
-      member.setMfaEnabled(true);
       member.setEmailAddressVerified(true);
       member.setMfaType(MfaType.EMAIL);
     }
+
+    member.setMfaSecret(null);
+    member.setMfaEnabled(true);
+    save(member);
     return true;
   }
 

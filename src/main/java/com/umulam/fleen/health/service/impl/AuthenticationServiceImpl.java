@@ -806,6 +806,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   /**
+   * <p>Remove the user's mfa otp after successful setup and configuration.</p>
+   * <br/>
+   *
+   * @param username the user's identifier associated with the mfa setup otp or code
+   */
+  private void clearMfaSetupOtp(String username) {
+    cacheService.delete(getMfaSetupCacheKey(username));
+  }
+
+  /**
    * <p>Prefix a user's identifier with a predefined key used to save an authentication token like JWT.</p>
    * <br/>
    *
@@ -1235,6 +1245,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     sendVerificationMessage(request, verificationType);
     saveMfaSetupOtp(member.getEmailAddress(), code);
+  }
+
+  @Override
+  public void validateMfaSetupCode(String username, String code) {
+    String verificationKey = getMfaSetupCacheKey(username);
+    validateSmsAndEmailMfa(verificationKey, code);
+    clearMfaSetupOtp(username);
   }
 
   private String getRandomSixDigitOtp() {

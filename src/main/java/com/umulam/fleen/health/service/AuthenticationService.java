@@ -60,4 +60,6 @@ public interface AuthenticationService {
 
   @Transactional
   void sendMfaVerification(Member member, VerificationType verificationType);
+
+  void validateMfaSetupCode(String username, String code);
 }
