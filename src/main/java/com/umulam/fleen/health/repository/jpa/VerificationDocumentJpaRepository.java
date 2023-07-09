@@ -13,6 +13,10 @@ public interface VerificationDocumentJpaRepository extends JpaRepository<Verific
   @Query("SELECT vd FROM VerificationDocument vd WHERE vd.member.emailAddress = :emailAddress")
   Optional<VerificationDocument> findVerificationDocumentByEmailAddress(String emailAddress);
 
+  @Query("SELECT vd FROM VerificationDocument vd WHERE vd.member.emailAddress = :emailAddress")
+  List<VerificationDocument> findVerificationDocumentsByEmailAddress(String emailAddress);
 
-  List<VerificationDocument> findVerificationDocumentByMember(Member member);
+  List<VerificationDocument> findVerificationDocumentsByMember(Member member);
+
+  VerificationDocument findVerificationDocumentByMember(Member member);
 }

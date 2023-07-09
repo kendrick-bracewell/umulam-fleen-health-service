@@ -21,21 +21,18 @@ import javax.validation.Valid;
 public class BusinessController {
 
   private final BusinessService businessService;
-  private final CountryService countryService;
 
-  public BusinessController(BusinessService businessService,
-                            CountryService countryService) {
+  public BusinessController(BusinessService businessService) {
 
     this.businessService = businessService;
-    this.countryService = countryService;
   }
 
   @PutMapping(value = "/verification/update-details")
   public BusinessView updateDetails(@Valid @RequestBody UpdateBusinessDetailDto dto, @AuthenticationPrincipal FleenUser user) {
     Business business = businessService.updateDetails(dto, user);
-    Country country = countryService.getCountry(business.getCountry().getId());
-    business.setCountry(country);
-    return businessService.toBusinessView(business);
+    BusinessView businessView = businessService.toBusinessView(business);
+    businessService.setVerificationDocument(businessView);
+    return businessView;
   }
 
   @PutMapping(value = "/verification/upload-documents")

@@ -4,19 +4,22 @@ import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.constant.verification.VerificationDocumentType;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.model.domain.Business;
+import com.umulam.fleen.health.model.domain.Country;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.VerificationDocument;
 import com.umulam.fleen.health.model.dto.business.UpdateBusinessDetailDto;
 import com.umulam.fleen.health.model.dto.business.UploadBusinessDocumentDto;
 import com.umulam.fleen.health.model.mapper.BusinessMapper;
+import com.umulam.fleen.health.model.mapper.VerificationDocumentMapper;
 import com.umulam.fleen.health.model.request.UpdateVerificationDocumentRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.BusinessView;
+import com.umulam.fleen.health.model.view.VerificationDocumentView;
 import com.umulam.fleen.health.repository.jpa.BusinessJpaRepository;
-import com.umulam.fleen.health.repository.jpa.VerificationDocumentJpaRepository;
 import com.umulam.fleen.health.service.BusinessService;
 import com.umulam.fleen.health.service.CountryService;
 import com.umulam.fleen.health.service.MemberService;
+import com.umulam.fleen.health.service.VerificationDocumentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,19 +33,19 @@ public class BusinessServiceImpl implements BusinessService {
   private final MemberService memberService;
   private final S3Service s3Service;
   private final CountryService countryService;
+  private final VerificationDocumentService verificationDocumentService;
   private final BusinessJpaRepository repository;
-  private final VerificationDocumentJpaRepository verificationDocumentJpaRepository;
 
   public BusinessServiceImpl(MemberService memberService,
                              S3Service s3Service,
                              CountryService countryService,
-                             BusinessJpaRepository repository,
-                             VerificationDocumentJpaRepository verificationDocumentJpaRepository) {
+                             VerificationDocumentService verificationDocumentService,
+                             BusinessJpaRepository repository) {
     this.memberService = memberService;
     this.s3Service = s3Service;
     this.countryService = countryService;
+    this.verificationDocumentService = verificationDocumentService;
     this.repository = repository;
-    this.verificationDocumentJpaRepository = verificationDocumentJpaRepository;
   }
 
   @Override
@@ -77,7 +80,10 @@ public class BusinessServiceImpl implements BusinessService {
       business.setMember(member);
     }
 
-    return repository.save(business);
+    Business savedBusiness = repository.save(business);
+    Country country = countryService.getCountry(business.getCountry().getId());
+    business.setCountry(country);
+    return savedBusiness;
   }
 
   @Override
@@ -88,9 +94,9 @@ public class BusinessServiceImpl implements BusinessService {
       throw new UserNotFoundException(user.getEmailAddress());
     }
 
-    List<VerificationDocument> existingDocuments = verificationDocumentJpaRepository.findVerificationDocumentByMember(member);
+    List<VerificationDocument> existingDocuments = verificationDocumentService.getVerificationDocumentsByMember(member);
     List<VerificationDocument> newOrUpdatedDocument = setVerificationDocument(dto.toUpdateVerificationDocumentRequest(), existingDocuments);
-    verificationDocumentJpaRepository.saveAll(newOrUpdatedDocument);
+    verificationDocumentService.saveMany(newOrUpdatedDocument);
     return "Success";
   }
 
@@ -130,5 +136,13 @@ public class BusinessServiceImpl implements BusinessService {
   @Override
   public Object checkVerificationStatus() {
     return null;
+  }
+
+  @Override
+  public void setVerificationDocument(BusinessView businessView) {
+    String emailAddress = businessView.getMember().getEmailAddress();
+    List<VerificationDocument> verificationDocuments = verificationDocumentService.getByMemberEmailAddress(emailAddress);
+    List<VerificationDocumentView> verificationDocumentViews = VerificationDocumentMapper.toVerificationDocumentViews(verificationDocuments);
+    businessView.setVerificationDocuments(verificationDocumentViews);
   }
 }

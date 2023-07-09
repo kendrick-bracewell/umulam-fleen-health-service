@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_FORMAT;
 
@@ -30,4 +31,5 @@ public class BusinessView {
 
   private CountryView country;
   private MemberView member;
+  private List<VerificationDocumentView> verificationDocuments;
 }

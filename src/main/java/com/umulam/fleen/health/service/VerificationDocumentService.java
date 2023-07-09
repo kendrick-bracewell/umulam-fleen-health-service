@@ -9,7 +9,13 @@ import java.util.Optional;
 
 public interface VerificationDocumentService {
 
+  List<VerificationDocument> getByMemberEmailAddress(String emailAddress);
+
   Optional<VerificationDocument> getVerificationDocument(Integer verificationDocumentId);
 
   List<VerificationDocument> getVerificationDocumentsByMember(Member member);
+
+  VerificationDocument getVerificationDocumentByMember(Member member);
+
+  void saveMany(List<VerificationDocument> verificationDocuments);
 }

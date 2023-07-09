@@ -28,4 +28,6 @@ public interface BusinessService {
 
   @Transactional(readOnly = true)
   List<BusinessView> toBusinessViews(List<Business> entries);
+
+  void setVerificationDocument(BusinessView businessView);
 }
