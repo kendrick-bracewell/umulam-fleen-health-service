@@ -371,6 +371,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   public SignUpResponse completeSignUp(VerificationCodeDto dto, FleenUser fleenUser) {
     String username = fleenUser.getUsername();
     String verificationKey = getPreVerificationCacheKey(username);
+    VerificationType verificationType = VerificationType.valueOf(dto.getVerificationType());
     String code = dto.getCode();
 
     validateSmsAndEmailMfa(verificationKey, code);
@@ -407,6 +408,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     Set<Role> roles = new HashSet<>();
     roles.add(role);
     member.setRoles(roles);
+
+    if (verificationType == VerificationType.SMS) {
+      member.setPhoneNumberVerified(true);
+    } else {
+      member.setEmailAddressVerified(true);
+    }
 
     MemberStatus memberStatus = memberStatusService.getMemberStatusByCode(MemberStatusType.ACTIVE.name());
     member.setMemberStatus(memberStatus);
