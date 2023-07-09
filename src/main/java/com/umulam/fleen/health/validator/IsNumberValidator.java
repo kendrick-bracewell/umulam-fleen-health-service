@@ -1,10 +1,12 @@
 package com.umulam.fleen.health.validator;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+@Slf4j
 public class IsNumberValidator implements ConstraintValidator<IsNumber, String> {
 
   @Override
@@ -12,6 +14,11 @@ public class IsNumberValidator implements ConstraintValidator<IsNumber, String> 
 
   @Override
   public boolean isValid(String number, ConstraintValidatorContext context) {
-    return NumberUtils.isParsable(number);
+    try {
+      return NumberUtils.isParsable(number);
+    } catch (NumberFormatException ex) {
+      log.error(ex.getMessage(), ex);
+    }
+    return false;
   }
 }
