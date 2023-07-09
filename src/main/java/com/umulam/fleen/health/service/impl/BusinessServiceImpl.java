@@ -72,17 +72,19 @@ public class BusinessServiceImpl implements BusinessService {
       throw new UserNotFoundException(user.getEmailAddress());
     }
 
+    Country country;
     Optional<Business> businessExists = repository.findBusinessByEmailAddress(user.getEmailAddress());
     if (businessExists.isPresent()) {
       Business existingBusiness = businessExists.get();
+      country = existingBusiness.getCountry();
       business.setId(existingBusiness.getId());
-      business.setMember(member);
-      business.setCountry(existingBusiness.getCountry());
     } else {
-      Country country = countryService.getCountry(business.getCountry().getId());
-      business.setMember(member);
-      business.setCountry(country);
+      country = countryService.getCountry(business.getCountry().getId());
     }
+
+    business.setMember(member);
+    business.getMember().setMemberStatus(member.getMemberStatus());
+    business.setCountry(country);
 
     return repository.save(business);
   }
@@ -133,6 +135,9 @@ public class BusinessServiceImpl implements BusinessService {
     Member member = memberService.getMemberByEmailAddress(user.getEmailAddress());
     if (Objects.isNull(member)) {
       throw new UserNotFoundException(user.getEmailAddress());
+    }
+    if (member.getVerificationStatus() == ProfileVerificationStatus.IN_PROGRESS) {
+      return;
     }
     member.setVerificationStatus(ProfileVerificationStatus.IN_PROGRESS);
     memberService.save(member);
