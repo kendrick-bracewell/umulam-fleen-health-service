@@ -109,6 +109,8 @@ public class MemberServiceImpl implements MemberService {
     if (member.getMfaType() == mfaType && mfaType != MfaType.AUTHENTICATOR) {
       mfaDetail.setEnabled(true);
       mfaDetail.setMfaType(mfaType.name());
+      mfaDetail.setMfaSetupStatus(MfaSetupStatus.COMPLETE);
+      mfaDetail.setMfaType(member.getMfaType().name());
       return mfaDetail;
     }
 

@@ -1140,16 +1140,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   private PreVerificationOrAuthenticationRequest createPreVerificationRequest(String code, FleenUser user) {
     CommonEmailMessageTemplateDetails templateDetails = CommonEmailMessageTemplateDetails.PRE_VERIFICATION;
-    PreVerificationOrAuthenticationRequest request = PreVerificationOrAuthenticationRequest
-            .builder()
-            .code(code)
-            .firstName(user.getFirstName())
-            .lastName(user.getLastName())
-            .phoneNumber(user.getPhoneNumber())
-            .emailAddress(user.getEmailAddress())
-            .emailMessageTitle(templateDetails.getEmailMessageSubject())
-            .smsMessage(getVerificationSmsMessage(VerificationMessageType.PRE_VERIFICATION))
-            .build();
+    PreVerificationOrAuthenticationRequest request = createVerificationRequest(code, user);
+    request.setEmailMessageTitle(templateDetails.getEmailMessageSubject());
+    request.setSmsMessage(getVerificationSmsMessage(VerificationMessageType.PRE_VERIFICATION));
+
     String emailBody = getVerificationEmailBody(templateDetails.getTemplateName(), request);
     request.setEmailMessageBody(emailBody);
     return request;
@@ -1157,15 +1151,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   private PreVerificationOrAuthenticationRequest createPreAuthenticationRequest(String code, FleenUser user) {
     CommonEmailMessageTemplateDetails templateDetails = CommonEmailMessageTemplateDetails.PRE_AUTHENTICATION;
-    PreVerificationOrAuthenticationRequest request = PreVerificationOrAuthenticationRequest.builder()
-            .code(code)
-            .firstName(user.getFirstName())
-            .lastName(user.getLastName())
-            .phoneNumber(user.getPhoneNumber())
-            .emailAddress(user.getEmailAddress())
-            .emailMessageTitle(templateDetails.getEmailMessageSubject())
-            .smsMessage(getVerificationSmsMessage(VerificationMessageType.PRE_AUTHENTICATION))
-            .build();
+    PreVerificationOrAuthenticationRequest request = createVerificationRequest(code, user);
+    request.setEmailMessageTitle(templateDetails.getEmailMessageSubject());
+    request.setSmsMessage(getVerificationSmsMessage(VerificationMessageType.PRE_AUTHENTICATION));
+
     String emailBody = getVerificationEmailBody(templateDetails.getTemplateName(), request);
     request.setEmailMessageBody(emailBody);
     return request;
@@ -1173,15 +1162,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   private PreVerificationOrAuthenticationRequest createForgotPasswordRequest(String code, FleenUser user) {
     CommonEmailMessageTemplateDetails templateDetails = CommonEmailMessageTemplateDetails.FORGOT_PASSWORD;
-    PreVerificationOrAuthenticationRequest request = PreVerificationOrAuthenticationRequest.builder()
-            .code(code)
-            .firstName(user.getFirstName())
-            .lastName(user.getLastName())
-            .phoneNumber(user.getPhoneNumber())
-            .emailAddress(user.getEmailAddress())
-            .emailMessageTitle(templateDetails.getEmailMessageSubject())
-            .smsMessage(getVerificationSmsMessage(VerificationMessageType.FORGOT_PASSWORD))
-            .build();
+    PreVerificationOrAuthenticationRequest request = createVerificationRequest(code, user);
+    request.setEmailMessageTitle(templateDetails.getEmailMessageSubject());
+    request.setSmsMessage(getVerificationSmsMessage(VerificationMessageType.FORGOT_PASSWORD));
+
     String emailBody = getVerificationEmailBody(templateDetails.getTemplateName(), request);
     request.setEmailMessageBody(emailBody);
     return request;
@@ -1189,18 +1173,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   private PreVerificationOrAuthenticationRequest createMfaSetupRequest(String code, FleenUser user) {
     CommonEmailMessageTemplateDetails templateDetails = CommonEmailMessageTemplateDetails.MFA_SETUP;
-    PreVerificationOrAuthenticationRequest request = PreVerificationOrAuthenticationRequest.builder()
+    PreVerificationOrAuthenticationRequest request = createVerificationRequest(code, user);
+    request.setEmailMessageTitle(templateDetails.getEmailMessageSubject());
+    request.setSmsMessage(getVerificationSmsMessage(VerificationMessageType.MFA_SETUP));
+
+    String emailBody = getVerificationEmailBody(templateDetails.getTemplateName(), request);
+    request.setEmailMessageBody(emailBody);
+    return request;
+  }
+
+  private PreVerificationOrAuthenticationRequest createVerificationRequest(String code, FleenUser user) {
+    return PreVerificationOrAuthenticationRequest.builder()
             .code(code)
             .firstName(user.getFirstName())
             .lastName(user.getLastName())
             .phoneNumber(user.getPhoneNumber())
             .emailAddress(user.getEmailAddress())
-            .emailMessageTitle(templateDetails.getEmailMessageSubject())
-            .smsMessage(getVerificationSmsMessage(VerificationMessageType.MFA_SETUP))
             .build();
-    String emailBody = getVerificationEmailBody(templateDetails.getTemplateName(), request);
-    request.setEmailMessageBody(emailBody);
-    return request;
   }
 
   /**
