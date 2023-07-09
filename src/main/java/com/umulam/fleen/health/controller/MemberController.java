@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +25,31 @@ public class MemberController {
                           AuthenticationService authenticationService) {
     this.memberService = memberService;
     this.authenticationService = authenticationService;
+  }
+
+  @PutMapping(value = "/update-details")
+  public Object updateDetails() {
+    return null;
+  }
+
+  @PutMapping(value = "/update-phone-number")
+  public Object updatePhoneNumber() {
+    return null;
+  }
+
+  @PutMapping(value = "/confirm-update-phone-number")
+  public Object confirmUpdatePhoneNumber() {
+    return null;
+  }
+
+  @PutMapping(value = "/update-email-address")
+  public Object updateEmailAddress() {
+    return null;
+  }
+
+  @PutMapping(value = "/update-profile-photo")
+  public Object updateProfilePhoto() {
+    return null;
   }
 
   @GetMapping(value = "/sign-out")
