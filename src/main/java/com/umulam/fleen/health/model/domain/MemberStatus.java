@@ -32,7 +32,7 @@ public class MemberStatus {
   private String description;
 
   @CreationTimestamp
-  @Column(name = "created_on")
+  @Column(name = "created_on", updatable = false)
   private LocalDateTime createdOn;
 
   @UpdateTimestamp
