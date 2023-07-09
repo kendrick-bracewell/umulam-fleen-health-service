@@ -1,7 +1,6 @@
 package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
-import com.umulam.fleen.health.constant.verification.VerificationDocumentType;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.model.domain.Business;
 import com.umulam.fleen.health.model.domain.Country;
@@ -11,7 +10,6 @@ import com.umulam.fleen.health.model.dto.business.UpdateBusinessDetailDto;
 import com.umulam.fleen.health.model.dto.business.UploadBusinessDocumentDto;
 import com.umulam.fleen.health.model.mapper.BusinessMapper;
 import com.umulam.fleen.health.model.mapper.VerificationDocumentMapper;
-import com.umulam.fleen.health.model.request.UpdateVerificationDocumentRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.BusinessView;
 import com.umulam.fleen.health.model.view.VerificationDocumentView;
@@ -24,11 +22,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
-public class BusinessServiceImpl implements BusinessService {
+public class BusinessServiceImpl implements BusinessService, ProfileService {
 
   private final MemberService memberService;
   private final S3Service s3Service;
@@ -89,38 +89,7 @@ public class BusinessServiceImpl implements BusinessService {
   @Override
   @Transactional
   public void uploadDocuments(UploadBusinessDocumentDto dto, FleenUser user) {
-    Member member = getMember(user.getEmailAddress());
-
-    List<VerificationDocument> existingDocuments = verificationDocumentService.getVerificationDocumentsByMember(member);
-    List<VerificationDocument> newOrUpdatedDocument = setVerificationDocument(dto.toUpdateVerificationDocumentRequest(), existingDocuments);
-    newOrUpdatedDocument.forEach(document -> document.setMember(member));
-
-    verificationDocumentService.saveMany(newOrUpdatedDocument);
-  }
-
-  private List<VerificationDocument> setVerificationDocument(List<UpdateVerificationDocumentRequest> updateVerificationDocumentRequest,
-                                       List<VerificationDocument> existingVerificationDocuments) {
-    Map<VerificationDocumentType, VerificationDocument> verificationDocumentMap = new HashMap<>();
-    for (UpdateVerificationDocumentRequest request: updateVerificationDocumentRequest) {
-      if (Objects.nonNull(request.getDocumentLink())) {
-        VerificationDocument verificationDocument = VerificationDocument.builder()
-                .verificationDocumentType(request.getVerificationDocumentType())
-                .filename(s3Service.getObjectKeyFromUrl(request.getDocumentLink()))
-                .link(request.getDocumentLink())
-                .build();
-        verificationDocumentMap.put(request.getVerificationDocumentType(), verificationDocument);
-      }
-    }
-
-    for (VerificationDocument existingVerificationDocument: existingVerificationDocuments) {
-      VerificationDocument verificationDocument = verificationDocumentMap.get(existingVerificationDocument.getVerificationDocumentType());
-      if (Objects.nonNull(verificationDocument)) {
-        existingVerificationDocument.setFilename(verificationDocument.getFilename());
-        existingVerificationDocument.setLink(verificationDocument.getLink());
-        verificationDocumentMap.put(verificationDocument.getVerificationDocumentType(), existingVerificationDocument);
-      }
-    }
-    return new ArrayList<>(verificationDocumentMap.values());
+    saveVerificationDocument(user, dto.toUpdateVerificationDocumentRequest());
   }
 
   @Override
@@ -136,7 +105,7 @@ public class BusinessServiceImpl implements BusinessService {
 
   @Override
   public ProfileVerificationStatus checkVerificationStatus(FleenUser user) {
-    Member member = getMember(user.getEmailAddress());
+    getMember(user.getEmailAddress());
     return memberService.getVerificationStatus(user.getId());
   }
 
@@ -154,5 +123,20 @@ public class BusinessServiceImpl implements BusinessService {
       throw new UserNotFoundException(emailAddress);
     }
     return member;
+  }
+
+  @Override
+  public S3Service getS3Service() {
+    return s3Service;
+  }
+
+  @Override
+  public MemberService getMemberService() {
+    return memberService;
+  }
+
+  @Override
+  public VerificationDocumentService getVerificationDocumentService() {
+    return verificationDocumentService;
   }
 }
