@@ -16,6 +16,10 @@
     "code": "USER"
   },
   {
+    "title": "Business",
+    "code": "BUSINESS"
+  },
+  {
     "title": "Pre Authenticated User",
     "code": "PRE_AUTHENTICATED_USER"
   },
