@@ -67,10 +67,7 @@ public class BusinessServiceImpl implements BusinessService {
   @Transactional
   public Business updateDetails(UpdateBusinessDetailDto dto, FleenUser user) {
     Business business = dto.toBusiness();
-    Member member = memberService.getMemberByEmailAddress(user.getEmailAddress());
-    if (Objects.isNull(member)) {
-      throw new UserNotFoundException(user.getEmailAddress());
-    }
+    Member member = getMember(user.getEmailAddress());
 
     Country country;
     Optional<Business> businessExists = repository.findBusinessByEmailAddress(user.getEmailAddress());
@@ -92,10 +89,7 @@ public class BusinessServiceImpl implements BusinessService {
   @Override
   @Transactional
   public void uploadDocuments(UploadBusinessDocumentDto dto, FleenUser user) {
-    Member member = memberService.getMemberByEmailAddress(user.getEmailAddress());
-    if (Objects.isNull(member)) {
-      throw new UserNotFoundException(user.getEmailAddress());
-    }
+    Member member = getMember(user.getEmailAddress());
 
     List<VerificationDocument> existingDocuments = verificationDocumentService.getVerificationDocumentsByMember(member);
     List<VerificationDocument> newOrUpdatedDocument = setVerificationDocument(dto.toUpdateVerificationDocumentRequest(), existingDocuments);
@@ -132,10 +126,7 @@ public class BusinessServiceImpl implements BusinessService {
   @Override
   @Transactional
   public void requestForVerification(FleenUser user) {
-    Member member = memberService.getMemberByEmailAddress(user.getEmailAddress());
-    if (Objects.isNull(member)) {
-      throw new UserNotFoundException(user.getEmailAddress());
-    }
+    Member member = getMember(user.getEmailAddress());
     if (member.getVerificationStatus() == ProfileVerificationStatus.IN_PROGRESS) {
       return;
     }
@@ -145,10 +136,7 @@ public class BusinessServiceImpl implements BusinessService {
 
   @Override
   public ProfileVerificationStatus checkVerificationStatus(FleenUser user) {
-    Member member = memberService.getMemberByEmailAddress(user.getEmailAddress());
-    if (Objects.isNull(member)) {
-      throw new UserNotFoundException(user.getEmailAddress());
-    }
+    Member member = getMember(user.getEmailAddress());
     return memberService.getVerificationStatus(user.getId());
   }
 
@@ -158,5 +146,13 @@ public class BusinessServiceImpl implements BusinessService {
     List<VerificationDocument> verificationDocuments = verificationDocumentService.getByMemberEmailAddress(emailAddress);
     List<VerificationDocumentView> verificationDocumentViews = VerificationDocumentMapper.toVerificationDocumentViews(verificationDocuments);
     businessView.setVerificationDocuments(verificationDocumentViews);
+  }
+
+  private Member getMember(String emailAddress) {
+    Member member = memberService.getMemberByEmailAddress(emailAddress);
+    if (Objects.isNull(member)) {
+      throw new UserNotFoundException(emailAddress);
+    }
+    return member;
   }
 }

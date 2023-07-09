@@ -1,6 +1,8 @@
 package com.umulam.fleen.health.model.dto.professional;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.umulam.fleen.health.model.domain.Professional;
+import com.umulam.fleen.health.validator.CountryExists;
 import com.umulam.fleen.health.validator.IsNumber;
 import lombok.*;
 
@@ -28,4 +30,17 @@ public class UpdateProfessionalDetailsDto {
   @Size(max = 2500, message = "{professional.areaOfExpertise.size}")
   @JsonProperty("area_of_expertise")
   private String areaOfExpertise;
+
+  @NotBlank(message = "{business.country.notEmpty}")
+  @IsNumber(message = "{business.country.isNumber}")
+  @CountryExists(message = "{business.country.exists}")
+  private String country;
+
+  public Professional toProfessional() {
+    return Professional.builder()
+            .title(title)
+            .yearsOfExperience(Integer.parseInt(yearsOfExperience))
+            .areaOfExpertise(areaOfExpertise)
+            .build();
+  }
 }

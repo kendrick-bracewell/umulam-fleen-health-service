@@ -30,6 +30,10 @@ public class Professional {
   @Column(name = "area_of_expertise", nullable = false, length = 2500)
   private String areaOfExpertise;
 
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "country_id", referencedColumnName = "id")
+  private Country country;
+
   @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "member_id", referencedColumnName = "id")
   private Member member;
