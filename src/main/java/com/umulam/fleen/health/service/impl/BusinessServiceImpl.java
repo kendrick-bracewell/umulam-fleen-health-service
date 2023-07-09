@@ -8,11 +8,14 @@ import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.VerificationDocument;
 import com.umulam.fleen.health.model.dto.business.UpdateBusinessDetailDto;
 import com.umulam.fleen.health.model.dto.business.UploadBusinessDocumentDto;
+import com.umulam.fleen.health.model.mapper.BusinessMapper;
 import com.umulam.fleen.health.model.request.UpdateVerificationDocumentRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.model.view.BusinessView;
 import com.umulam.fleen.health.repository.jpa.BusinessJpaRepository;
 import com.umulam.fleen.health.repository.jpa.VerificationDocumentJpaRepository;
 import com.umulam.fleen.health.service.BusinessService;
+import com.umulam.fleen.health.service.CountryService;
 import com.umulam.fleen.health.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,17 +29,30 @@ public class BusinessServiceImpl implements BusinessService {
 
   private final MemberService memberService;
   private final S3Service s3Service;
+  private final CountryService countryService;
   private final BusinessJpaRepository repository;
   private final VerificationDocumentJpaRepository verificationDocumentJpaRepository;
 
   public BusinessServiceImpl(MemberService memberService,
                              S3Service s3Service,
+                             CountryService countryService,
                              BusinessJpaRepository repository,
                              VerificationDocumentJpaRepository verificationDocumentJpaRepository) {
     this.memberService = memberService;
     this.s3Service = s3Service;
+    this.countryService = countryService;
     this.repository = repository;
     this.verificationDocumentJpaRepository = verificationDocumentJpaRepository;
+  }
+
+  @Override
+  public List<BusinessView> toBusinessViews(List<Business> businesses) {
+    return BusinessMapper.toBusinessViews(businesses);
+  }
+
+  @Override
+  public BusinessView toBusinessView(Business business) {
+    return BusinessMapper.toBusinessView(business);
   }
 
   @Override

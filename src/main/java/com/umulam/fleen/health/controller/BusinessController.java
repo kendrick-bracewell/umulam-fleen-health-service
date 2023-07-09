@@ -35,7 +35,7 @@ public class BusinessController {
     Business business = businessService.updateDetails(dto, user);
     Country country = countryService.getCountry(business.getCountry().getId());
     business.setCountry(country);
-    return BusinessMapper.toBusinessView(business);
+    return businessService.toBusinessView(business);
   }
 
   @PutMapping(value = "/verification/upload-documents")

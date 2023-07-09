@@ -4,6 +4,7 @@ import com.umulam.fleen.health.model.domain.Business;
 import com.umulam.fleen.health.model.dto.business.UpdateBusinessDetailDto;
 import com.umulam.fleen.health.model.dto.business.UploadBusinessDocumentDto;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.model.view.BusinessView;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -21,4 +22,10 @@ public interface BusinessService {
   Object checkVerificationStatus();
 
   Object requestForVerification(FleenUser user);
+
+  @Transactional(readOnly = true)
+  BusinessView toBusinessView(Business entry);
+
+  @Transactional(readOnly = true)
+  List<BusinessView> toBusinessViews(List<Business> entries);
 }
