@@ -6,13 +6,12 @@ import com.umulam.fleen.health.model.view.RoleView;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class RoleMapper {
 
-  private RoleMapper() {
-
-  }
+  private RoleMapper() {}
 
   public static RoleView toRoleView(@NotNull Role role) {
     return RoleView.builder()
@@ -29,6 +28,7 @@ public class RoleMapper {
     if (roles != null && !roles.isEmpty()) {
       return roles
               .stream()
+              .filter(Objects::nonNull)
               .map(RoleMapper::toRoleView)
               .collect(Collectors.toList());
     }

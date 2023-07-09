@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.service;
+package com.umulam.fleen.health.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

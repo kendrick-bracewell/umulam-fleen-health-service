@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.service;
+package com.umulam.fleen.health.service.impl;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;

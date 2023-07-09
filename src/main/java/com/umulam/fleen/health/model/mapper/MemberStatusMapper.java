@@ -6,6 +6,7 @@ import com.umulam.fleen.health.model.view.MemberStatusView;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class MemberStatusMapper {
@@ -29,6 +30,7 @@ public class MemberStatusMapper {
     if (memberStatuses != null && !memberStatuses.isEmpty()) {
       return memberStatuses
               .stream()
+              .filter(Objects::nonNull)
               .map(MemberStatusMapper::toMemberStatusView)
               .collect(Collectors.toList());
     }

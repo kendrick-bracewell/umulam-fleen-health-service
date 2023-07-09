@@ -6,6 +6,7 @@ import com.umulam.fleen.health.model.view.CountryView;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class CountryMapper {
@@ -26,6 +27,7 @@ public class CountryMapper {
     if (entries != null && !entries.isEmpty()) {
       return entries
               .stream()
+              .filter(Objects::nonNull)
               .map(CountryMapper::toCountryView)
               .collect(Collectors.toList());
     }

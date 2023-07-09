@@ -12,12 +12,12 @@ import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_FORMAT;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberStatusView {
+public class VerificationDocumentView {
 
   private Integer id;
-  private String title;
-  private String code;
-  private String description;
+  private String documentType;
+  private String filename;
+  private String link;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
   private LocalDateTime createdOn;

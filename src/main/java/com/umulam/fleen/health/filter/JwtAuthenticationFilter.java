@@ -2,7 +2,7 @@ package com.umulam.fleen.health.filter;
 
 import com.umulam.fleen.health.model.dto.authentication.JwtTokenDetails;
 import com.umulam.fleen.health.model.security.FleenUser;
-import com.umulam.fleen.health.service.CacheService;
+import com.umulam.fleen.health.service.impl.CacheService;
 import com.umulam.fleen.health.util.JwtProvider;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;

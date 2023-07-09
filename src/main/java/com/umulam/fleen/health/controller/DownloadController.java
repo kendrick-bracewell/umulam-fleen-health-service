@@ -3,7 +3,7 @@ package com.umulam.fleen.health.controller;
 import com.amazonaws.HttpMethod;
 import com.umulam.fleen.health.configuration.aws.s3.S3BucketNames;
 import com.umulam.fleen.health.model.response.other.SignedUrlResponse;
-import com.umulam.fleen.health.service.S3Service;
+import com.umulam.fleen.health.service.impl.S3Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

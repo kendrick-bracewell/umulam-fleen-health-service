@@ -12,16 +12,22 @@ import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_FORMAT;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberStatusView {
+public class BusinessView {
 
   private Integer id;
-  private String title;
-  private String code;
+  private String name;
   private String description;
+  private String contactAddress;
+  private String registrationNumberOrId;
+  private String city;
+  private String websiteLink;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
   private LocalDateTime createdOn;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
   private LocalDateTime updatedOn;
+
+  private CountryView country;
+  private MemberView member;
 }

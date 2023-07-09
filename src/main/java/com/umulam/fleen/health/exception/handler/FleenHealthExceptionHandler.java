@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.exception.handler;
 
 import com.umulam.fleen.health.exception.authentication.*;
+import com.umulam.fleen.health.exception.business.BusinessNotFoundException;
 import com.umulam.fleen.health.exception.country.CountryCodeDuplicateException;
 import com.umulam.fleen.health.exception.country.CountryDuplicateException;
 import com.umulam.fleen.health.exception.country.CountryNotFoundException;
@@ -49,7 +50,8 @@ public class FleenHealthExceptionHandler {
   @ExceptionHandler(value = {
           CountryNotFoundException.class,
           RoleNotFoundException.class,
-          MemberStatusNotFoundException.class
+          MemberStatusNotFoundException.class,
+          BusinessNotFoundException.class
   })
   public Object handleNotFound(Exception ex) {
     log.error(ex.getMessage(), ex);
