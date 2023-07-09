@@ -67,10 +67,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   @Transactional
   public Professional updateDetails(UpdateProfessionalDetailsDto dto, FleenUser user) {
     Professional business = dto.toProfessional();
-    Member member = memberService.getMemberByEmailAddress(user.getEmailAddress());
-    if (Objects.isNull(member)) {
-      throw new UserNotFoundException(user.getEmailAddress());
-    }
+    Member member = getMember(user.getEmailAddress());
 
     Country country;
     Optional<Professional> businessExists = repository.findProfessionalByEmailAddress(user.getEmailAddress());
