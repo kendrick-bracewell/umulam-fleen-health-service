@@ -24,4 +24,10 @@ public class MfaDetail {
 
   @JsonProperty("mfa_setup_status")
   private MfaSetupStatus mfaSetupStatus;
+
+  @JsonProperty("email_address")
+  private String emailAddress;
+
+  @JsonProperty("phone_number")
+  private String phoneNumber;
 }

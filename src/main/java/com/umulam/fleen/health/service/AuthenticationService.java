@@ -1,6 +1,8 @@
 package com.umulam.fleen.health.service;
 
 import com.umulam.fleen.health.adapter.google.recaptcha.model.response.ReCaptchaResponse;
+import com.umulam.fleen.health.constant.authentication.VerificationType;
+import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.dto.authentication.*;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.response.authentication.SignInResponse;
@@ -55,4 +57,7 @@ public interface AuthenticationService {
   ReCaptchaResponse verifyReCaptcha(String reCaptchaToken);
 
   String createEncodedPassword(String rawPassword);
+
+  @Transactional
+  void sendMfaVerification(Member member, VerificationType verificationType);
 }

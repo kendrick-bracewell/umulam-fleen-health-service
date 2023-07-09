@@ -4,6 +4,7 @@ import com.umulam.fleen.health.constant.CommonEmailMessageTemplateDetails;
 import com.umulam.fleen.health.constant.VerificationMessageType;
 import com.umulam.fleen.health.constant.authentication.MfaSetupStatus;
 import com.umulam.fleen.health.constant.authentication.MfaType;
+import com.umulam.fleen.health.constant.authentication.VerificationType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.authentication.*;
 import com.umulam.fleen.health.exception.member.UpdatePasswordFailedException;
@@ -16,15 +17,18 @@ import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequ
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
 import com.umulam.fleen.health.repository.jpa.MemberJpaRepository;
+import com.umulam.fleen.health.service.AuthenticationService;
 import com.umulam.fleen.health.service.MemberService;
 import com.umulam.fleen.health.service.MfaService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.auth.AUTH;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @Service
@@ -32,13 +36,16 @@ public class MemberServiceImpl implements MemberService {
 
   private final MemberJpaRepository repository;
   private final MfaService mfaService;
+  private final AuthenticationService authenticationService;
   private final PasswordEncoder passwordEncoder;
 
   public MemberServiceImpl(MemberJpaRepository repository,
                            MfaService mfaService,
+                           AuthenticationService authenticationService,
                            PasswordEncoder passwordEncoder) {
     this.repository = repository;
     this.mfaService = mfaService;
+    this.authenticationService = authenticationService;
     this.passwordEncoder = passwordEncoder;
   }
 
@@ -94,7 +101,13 @@ public class MemberServiceImpl implements MemberService {
     Member member = repository
             .findById(memberId)
             .orElseThrow(() -> new UserNotFoundException(String.valueOf(memberId)));
-    MfaDetail mfaDetail = new MfaDetail();
+    MfaDetail mfaDetail = MfaDetail.builder()
+            .emailAddress(member.getEmailAddress())
+            .phoneNumber(member.getPhoneNumber())
+            .mfaSetupStatus(MfaSetupStatus.IN_PROGRESS)
+            .mfaType(mfaType.name())
+            .enabled(false)
+            .build();
 
     if (member.getMfaType() == mfaType && mfaType != MfaType.AUTHENTICATOR) {
       mfaDetail.setEnabled(true);
@@ -104,14 +117,11 @@ public class MemberServiceImpl implements MemberService {
 
     switch (mfaType) {
       case SMS:
+        authenticationService.sendMfaVerification(member, VerificationType.SMS);
+        break;
 
       case EMAIL:
-        member.setMfaType(mfaType);
-        member.setMfaSecret(null);
-        member.setMfaEnabled(true);
-        mfaDetail.setEnabled(true);
-        mfaDetail.setMfaSetupStatus(MfaSetupStatus.COMPLETE);
-        mfaDetail.setMfaType(mfaType.name());
+        authenticationService.sendMfaVerification(member, VerificationType.EMAIL);
         break;
 
       case AUTHENTICATOR:
@@ -137,10 +147,21 @@ public class MemberServiceImpl implements MemberService {
     if (mfaType == MfaType.AUTHENTICATOR) {
       if (mfaService.verifyAuthenticatorOtp(dto.getCode(), member.getMfaSecret())) {
         member.setMfaEnabled(true);
+        member.setMfaType(MfaType.AUTHENTICATOR);
         save(member);
       } else {
         throw new InvalidVerificationCodeException(dto.getCode());
       }
+    } else if (mfaType == MfaType.SMS) {
+      member.setMfaSecret(null);
+      member.setMfaEnabled(true);
+      member.setPhoneNumberVerified(true);
+      member.setMfaType(MfaType.SMS);
+    } else {
+      member.setMfaSecret(null);
+      member.setMfaEnabled(true);
+      member.setEmailAddressVerified(true);
+      member.setMfaType(MfaType.EMAIL);
     }
     return true;
   }

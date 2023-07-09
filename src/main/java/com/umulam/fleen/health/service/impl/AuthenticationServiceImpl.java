@@ -785,6 +785,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   /**
+   * <p>Save the user's mfa setup otp.</p>
+   * <br/>
+   *
+   * @param username the user's identifier to associate with the mfa setup otp or code
+   * @param otp a random code associated with the user's identifier during the mfa setup process
+   */
+  private void saveMfaSetupOtp(String username, String otp) {
+    cacheService.set(getMfaSetupCacheKey(username), otp, Duration.ofMinutes(3));
+  }
+
+  /**
    * <p>Remove the user's pre-authentication otp after successful authentication.</p>
    * <br/>
    *
@@ -847,6 +858,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    */
   private String getResetPasswordCacheKey(String username) {
     return RESET_PASSWORD_CACHE_PREFIX.concat(username);
+  }
+
+  /**
+   * <p>Prefix a user's identifier with a predefined key used to save a MFA setup token or OTP or code.</p>
+   * <br/>
+   *
+   * @param username a user identifier found on the system or is to be registered on the system
+   * @return a string concatenation of a predefined prefix and the user's identifier
+   */
+  private String getMfaSetupCacheKey(String username) {
+    return MFA_SETUP_CACHE_PREFIX.concat(username);
   }
 
   /**
@@ -974,8 +996,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     VerificationType verificationType = VerificationType.valueOf(dto.getVerificationType());
-    int code = ThreadLocalRandom.current().nextInt(100000, 1000000);
-    String codeStr = String.valueOf(code);
+    String code = getRandomSixDigitOtp();
 
     ProfileToken profileToken;
     Optional<ProfileToken> profileTokenExists = profileTokenService.findByEmailAddress(dto.getEmailAddress());
@@ -986,17 +1007,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       profileToken = profileTokenExists.get();
     }
 
-    profileToken.setResetPasswordToken(codeStr);
+    profileToken.setResetPasswordToken(code);
     profileToken.setResetPasswordTokenExpiryDate(addMinutesFromNow(10));
     profileToken.setCreatedOn(LocalDateTime.now());
     profileToken.setUpdatedOn(LocalDateTime.now());
     profileTokenService.save(profileToken);
 
     FleenUser user = FleenUser.fromMember(member);
-    PreVerificationOrAuthenticationRequest request = createForgotPasswordRequest(codeStr, user);
+    PreVerificationOrAuthenticationRequest request = createForgotPasswordRequest(code, user);
 
     sendVerificationMessage(request, verificationType);
-    saveResetPasswordOtp(member.getEmailAddress(), codeStr);
+    saveResetPasswordOtp(member.getEmailAddress(), code);
   }
 
   /**
@@ -1205,5 +1226,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     return passwordEncoder.encode(rawPassword);
   }
 
+  @Override
+  @Transactional
+  public void sendMfaVerification(Member member, VerificationType verificationType) {
+    String code = getRandomSixDigitOtp();
+    FleenUser user = FleenUser.fromMember(member);
+    PreVerificationOrAuthenticationRequest request = createMfaSetupRequest(code, user);
 
+    sendVerificationMessage(request, verificationType);
+    saveMfaSetupOtp(member.getEmailAddress(), code);
+  }
+
+  private String getRandomSixDigitOtp() {
+    return String.valueOf(ThreadLocalRandom.current().nextInt(100000, 1000000));
+  }
 }
