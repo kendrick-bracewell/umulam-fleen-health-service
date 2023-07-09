@@ -7,5 +7,6 @@ public enum VerificationMessageType {
 
   PRE_VERIFICATION,
   FORGOT_PASSWORD,
-  PRE_AUTHENTICATION;
+  PRE_AUTHENTICATION,
+  MFA_SETUP;
 }

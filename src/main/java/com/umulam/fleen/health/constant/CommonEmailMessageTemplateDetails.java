@@ -7,6 +7,7 @@ public enum CommonEmailMessageTemplateDetails {
 
   PRE_VERIFICATION("pre-verification.ftl", "Complete Sign Up", null),
   PRE_AUTHENTICATION("pre-authentication.ftl", "Complete Sign in", null),
+  MFA_SETUP("mfa-setup.ftl", "Complete Multi-Factor Authentication (MFA) Setup", null),
   FORGOT_PASSWORD("forgot-password.ftl", "Forgot Password", "Unable to complete forgot password operation, no email body available.");
 
   private final String templateName;

@@ -1156,6 +1156,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     return request;
   }
 
+  private PreVerificationOrAuthenticationRequest createMfaSetupRequest(String code, FleenUser user) {
+    CommonEmailMessageTemplateDetails templateDetails = CommonEmailMessageTemplateDetails.MFA_SETUP;
+    PreVerificationOrAuthenticationRequest request = PreVerificationOrAuthenticationRequest.builder()
+            .code(code)
+            .firstName(user.getFirstName())
+            .lastName(user.getLastName())
+            .phoneNumber(user.getPhoneNumber())
+            .emailAddress(user.getEmailAddress())
+            .emailMessageTitle(templateDetails.getEmailMessageSubject())
+            .smsMessage(getVerificationSmsMessage(VerificationMessageType.MFA_SETUP))
+            .build();
+    String emailBody = getVerificationEmailBody(templateDetails.getTemplateName(), request);
+    request.setEmailMessageBody(emailBody);
+    return request;
+  }
+
   /**
    * <p>When a user completes a sign up process, the profile of the user is initialized with some basic details</p>
    * <br/>
@@ -1188,4 +1204,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   public String createEncodedPassword(String rawPassword) {
     return passwordEncoder.encode(rawPassword);
   }
+
+
 }

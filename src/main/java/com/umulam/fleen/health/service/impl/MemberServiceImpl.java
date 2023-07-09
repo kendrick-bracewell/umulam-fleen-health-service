@@ -1,5 +1,7 @@
 package com.umulam.fleen.health.service.impl;
 
+import com.umulam.fleen.health.constant.CommonEmailMessageTemplateDetails;
+import com.umulam.fleen.health.constant.VerificationMessageType;
 import com.umulam.fleen.health.constant.authentication.MfaSetupStatus;
 import com.umulam.fleen.health.constant.authentication.MfaType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
@@ -10,6 +12,8 @@ import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.dto.authentication.ConfirmMfaDto;
 import com.umulam.fleen.health.model.dto.authentication.MfaTypeDto;
 import com.umulam.fleen.health.model.dto.authentication.UpdatePasswordDto;
+import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequest;
+import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
 import com.umulam.fleen.health.repository.jpa.MemberJpaRepository;
 import com.umulam.fleen.health.service.MemberService;
