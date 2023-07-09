@@ -89,7 +89,7 @@ public class BusinessServiceImpl implements BusinessService {
 
   @Override
   @Transactional
-  public Object uploadDocuments(UploadBusinessDocumentDto dto, FleenUser user) {
+  public void uploadDocuments(UploadBusinessDocumentDto dto, FleenUser user) {
     Member member = memberService.getMemberByEmailAddress(user.getEmailAddress());
     if (Objects.isNull(member)) {
       throw new UserNotFoundException(user.getEmailAddress());
@@ -98,7 +98,6 @@ public class BusinessServiceImpl implements BusinessService {
     List<VerificationDocument> existingDocuments = verificationDocumentService.getVerificationDocumentsByMember(member);
     List<VerificationDocument> newOrUpdatedDocument = setVerificationDocument(dto.toUpdateVerificationDocumentRequest(), existingDocuments);
     verificationDocumentService.saveMany(newOrUpdatedDocument);
-    return "Success";
   }
 
   private List<VerificationDocument> setVerificationDocument(List<UpdateVerificationDocumentRequest> updateVerificationDocumentRequest,

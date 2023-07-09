@@ -17,7 +17,7 @@ public interface BusinessService {
   Business updateDetails(UpdateBusinessDetailDto dto, FleenUser user);
 
   @Transactional
-  Object uploadDocuments(UploadBusinessDocumentDto dto, FleenUser user);
+  void uploadDocuments(UploadBusinessDocumentDto dto, FleenUser user);
 
   Object checkVerificationStatus();
 

@@ -5,6 +5,7 @@ import com.umulam.fleen.health.model.domain.Country;
 import com.umulam.fleen.health.model.dto.business.UpdateBusinessDetailDto;
 import com.umulam.fleen.health.model.dto.business.UploadBusinessDocumentDto;
 import com.umulam.fleen.health.model.mapper.BusinessMapper;
+import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.BusinessView;
 import com.umulam.fleen.health.service.BusinessService;
@@ -14,6 +15,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.VERIFICATION_DOCUMENT_UPDATED;
 
 @Slf4j
 @RestController
@@ -37,8 +40,8 @@ public class BusinessController {
 
   @PutMapping(value = "/verification/upload-documents")
   public Object uploadDocuments(@Valid @RequestBody UploadBusinessDocumentDto dto, @AuthenticationPrincipal FleenUser user) {
-
-    return businessService.uploadDocuments(dto, user);
+    businessService.uploadDocuments(dto, user);
+    return new FleenHealthResponse(VERIFICATION_DOCUMENT_UPDATED);
   }
 
   @PutMapping(value = "/request-verification")
