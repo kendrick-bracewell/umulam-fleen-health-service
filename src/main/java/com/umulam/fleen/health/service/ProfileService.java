@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.service.impl;
+package com.umulam.fleen.health.service;
 
 import com.umulam.fleen.health.constant.verification.VerificationDocumentType;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
@@ -8,6 +8,7 @@ import com.umulam.fleen.health.model.request.UpdateVerificationDocumentRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.service.MemberService;
 import com.umulam.fleen.health.service.VerificationDocumentService;
+import com.umulam.fleen.health.service.impl.S3Service;
 
 import java.util.*;
 

@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.model.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,16 +18,24 @@ public class ProfessionalView {
 
   private Integer id;
   private String title;
+
+  @JsonProperty("years_of_experience")
   private Integer yearsOfExperience;
+
+  @JsonProperty("area_of_expertise")
   private String areaOfExpertise;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+  @JsonProperty("created_on")
   private LocalDateTime createdOn;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+  @JsonProperty("updated_on")
   private LocalDateTime updatedOn;
 
   private MemberView member;
   private CountryView country;
+
+  @JsonProperty("verification_documents")
   private List<VerificationDocumentView> verificationDocuments;
 }
