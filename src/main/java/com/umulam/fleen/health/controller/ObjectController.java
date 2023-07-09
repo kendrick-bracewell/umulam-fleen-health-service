@@ -30,15 +30,6 @@ public class ObjectController {
   @GetMapping(value = "/upload/create-signed-url/profile-photo")
   public SignedUrlResponse generateSignedUrlForProfilePhoto(@RequestParam(name = "file_name") String originalFilename) {
     String signedUrl = s3Service.generateSignedUrl(
-            s3BucketNames.getMemberDocument(),
-            objectService.generateFilename(originalFilename),
-            HttpMethod.PUT, 1);
-    return new SignedUrlResponse(signedUrl);
-  }
-
-  @GetMapping(value = "/create-signed-url/avatar-upload")
-  public SignedUrlResponse generateSignedUrlForMemberAvatar(@RequestParam(name = "file_name") String originalFilename) {
-    String signedUrl = s3Service.generateSignedUrl(
             s3BucketNames.getProfilePhoto(),
             objectService.generateFilename(originalFilename),
             HttpMethod.PUT, 1);

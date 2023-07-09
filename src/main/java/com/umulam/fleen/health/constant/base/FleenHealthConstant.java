@@ -22,5 +22,6 @@ public class FleenHealthConstant {
   public static final String SIGN_OUT = "Sign out successful";
   public static final String VERIFICATION_DOCUMENT_UPDATED = "Verification documents updated";
   public static final String REQUEST_FOR_VERIFICATION = "Request for verification In Progress";
+  public static final String FILE_NOT_FOUND = "File does not exists or cannot be found";
 
 }

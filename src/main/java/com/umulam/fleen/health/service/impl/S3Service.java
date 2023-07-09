@@ -4,6 +4,7 @@ import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.umulam.fleen.health.exception.ObjectNotFoundException;
+import com.umulam.fleen.health.exception.base.FleenHealthException;
 import com.umulam.fleen.health.model.response.other.DeleteResponse;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.CacheControl;
@@ -22,12 +23,15 @@ import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.FILE_NOT_FOUND;
 import static com.umulam.fleen.health.util.DateTimeUtil.getTimeInMillis;
 
 @Component
 public class S3Service {
 
   private final AmazonS3 amazonS3;
+  private static final String FILE_NAME_BLACKLISTED_REGEX = "[^a-zA-Z0-9\\_]";
+  private static final String FILE_NAME_SEPARATOR = "_";
 
   public S3Service(AmazonS3 amazonS3) {
     this.amazonS3 = amazonS3;
@@ -43,6 +47,10 @@ public class S3Service {
     expirationTime.add(Calendar.HOUR, hour);
     URL url = amazonS3.generatePresignedUrl(bucketName, fileName, expirationTime.getTime(), httpMethod);
     return url.toString();
+  }
+
+  public String generateSignedUrl(String bucketName, String fileName) {
+    return generateSignedUrl(bucketName, fileName, HttpMethod.PUT, 1);
   }
 
   public String generateSignedUrl(String bucketName, String fileName, HttpMethod httpMethod, Date expirationDate) {
@@ -63,7 +71,7 @@ public class S3Service {
 
   public String getObjectSignedUrl(String bucketName, String fileName) {
     if (isObjectExists(bucketName, fileName)) {
-      throw new RuntimeException("File does not exists");
+      throw new FleenHealthException(FILE_NOT_FOUND);
     }
     return generateSignedUrl(bucketName, fileName, HttpMethod.GET);
   }
@@ -106,7 +114,7 @@ public class S3Service {
   public String generateObjectKey(String objectName) {
     return (new Date()).getTime() +
             "-" +
-            objectName.replace(" ", "_");
+            objectName.replaceAll(FILE_NAME_BLACKLISTED_REGEX, FILE_NAME_SEPARATOR);
   }
 
   public Object getObjectStream(String bucketName, String filename) {
