@@ -1,5 +1,6 @@
-package com.umulam.fleen.health.validator;
+package com.umulam.fleen.health.validator.impl;
 
+import com.umulam.fleen.health.validator.IsNumber;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 

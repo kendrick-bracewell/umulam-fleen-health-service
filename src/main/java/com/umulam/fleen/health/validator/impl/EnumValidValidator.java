@@ -1,4 +1,6 @@
-package com.umulam.fleen.health.validator;
+package com.umulam.fleen.health.validator.impl;
+
+import com.umulam.fleen.health.validator.EnumValid;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

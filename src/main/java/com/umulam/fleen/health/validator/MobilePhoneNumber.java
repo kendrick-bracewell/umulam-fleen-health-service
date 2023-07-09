@@ -1,5 +1,7 @@
 package com.umulam.fleen.health.validator;
 
+import com.umulam.fleen.health.validator.impl.PhoneNumberValidator;
+
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
