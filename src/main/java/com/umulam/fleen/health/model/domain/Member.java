@@ -73,7 +73,7 @@ public class Member {
   @Enumerated(EnumType.STRING)
   private ProfileType userType;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "member_status_id")
   private MemberStatus memberStatus;
 

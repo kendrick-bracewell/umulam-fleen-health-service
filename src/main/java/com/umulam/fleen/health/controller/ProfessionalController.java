@@ -34,7 +34,7 @@ public class ProfessionalController {
     Professional professional = professionalService.updateDetails(dto, user);
     ProfessionalView professionalView = professionalService.toProfessionalView(professional);
     professionalService.setVerificationDocument(professionalView);
-    return professionalView;
+    return null;
   }
 
   @PutMapping(value = "/verification/upload-documents")

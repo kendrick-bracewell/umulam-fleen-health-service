@@ -49,13 +49,13 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   }
 
   @Override
-  public List<ProfessionalView> toProfessionalViews(List<Professional> businesses) {
-    return ProfessionalMapper.toProfessionalViews(businesses);
+  public List<ProfessionalView> toProfessionalViews(List<Professional> professionals) {
+    return ProfessionalMapper.toProfessionalViews(professionals);
   }
 
   @Override
-  public ProfessionalView toProfessionalView(Professional business) {
-    return ProfessionalMapper.toProfessionalView(business);
+  public ProfessionalView toProfessionalView(Professional professional) {
+    return ProfessionalMapper.toProfessionalView(professional);
   }
 
   @Override
@@ -66,24 +66,23 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   @Override
   @Transactional
   public Professional updateDetails(UpdateProfessionalDetailsDto dto, FleenUser user) {
-    Professional business = dto.toProfessional();
+    Professional professional = dto.toProfessional();
     Member member = getMember(user.getEmailAddress());
 
     Country country;
-    Optional<Professional> businessExists = repository.findProfessionalByEmailAddress(user.getEmailAddress());
-    if (businessExists.isPresent()) {
-      Professional existingProfessional = businessExists.get();
+    Optional<Professional> professionalExists = repository.findProfessionalByEmailAddress(user.getEmailAddress());
+    if (professionalExists.isPresent()) {
+      Professional existingProfessional = professionalExists.get();
       country = existingProfessional.getCountry();
-      business.setId(existingProfessional.getId());
+      professional.setId(existingProfessional.getId());
     } else {
-      country = countryService.getCountry(business.getCountry().getId());
+      country = countryService.getCountry(professional.getCountry().getId());
     }
 
-    business.setMember(member);
-    business.getMember().setMemberStatus(member.getMemberStatus());
-    business.setCountry(country);
+    professional.setMember(member);
+    professional.setCountry(country);
 
-    return repository.save(business);
+    return repository.save(professional);
   }
 
   @Override

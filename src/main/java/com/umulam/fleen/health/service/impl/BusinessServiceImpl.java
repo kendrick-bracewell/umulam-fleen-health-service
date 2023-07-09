@@ -80,7 +80,6 @@ public class BusinessServiceImpl implements BusinessService, ProfileService {
     }
 
     business.setMember(member);
-    business.getMember().setMemberStatus(member.getMemberStatus());
     business.setCountry(country);
 
     return repository.save(business);
