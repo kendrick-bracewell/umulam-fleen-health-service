@@ -2,7 +2,6 @@ package com.umulam.fleen.health.model.mapper;
 
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.view.MemberView;
-import org.springframework.lang.NonNull;
 
 import java.util.Collections;
 import java.util.List;
