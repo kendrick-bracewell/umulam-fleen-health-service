@@ -27,17 +27,8 @@ public class ObjectController {
     this.s3BucketNames = s3BucketNames;
   }
 
-  @GetMapping(value = "/upload/create-signed-url/profile-photo")
-  public SignedUrlResponse generateSignedUrlForProfilePhoto(@RequestParam(name = "file_name") String originalFilename) {
-    String signedUrl = s3Service.generateSignedUrl(
-            s3BucketNames.getProfilePhoto(),
-            objectService.generateFilename(originalFilename),
-            HttpMethod.PUT, 1);
-    return new SignedUrlResponse(signedUrl);
-  }
-
   @DeleteMapping(value = "/delete/member-document")
-  public DeleteResponse deleteMemberDocument(@RequestParam(name = "key") String key) {
+  public DeleteResponse deleteProfileVerificationDocument(@RequestParam(name = "key") String key) {
     return s3Service.deleteObject(s3BucketNames.getMemberDocument(), key);
   }
 

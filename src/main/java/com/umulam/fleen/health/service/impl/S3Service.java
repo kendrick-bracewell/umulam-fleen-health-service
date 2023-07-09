@@ -89,7 +89,7 @@ public class S3Service {
     if (isObjectExists(bucketName, objectKey)) {
       DeleteObjectRequest objectRequest = new DeleteObjectRequest(bucketName, objectKey);
       amazonS3.deleteObject(objectRequest);
-      return new DeleteResponse("Success", true);
+      return new DeleteResponse();
     }
 
     throw new ObjectNotFoundException(objectKey);

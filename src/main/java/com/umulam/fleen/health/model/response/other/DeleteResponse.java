@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.model.response.other;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,8 @@ import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
+import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_FORMAT;
+
 @Builder
 @Getter
 @Setter
@@ -16,6 +19,8 @@ import java.time.LocalDateTime;
 public class DeleteResponse {
 
   private final String message;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
   private final String timestamp;
 
   @JsonProperty("status_code")
