@@ -7,6 +7,7 @@ import com.umulam.fleen.health.validator.EnumValid;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Builder
 @Getter
@@ -15,6 +16,8 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class ConfirmMfaDto {
 
+  @NotBlank(message = "{verification.code.notEmpty}")
+  @Size(min = 1, max = 6, message = "{verification.code.size}")
   private String code;
 
   @NotBlank(message = "{mfa.type.notEmpty}")

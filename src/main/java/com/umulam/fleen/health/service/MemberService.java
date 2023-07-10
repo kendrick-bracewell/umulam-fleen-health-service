@@ -5,6 +5,8 @@ import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.dto.authentication.ConfirmMfaDto;
 import com.umulam.fleen.health.model.dto.authentication.MfaTypeDto;
 import com.umulam.fleen.health.model.dto.authentication.UpdatePasswordDto;
+import com.umulam.fleen.health.model.response.member.MemberGetUpdateDetailsResponse;
+import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
 import lombok.NonNull;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,4 +40,6 @@ public interface MemberService {
   void updatePassword(String username, UpdatePasswordDto dto);
 
   ProfileVerificationStatus getVerificationStatus(Integer memberId);
+
+  MemberGetUpdateDetailsResponse getMemberGetUpdateDetailsResponse(FleenUser user);
 }

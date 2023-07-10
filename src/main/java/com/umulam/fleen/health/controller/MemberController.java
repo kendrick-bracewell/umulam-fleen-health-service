@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.controller;
 
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
+import com.umulam.fleen.health.model.response.member.MemberGetUpdateDetailsResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.service.AuthenticationService;
 import com.umulam.fleen.health.service.MemberService;
@@ -27,6 +28,11 @@ public class MemberController {
     this.authenticationService = authenticationService;
   }
 
+  @GetMapping("/update-details")
+  public MemberGetUpdateDetailsResponse getUpdateDetails(@AuthenticationPrincipal FleenUser user) {
+    return memberService.getMemberGetUpdateDetailsResponse(user);
+  }
+
   @PutMapping(value = "/update-details")
   public Object updateDetails() {
     return null;
@@ -37,8 +43,8 @@ public class MemberController {
     return null;
   }
 
-  @PutMapping(value = "/confirm-update-phone-number")
-  public Object confirmUpdatePhoneNumber() {
+  @GetMapping(value = "/confirm-update-phone-number")
+  public Object requestPhoneNumberUpdate() {
     return null;
   }
 
@@ -47,8 +53,18 @@ public class MemberController {
     return null;
   }
 
+  @GetMapping(value ="/request-email-address-update-")
+  public Object requestEmailAddressUpdate() {
+    return null;
+  }
+
   @PutMapping(value = "/update-profile-photo")
   public Object updateProfilePhoto() {
+    return null;
+  }
+
+  @PutMapping(value = "/update-password")
+  public Object updatePassword() {
     return null;
   }
 

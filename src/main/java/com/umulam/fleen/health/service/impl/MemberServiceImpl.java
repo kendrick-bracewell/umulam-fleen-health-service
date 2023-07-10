@@ -13,6 +13,8 @@ import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.dto.authentication.ConfirmMfaDto;
 import com.umulam.fleen.health.model.dto.authentication.MfaTypeDto;
 import com.umulam.fleen.health.model.dto.authentication.UpdatePasswordDto;
+import com.umulam.fleen.health.model.response.member.MemberGetUpdateDetailsResponse;
+import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
 import com.umulam.fleen.health.repository.jpa.MemberJpaRepository;
 import com.umulam.fleen.health.service.AuthenticationService;
@@ -201,5 +203,14 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public ProfileVerificationStatus getVerificationStatus(Integer memberId) {
     return repository.getProfileVerificationStatus(memberId);
+  }
+
+  @Override
+  public MemberGetUpdateDetailsResponse getMemberGetUpdateDetailsResponse(FleenUser user) {
+    MemberGetUpdateDetailsResponse response = repository.getMemberUpdateDetails(user.getId());
+    if (Objects.nonNull(response)) {
+      return response;
+    }
+    throw new UserNotFoundException(user.getEmailAddress());
   }
 }
