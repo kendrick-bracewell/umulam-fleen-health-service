@@ -4,6 +4,10 @@
     "body": "Hi, kindly use this code {0} to complete the verification process"
   },
   {
+    "title": "PRE_AUTHENTICATION",
+    "body": "Hi, kindly use this code {0} to complete the multi-factor authentication sign-in process"
+  },
+  {
     "title": "FORGOT_PASSWORD",
     "body": "Hi, kindly use this code {0} to complete the reset your password. If you didn't initiate this process, kindly ignore this message."
   },
