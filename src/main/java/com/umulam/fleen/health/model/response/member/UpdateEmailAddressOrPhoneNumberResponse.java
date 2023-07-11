@@ -3,7 +3,6 @@ package com.umulam.fleen.health.model.response.member;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.umulam.fleen.health.constant.base.FleenHealthConstant;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 
