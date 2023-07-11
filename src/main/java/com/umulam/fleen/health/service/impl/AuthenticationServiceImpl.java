@@ -530,7 +530,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, CommonA
 
     if (SMS == mfaType || EMAIL == mfaType) {
       String verificationKey = getPreAuthenticationCacheKey(username);
-      validateSmsAndEmailMfa(verificationKey, code);
+      validateSmsAndEmailVerificationCode(verificationKey, code);
     }
     else if (AUTHENTICATOR == mfaType) {
       String secret = memberService.getTwoFaSecret(fleenUser.getId());
