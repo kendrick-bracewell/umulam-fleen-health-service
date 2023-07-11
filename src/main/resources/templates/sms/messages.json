@@ -14,5 +14,9 @@
   {
     "title": "MFA_SETUP",
     "body": "Hi, kindly use this code {0} to complete the multi-factor authentication setup process"
+  },
+  {
+    "title": "PROFILE_UPDATE",
+    "body": "Hi, kindly use this code {0} to complete the verification process"
   }
 ]

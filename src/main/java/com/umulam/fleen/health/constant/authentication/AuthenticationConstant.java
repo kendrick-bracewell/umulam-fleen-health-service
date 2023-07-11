@@ -27,4 +27,6 @@ public final class AuthenticationConstant {
   public static final long RESET_PASSWORD_TOKEN_VALIDITY = getTimeInMillis(60, 15, 0, 0);
   public static final String CLAIMS_USER_ID_KEY = "userId";
   public static final String CLAIMS_AUTHORITY_KEY = "authorities";
+  public static final String UPDATE_EMAIL_CACHE_PREFIX = "UPDATE_EMAIL:::";
+  public static final String UPDATE_PHONE_NUMBER_CACHE_PREFIX = "UPDATE_PHONE_NUMBER:::";
 }

@@ -17,5 +17,5 @@ public class JwtTokenDetails {
   private String status;
   private String firstName;
   private String lastName;
-
+  private String phoneNumber;
 }

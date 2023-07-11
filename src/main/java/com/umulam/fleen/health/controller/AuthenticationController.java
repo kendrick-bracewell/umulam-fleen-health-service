@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.VERIFICATION_CODE_MESSAGE;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.VERIFICATION_CODE_SENT_MESSAGE;
 
 @Slf4j
 @RestController
@@ -39,7 +39,7 @@ public class AuthenticationController {
   @PostMapping(value = "/forgot-password")
   public FleenHealthResponse forgotPassword(@Valid @RequestBody ForgotPasswordDto dto) {
     authenticationService.forgotPassword(dto);
-    return new FleenHealthResponse(VERIFICATION_CODE_MESSAGE);
+    return new FleenHealthResponse(VERIFICATION_CODE_SENT_MESSAGE);
   }
 
   @PostMapping(value = "/verify-reset-password-code")

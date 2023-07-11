@@ -1,17 +1,28 @@
 package com.umulam.fleen.health.controller;
 
+import com.umulam.fleen.health.constant.base.FleenHealthConstant;
+import com.umulam.fleen.health.model.dto.authentication.UpdatePasswordDto;
+import com.umulam.fleen.health.model.dto.member.ConfirmUpdateEmailAddressDto;
+import com.umulam.fleen.health.model.dto.member.ConfirmUpdatePhoneNumberDto;
+import com.umulam.fleen.health.model.dto.member.UpdateEmailAddressOrPhoneNumberDto;
+import com.umulam.fleen.health.model.dto.member.UpdateMemberDetailsDto;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
-import com.umulam.fleen.health.model.response.member.MemberGetUpdateDetailsResponse;
+import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsResponse;
+import com.umulam.fleen.health.model.response.member.SendUpdateEmailAddressOrPhoneNumberVerificationCodeResponse;
+import com.umulam.fleen.health.model.response.member.UpdateEmailAddressOrPhoneNumberResponse;
+import com.umulam.fleen.health.model.response.member.UpdateMemberDetailsResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.service.AuthenticationService;
 import com.umulam.fleen.health.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.PASSWORD_CHANGED_UPDATED;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.SUCCESS_MESSAGE;
 
 @Slf4j
 @RestController
@@ -29,33 +40,35 @@ public class MemberController {
   }
 
   @GetMapping("/update-details")
-  public MemberGetUpdateDetailsResponse getUpdateDetails(@AuthenticationPrincipal FleenUser user) {
+  public GetMemberUpdateDetailsResponse getUpdateDetails(@AuthenticationPrincipal FleenUser user) {
     return memberService.getMemberGetUpdateDetailsResponse(user);
   }
 
   @PutMapping(value = "/update-details")
-  public Object updateDetails() {
-    return null;
+  public UpdateMemberDetailsResponse updateDetails(@Valid @RequestBody UpdateMemberDetailsDto dto, @AuthenticationPrincipal FleenUser user) {
+    return memberService.updateMemberDetails(dto, user);
   }
 
-  @PutMapping(value = "/update-phone-number")
-  public Object updatePhoneNumber() {
-    return null;
+  @PutMapping(value = "/send-update-email-address-phone-number-code")
+  public SendUpdateEmailAddressOrPhoneNumberVerificationCodeResponse sendUpdatePhoneNumberCode(
+          @Valid @RequestBody UpdateEmailAddressOrPhoneNumberDto dto,
+          @AuthenticationPrincipal FleenUser user) {
+    memberService.sendUpdateEmailAddressOrPhoneNumberCode(dto, user);
+    return new SendUpdateEmailAddressOrPhoneNumberVerificationCodeResponse(FleenHealthConstant.VERIFICATION_CODE_SENT_MESSAGE);
   }
 
-  @GetMapping(value = "/confirm-update-phone-number")
-  public Object requestPhoneNumberUpdate() {
-    return null;
+  @PutMapping(value = "/confirm-update-email-address")
+  public UpdateEmailAddressOrPhoneNumberResponse confirmUpdatePhoneNumber(
+          @Valid @RequestBody ConfirmUpdateEmailAddressDto dto,
+          @AuthenticationPrincipal FleenUser user) {
+    return memberService.confirmUpdateEmailAddress(dto, user);
   }
 
-  @PutMapping(value = "/update-email-address")
-  public Object updateEmailAddress() {
-    return null;
-  }
-
-  @GetMapping(value ="/request-email-address-update-")
-  public Object requestEmailAddressUpdate() {
-    return null;
+  @PutMapping(value ="/confirm-update-phone-number")
+  public UpdateEmailAddressOrPhoneNumberResponse confirmUpdateEmailAddress(
+          @Valid @RequestBody ConfirmUpdatePhoneNumberDto dto,
+          @AuthenticationPrincipal FleenUser user) {
+    return memberService.confirmUpdatePhoneNumber(dto, user);
   }
 
   @PutMapping(value = "/update-profile-photo")
@@ -64,14 +77,15 @@ public class MemberController {
   }
 
   @PutMapping(value = "/update-password")
-  public Object updatePassword() {
-    return null;
+  public Object updatePassword(@Valid @RequestBody UpdatePasswordDto dto, @AuthenticationPrincipal FleenUser user) {
+    memberService.updatePassword(user.getUsername(), dto);
+    return new FleenHealthResponse(PASSWORD_CHANGED_UPDATED);
   }
 
   @GetMapping(value = "/sign-out")
   @PreAuthorize("hasAnyRole('USER', 'PROFESSIONAL', 'ADMINISTRATOR', 'SUPERADMINISTRATOR')")
   public FleenHealthResponse signOut(@AuthenticationPrincipal FleenUser user) {
     authenticationService.signOut(user.getUsername());
-    return new FleenHealthResponse("Success");
+    return new FleenHealthResponse(SUCCESS_MESSAGE);
   }
 }

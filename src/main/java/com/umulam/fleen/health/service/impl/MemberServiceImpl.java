@@ -1,5 +1,7 @@
 package com.umulam.fleen.health.service.impl;
 
+import com.umulam.fleen.health.constant.CommonEmailMessageTemplateDetails;
+import com.umulam.fleen.health.constant.VerificationMessageType;
 import com.umulam.fleen.health.constant.authentication.MfaSetupStatus;
 import com.umulam.fleen.health.constant.authentication.MfaType;
 import com.umulam.fleen.health.constant.authentication.VerificationType;
@@ -13,13 +15,23 @@ import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.dto.authentication.ConfirmMfaDto;
 import com.umulam.fleen.health.model.dto.authentication.MfaTypeDto;
 import com.umulam.fleen.health.model.dto.authentication.UpdatePasswordDto;
-import com.umulam.fleen.health.model.response.member.MemberGetUpdateDetailsResponse;
+import com.umulam.fleen.health.model.dto.member.ConfirmUpdateEmailAddressDto;
+import com.umulam.fleen.health.model.dto.member.ConfirmUpdatePhoneNumberDto;
+import com.umulam.fleen.health.model.dto.member.UpdateEmailAddressOrPhoneNumberDto;
+import com.umulam.fleen.health.model.dto.member.UpdateMemberDetailsDto;
+import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequest;
+import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsResponse;
+import com.umulam.fleen.health.model.response.member.UpdateEmailAddressOrPhoneNumberResponse;
+import com.umulam.fleen.health.model.response.member.UpdateMemberDetailsResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
 import com.umulam.fleen.health.repository.jpa.MemberJpaRepository;
 import com.umulam.fleen.health.service.AuthenticationService;
+import com.umulam.fleen.health.service.CommonAuthService;
 import com.umulam.fleen.health.service.MemberService;
 import com.umulam.fleen.health.service.MfaService;
+import com.umulam.fleen.health.service.external.aws.EmailServiceImpl;
+import com.umulam.fleen.health.service.external.aws.MobileTextService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
@@ -27,24 +39,37 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.Objects;
+
+import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.UPDATE_EMAIL_CACHE_PREFIX;
+import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.UPDATE_PHONE_NUMBER_CACHE_PREFIX;
 
 @Slf4j
 @Service
-public class MemberServiceImpl implements MemberService {
+public class MemberServiceImpl implements MemberService, CommonAuthService {
 
   private final MemberJpaRepository repository;
   private final MfaService mfaService;
   private final AuthenticationService authenticationService;
+  private final CacheService cacheService;
+  private final MobileTextService mobileTextService;
+  private final EmailServiceImpl emailService;
   private final PasswordEncoder passwordEncoder;
 
   public MemberServiceImpl(MemberJpaRepository repository,
                            MfaService mfaService,
                            @Lazy AuthenticationService authenticationService,
+                           CacheService cacheService,
+                           MobileTextService mobileTextService,
+                           EmailServiceImpl emailService,
                            PasswordEncoder passwordEncoder) {
     this.repository = repository;
     this.mfaService = mfaService;
     this.authenticationService = authenticationService;
+    this.cacheService = cacheService;
+    this.mobileTextService = mobileTextService;
+    this.emailService = emailService;
     this.passwordEncoder = passwordEncoder;
   }
 
@@ -188,11 +213,7 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   public void updatePassword(String username, UpdatePasswordDto dto) {
-    Member member = getMemberByEmailAddress(username);
-    if (Objects.isNull(member)) {
-      throw new UserNotFoundException(username);
-    }
-
+    Member member = getMember(username);
     if (passwordEncoder.matches(dto.getOldPassword(), member.getPassword())) {
       throw new UpdatePasswordFailedException();
     }
@@ -206,11 +227,175 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
-  public MemberGetUpdateDetailsResponse getMemberGetUpdateDetailsResponse(FleenUser user) {
-    MemberGetUpdateDetailsResponse response = repository.getMemberUpdateDetails(user.getId());
+  public GetMemberUpdateDetailsResponse getMemberGetUpdateDetailsResponse(FleenUser user) {
+    GetMemberUpdateDetailsResponse response = repository.findMemberDetailsById(user.getId());
     if (Objects.nonNull(response)) {
       return response;
     }
     throw new UserNotFoundException(user.getEmailAddress());
+  }
+
+  @Override
+  @Transactional
+  public UpdateMemberDetailsResponse updateMemberDetails(UpdateMemberDetailsDto dto, FleenUser user) {
+    Member member = getMember(user.getEmailAddress());
+    member.setFirstName(dto.getFirstName());
+    member.setLastName(dto.getLastName());
+    save(member);
+    return new UpdateMemberDetailsResponse(dto.getFirstName(), dto.getLastName());
+  }
+
+  private Member getMember(String emailAddress) {
+    Member member = getMemberByEmailAddress(emailAddress);
+    if (Objects.isNull(member)) {
+      throw new UserNotFoundException(emailAddress);
+    }
+    return member;
+  }
+
+  @Override
+  public void sendUpdateEmailAddressOrPhoneNumberCode(UpdateEmailAddressOrPhoneNumberDto dto, FleenUser user) {
+    VerificationType verificationType = VerificationType.valueOf(dto.getVerificationType());
+    Member member = getMember(user.getEmailAddress());
+
+    String code = getRandomSixDigitOtp();
+    FleenUser freshUser = FleenUser.fromMember(member);
+    PreVerificationOrAuthenticationRequest request = createUpdateProfileRequest(code, freshUser);
+
+    if (verificationType == VerificationType.EMAIL) {
+      sendVerificationMessage(request, VerificationType.EMAIL);
+      saveUpdateEmailOtp(member.getEmailAddress(), code);
+    } else {
+      sendVerificationMessage(request, VerificationType.SMS);
+      saveUpdatePhoneNumberOtp(member.getEmailAddress(), code);
+    }
+  }
+
+  @Override
+  @Transactional
+  public UpdateEmailAddressOrPhoneNumberResponse confirmUpdateEmailAddress(ConfirmUpdateEmailAddressDto dto, FleenUser user) {
+    String username = user.getEmailAddress();
+    String verificationKey = getUpdateEmailCacheKey(username);
+    String code = dto.getCode();
+
+    validateSmsAndEmailVerificationCode(verificationKey, code);
+    Member member = getMember(user.getEmailAddress());
+
+    member.setEmailAddress(dto.getEmailAddress());
+    member.setEmailAddressVerified(true);
+    save(member);
+
+    return new UpdateEmailAddressOrPhoneNumberResponse(dto.getEmailAddress(), null);
+  }
+
+  @Override
+  @Transactional
+  public UpdateEmailAddressOrPhoneNumberResponse confirmUpdatePhoneNumber(ConfirmUpdatePhoneNumberDto dto, FleenUser user) {
+    String username = user.getEmailAddress();
+    String verificationKey = getUpdatePhoneNumberCacheKey(username);
+    String code = dto.getCode();
+
+    validateSmsAndEmailVerificationCode(verificationKey, code);
+    Member member = getMember(user.getEmailAddress());
+
+    member.setPhoneNumber(dto.getPhoneNumber());
+    member.setPhoneNumberVerified(true);
+    save(member);
+
+    return new UpdateEmailAddressOrPhoneNumberResponse(null, dto.getPhoneNumber());
+  }
+
+  /**
+   * <p>Prefix a user's identifier with a predefined key used to save an update email otp</p>
+   * <br/>
+   *
+   * @param username a user identifier found on the system or is to be registered on the system
+   * @return a string concatenation of a predefined prefix and the user's identifier
+   */
+  public static String getUpdateEmailCacheKey(String username) {
+    return UPDATE_EMAIL_CACHE_PREFIX.concat(username);
+  }
+
+  /**
+   * <p>Save the update email otp.</p>
+   * <br/>
+   *
+   * @param subject the user's identifier to associate with the otp
+   * @param otp a random code associated with the user's identifier during the update email process
+   */
+  @Override
+  public void saveUpdateEmailOtp(String subject, String otp) {
+    cacheService.set(getUpdateEmailCacheKey(subject), otp, Duration.ofMinutes(3));
+  }
+
+  /**
+   * <p>Remove the user's update email otp after successful update of the user's email address.</p>
+   * <br/>
+   *
+   * @param username the user's identifier associated with the update email otp or code
+   */
+  private void clearUpdateEmailOtp(String username) {
+    cacheService.delete(getUpdateEmailCacheKey(username));
+  }
+
+
+  /**
+   * <p>Prefix a user's identifier with a predefined key used to save an update phone number otp</p>
+   * <br/>
+   *
+   * @param username a user identifier found on the system or is to be registered on the system
+   * @return a string concatenation of a predefined prefix and the user's identifier
+   */
+  public static String getUpdatePhoneNumberCacheKey(String username) {
+    return UPDATE_PHONE_NUMBER_CACHE_PREFIX.concat(username);
+  }
+
+  /**
+   * <p>Save the update phone number otp.</p>
+   * <br/>
+   *
+   * @param subject the user's identifier to associate with the otp
+   * @param otp a random code associated with the user's identifier during the update phone number process
+   */
+  @Override
+  public void saveUpdatePhoneNumberOtp(String subject, String otp) {
+    cacheService.set(getUpdatePhoneNumberCacheKey(subject), otp, Duration.ofMinutes(3));
+  }
+
+  /**
+   * <p>Remove the user's update phone number otp after successful update of the user's phone number.</p>
+   * <br/>
+   *
+   * @param username the user's identifier associated with the update phone number otp or code
+   */
+  private void clearUpdatePhoneNumberOtp(String username) {
+    cacheService.delete(getUpdatePhoneNumberCacheKey(username));
+  }
+
+
+  private PreVerificationOrAuthenticationRequest createUpdateProfileRequest(String code, FleenUser user) {
+    CommonEmailMessageTemplateDetails templateDetails = CommonEmailMessageTemplateDetails.PROFILE_UPDATE;
+    PreVerificationOrAuthenticationRequest request = createVerificationRequest(code, user);
+    request.setEmailMessageTitle(templateDetails.getEmailMessageSubject());
+    request.setSmsMessage(getVerificationSmsMessage(VerificationMessageType.PROFILE_UPDATE));
+
+    String emailBody = getVerificationEmailBody(templateDetails.getTemplateName(), request);
+    request.setEmailMessageBody(emailBody);
+    return request;
+  }
+
+  @Override
+  public MobileTextService getMobileTextService() {
+    return mobileTextService;
+  }
+
+  @Override
+  public EmailServiceImpl getEmailService() {
+    return emailService;
+  }
+
+  @Override
+  public CacheService getCacheService() {
+    return cacheService;
   }
 }
