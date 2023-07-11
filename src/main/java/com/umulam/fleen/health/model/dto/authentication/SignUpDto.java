@@ -64,8 +64,8 @@ public class SignUpDto {
   @JsonProperty("verification_type")
   private String verificationType;
 
-  @JsonProperty("profile_type")
   @EnumValid(enumClass = ProfileType.class, message = "{platform.entity.type.type}")
+  @JsonProperty("profile_type")
   private String profileType;
 
   @EnumValid(enumClass = MemberGender.class, message = "{signup.gender}")

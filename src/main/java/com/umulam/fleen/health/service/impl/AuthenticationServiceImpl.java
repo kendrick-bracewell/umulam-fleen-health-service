@@ -312,14 +312,10 @@ public class AuthenticationServiceImpl implements AuthenticationService, CommonA
     String refreshToken = createRefreshToken(user);
 
     String otp = mfaService.generateVerificationOtp(6);
-    PreVerificationOrAuthenticationRequest preVerification = PreVerificationOrAuthenticationRequest.builder()
-            .code(otp)
-            .phoneNumber(dto.getPhoneNumber())
-            .emailAddress(dto.getEmailAddress())
-            .build();
+    PreVerificationOrAuthenticationRequest request = createPreVerificationRequest(otp, user);
 
     VerificationType verificationType = VerificationType.valueOf(dto.getVerificationType());
-    sendVerificationMessage(preVerification, verificationType);
+    sendVerificationMessage(request, verificationType);
     savePreVerificationOtp(user.getUsername(), otp);
 
     ProfileVerificationMessage verificationMessage = profileVerificationMessageService.getProfileVerificationMessageByType(ProfileVerificationMessageType.PENDING);
