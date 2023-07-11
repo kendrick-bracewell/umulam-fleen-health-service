@@ -1,15 +1,19 @@
 package com.umulam.fleen.health.model.dto.authentication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.constant.authentication.VerificationType;
+import com.umulam.fleen.health.constant.base.ProfileType;
+import com.umulam.fleen.health.constant.member.MemberGender;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.validator.*;
 import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import static com.umulam.fleen.health.util.DateTimeUtil.toLocalDateTime;
 
 @Builder
 @Getter
@@ -56,13 +60,22 @@ public class SignUpDto {
   @JsonProperty("confirm_password")
   private String confirmPassword;
 
-  @JsonProperty("verification_type")
   @EnumValid(enumClass = VerificationType.class, message = "{verification.type}")
+  @JsonProperty("verification_type")
   private String verificationType;
 
   @JsonProperty("profile_type")
   @EnumValid(enumClass = ProfileType.class, message = "{platform.entity.type.type}")
   private String profileType;
+
+  @EnumValid(enumClass = MemberGender.class, message = "{signup.gender}")
+  @JsonProperty("gender")
+  private String gender;
+
+  @NotNull(message = "{signup.dateOfBirth.notEmpty}")
+  @DateOfBirth(message = "{signup.dateOfBirth.invalid}")
+  @JsonProperty("date_of_birth")
+  private String dateOfBirth;
 
   public Member toMember() {
     return Member.builder()
@@ -72,6 +85,8 @@ public class SignUpDto {
             .phoneNumber(phoneNumber)
             .password(password)
             .userType(ProfileType.valueOf(profileType))
+            .gender(MemberGender.valueOf(gender))
+            .dateOfBirth(toLocalDateTime(dateOfBirth))
             .build();
   }
 }

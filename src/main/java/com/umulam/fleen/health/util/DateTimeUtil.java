@@ -1,10 +1,12 @@
 package com.umulam.fleen.health.util;
 
 import java.time.*;
-import java.util.Calendar;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static com.umulam.fleen.health.util.DateFormatUtil.DATE;
 
 public class DateTimeUtil {
   public static Date asDate(LocalDate localDate) {
@@ -58,5 +60,10 @@ public class DateTimeUtil {
 
   public static LocalDateTime addMinutesFromNow(int minute) {
     return LocalDateTime.now().plusMinutes(minute);
+  }
+
+  public static LocalDateTime toLocalDateTime(String date) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE);
+    return LocalDate.parse(date, formatter).atStartOfDay();
   }
 }

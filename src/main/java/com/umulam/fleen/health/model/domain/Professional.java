@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.model.domain;
 
+import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -29,6 +30,13 @@ public class Professional {
 
   @Column(name = "area_of_expertise", nullable = false, length = 2500)
   private String areaOfExpertise;
+
+  @Column
+  private String languagesSpoken;
+
+  @Column
+  @Enumerated(EnumType.STRING)
+  private ProfessionalAvailabilityStatus availabilityStatus;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "country_id", referencedColumnName = "id")

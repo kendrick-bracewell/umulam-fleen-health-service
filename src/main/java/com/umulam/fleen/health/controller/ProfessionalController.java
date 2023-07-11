@@ -54,4 +54,16 @@ public class ProfessionalController {
     ProfileVerificationStatus status = professionalService.checkVerificationStatus(user);
     return new UserVerificationStatusView();
   }
+
+  public void viewSessions() {
+
+  }
+
+  public void viewPatientSession() {
+
+  }
+
+  public void viewPatientDetail() {
+
+  }
 }

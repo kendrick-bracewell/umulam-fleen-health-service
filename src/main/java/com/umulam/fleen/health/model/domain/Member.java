@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.model.domain;
 
 import com.umulam.fleen.health.constant.base.ProfileType;
+import com.umulam.fleen.health.constant.member.MemberGender;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.constant.authentication.MfaType;
 import lombok.*;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,6 +48,9 @@ public class Member {
   @Column(name = "profile_photo", length = 500)
   private String profilePhoto;
 
+  @Column(name = "date_of_birth", nullable = false)
+  private LocalDateTime dateOfBirth;
+
   @Builder.Default
   @Column(name ="email_address_verified")
   private boolean emailAddressVerified = false;
@@ -53,6 +58,10 @@ public class Member {
   @Builder.Default
   @Column(name ="phone_number_verified")
   private boolean phoneNumberVerified = false;
+
+  @Column(name = "gender", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private MemberGender gender;
 
   @Builder.Default
   @Column(name = "mfa_enabled")
