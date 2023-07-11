@@ -1123,7 +1123,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, CommonA
   @Override
   public void validateMfaSetupCode(String username, String code) {
     String verificationKey = getMfaSetupCacheKey(username);
-    validateSmsAndEmailVerifcationCode(verificationKey, code);
+    validateSmsAndEmailVerificationCode(verificationKey, code);
     clearMfaSetupOtp(username);
   }
 
