@@ -5,6 +5,7 @@ import com.umulam.fleen.health.constant.VerificationMessageType;
 import com.umulam.fleen.health.constant.authentication.MfaSetupStatus;
 import com.umulam.fleen.health.constant.authentication.MfaType;
 import com.umulam.fleen.health.constant.authentication.VerificationType;
+import com.umulam.fleen.health.constant.member.MemberGender;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.authentication.InvalidVerificationCodeException;
 import com.umulam.fleen.health.exception.authentication.MfaGenerationFailedException;
@@ -44,6 +45,7 @@ import java.util.Objects;
 
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.UPDATE_EMAIL_CACHE_PREFIX;
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.UPDATE_PHONE_NUMBER_CACHE_PREFIX;
+import static com.umulam.fleen.health.util.DateTimeUtil.toLocalDateTime;
 
 @Slf4j
 @Service
@@ -241,8 +243,10 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
     Member member = getMember(user.getEmailAddress());
     member.setFirstName(dto.getFirstName());
     member.setLastName(dto.getLastName());
+    member.setGender(MemberGender.valueOf(dto.getGender()));
+    member.setDateOfBirth(toLocalDateTime(dto.getDateOfBirth()));
     save(member);
-    return new UpdateMemberDetailsResponse(dto.getFirstName(), dto.getLastName());
+    return new UpdateMemberDetailsResponse(dto.getFirstName(), dto.getLastName(), member.getGender(), member.getDateOfBirth());
   }
 
   private Member getMember(String emailAddress) {
