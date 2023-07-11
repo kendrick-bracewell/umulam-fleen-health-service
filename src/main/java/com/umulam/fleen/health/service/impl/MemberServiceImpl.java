@@ -284,6 +284,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
     member.setEmailAddress(dto.getEmailAddress());
     member.setEmailAddressVerified(true);
     save(member);
+    clearUpdateEmailAddressOtp(username);
 
     return new UpdateEmailAddressOrPhoneNumberResponse(dto.getEmailAddress(), null);
   }
@@ -301,6 +302,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
     member.setPhoneNumber(dto.getPhoneNumber());
     member.setPhoneNumberVerified(true);
     save(member);
+    clearUpdatePhoneNumberOtp(username);
 
     return new UpdateEmailAddressOrPhoneNumberResponse(null, dto.getPhoneNumber());
   }
@@ -334,7 +336,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
    *
    * @param username the user's identifier associated with the update email otp or code
    */
-  private void clearUpdateEmailOtp(String username) {
+  private void clearUpdateEmailAddressOtp(String username) {
     cacheService.delete(getUpdateEmailCacheKey(username));
   }
 
