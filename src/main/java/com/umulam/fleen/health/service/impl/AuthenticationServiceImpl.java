@@ -921,7 +921,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, CommonA
     profileToken.setUpdatedOn(LocalDateTime.now());
     profileTokenService.save(profileToken);
 
-    FleenUser user = FleenUser.fromMember(member);
+    FleenUser user = FleenUser.fromMemberBasic(member);
     PreVerificationOrAuthenticationRequest request = createForgotPasswordRequest(code, user);
 
     sendVerificationMessage(request, verificationType);
@@ -1109,7 +1109,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, CommonA
   @Transactional
   public void sendMfaVerification(Member member, VerificationType verificationType) {
     String code = getRandomSixDigitOtp();
-    FleenUser user = FleenUser.fromMember(member);
+    FleenUser user = FleenUser.fromMemberBasic(member);
     PreVerificationOrAuthenticationRequest request = createMfaSetupRequest(code, user);
 
     sendVerificationMessage(request, verificationType);

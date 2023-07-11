@@ -2,10 +2,7 @@ package com.umulam.fleen.health.controller;
 
 import com.umulam.fleen.health.constant.base.FleenHealthConstant;
 import com.umulam.fleen.health.model.dto.authentication.UpdatePasswordDto;
-import com.umulam.fleen.health.model.dto.member.ConfirmUpdateEmailAddressDto;
-import com.umulam.fleen.health.model.dto.member.ConfirmUpdatePhoneNumberDto;
-import com.umulam.fleen.health.model.dto.member.UpdateEmailAddressOrPhoneNumberDto;
-import com.umulam.fleen.health.model.dto.member.UpdateMemberDetailsDto;
+import com.umulam.fleen.health.model.dto.member.*;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsResponse;
 import com.umulam.fleen.health.model.response.member.SendUpdateEmailAddressOrPhoneNumberVerificationCodeResponse;
@@ -21,8 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.PASSWORD_CHANGED_UPDATED;
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.SUCCESS_MESSAGE;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.*;
 
 @Slf4j
 @RestController
@@ -49,7 +45,7 @@ public class MemberController {
     return memberService.updateMemberDetails(dto, user);
   }
 
-  @PutMapping(value = "/send-update-email-address-phone-number-code")
+  @PostMapping(value = "/send-update-email-address-phone-number-code")
   public SendUpdateEmailAddressOrPhoneNumberVerificationCodeResponse sendUpdatePhoneNumberCode(
           @Valid @RequestBody UpdateEmailAddressOrPhoneNumberDto dto,
           @AuthenticationPrincipal FleenUser user) {
@@ -72,8 +68,11 @@ public class MemberController {
   }
 
   @PutMapping(value = "/update-profile-photo")
-  public Object updateProfilePhoto() {
-    return null;
+  public FleenHealthResponse updateProfilePhoto(
+          @Valid @RequestBody UpdateProfilePhotoDto dto,
+          @AuthenticationPrincipal FleenUser user) {
+    memberService.updateProfilePhoto(dto, user);
+    return new FleenHealthResponse(PROFILE_PHOTO_UPDATED);
   }
 
   @PutMapping(value = "/update-password")

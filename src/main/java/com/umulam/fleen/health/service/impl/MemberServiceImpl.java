@@ -16,10 +16,7 @@ import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.dto.authentication.ConfirmMfaDto;
 import com.umulam.fleen.health.model.dto.authentication.MfaTypeDto;
 import com.umulam.fleen.health.model.dto.authentication.UpdatePasswordDto;
-import com.umulam.fleen.health.model.dto.member.ConfirmUpdateEmailAddressDto;
-import com.umulam.fleen.health.model.dto.member.ConfirmUpdatePhoneNumberDto;
-import com.umulam.fleen.health.model.dto.member.UpdateEmailAddressOrPhoneNumberDto;
-import com.umulam.fleen.health.model.dto.member.UpdateMemberDetailsDto;
+import com.umulam.fleen.health.model.dto.member.*;
 import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequest;
 import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsResponse;
 import com.umulam.fleen.health.model.response.member.UpdateEmailAddressOrPhoneNumberResponse;
@@ -217,10 +214,10 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
   public void updatePassword(String username, UpdatePasswordDto dto) {
     Member member = getMember(username);
     if (passwordEncoder.matches(dto.getOldPassword(), member.getPassword())) {
-      throw new UpdatePasswordFailedException();
+      repository.updatePassword(member.getId(), passwordEncoder.encode(dto.getPassword()));
+      return;
     }
-
-    repository.updatePassword(member.getId(), passwordEncoder.encode(dto.getPassword()));
+    throw new UpdatePasswordFailedException();
   }
 
   @Override
@@ -258,12 +255,13 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
   }
 
   @Override
+  @Transactional
   public void sendUpdateEmailAddressOrPhoneNumberCode(UpdateEmailAddressOrPhoneNumberDto dto, FleenUser user) {
     VerificationType verificationType = VerificationType.valueOf(dto.getVerificationType());
     Member member = getMember(user.getEmailAddress());
 
     String code = getRandomSixDigitOtp();
-    FleenUser freshUser = FleenUser.fromMember(member);
+    FleenUser freshUser = FleenUser.fromMemberBasic(member);
     PreVerificationOrAuthenticationRequest request = createUpdateProfileRequest(code, freshUser);
 
     if (verificationType == VerificationType.EMAIL) {
@@ -309,6 +307,14 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
     clearUpdatePhoneNumberOtp(username);
 
     return new UpdateEmailAddressOrPhoneNumberResponse(null, dto.getPhoneNumber());
+  }
+
+  @Override
+  @Transactional
+  public void updateProfilePhoto(UpdateProfilePhotoDto dto, FleenUser user) {
+    Member member = getMember(user.getEmailAddress());
+    member.setProfilePhoto(dto.getProfilePhoto());
+    save(member);
   }
 
   /**

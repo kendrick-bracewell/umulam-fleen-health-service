@@ -21,7 +21,7 @@ public class VerificationCodeDto {
   @Size(min = 1, max = 6, message = "{verification.code.size}")
   private String code;
 
-  @JsonProperty("verification_type")
   @EnumValid(enumClass = VerificationType.class, message = "{verification.type}")
+  @JsonProperty("verification_type")
   private String verificationType;
 }

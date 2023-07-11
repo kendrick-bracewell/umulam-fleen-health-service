@@ -5,6 +5,7 @@ import com.umulam.fleen.health.exception.business.BusinessNotFoundException;
 import com.umulam.fleen.health.exception.country.CountryCodeDuplicateException;
 import com.umulam.fleen.health.exception.country.CountryDuplicateException;
 import com.umulam.fleen.health.exception.country.CountryNotFoundException;
+import com.umulam.fleen.health.exception.member.UpdatePasswordFailedException;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusCodeDuplicateException;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusNotFoundException;
@@ -81,7 +82,8 @@ public class FleenHealthExceptionHandler {
           UserNotFoundException.class,
           VerificationCodeAlreadySentException.class,
           ResetPasswordCodeInvalidException.class,
-          MfaVerificationFailed.class
+          MfaVerificationFailed.class,
+          UpdatePasswordFailedException.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);

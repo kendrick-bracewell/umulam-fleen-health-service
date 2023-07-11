@@ -12,7 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 public class UpdateEmailAddressOrPhoneNumberDto {
 
-  @JsonProperty("verification_type")
   @EnumValid(enumClass = VerificationType.class, message = "{verification.type}")
+  @JsonProperty("verification_type")
   private String verificationType;
 }

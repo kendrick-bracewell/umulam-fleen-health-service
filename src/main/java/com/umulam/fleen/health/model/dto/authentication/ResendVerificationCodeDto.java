@@ -27,7 +27,7 @@ public class ResendVerificationCodeDto {
   @JsonProperty("phone_number")
   private String phoneNumber;
 
-  @JsonProperty("verification_type")
   @EnumValid(enumClass = VerificationType.class, message = "{verification.type}")
+  @JsonProperty("verification_type")
   private String verificationType;
 }

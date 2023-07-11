@@ -23,7 +23,7 @@ public class FleenHealthConstant {
   public static final String VERIFICATION_DOCUMENT_UPDATED = "Verification documents updated";
   public static final String REQUEST_FOR_VERIFICATION = "Request for verification In Progress";
   public static final String FILE_NOT_FOUND = "File does not exists or cannot be found";
-
   public static final String SUCCESS_MESSAGE = "Success";
+  public static final String PROFILE_PHOTO_UPDATED = "Profile photo updated successfully";
 
 }

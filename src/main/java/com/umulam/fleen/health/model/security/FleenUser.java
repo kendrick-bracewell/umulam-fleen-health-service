@@ -62,6 +62,19 @@ public class FleenUser implements UserDetails {
     return user;
   }
 
+  public static FleenUser fromMemberBasic(Member member) {
+    var user = FleenUser.builder()
+            .id(member.getId())
+            .emailAddress(member.getEmailAddress())
+            .phoneNumber(member.getPhoneNumber())
+            .password(member.getPassword())
+            .build();
+
+    user.setFirstName(member.getFirstName());
+    user.setLastName(member.getLastName());
+    return user;
+  }
+
   public static FleenUser fromToken(JwtTokenDetails details) {
     List<GrantedAuthority> authorities = buildAuthorities(Arrays.asList(details.getAuthorities()));
     return FleenUser
