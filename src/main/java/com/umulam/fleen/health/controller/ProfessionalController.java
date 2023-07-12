@@ -52,7 +52,7 @@ public class ProfessionalController {
   @GetMapping(value = "/check-verification-status")
   public UserVerificationStatusView checkVerificationStatus(@AuthenticationPrincipal FleenUser user) {
     ProfileVerificationStatus status = professionalService.checkVerificationStatus(user);
-    return new UserVerificationStatusView();
+    return new UserVerificationStatusView(status.name());
   }
 
   public void viewSessions() {
