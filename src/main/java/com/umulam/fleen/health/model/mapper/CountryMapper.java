@@ -13,14 +13,17 @@ public class CountryMapper {
 
   private CountryMapper() {}
 
-  public static CountryView toCountryView(@NotNull Country entry) {
-    return CountryView.builder()
-            .id(entry.getId())
-            .title(entry.getTitle())
-            .code(entry.getCode())
-            .createdOn(entry.getCreatedOn())
-            .updatedOn(entry.getUpdatedOn())
-            .build();
+  public static CountryView toCountryView(Country entry) {
+    if (Objects.nonNull(entry)) {
+      return CountryView.builder()
+              .id(entry.getId())
+              .title(entry.getTitle())
+              .code(entry.getCode())
+              .createdOn(entry.getCreatedOn())
+              .updatedOn(entry.getUpdatedOn())
+              .build();
+    }
+    return null;
   }
 
   public static List<CountryView> toCountryViews(List<Country> entries) {

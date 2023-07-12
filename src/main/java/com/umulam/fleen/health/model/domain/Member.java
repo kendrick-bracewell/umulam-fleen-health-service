@@ -70,9 +70,10 @@ public class Member {
   @Column(name = "mfa_secret")
   private String mfaSecret;
 
+  @Builder.Default
   @Column(name = "mfa_type")
   @Enumerated(EnumType.STRING)
-  private MfaType mfaType;
+  private MfaType mfaType = MfaType.NONE;
 
   @Column(name = "verification_status")
   @Enumerated(EnumType.STRING)

@@ -19,11 +19,23 @@ public class ProfessionalView {
   private Integer id;
   private String title;
 
+  @JsonProperty("type")
+  private String professionalType;
+
+  @JsonProperty("qualification")
+  private String qualification;
+
   @JsonProperty("years_of_experience")
   private Integer yearsOfExperience;
 
   @JsonProperty("area_of_expertise")
   private String areaOfExpertise;
+
+  @JsonProperty("availability_status")
+  private String availabilityStatus;
+
+  @JsonProperty("languages_spoken")
+  private String languagesSpoken;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
   @JsonProperty("created_on")

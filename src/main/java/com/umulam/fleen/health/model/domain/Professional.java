@@ -28,9 +28,11 @@ public class Professional {
   private String title;
 
   @Column(name = "type", nullable = false)
+  @Enumerated(EnumType.STRING)
   private ProfessionalType professionalType;
 
   @Column(name = "education", nullable = false)
+  @Enumerated(EnumType.STRING)
   private ProfessionalQualificationType qualificationType;
 
   @Column(name = "years_of_experience", nullable = false)

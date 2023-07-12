@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.model.mapper;
 
+import com.umulam.fleen.health.constant.member.MemberGender;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.view.MemberView;
 
@@ -28,6 +29,10 @@ public class MemberMapper {
               .emailAddressVerified(entry.isEmailAddressVerified())
               .phoneNumberVerified(entry.isPhoneNumberVerified())
               .profileVerificationStatus(entry.getVerificationStatus().name())
+              .gender(entry.getGender().name())
+              .dateOfBirth(entry.getDateOfBirth())
+              .createdOn(entry.getCreatedOn())
+              .updatedOn(entry.getUpdatedOn())
               .build();
     }
     return null;

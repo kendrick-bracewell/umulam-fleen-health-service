@@ -44,6 +44,7 @@ public class UpdateProfessionalDetailsDto {
 
   @NotBlank(message = "{professional.languagesSpoken.notEmpty}")
   @Size(min = 1, max = 150, message = "{professional.languagesSpoken.size}")
+  @JsonProperty("languages_spoken")
   private String languagesSpoken;
 
   @EnumValid(enumClass = ProfessionalType.class, message = "{professional.type}")

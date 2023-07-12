@@ -1,7 +1,13 @@
 package com.umulam.fleen.health.model.view;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+
+import java.time.LocalDateTime;
+
+import static com.umulam.fleen.health.util.DateFormatUtil.DATE;
+import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_FORMAT;
 
 @Builder
 @Getter
@@ -27,12 +33,6 @@ public class MemberView {
   @JsonProperty("profile_photo")
   private String profilePhoto;
 
-  @JsonProperty("email_address_verified")
-  private boolean emailAddressVerified;
-
-  @JsonProperty("phone_number_verified")
-  private boolean phoneNumberVerified;
-
   @JsonProperty("mfa_enabled")
   private boolean mfaEnabled;
 
@@ -45,6 +45,27 @@ public class MemberView {
   @JsonProperty("user_type")
   private String userType;
 
+  @JsonProperty("gender")
+  private String gender;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE)
+  @JsonProperty("date_of_birth")
+  private LocalDateTime dateOfBirth;
+
+  @JsonProperty("email_address_verified")
+  private boolean emailAddressVerified;
+
+  @JsonProperty("phone_number_verified")
+  private boolean phoneNumberVerified;
+
   @JsonProperty("member_status")
   private MemberStatusView memberStatus;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+  @JsonProperty("created_on")
+  private LocalDateTime createdOn;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+  @JsonProperty("updated_on")
+  private LocalDateTime updatedOn;
 }

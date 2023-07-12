@@ -72,6 +72,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
       Professional existingProfessional = professionalExists.get();
       country = existingProfessional.getCountry();
       professional.setId(existingProfessional.getId());
+      professional.setCreatedOn(existingProfessional.getCreatedOn());
     } else {
       country = countryService.getCountry(professional.getCountry().getId());
     }

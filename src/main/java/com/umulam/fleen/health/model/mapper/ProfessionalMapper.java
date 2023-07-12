@@ -22,6 +22,10 @@ public class ProfessionalMapper {
               .updatedOn(entry.getUpdatedOn())
               .country(CountryMapper.toCountryView(entry.getCountry()))
               .member(MemberMapper.toMemberView(entry.getMember()))
+              .professionalType(entry.getProfessionalType().name())
+              .qualification(entry.getQualificationType().name())
+              .availabilityStatus(entry.getAvailabilityStatus().name())
+              .languagesSpoken(entry.getLanguagesSpoken())
               .build();
     }
     return null;

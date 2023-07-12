@@ -7,7 +7,8 @@ public enum MfaType {
 
   SMS("SMS"),
   EMAIL("Email"),
-  AUTHENTICATOR("Authenticator");
+  AUTHENTICATOR("Authenticator"),
+  NONE("None");
 
   private final String value;
 
