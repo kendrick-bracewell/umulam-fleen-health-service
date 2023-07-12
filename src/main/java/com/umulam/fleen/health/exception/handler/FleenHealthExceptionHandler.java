@@ -9,6 +9,7 @@ import com.umulam.fleen.health.exception.member.UpdatePasswordFailedException;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusCodeDuplicateException;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusNotFoundException;
+import com.umulam.fleen.health.exception.professional.ProfessionalNotFoundException;
 import com.umulam.fleen.health.exception.role.RoleDuplicateException;
 import com.umulam.fleen.health.exception.role.RoleNotFoundException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -83,7 +84,8 @@ public class FleenHealthExceptionHandler {
           VerificationCodeAlreadySentException.class,
           ResetPasswordCodeInvalidException.class,
           MfaVerificationFailed.class,
-          UpdatePasswordFailedException.class
+          UpdatePasswordFailedException.class,
+          ProfessionalNotFoundException.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);

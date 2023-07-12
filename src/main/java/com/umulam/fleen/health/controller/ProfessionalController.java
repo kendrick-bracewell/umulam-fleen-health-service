@@ -2,9 +2,11 @@ package com.umulam.fleen.health.controller;
 
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.model.domain.Professional;
+import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalAvailabilityStatusDto;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalDetailsDto;
 import com.umulam.fleen.health.model.dto.professional.UploadProfessionalDocumentDto;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
+import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateAvailabilityStatusResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalView;
 import com.umulam.fleen.health.model.view.UserVerificationStatusView;
@@ -15,8 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.REQUEST_FOR_VERIFICATION;
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.VERIFICATION_DOCUMENT_UPDATED;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.*;
 
 @Slf4j
 @RestController
@@ -53,6 +54,18 @@ public class ProfessionalController {
   public UserVerificationStatusView checkVerificationStatus(@AuthenticationPrincipal FleenUser user) {
     ProfileVerificationStatus status = professionalService.checkVerificationStatus(user);
     return new UserVerificationStatusView(status.name());
+  }
+
+  @GetMapping(value = "/update-availability-status")
+  public GetProfessionalUpdateAvailabilityStatusResponse getUpdateAvailabilityStatus(@AuthenticationPrincipal FleenUser user) {
+    return professionalService.getProfessionalAvailabilityStatus(user);
+  }
+
+  @PutMapping(value = "/update-availability-status")
+  public FleenHealthResponse updateAvailabilityStatus(@Valid @RequestBody UpdateProfessionalAvailabilityStatusDto dto,
+                                                      @AuthenticationPrincipal FleenUser user) {
+    professionalService.updateAvailabilityStatus(dto, user);
+    return new FleenHealthResponse(AVAILABILITY_STATUS_UPDATED);
   }
 
   public void viewSessions() {

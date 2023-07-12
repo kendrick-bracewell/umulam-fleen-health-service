@@ -1,15 +1,19 @@
 package com.umulam.fleen.health.service.impl;
 
+import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
+import com.umulam.fleen.health.exception.professional.ProfessionalNotFoundException;
 import com.umulam.fleen.health.model.domain.Country;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.domain.VerificationDocument;
+import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalAvailabilityStatusDto;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalDetailsDto;
 import com.umulam.fleen.health.model.dto.professional.UploadProfessionalDocumentDto;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.mapper.VerificationDocumentMapper;
+import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateAvailabilityStatusResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalView;
 import com.umulam.fleen.health.model.view.VerificationDocumentView;
@@ -43,6 +47,12 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
     this.countryService = countryService;
     this.verificationDocumentService = verificationDocumentService;
     this.repository = repository;
+  }
+
+  @Override
+  @Transactional
+  public Professional save(Professional professional) {
+    return repository.save(professional);
   }
 
   @Override
@@ -104,6 +114,31 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   public ProfileVerificationStatus checkVerificationStatus(FleenUser user) {
     getMember(user.getEmailAddress());
     return memberService.getVerificationStatus(user.getId());
+  }
+
+  @Override
+  public GetProfessionalUpdateAvailabilityStatusResponse getProfessionalAvailabilityStatus(FleenUser user) {
+    Member member = getMember(user.getEmailAddress());
+    Optional<Professional> professionalExists = repository.findProfessionalByEmailAddress(member.getEmailAddress());
+    if (professionalExists.isPresent()) {
+      Professional professional = professionalExists.get();
+      return repository.getProfessionalAvailabilityStatus(professional.getId());
+    }
+    throw new ProfessionalNotFoundException(user.getEmailAddress());
+  }
+
+  @Override
+  @Transactional
+  public void updateAvailabilityStatus(UpdateProfessionalAvailabilityStatusDto dto, FleenUser user) {
+    Member member = getMember(user.getEmailAddress());
+    Optional<Professional> professionalExists = repository.findProfessionalByEmailAddress(member.getEmailAddress());
+    if (professionalExists.isPresent()) {
+      Professional professional = professionalExists.get();
+      professional.setAvailabilityStatus(ProfessionalAvailabilityStatus.valueOf(dto.getAvailabilityStatus()));
+      save(professional);
+      return;
+    }
+    throw new ProfessionalNotFoundException(user.getEmailAddress());
   }
 
   @Override
