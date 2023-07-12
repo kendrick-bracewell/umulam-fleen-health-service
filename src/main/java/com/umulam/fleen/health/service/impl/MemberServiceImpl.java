@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.service.impl;
 
+import com.umulam.fleen.health.configuration.aws.s3.S3BucketNames;
 import com.umulam.fleen.health.constant.CommonEmailMessageTemplateDetails;
 import com.umulam.fleen.health.constant.VerificationMessageType;
 import com.umulam.fleen.health.constant.authentication.MfaSetupStatus;
@@ -54,6 +55,8 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
   private final CacheService cacheService;
   private final MobileTextService mobileTextService;
   private final EmailServiceImpl emailService;
+  private final S3Service s3Service;
+  private final S3BucketNames bucketNames;
   private final PasswordEncoder passwordEncoder;
 
   public MemberServiceImpl(MemberJpaRepository repository,
@@ -62,6 +65,8 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
                            CacheService cacheService,
                            MobileTextService mobileTextService,
                            EmailServiceImpl emailService,
+                           S3Service s3Service,
+                           S3BucketNames bucketNames,
                            PasswordEncoder passwordEncoder) {
     this.repository = repository;
     this.mfaService = mfaService;
@@ -69,6 +74,8 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
     this.cacheService = cacheService;
     this.mobileTextService = mobileTextService;
     this.emailService = emailService;
+    this.s3Service = s3Service;
+    this.bucketNames = bucketNames;
     this.passwordEncoder = passwordEncoder;
   }
 
@@ -315,6 +322,14 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
     Member member = getMember(user.getEmailAddress());
     member.setProfilePhoto(dto.getProfilePhoto());
     save(member);
+  }
+
+  @Override
+  @Transactional
+  public void removeProfilePhoto(FleenUser user) {
+    Member member = getMember(user.getEmailAddress());
+    String key = s3Service.getObjectKeyFromUrl(member.getProfilePhoto());
+    s3Service.deleteObject(bucketNames.getProfilePhoto(), key);
   }
 
   /**

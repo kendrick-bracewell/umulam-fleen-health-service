@@ -8,6 +8,7 @@ import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsRespo
 import com.umulam.fleen.health.model.response.member.SendUpdateEmailAddressOrPhoneNumberVerificationCodeResponse;
 import com.umulam.fleen.health.model.response.member.UpdateEmailAddressOrPhoneNumberResponse;
 import com.umulam.fleen.health.model.response.member.UpdateMemberDetailsResponse;
+import com.umulam.fleen.health.model.response.other.DeleteResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.service.AuthenticationService;
 import com.umulam.fleen.health.service.MemberService;
@@ -86,5 +87,11 @@ public class MemberController {
   public FleenHealthResponse signOut(@AuthenticationPrincipal FleenUser user) {
     authenticationService.signOut(user.getUsername());
     return new FleenHealthResponse(SUCCESS_MESSAGE);
+  }
+
+  @DeleteMapping(value ="/delete-profile-photo")
+  public DeleteResponse removeProfilePhoto(@AuthenticationPrincipal FleenUser user) {
+    memberService.removeProfilePhoto(user);
+    return new DeleteResponse();
   }
 }

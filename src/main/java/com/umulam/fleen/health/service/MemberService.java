@@ -59,6 +59,9 @@ public interface MemberService {
   @Transactional
   void updateProfilePhoto(UpdateProfilePhotoDto dto, FleenUser user);
 
+  @Transactional
+  void removeProfilePhoto(FleenUser user);
+
   void saveUpdateEmailOtp(String subject, String otp);
 
   void saveUpdatePhoneNumberOtp(String subject, String otp);
