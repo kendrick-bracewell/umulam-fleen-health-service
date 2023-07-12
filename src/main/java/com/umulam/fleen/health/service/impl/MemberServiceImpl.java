@@ -399,7 +399,6 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
     cacheService.delete(getUpdatePhoneNumberCacheKey(username));
   }
 
-
   private PreVerificationOrAuthenticationRequest createUpdateProfileRequest(String code, FleenUser user) {
     CommonEmailMessageTemplateDetails templateDetails = CommonEmailMessageTemplateDetails.PROFILE_UPDATE;
     PreVerificationOrAuthenticationRequest request = createVerificationRequest(code, user);

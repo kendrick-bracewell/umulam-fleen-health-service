@@ -1,5 +1,7 @@
 package com.umulam.fleen.health.model.domain;
 
+import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
+import com.umulam.fleen.health.constant.member.ProfessionalType;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -25,18 +27,25 @@ public class Professional {
   @Column(name = "title")
   private String title;
 
+  @Column(name = "type", nullable = false)
+  private ProfessionalType professionalType;
+
+  @Column(name = "education", nullable = false)
+  private ProfessionalQualificationType qualificationType;
+
   @Column(name = "years_of_experience", nullable = false)
   private Integer yearsOfExperience;
 
   @Column(name = "area_of_expertise", nullable = false, length = 2500)
   private String areaOfExpertise;
 
-  @Column
+  @Column(name = "languages_spoken", nullable = false, length = 150)
   private String languagesSpoken;
 
-  @Column
+  @Builder.Default
+  @Column(name = "availability_status", nullable = false)
   @Enumerated(EnumType.STRING)
-  private ProfessionalAvailabilityStatus availabilityStatus;
+  private ProfessionalAvailabilityStatus availabilityStatus = ProfessionalAvailabilityStatus.UNAVAILABLE;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "country_id", referencedColumnName = "id")

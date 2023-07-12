@@ -1,9 +1,13 @@
 package com.umulam.fleen.health.model.dto.professional;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.umulam.fleen.health.constant.authentication.VerificationType;
+import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
+import com.umulam.fleen.health.constant.member.ProfessionalType;
 import com.umulam.fleen.health.model.domain.Country;
 import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.validator.CountryExists;
+import com.umulam.fleen.health.validator.EnumValid;
 import com.umulam.fleen.health.validator.IsNumber;
 import lombok.*;
 
@@ -38,6 +42,18 @@ public class UpdateProfessionalDetailsDto {
   @CountryExists(message = "{professional.country.exists}")
   private String country;
 
+  @NotBlank(message = "{professional.languagesSpoken.notEmpty}")
+  @Size(min = 1, max = 150, message = "{professional.languagesSpoken.size}")
+  private String languagesSpoken;
+
+  @EnumValid(enumClass = ProfessionalType.class, message = "{professional.type}")
+  @JsonProperty("professional_type")
+  private String professionalType;
+
+  @EnumValid(enumClass = ProfessionalQualificationType.class, message = "{professional.qualificationType}")
+  @JsonProperty("qualification_type")
+  private String qualificationType;
+
   public Professional toProfessional() {
     return Professional.builder()
             .title(title)
@@ -45,6 +61,9 @@ public class UpdateProfessionalDetailsDto {
             .areaOfExpertise(areaOfExpertise)
             .country(Country.builder()
                     .id(Integer.parseInt(country)).build())
+            .languagesSpoken(languagesSpoken)
+            .professionalType(ProfessionalType.valueOf(professionalType))
+            .qualificationType(ProfessionalQualificationType.valueOf(qualificationType))
             .build();
   }
 }
