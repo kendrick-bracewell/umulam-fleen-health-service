@@ -44,6 +44,7 @@ import java.util.Objects;
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.UPDATE_EMAIL_CACHE_PREFIX;
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.UPDATE_PHONE_NUMBER_CACHE_PREFIX;
 import static com.umulam.fleen.health.util.DateTimeUtil.toLocalDateTime;
+import static org.springframework.util.StringUtils.capitalize;
 
 @Slf4j
 @Service
@@ -245,8 +246,8 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
   @Transactional
   public UpdateMemberDetailsResponse updateMemberDetails(UpdateMemberDetailsDto dto, FleenUser user) {
     Member member = getMember(user.getEmailAddress());
-    member.setFirstName(dto.getFirstName());
-    member.setLastName(dto.getLastName());
+    member.setFirstName(capitalize(dto.getFirstName()));
+    member.setLastName(capitalize(dto.getLastName()));
     member.setGender(MemberGender.valueOf(dto.getGender()));
     member.setDateOfBirth(toLocalDateTime(dto.getDateOfBirth()));
     save(member);
@@ -290,7 +291,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
     validateSmsAndEmailVerificationCode(verificationKey, code);
     Member member = getMember(user.getEmailAddress());
 
-    member.setEmailAddress(dto.getEmailAddress());
+    member.setEmailAddress(dto.getEmailAddress().toLowerCase());
     member.setEmailAddressVerified(true);
     save(member);
     clearUpdateEmailAddressOtp(username);
