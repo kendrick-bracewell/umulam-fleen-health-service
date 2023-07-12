@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +52,8 @@ public class FleenHealthExceptionHandler {
           CountryNotFoundException.class,
           RoleNotFoundException.class,
           MemberStatusNotFoundException.class,
-          BusinessNotFoundException.class
+          BusinessNotFoundException.class,
+          ProfessionalNotFoundException.class
   })
   public Object handleNotFound(Exception ex) {
     log.error(ex.getMessage(), ex);
@@ -84,8 +84,7 @@ public class FleenHealthExceptionHandler {
           VerificationCodeAlreadySentException.class,
           ResetPasswordCodeInvalidException.class,
           MfaVerificationFailed.class,
-          UpdatePasswordFailedException.class,
-          ProfessionalNotFoundException.class
+          UpdatePasswordFailedException.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);
