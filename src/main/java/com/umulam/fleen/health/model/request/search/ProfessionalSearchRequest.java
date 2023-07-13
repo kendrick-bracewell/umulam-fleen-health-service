@@ -5,10 +5,14 @@ import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
 import com.umulam.fleen.health.constant.member.ProfessionalType;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
-import lombok.*;
-import org.springframework.data.domain.PageRequest;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+import org.springframework.data.domain.Pageable;
 
-@Builder
+@SuperBuilder
 @Getter
 @Setter
 @NoArgsConstructor
@@ -37,8 +41,8 @@ public class ProfessionalSearchRequest extends SearchRequest {
   private String languageSpoken;
 
   public ProfessionalSearchRequest toSearchRequest() {
-    createPageable
-    return ProfessionalSearchRequest.builder()
-            .
+    Pageable pageable = this.toPageable();
+    this.setPageRequest(pageable);
+    return this;
   }
 }

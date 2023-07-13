@@ -24,26 +24,6 @@ import static com.umulam.fleen.health.util.FleenHealthUtil.createPageable;
 @RequestMapping(value = "admin/professional")
 public class AdminProfessionalController {
 
-  public void viewProfessionals(@RequestParam(name = "page_no", defaultValue = DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
-                                @RequestParam(name = "page_size", defaultValue = DEFAULT_PAGE_SIZE, required = false) Integer pageSize,
-                                @RequestParam(name = "sort_dir", defaultValue = DEFAULT_SORT_DIRECTION, required = false) String sortDir,
-                                @RequestParam(name = "sort_by", defaultValue = DEFAULT_SORT_BY, required = false) String sortBy,
-                                @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date fromDate,
-                                @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date toDate,
-                                @PageableDefault(page = 0, size = 20)
-                                @SortDefault.SortDefaults({
-                                        @SortDefault(sort = "id", direction = Sort.Direction.ASC)
-                                })
-                                Pageable pageable) {
-    createPageable(pageNo, pageSize, sortBy, sortDir);
-    PageRequest.of(1, 1);
-    Sort.by("professionalType");
-    PageRequest.of(1, 2, Sort.by("professionalType").descending());
-    Sort.by(Sort.Order.asc("name"), Sort.Order.desc("professionalType"));
-    Sort sort = sortBy.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
-            : Sort.by(sortBy).descending();
-  }
-
   @GetMapping(value = "/test-view-professionals")
   public Object testViewProfessionals(@SearchParam ProfessionalSearchRequest dto) {
     return dto;

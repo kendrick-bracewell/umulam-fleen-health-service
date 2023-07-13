@@ -4,13 +4,17 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 
 import static com.umulam.fleen.health.constant.base.PagingConstant.*;
 import static com.umulam.fleen.health.util.DateFormatUtil.DATE;
+import static com.umulam.fleen.health.util.FleenHealthUtil.createPageable;
 
+@SuperBuilder
 @Getter
 @Setter
 @NoArgsConstructor
@@ -42,5 +46,10 @@ public class SearchRequest {
   private LocalDate updatedOn;
 
   @JsonIgnore
-  private PageRequest pageRequest;
+  private Pageable pageRequest;
+
+  @JsonIgnore
+  protected Pageable toPageable() {
+    return createPageable(pageNo, pageSize, sortBy, sortDir);
+  }
 }
