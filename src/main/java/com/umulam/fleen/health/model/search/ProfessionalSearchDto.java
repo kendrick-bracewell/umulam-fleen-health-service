@@ -26,15 +26,12 @@ public class ProfessionalSearchDto extends SearchRequest {
   private String emailAddress;
 
   @JsonProperty("availability_status")
-  @ToUpperCase
   private ProfessionalAvailabilityStatus availabilityStatus;
 
   @JsonProperty("professional_type")
-  @ToUpperCase
   private ProfessionalType professionalType;
 
   @JsonProperty("qualification")
-  @ToUpperCase
   private ProfessionalQualificationType qualificationType;
 
   @JsonProperty("language_spoken")
