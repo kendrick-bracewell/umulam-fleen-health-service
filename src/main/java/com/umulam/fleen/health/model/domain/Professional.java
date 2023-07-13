@@ -53,7 +53,7 @@ public class Professional {
   @JoinColumn(name = "country_id", referencedColumnName = "id")
   private Country country;
 
-  @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id", referencedColumnName = "id")
   private Member member;
 
