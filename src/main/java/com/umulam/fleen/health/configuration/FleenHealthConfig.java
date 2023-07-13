@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.configuration;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.resolver.impl.SearchParamArgResolver;
 import dev.samstevens.totp.code.CodeVerifier;
@@ -42,10 +43,11 @@ public class FleenHealthConfig implements WebMvcConfigurer {
 
   @Bean
   public ObjectMapper objectMapper() {
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-    objectMapper.findAndRegisterModules();
-    return objectMapper;
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
+    mapper.findAndRegisterModules();
+    return mapper;
   }
 
   @Primary
