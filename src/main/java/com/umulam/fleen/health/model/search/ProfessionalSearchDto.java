@@ -4,12 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
 import com.umulam.fleen.health.constant.member.ProfessionalType;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
+import com.umulam.fleen.health.validator.EnumValid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -26,22 +25,19 @@ public class ProfessionalSearchDto extends SearchRequest {
   @JsonProperty("email_address")
   private String emailAddress;
 
+  @EnumValid(enumClass = ProfessionalAvailabilityStatus.class, message = "{professional.availabilityStatus}")
   @JsonProperty("availability_status")
   private ProfessionalAvailabilityStatus availabilityStatus;
 
+  @EnumValid(enumClass = ProfessionalType.class, message = "{professional.type}")
   @JsonProperty("professional_type")
   private ProfessionalType professionalType;
 
+  @EnumValid(enumClass = ProfessionalQualificationType.class, message = "{professional.qualificationType}")
   @JsonProperty("qualification")
   private ProfessionalQualificationType qualificationType;
 
   @JsonProperty("language_spoken")
   private String languageSpoken;
-
-  @JsonProperty("created_on")
-  private LocalDateTime createdOn;
-
-  @JsonProperty("updated_on")
-  private LocalDateTime updatedOn;
 
 }

@@ -2,7 +2,7 @@ package com.umulam.fleen.health.configuration;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umulam.fleen.health.resolver.impl.QueryParamArgumentResolver;
+import com.umulam.fleen.health.resolver.impl.SearchParamArgResolver;
 import dev.samstevens.totp.code.CodeVerifier;
 import dev.samstevens.totp.code.DefaultCodeGenerator;
 import dev.samstevens.totp.code.DefaultCodeVerifier;
@@ -27,9 +27,9 @@ import java.util.List;
 @ComponentScan(value = {"com.umulam.fleen.health.controller"})
 public class FleenHealthConfig implements WebMvcConfigurer {
 
-  private final QueryParamArgumentResolver queryParamResolver;
+  private final SearchParamArgResolver queryParamResolver;
 
-  public FleenHealthConfig(@Lazy QueryParamArgumentResolver queryParamResolver) {
+  public FleenHealthConfig(@Lazy SearchParamArgResolver queryParamResolver) {
     this.queryParamResolver = queryParamResolver;
   }
 

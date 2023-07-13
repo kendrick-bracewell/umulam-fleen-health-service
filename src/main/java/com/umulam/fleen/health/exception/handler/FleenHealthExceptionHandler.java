@@ -84,7 +84,7 @@ public class FleenHealthExceptionHandler {
           VerificationCodeAlreadySentException.class,
           ResetPasswordCodeInvalidException.class,
           MfaVerificationFailed.class,
-          UpdatePasswordFailedException.class
+          UpdatePasswordFailedException.class,
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);
@@ -150,6 +150,13 @@ public class FleenHealthExceptionHandler {
     log.error(ex.getMessage(), ex);
     String message = String.format(MISSING_HTTP_REQUEST_PARAMETERS, ex.getParameterName(), ex.getParameterType());
     return buildErrorMap(message, BAD_REQUEST);
+  }
+
+  @ResponseStatus(value = BAD_REQUEST)
+  @ExceptionHandler(value = { IllegalArgumentException.class })
+  public Object handleInvalidArguments(IllegalArgumentException ex) {
+    log.error(ex.getMessage(), ex);
+    return buildErrorMap(INVALID_ARGUMENTS, BAD_REQUEST);
   }
 
   @ResponseStatus(value = INTERNAL_SERVER_ERROR)
