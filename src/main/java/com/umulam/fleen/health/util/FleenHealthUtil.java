@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -63,6 +64,28 @@ public class FleenHealthUtil {
                   ? Sort.by(sortBy).ascending()
                   : Sort.by(sortBy).descending();
     return PageRequest.of(pageNo, pageSize, sort);
+  }
+
+  public static HashMap<String, String> convertQueryStringToHashMap(
+          String source) {
+    HashMap<String, String> data = new HashMap<>();
+  try {
+    final String[] arrParameters = source.split("&");
+    for (final String tempParameterString : arrParameters) {
+
+      final String[] arrTempParameter = tempParameterString
+              .split("=");
+
+      final String parameterKey = arrTempParameter[0];
+      if (arrTempParameter.length >= 2) {
+        final String parameterValue = arrTempParameter[1];
+        data.put(parameterKey, parameterValue);
+      } else {
+        data.put(parameterKey, "");
+      }
+    }
+    } catch (Exception ex) {}
+    return data;
   }
 
 }

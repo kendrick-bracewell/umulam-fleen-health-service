@@ -4,14 +4,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
 import com.umulam.fleen.health.constant.member.ProfessionalType;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class ProfessionalSearchDto {
+@NoArgsConstructor
+@AllArgsConstructor
+public class ProfessionalSearchDto extends SearchRequest {
 
   @JsonProperty("first_name")
   private String firstName;
@@ -39,4 +43,5 @@ public class ProfessionalSearchDto {
 
   @JsonProperty("updated_on")
   private LocalDateTime updatedOn;
+
 }
