@@ -1,20 +1,19 @@
-package com.umulam.fleen.health.model.search;
+package com.umulam.fleen.health.model.request.search;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.umulam.fleen.health.annotation.ToUpperCase;
 import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
 import com.umulam.fleen.health.constant.member.ProfessionalType;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.umulam.fleen.health.model.request.search.base.SearchRequest;
+import lombok.*;
+import org.springframework.data.domain.PageRequest;
 
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfessionalSearchDto extends SearchRequest {
+public class ProfessionalSearchRequest extends SearchRequest {
 
   @JsonProperty("first_name")
   private String firstName;
@@ -37,4 +36,9 @@ public class ProfessionalSearchDto extends SearchRequest {
   @JsonProperty("language_spoken")
   private String languageSpoken;
 
+  public ProfessionalSearchRequest toSearchRequest() {
+    createPageable
+    return ProfessionalSearchRequest.builder()
+            .
+  }
 }

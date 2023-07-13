@@ -1,6 +1,6 @@
 package com.umulam.fleen.health.controller.admin;
 
-import com.umulam.fleen.health.model.search.ProfessionalSearchDto;
+import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.resolver.SearchParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -45,7 +45,7 @@ public class AdminProfessionalController {
   }
 
   @GetMapping(value = "/test-view-professionals")
-  public Object testViewProfessionals(@SearchParam ProfessionalSearchDto dto) {
+  public Object testViewProfessionals(@SearchParam ProfessionalSearchRequest dto) {
     return dto;
   }
 
