@@ -2,15 +2,17 @@ package com.umulam.fleen.health.model.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
+@Builder
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ListOfEntityView {
+public class SearchResultView {
 
   @JsonProperty("page_no")
   private Integer pageNo;
@@ -19,7 +21,7 @@ public class ListOfEntityView {
   private Integer pageSize;
 
   @JsonProperty("total_entries")
-  private Integer totalEntries;
+  private Long totalEntries;
 
   @JsonProperty("total_pages")
   private Integer totalPages;
@@ -30,5 +32,7 @@ public class ListOfEntityView {
   @JsonProperty("is_first")
   private boolean isFirst;
 
-  private List<Object> values;
+  private List<?> values;
+
+
 }

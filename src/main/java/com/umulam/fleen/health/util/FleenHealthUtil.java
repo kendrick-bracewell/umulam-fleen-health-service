@@ -1,12 +1,16 @@
 package com.umulam.fleen.health.util;
 
+import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.service.impl.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,7 +23,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -64,6 +70,28 @@ public class FleenHealthUtil {
                   ? Sort.by(sortBy).ascending()
                   : Sort.by(sortBy).descending();
     return PageRequest.of(pageNo, pageSize, sort);
+  }
+
+  public static boolean areNotEmpty(String...args) {
+    if (ArrayUtils.isEmpty(args)) {
+      return false;
+    } else {
+      long arrLength = args.length;
+      long nonEmptyElements = Arrays.stream(args).filter(StringUtils::isNotBlank).count();
+      return arrLength == nonEmptyElements;
+    }
+  }
+
+  public static SearchResultView toSearchResult(List<?> values, Page<?> page) {
+    return SearchResultView.builder()
+            .isFirst(page.isFirst())
+            .isLast(page.isLast())
+            .totalPages(page.getTotalPages())
+            .totalEntries(page.getTotalElements())
+            .pageNo(page.getNumber())
+            .pageSize(page.getNumber())
+            .values(values)
+            .build();
   }
 
 }
