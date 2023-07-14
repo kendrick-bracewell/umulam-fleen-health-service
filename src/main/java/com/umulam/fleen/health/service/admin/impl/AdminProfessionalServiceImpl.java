@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.service.admin.impl;
 
+import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
@@ -56,5 +57,21 @@ public class AdminProfessionalServiceImpl implements AdminProfessionalService {
     List<ProfessionalView> views = ProfessionalMapper.toProfessionalViews(page.getContent());
     return toSearchResult(views, page);
   }
+
+  @Override
+  @Transactional(readOnly = true)
+  public SearchResultView findProfessionalsVerificationStatus(ProfessionalSearchRequest req) {
+    Page<Professional> page;
+    ProfileVerificationStatus verificationStatus = ProfileVerificationStatus.PENDING;
+    if (areNotEmpty(req.getStartDate(), req.getEndDate())) {
+      page = repository.findByVerificationStatusBetween(verificationStatus, req.getStartDate().atStartOfDay(), req.getEndDate().atStartOfDay(), req.getPage());
+    } else {
+      page = repository.findByVerificationStatus(verificationStatus, req.getPage());
+    }
+
+    List<ProfessionalView> views = ProfessionalMapper.toProfessionalViews(page.getContent());
+    return toSearchResult(views, page);
+  }
+
 
 }

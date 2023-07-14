@@ -3,6 +3,7 @@ package com.umulam.fleen.health.repository.jpa;
 import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
 import com.umulam.fleen.health.constant.member.ProfessionalType;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
+import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateAvailabilityStatusResponse;
 import org.springframework.data.domain.Page;
@@ -50,4 +51,10 @@ public interface ProfessionalJpaRepository extends JpaRepository<Professional, I
 
   @Query(value = "SELECT p FROM Professional p WHERE p.createdOn BETWEEN :startDate AND :endDate")
   Page<Professional> findByCreatedOnAndUpdatedOnBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
+
+  @Query(value = "SELECT p FROM Professional p WHERE p.member.verificationStatus = :verificationStatus")
+  Page<Professional> findByVerificationStatus(ProfileVerificationStatus verificationStatus, Pageable pageable);
+
+  @Query(value = "SELECT p FROM Professional p WHERE p.member.verificationStatus = :verificationStatus AND p.createdOn BETWEEN :startDate AND :endDate")
+  Page<Professional> findByVerificationStatusBetween(ProfileVerificationStatus verificationStatus, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 }

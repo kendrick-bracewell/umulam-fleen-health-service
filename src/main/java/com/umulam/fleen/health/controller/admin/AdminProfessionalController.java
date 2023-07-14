@@ -35,8 +35,13 @@ public class AdminProfessionalController {
   }
 
   @GetMapping(value = "/entries")
-  public Object findProfessionals(@SearchParam ProfessionalSearchRequest request) {
+  public SearchResultView findProfessionals(@SearchParam ProfessionalSearchRequest request) {
     return service.findProfessionals(request);
+  }
+
+  @GetMapping(value = "/pending-verification")
+  public SearchResultView findProfessionalsPendingVerification(@SearchParam ProfessionalSearchRequest request) {
+    return service.findProfessionalsVerificationStatus(request);
   }
 
   public void viewProfessionalDetail() {
