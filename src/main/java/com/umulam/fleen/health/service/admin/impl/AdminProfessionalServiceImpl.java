@@ -7,7 +7,12 @@ import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.view.ProfessionalView;
 import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.ProfessionalJpaRepository;
+import com.umulam.fleen.health.service.CountryService;
+import com.umulam.fleen.health.service.MemberService;
+import com.umulam.fleen.health.service.VerificationDocumentService;
 import com.umulam.fleen.health.service.admin.AdminProfessionalService;
+import com.umulam.fleen.health.service.impl.ProfessionalServiceImpl;
+import com.umulam.fleen.health.service.impl.S3Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -21,13 +26,16 @@ import static java.util.Objects.nonNull;
 
 @Slf4j
 @Service
-public class AdminProfessionalServiceImpl implements AdminProfessionalService {
+public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implements AdminProfessionalService {
 
-  private final ProfessionalJpaRepository repository;
-
-  public AdminProfessionalServiceImpl(ProfessionalJpaRepository repository) {
-    this.repository = repository;
+  public AdminProfessionalServiceImpl(MemberService memberService,
+                                 S3Service s3Service,
+                                 CountryService countryService,
+                                 VerificationDocumentService verificationDocumentService,
+                                 ProfessionalJpaRepository repository) {
+    super(memberService, s3Service, countryService, verificationDocumentService, repository);
   }
+
 
   @Override
   @Transactional(readOnly = true)

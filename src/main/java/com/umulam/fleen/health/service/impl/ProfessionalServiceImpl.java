@@ -35,7 +35,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   private final S3Service s3Service;
   private final CountryService countryService;
   private final VerificationDocumentService verificationDocumentService;
-  private final ProfessionalJpaRepository repository;
+  protected final ProfessionalJpaRepository repository;
 
   public ProfessionalServiceImpl(MemberService memberService,
                              S3Service s3Service,
@@ -47,6 +47,18 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
     this.countryService = countryService;
     this.verificationDocumentService = verificationDocumentService;
     this.repository = repository;
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public ProfessionalView getProfessionalById(Integer id) {
+    Optional<Professional> professionalExists = repository.findById(id);
+    if (professionalExists.isEmpty()) {
+      throw new ProfessionalNotFoundException(id);
+    }
+    ProfessionalView view = toProfessionalView(professionalExists.get());
+    setVerificationDocument(view);
+    return view;
   }
 
   @Override
@@ -63,11 +75,6 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   @Override
   public ProfessionalView toProfessionalView(Professional professional) {
     return ProfessionalMapper.toProfessionalView(professional);
-  }
-
-  @Override
-  public List<Object> getProfessionalsByAdmin() {
-    return null;
   }
 
   @Override

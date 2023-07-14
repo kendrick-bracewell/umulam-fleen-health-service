@@ -8,7 +8,7 @@ public class ProfessionalNotFoundException extends FleenHealthException {
 
   private static final String message = "Professional does not exists or cannot be found. ID: %s";
 
-  public ProfessionalNotFoundException(String username) {
-    super(String.format(message, Objects.toString(username, "Unknown")));
+  public ProfessionalNotFoundException(Object id) {
+    super(String.format(message, Objects.toString(id, "Unknown")));
   }
 }
