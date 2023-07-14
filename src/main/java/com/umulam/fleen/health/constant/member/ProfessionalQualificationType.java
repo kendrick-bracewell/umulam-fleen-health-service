@@ -5,5 +5,5 @@ public enum ProfessionalQualificationType {
   DIPLOMA,
   BACHELOR,
   MASTER,
-  DOCTORATE,
+  DOCTORATE;
 }
