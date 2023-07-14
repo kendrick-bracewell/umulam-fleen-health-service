@@ -1,7 +1,9 @@
 package com.umulam.fleen.health.service.admin.impl;
 
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
+import com.umulam.fleen.health.exception.professional.ProfessionalNotFoundException;
 import com.umulam.fleen.health.model.domain.Professional;
+import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalDetailsDto;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.view.ProfessionalView;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
@@ -87,5 +90,21 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
     return toSearchResult(views, page);
   }
 
+  @Override
+  @Transactional
+  public ProfessionalView updateProfessionalDetail(UpdateProfessionalDetailsDto dto, Integer professionalId) {
+    Professional professional = dto.toProfessional();
+
+    Optional<Professional> professionalExists = repository.findById(professionalId);
+    if (professionalExists.isEmpty()) {
+      throw new ProfessionalNotFoundException(professionalId);
+    }
+
+    Professional existingProfessional = professionalExists.get();
+    professional.setCountry(professional.getCountry());
+
+    Professional savedProfessional = repository.save(existingProfessional);
+    return toProfessionalView(savedProfessional);
+  }
 
 }

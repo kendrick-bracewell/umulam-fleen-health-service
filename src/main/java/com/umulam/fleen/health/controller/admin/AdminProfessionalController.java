@@ -1,6 +1,9 @@
 package com.umulam.fleen.health.controller.admin;
 
+import com.umulam.fleen.health.model.domain.Professional;
+import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalDetailsDto;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
+import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalView;
 import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.resolver.SearchParam;
@@ -13,8 +16,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 
@@ -39,17 +44,20 @@ public class AdminProfessionalController {
   }
 
   @GetMapping(value = "/entries/pending-verification")
-  public SearchResultView findProfessionalsPendingVerification(@SearchParam ProfessionalSearchRequest request) {
+  public SearchResultView findProfessionalsPendingVerification(@SearchParam ProfessionalSearchRequest request, @AuthenticationPrincipal) {
     return service.findProfessionalsVerificationStatus(request);
   }
 
-  @GetMapping(value = "/detail/{professionalId}")
-  public ProfessionalView findProfessionalDetail(@PathVariable(name = "professionalId") Integer id) {
-    return service.findProfessionalById(id);
+  @GetMapping(value = "/detail/{id}")
+  public ProfessionalView findProfessionalDetail(@PathVariable(name = "id") Integer professionalId) {
+    return service.findProfessionalById(professionalId);
   }
 
-  public void updateProfessionalDetail() {
-
+  @PutMapping(value = "/update/{id}")
+  public ProfessionalView updateProfessionalDetail(
+          @PathVariable(name = "id") Integer professionalId,
+          @Valid @RequestBody UpdateProfessionalDetailsDto dto) {
+    return service.updateProfessionalDetail(dto, professionalId);
   }
 
   public void updateProfessionalVerificationStatus() {
