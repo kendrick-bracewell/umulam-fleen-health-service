@@ -1,7 +1,6 @@
 package com.umulam.fleen.health.resolver.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
 import com.umulam.fleen.health.resolver.SearchParam;
 import lombok.extern.slf4j.Slf4j;
@@ -42,14 +41,9 @@ public class SearchParamArgResolver implements HandlerMethodArgumentResolver {
     UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(getFullURL(request));
     Map<String, String> queryMap = toQueryMap(builder.build().getQueryParams());
     try {
-      for (var param : queryMap.entrySet()) {
-        System.out.println(param.getKey() + " is the param and the value is " + param.getValue());
-      }
       var value = mapper.convertValue(queryMap, parameter.getParameterType());
-      System.out.println("The availability status is : " + ((ProfessionalSearchRequest) value).getAvailabilityStatus());
       ((SearchRequest) value).toPageable();
       return value;
-//      return value;
     } catch (ClassCastException ex) {
       log.error(ex.getMessage(), ex);
       throw new IllegalArgumentException(ex.getMessage());

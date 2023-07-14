@@ -39,7 +39,7 @@ public class AdminProfessionalController {
     return service.findProfessionals(request);
   }
 
-  @GetMapping(value = "/pending-verification")
+  @GetMapping(value = "/entries/pending-verification")
   public SearchResultView findProfessionalsPendingVerification(@SearchParam ProfessionalSearchRequest request) {
     return service.findProfessionalsVerificationStatus(request);
   }

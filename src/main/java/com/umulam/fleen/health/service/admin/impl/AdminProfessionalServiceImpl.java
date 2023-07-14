@@ -46,6 +46,8 @@ public class AdminProfessionalServiceImpl implements AdminProfessionalService {
       page = repository.findByQualification(req.getQualificationType(), req.getPage());
     } else if (nonNull(req.getLanguageSpoken())) {
       page = repository.findByLanguageSpoken(req.getLanguageSpoken(), req.getPage());
+    } else if (nonNull(req.getVerificationStatus())) {
+      page = repository.findByVerificationStatus(req.getVerificationStatus(), req.getPage());
     } else if (nonNull(req.getBeforeDate())) {
       page = repository.findByCreatedOnBefore(req.getBeforeDate().atStartOfDay(), req.getPage());
     } else if (nonNull(req.getAfterDate())) {
