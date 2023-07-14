@@ -12,10 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -44,8 +41,9 @@ public class AdminProfessionalController {
     return service.findProfessionalsVerificationStatus(request);
   }
 
-  public void viewProfessionalDetail() {
-
+  @GetMapping(value = "/detail/{professionalId}")
+  public ProfessionalView findProfessionalDetail(@PathVariable(name = "professionalId") Integer id) {
+    return service.findProfessionalById(id);
   }
 
   public void updateProfessionalDetail() {

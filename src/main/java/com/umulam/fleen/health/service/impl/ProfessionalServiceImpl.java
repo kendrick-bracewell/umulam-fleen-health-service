@@ -51,7 +51,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
 
   @Override
   @Transactional(readOnly = true)
-  public ProfessionalView getProfessionalById(Integer id) {
+  public ProfessionalView findProfessionalById(Integer id) {
     Optional<Professional> professionalExists = repository.findById(id);
     if (professionalExists.isEmpty()) {
       throw new ProfessionalNotFoundException(id);

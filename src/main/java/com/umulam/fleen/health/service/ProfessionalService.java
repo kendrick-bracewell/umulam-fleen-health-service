@@ -15,7 +15,7 @@ import java.util.List;
 public interface ProfessionalService {
 
   @Transactional(readOnly = true)
-  ProfessionalView getProfessionalById(Integer id);
+  ProfessionalView findProfessionalById(Integer id);
 
   @Transactional
   Professional updateDetails(UpdateProfessionalDetailsDto dto, FleenUser user);
