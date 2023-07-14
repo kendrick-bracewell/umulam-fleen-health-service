@@ -36,8 +36,8 @@ public interface ProfessionalJpaRepository extends JpaRepository<Professional, I
   @Query(value = "SELECT p FROM Professional p WHERE p.qualificationType = :qualification")
   Page<Professional> findByQualification(@Param("qualification") ProfessionalQualificationType qualificationType, Pageable pageable);
 
-  @Query(value = "SELECT p FROM Professional p WHERE p.availabilityStatus =: availabilityStatus")
-  Page<Professional> findByAvailabilityStatus(ProfessionalAvailabilityStatus availabilityStatus, Pageable pageable);
+  @Query(value = "SELECT p FROM Professional p WHERE p.availabilityStatus = :availability")
+  Page<Professional> findByAvailabilityStatus(@Param("availability") ProfessionalAvailabilityStatus availabilityStatus, Pageable pageable);
 
   @Query(value = "SELECT p FROM Professional p WHERE p.languagesSpoken LIKE CONCAT('%',INITCAP(?1),'%')")
   Page<Professional> findByLanguageSpoken(@Param("language") String languageSpoken, Pageable pageable);
@@ -47,4 +47,7 @@ public interface ProfessionalJpaRepository extends JpaRepository<Professional, I
 
   @Query(value = "SELECT p FROM Professional p WHERE p.createdOn >= :created")
   Page<Professional> findByCreatedOnAfter(@Param("created") LocalDateTime createdOn, Pageable pageable);
+
+  @Query(value = "SELECT p FROM Professional p WHERE p.createdOn BETWEEN :startDate AND :endDate")
+  Page<Professional> findByCreatedOnAndUpdatedOnBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 }

@@ -20,35 +20,39 @@ import static com.umulam.fleen.health.util.FleenHealthUtil.createPageable;
 @AllArgsConstructor
 public class SearchRequest {
 
-  @Builder.Default
   @JsonProperty("page_no")
   private Integer pageNo = Integer.valueOf(DEFAULT_PAGE_NUMBER);
 
-  @Builder.Default
   @JsonProperty("page_size")
   private Integer pageSize = Integer.valueOf(DEFAULT_PAGE_SIZE);
 
-  @Builder.Default
   @JsonProperty("sort_dir")
   private String sortDir = DEFAULT_SORT_DIRECTION;
 
-  @Builder.Default
   @JsonProperty("sort_by")
   private String sortBy = DEFAULT_SORT_BY;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE)
-  @JsonProperty("created_on")
-  private LocalDate createdOn;
+  @JsonProperty("start_date")
+  private LocalDate startDate;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE)
-  @JsonProperty("updated_on")
-  private LocalDate updatedOn;
+  @JsonProperty("end_date")
+  private LocalDate endDate;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE)
+  @JsonProperty("before")
+  private LocalDate beforeDate;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE)
+  @JsonProperty("after")
+  private LocalDate afterDate;
 
   @JsonIgnore
-  private Pageable pageRequest;
+  private Pageable page;
 
   public void toPageable() {
     Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
-    this.setPageRequest(pageable);
+    this.setPage(pageable);
   }
 }

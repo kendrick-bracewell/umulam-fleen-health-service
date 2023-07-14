@@ -35,7 +35,7 @@ public class AdminProfessionalController {
   }
 
   @GetMapping(value = "/entries")
-  public SearchResultView findProfessionals(@SearchParam ProfessionalSearchRequest request) {
+  public Object findProfessionals(@SearchParam ProfessionalSearchRequest request) {
     return service.findProfessionals(request);
   }
 

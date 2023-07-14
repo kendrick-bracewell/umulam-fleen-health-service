@@ -24,7 +24,6 @@ import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -72,12 +71,17 @@ public class FleenHealthUtil {
     return PageRequest.of(pageNo, pageSize, sort);
   }
 
-  public static boolean areNotEmpty(String...args) {
+  public static boolean areNotEmpty(Object...args) {
     if (ArrayUtils.isEmpty(args)) {
       return false;
     } else {
       long arrLength = args.length;
-      long nonEmptyElements = Arrays.stream(args).filter(StringUtils::isNotBlank).count();
+      long nonEmptyElements = Arrays
+              .stream(args)
+              .filter(arg -> arg instanceof String
+                ? StringUtils.isNotBlank((String) arg)
+                : Objects.nonNull(arg))
+              .count();
       return arrLength == nonEmptyElements;
     }
   }

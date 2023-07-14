@@ -16,6 +16,7 @@ import java.util.List;
 
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Service
@@ -32,10 +33,24 @@ public class AdminProfessionalServiceImpl implements AdminProfessionalService {
   public SearchResultView findProfessionals(ProfessionalSearchRequest req) {
     Page<Professional> page;
 
-    if (areNotEmpty(req.getFirstName(), req.getLastName())) {
-      page = repository.findByFirstNameAndLastName(req.getFirstName(), req.getLastName(), req.getPageRequest());
+    if (areNotEmpty(req.getStartDate(), req.getEndDate())) {
+      page = repository.findByCreatedOnAndUpdatedOnBetween(req.getStartDate().atStartOfDay(), req.getEndDate().atStartOfDay(), req.getPage());
+    } else if (areNotEmpty(req.getFirstName(), req.getLastName())) {
+      page = repository.findByFirstNameAndLastName(req.getFirstName(), req.getLastName(), req.getPage());
+    } else if (nonNull(req.getAvailabilityStatus())) {
+      page = repository.findByAvailabilityStatus(req.getAvailabilityStatus(), req.getPage());
+    } else if (nonNull(req.getProfessionalType())) {
+      page = repository.findByProfessionalType(req.getProfessionalType(), req.getPage());
+    } else if (nonNull(req.getQualificationType())) {
+      page = repository.findByQualification(req.getQualificationType(), req.getPage());
+    } else if (nonNull(req.getLanguageSpoken())) {
+      page = repository.findByLanguageSpoken(req.getLanguageSpoken(), req.getPage());
+    } else if (nonNull(req.getBeforeDate())) {
+      page = repository.findByCreatedOnBefore(req.getBeforeDate().atStartOfDay(), req.getPage());
+    } else if (nonNull(req.getAfterDate())) {
+      page = repository.findByCreatedOnBefore(req.getAfterDate().atStartOfDay(), req.getPage());
     } else {
-      page = repository.findAll(req.getPageRequest());
+      page = repository.findAll(req.getPage());
     }
 
     List<ProfessionalView> views = ProfessionalMapper.toProfessionalViews(page.getContent());
