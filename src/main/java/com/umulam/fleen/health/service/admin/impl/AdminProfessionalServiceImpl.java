@@ -10,6 +10,7 @@ import com.umulam.fleen.health.service.admin.AdminProfessionalService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class AdminProfessionalServiceImpl implements AdminProfessionalService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public SearchResultView findProfessionals(ProfessionalSearchRequest req) {
     Page<Professional> page;
 

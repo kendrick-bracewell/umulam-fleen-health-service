@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.resolver.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umulam.fleen.health.model.request.search.base.SearchRequest;
 import com.umulam.fleen.health.resolver.SearchParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -39,7 +40,14 @@ public class SearchParamArgResolver implements HandlerMethodArgumentResolver {
     final HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
     UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(getFullURL(request));
     Map<String, String> queryMap = toQueryMap(builder.build().getQueryParams());
-    return mapper.convertValue(queryMap, parameter.getParameterType());
+    try {
+      SearchRequest searchRequest = (SearchRequest) mapper.convertValue(queryMap, parameter.getParameterType());
+      searchRequest.toPageable();
+      return searchRequest;
+    } catch (ClassCastException ex) {
+      log.error(ex.getMessage(), ex);
+      throw new IllegalArgumentException(ex.getMessage());
+    }
   }
 
   private String getFullURL(HttpServletRequest request) {

@@ -47,8 +47,8 @@ public class SearchRequest {
   @JsonIgnore
   private Pageable pageRequest;
 
-  @JsonIgnore
-  protected Pageable toPageable() {
-    return createPageable(pageNo, pageSize, sortBy, sortDir);
+  public void toPageable() {
+    Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
+    this.setPageRequest(pageable);
   }
 }

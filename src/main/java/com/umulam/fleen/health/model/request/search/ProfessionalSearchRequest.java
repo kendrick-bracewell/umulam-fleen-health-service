@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.domain.Pageable;
 
 @SuperBuilder
 @Getter
@@ -39,10 +38,4 @@ public class ProfessionalSearchRequest extends SearchRequest {
 
   @JsonProperty("language_spoken")
   private String languageSpoken;
-
-  public ProfessionalSearchRequest toSearchRequest() {
-    Pageable pageable = this.toPageable();
-    this.setPageRequest(pageable);
-    return this;
-  }
 }
