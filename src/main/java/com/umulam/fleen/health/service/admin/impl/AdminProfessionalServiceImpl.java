@@ -65,6 +65,8 @@ public class AdminProfessionalServiceImpl implements AdminProfessionalService {
     ProfileVerificationStatus verificationStatus = ProfileVerificationStatus.PENDING;
     if (areNotEmpty(req.getStartDate(), req.getEndDate())) {
       page = repository.findByVerificationStatusBetween(verificationStatus, req.getStartDate().atStartOfDay(), req.getEndDate().atStartOfDay(), req.getPage());
+    } else if (areNotEmpty(req.getFirstName(), req.getLastName())) {
+      page = repository.findByVerificationStatusAndFirstOrLastName(verificationStatus, req.getFirstName(), req.getLastName(), req.getPage());
     } else {
       page = repository.findByVerificationStatus(verificationStatus, req.getPage());
     }

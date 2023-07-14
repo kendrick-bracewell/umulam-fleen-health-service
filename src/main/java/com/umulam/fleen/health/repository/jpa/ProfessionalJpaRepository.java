@@ -28,7 +28,7 @@ public interface ProfessionalJpaRepository extends JpaRepository<Professional, I
 
   Page<Professional> findAll(Pageable pageable);
 
-  @Query(value = "SELECT p FROM Professional p WHERE p.member.firstName LIKE CONCAT('%',INITCAP(?1),'%') AND p.member.lastName LIKE CONCAT('%',INITCAP(?2),'%') ")
+  @Query(value = "SELECT p FROM Professional p WHERE p.member.firstName LIKE CONCAT('%',INITCAP(?1),'%') AND p.member.lastName LIKE CONCAT('%',INITCAP(?2),'%')")
   Page<Professional> findByFirstNameAndLastName(String firstName, String lastName, Pageable pageable);
 
   @Query(value = "SELECT p FROM Professional p WHERE p.professionalType = :type")
@@ -57,4 +57,7 @@ public interface ProfessionalJpaRepository extends JpaRepository<Professional, I
 
   @Query(value = "SELECT p FROM Professional p WHERE p.member.verificationStatus = :verificationStatus AND p.createdOn BETWEEN :startDate AND :endDate")
   Page<Professional> findByVerificationStatusBetween(ProfileVerificationStatus verificationStatus, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+
+  @Query(value = "SELECT p FROM Professional p WHERE p.member.verificationStatus = ?1 AND p.member.firstName LIKE CONCAT('%',INITCAP(?2),'%') OR p.member.lastName LIKE CONCAT('%',INITCAP(?3),'%')")
+  Page<Professional> findByVerificationStatusAndFirstOrLastName(ProfileVerificationStatus verificationStatus, String firstName, String lastName, Pageable pageable);
 }
