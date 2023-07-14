@@ -14,6 +14,7 @@ import com.umulam.fleen.health.service.admin.AdminProfessionalService;
 import com.umulam.fleen.health.service.impl.ProfessionalServiceImpl;
 import com.umulam.fleen.health.service.impl.S3Service;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import static java.util.Objects.nonNull;
 
 @Slf4j
 @Service
+@Qualifier("adminProfessionalService")
 public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implements AdminProfessionalService {
 
   public AdminProfessionalServiceImpl(MemberService memberService,

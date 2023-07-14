@@ -6,6 +6,7 @@ import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.admin.AdminProfessionalService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -27,7 +28,8 @@ public class AdminProfessionalController {
 
   private final AdminProfessionalService service;
 
-  public AdminProfessionalController(AdminProfessionalService service) {
+  public AdminProfessionalController(
+          @Qualifier("adminProfessionalService") AdminProfessionalService service) {
     this.service = service;
   }
 

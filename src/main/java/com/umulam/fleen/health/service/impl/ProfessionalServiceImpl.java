@@ -20,6 +20,8 @@ import com.umulam.fleen.health.model.view.VerificationDocumentView;
 import com.umulam.fleen.health.repository.jpa.ProfessionalJpaRepository;
 import com.umulam.fleen.health.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@Primary
 public class ProfessionalServiceImpl implements ProfessionalService, ProfileService {
 
   private final MemberService memberService;
