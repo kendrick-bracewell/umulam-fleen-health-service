@@ -13,6 +13,7 @@ import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.authentication.*;
+import com.umulam.fleen.health.exception.member.MemberNotFoundException;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.model.domain.*;
 import com.umulam.fleen.health.model.dto.authentication.*;
@@ -976,7 +977,15 @@ public class AuthenticationServiceImpl implements
   public SignInResponse completeOnboarding(String username, ChangePasswordDto dto) {
     Member member = memberService.getMemberByEmailAddress(username);
     if (isNull(member)) {
-      throw new UserNotFoundException(username);
+      throw new MemberNotFoundException(username);
+    }
+
+    boolean isPreOnboarded = member.getRoles()
+            .stream()
+            .anyMatch(role -> RoleType.PRE_ONBOARDED.name().equals(role.getCode()));
+
+    if (!isPreOnboarded) {
+
     }
 
     CompleteUserSignUpRequest request = createCompleteUserSignUpRequest(member);
