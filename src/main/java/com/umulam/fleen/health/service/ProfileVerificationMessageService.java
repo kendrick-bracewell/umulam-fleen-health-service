@@ -6,4 +6,8 @@ import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
 public interface ProfileVerificationMessageService {
 
   ProfileVerificationMessage getProfileVerificationMessageByType(ProfileVerificationMessageType messageType);
+
+  boolean existsById(Integer id);
+
+  ProfileVerificationMessage getProfileVerificationMessageFromCache(Integer messageId);
 }

@@ -132,6 +132,7 @@ public class EmailServiceImpl {
 
   public String processAndReturnTemplate(String templateName, Map<String, Object> data) {
     try {
+      Template template1 = new Template("", "", null);
       Template template = configuration.getTemplate(templateName);
       return FreeMarkerTemplateUtils.processTemplateIntoString(template, data);
     } catch (TemplateException | IOException ex) {

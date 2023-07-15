@@ -1,30 +1,18 @@
 package com.umulam.fleen.health.controller.admin;
 
-import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalDetailsDto;
+import com.umulam.fleen.health.model.dto.verification.UpdateProfileVerificationStatusDto;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
-import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalView;
 import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.admin.AdminProfessionalService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
-import java.util.List;
-
-import static com.umulam.fleen.health.constant.base.PagingConstant.*;
-import static com.umulam.fleen.health.util.FleenHealthUtil.createPageable;
 
 @Slf4j
 @RestController
@@ -45,7 +33,7 @@ public class AdminProfessionalController {
 
   @GetMapping(value = "/entries/pending-verification")
   public SearchResultView findProfessionalsPendingVerification(@SearchParam ProfessionalSearchRequest request, @AuthenticationPrincipal) {
-    return service.findProfessionalsVerificationStatus(request);
+    return service.findProfessionalsByVerificationStatus(request);
   }
 
   @GetMapping(value = "/detail/{id}")
@@ -60,7 +48,10 @@ public class AdminProfessionalController {
     return service.updateProfessionalDetail(dto, professionalId);
   }
 
-  public void updateProfessionalVerificationStatus() {
+  @PutMapping(value = "/update-verification-status/{id}")
+  public void updateProfessionalVerificationStatus(
+          @PathVariable(name = "id") Integer professionalId,
+          @Valid @RequestBody UpdateProfileVerificationStatusDto dto) {
 
   }
 

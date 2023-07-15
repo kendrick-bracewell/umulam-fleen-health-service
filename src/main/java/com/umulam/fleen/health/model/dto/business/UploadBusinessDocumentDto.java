@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.umulam.fleen.health.constant.verification.VerificationDocumentType.*;
+import static java.util.Objects.nonNull;
+
 @Builder
 @Getter
 @Setter
@@ -55,54 +58,40 @@ public class UploadBusinessDocumentDto {
   public List<UpdateVerificationDocumentRequest> toUpdateVerificationDocumentRequest() {
     List<UpdateVerificationDocumentRequest> documents = new ArrayList<>();
 
-    if (Objects.nonNull(registrationDocument)) {
-      UpdateVerificationDocumentRequest request = new UpdateVerificationDocumentRequest();
-      request.setDocumentLink(registrationDocument);
-      request.setVerificationDocumentType(VerificationDocumentType.BUSINESS_REGISTRATION_DOCUMENT);
-      documents.add(request);
+    if (nonNull(registrationDocument)) {
+      documents.add(createNew(registrationDocument, BUSINESS_REGISTRATION_DOCUMENT));
     }
 
-    if (Objects.nonNull(taxIdentification)) {
-      UpdateVerificationDocumentRequest request = new UpdateVerificationDocumentRequest();
-      request.setDocumentLink(taxIdentification);
-      request.setVerificationDocumentType(VerificationDocumentType.BUSINESS_TAX_IDENTIFICATION);
-      documents.add(request);
+    if (nonNull(taxIdentification)) {
+      documents.add(createNew(taxIdentification, BUSINESS_TAX_IDENTIFICATION));
     }
 
-    if (Objects.nonNull(passport)) {
-      UpdateVerificationDocumentRequest request = new UpdateVerificationDocumentRequest();
-      request.setDocumentLink(passport);
-      request.setVerificationDocumentType(VerificationDocumentType.PASSPORT);
-      documents.add(request);
+    if (nonNull(passport)) {
+      documents.add(createNew(passport, PASSPORT));
     }
 
-    if (Objects.nonNull(driverLicense)) {
-      UpdateVerificationDocumentRequest request = new UpdateVerificationDocumentRequest();
-      request.setDocumentLink(driverLicense);
-      request.setVerificationDocumentType(VerificationDocumentType.DRIVER_LICENSE);
-      documents.add(request);
+    if (nonNull(nationalId)) {
+      documents.add(createNew(nationalId, NATIONAL_ID_CARD));
     }
 
-    if (Objects.nonNull(nationalId)) {
-      UpdateVerificationDocumentRequest request = new UpdateVerificationDocumentRequest();
-      request.setDocumentLink(nationalId);
-      request.setVerificationDocumentType(VerificationDocumentType.NATIONAL_ID_CARD);
-      documents.add(request);
+    if (nonNull(driverLicense)) {
+      documents.add(createNew(driverLicense, DRIVER_LICENSE));
     }
 
-    if (Objects.nonNull(leaseAgreement)) {
-      UpdateVerificationDocumentRequest request = new UpdateVerificationDocumentRequest();
-      request.setDocumentLink(leaseAgreement);
-      request.setVerificationDocumentType(VerificationDocumentType.LEASE_AGREEMENT);
-      documents.add(request);
+    if (nonNull(leaseAgreement)) {
+      documents.add(createNew(leaseAgreement, LEASE_AGREEMENT));
     }
 
-    if (Objects.nonNull(utilityBill)) {
-      UpdateVerificationDocumentRequest request = new UpdateVerificationDocumentRequest();
-      request.setDocumentLink(utilityBill);
-      request.setVerificationDocumentType(VerificationDocumentType.UTILITY_BILL);
-      documents.add(request);
+    if (nonNull(utilityBill)) {
+      documents.add(createNew(utilityBill, UTILITY_BILL));
     }
     return documents;
+  }
+
+  private UpdateVerificationDocumentRequest createNew(String link, VerificationDocumentType documentType) {
+    UpdateVerificationDocumentRequest request = new UpdateVerificationDocumentRequest();
+    request.setDocumentLink(link);
+    request.setVerificationDocumentType(documentType);
+    return request;
   }
 }

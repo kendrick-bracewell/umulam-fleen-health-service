@@ -1,9 +1,12 @@
 package com.umulam.fleen.health.service.admin.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotFoundException;
 import com.umulam.fleen.health.model.domain.Professional;
+import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalDetailsDto;
+import com.umulam.fleen.health.model.dto.verification.UpdateProfileVerificationStatusDto;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.view.ProfessionalView;
@@ -11,8 +14,10 @@ import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.ProfessionalJpaRepository;
 import com.umulam.fleen.health.service.CountryService;
 import com.umulam.fleen.health.service.MemberService;
+import com.umulam.fleen.health.service.ProfileVerificationMessageService;
 import com.umulam.fleen.health.service.VerificationDocumentService;
 import com.umulam.fleen.health.service.admin.AdminProfessionalService;
+import com.umulam.fleen.health.service.impl.CacheService;
 import com.umulam.fleen.health.service.impl.ProfessionalServiceImpl;
 import com.umulam.fleen.health.service.impl.S3Service;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.PROFILE_VERIFICATION_MESSAGE_TEMPLATE_CACHE_PREFIX;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
 import static java.util.Objects.nonNull;
@@ -33,12 +39,18 @@ import static java.util.Objects.nonNull;
 @Qualifier("adminProfessionalService")
 public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implements AdminProfessionalService {
 
+  private final ProfileVerificationMessageService verificationMessageService;
+
   public AdminProfessionalServiceImpl(MemberService memberService,
-                                 S3Service s3Service,
-                                 CountryService countryService,
-                                 VerificationDocumentService verificationDocumentService,
-                                 ProfessionalJpaRepository repository) {
+                                      S3Service s3Service,
+                                      CountryService countryService,
+                                      VerificationDocumentService verificationDocumentService,
+                                      ProfessionalJpaRepository repository,
+                                      CacheService cacheService,
+                                      ObjectMapper mapper,
+                                      ProfileVerificationMessageService verificationMessageService) {
     super(memberService, s3Service, countryService, verificationDocumentService, repository);
+    this.verificationMessageService = verificationMessageService;
   }
 
 
@@ -75,7 +87,7 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
 
   @Override
   @Transactional(readOnly = true)
-  public SearchResultView findProfessionalsVerificationStatus(ProfessionalSearchRequest req) {
+  public SearchResultView findProfessionalsByVerificationStatus(ProfessionalSearchRequest req) {
     Page<Professional> page;
     ProfileVerificationStatus verificationStatus = ProfileVerificationStatus.PENDING;
     if (areNotEmpty(req.getStartDate(), req.getEndDate())) {
@@ -106,5 +118,15 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
     Professional savedProfessional = repository.save(existingProfessional);
     return toProfessionalView(savedProfessional);
   }
+
+  @Override
+  public Object updateProfessionalVerificationStatus(UpdateProfileVerificationStatusDto dto, Integer professionalId) {
+    ProfileVerificationMessage verificationMessage = verificationMessageService.getProfileVerificationMessageFromCache(Integer.parseInt(dto.getVerificationMessageTemplateId()));
+
+    return null;
+  }
+
+
+
 
 }

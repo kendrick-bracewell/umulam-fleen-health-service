@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface ProfileVerificationMessageRepository extends JpaRepository<ProfileVerificationMessage, Integer> {
 
   Optional<ProfileVerificationMessage> findByVerificationMessageType(ProfileVerificationMessageType messageType);
+
+  boolean existsById(Integer id);
 }

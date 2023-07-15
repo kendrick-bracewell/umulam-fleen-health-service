@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.umulam.fleen.health.constant.verification.VerificationDocumentType.*;
+import static java.util.Objects.nonNull;
+
 @Builder
 @Getter
 @Setter
@@ -40,33 +43,28 @@ public class UploadProfessionalDocumentDto {
   public List<UpdateVerificationDocumentRequest> toUpdateVerificationDocumentRequest() {
     List<UpdateVerificationDocumentRequest> documents = new ArrayList<>();
 
-    if (Objects.nonNull(educationCertificate)) {
-      UpdateVerificationDocumentRequest request = new UpdateVerificationDocumentRequest();
-      request.setDocumentLink(educationCertificate);
-      request.setVerificationDocumentType(VerificationDocumentType.EDUCATION_CERTIFICATE);
-      documents.add(request);
+    if (nonNull(educationCertificate)) {
+      documents.add(createNew(educationCertificate, EDUCATION_CERTIFICATE));
     }
 
-    if (Objects.nonNull(transcript)) {
-      UpdateVerificationDocumentRequest request = new UpdateVerificationDocumentRequest();
-      request.setDocumentLink(transcript);
-      request.setVerificationDocumentType(VerificationDocumentType.TRANSCRIPT);
-      documents.add(request);
+    if (nonNull(transcript)) {
+      documents.add(createNew(transcript, TRANSCRIPT));
     }
 
-    if (Objects.nonNull(professionalMembership)) {
-      UpdateVerificationDocumentRequest request = new UpdateVerificationDocumentRequest();
-      request.setDocumentLink(professionalMembership);
-      request.setVerificationDocumentType(VerificationDocumentType.PROFESSIONAL_MEMBERSHIP);
-      documents.add(request);
+    if (nonNull(professionalMembership)) {
+      documents.add(createNew(professionalMembership, PROFESSIONAL_MEMBERSHIP));
     }
 
-    if (Objects.nonNull(curriculumVitae)) {
-      UpdateVerificationDocumentRequest request = new UpdateVerificationDocumentRequest();
-      request.setDocumentLink(curriculumVitae);
-      request.setVerificationDocumentType(VerificationDocumentType.CURRICULUM_VITAE);
-      documents.add(request);
+    if (nonNull(curriculumVitae)) {
+      documents.add(createNew(curriculumVitae, CURRICULUM_VITAE));
     }
     return documents;
+  }
+
+  private UpdateVerificationDocumentRequest createNew(String link, VerificationDocumentType documentType) {
+    UpdateVerificationDocumentRequest request = new UpdateVerificationDocumentRequest();
+    request.setDocumentLink(link);
+    request.setVerificationDocumentType(documentType);
+    return request;
   }
 }
