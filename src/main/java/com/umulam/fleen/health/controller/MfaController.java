@@ -39,13 +39,13 @@ public class MfaController {
 
   @PutMapping(value = "/re-enable")
   public FleenHealthResponse reEnableMfa(@AuthenticationPrincipal FleenUser user) {
-    memberService.reEnableMfa(user.getId());
+    memberService.reEnableMfa(user);
     return new FleenHealthResponse(MFA_RE_ENABLED);
   }
 
   @PutMapping(value = "/disable")
   public FleenHealthResponse disableMfa(@AuthenticationPrincipal FleenUser user) {
-    memberService.disableMfa(user.getId());
+    memberService.disableMfa(user);
     return new FleenHealthResponse(MFA_DISABLED);
   }
 }

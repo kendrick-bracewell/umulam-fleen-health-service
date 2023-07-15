@@ -39,10 +39,10 @@ public interface MemberService {
   Member save(Member member);
 
   @Transactional
-  void reEnableMfa(Integer memberId);
+  void reEnableMfa(FleenUser user);
 
   @Transactional
-  void disableMfa(Integer memberId);
+  void disableMfa(FleenUser user);
 
   @Transactional
   MfaDetail setupMfa(Integer memberId, MfaTypeDto mfaTypeDto);

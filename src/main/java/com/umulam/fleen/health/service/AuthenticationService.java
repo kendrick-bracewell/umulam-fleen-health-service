@@ -61,7 +61,7 @@ public interface AuthenticationService {
   ReCaptchaResponse verifyReCaptcha(String reCaptchaToken);
 
   @Transactional
-  void sendMfaVerification(Member member, VerificationType verificationType, MfaType mfaType);
+  void saveAndSendMfaVerification(Member member, VerificationType verificationType, MfaType mfaType);
 
   void validateMfaSetupCode(String username, String code, MfaType mfaType);
 

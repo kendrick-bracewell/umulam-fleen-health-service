@@ -505,7 +505,7 @@ public class AuthenticationServiceImpl implements
    * <p>The {@link ConfirmMfaDto#getMfaType() MfaType} will be used to decide what service to deliver the and validate the OTP or code against. For example, if the user
    * has enabled the {@link MfaType#AUTHENTICATOR Authenticator} type of MFA_OR_PRE_AUTHENTICATION on their profile, the code will be validated through
    * {@link MfaService#verifyAuthenticatorOtp(String, String) verifyAuthenticatorOtp} by retrieving the secret associated with the user's profile. If the MFA_OR_PRE_AUTHENTICATION type is for example
-   * {@link MfaType#EMAIL EMAIL}, the code will be validated through {@link #validateMfaSetupCode(String, String)} (String, String) validateSmsAndEmailMfa}.</p>
+   * {@link MfaType#EMAIL EMAIL}, the code will be validated through {@link #validateMfaSetupCode(String, String, MfaType)} (String, String) validateSmsAndEmailMfa}.</p>
    * <br/>
    *
    * @param fleenUser The user that has started the sign-in process at {@link #signIn(SignInDto) signIn}.
@@ -519,24 +519,26 @@ public class AuthenticationServiceImpl implements
   @Transactional(readOnly = true)
   public SignInResponse validateSignInMfa(FleenUser fleenUser, ConfirmMfaDto dto) {
     String username = fleenUser.getUsername();
+    Member member = memberService.getMemberByEmailAddress(username);
+    if (isNull(member)) {
+      throw new InvalidAuthenticationException(username);
+    }
+
     MfaType mfaType = MfaType.valueOf(dto.getMfaType());
     String code = dto.getCode();
 
     if (SMS == mfaType || EMAIL == mfaType) {
       String verificationKey = getPreAuthenticationCacheKey(username);
       validateSmsAndEmailVerificationCode(verificationKey, code);
-    }
-    else if (AUTHENTICATOR == mfaType) {
+    } else if (AUTHENTICATOR == mfaType) {
       String secret = memberService.getTwoFaSecret(fleenUser.getId());
+      if (isNull(secret)) {
+        throw new MfaVerificationFailed();
+      }
       boolean valid = mfaService.verifyAuthenticatorOtp(code, secret);
       if (!valid) {
         throw new InvalidVerificationCodeException(code);
       }
-    }
-
-    Member member = memberService.getMemberByEmailAddress(username);
-    if (isNull(member)) {
-      throw new InvalidAuthenticationException(username);
     }
 
     FleenUser user = initAuthentication(member);
@@ -1128,7 +1130,7 @@ public class AuthenticationServiceImpl implements
   }
 
   @Transactional
-  public void sendAndSaveMfaVerification(Member member, VerificationType verificationType, MfaType mfaType) {
+  public void saveAndSendMfaVerification(Member member, VerificationType verificationType, MfaType mfaType) {
     String code = getRandomSixDigitOtp();
     FleenUser user = FleenUser.fromMemberBasic(member);
     PreVerificationOrAuthenticationRequest request = createMfaSetupRequest(code, user);
@@ -1139,7 +1141,7 @@ public class AuthenticationServiceImpl implements
 
   @Override
   public void validateMfaSetupCode(String username, String code, MfaType mfaType) {
-    String verificationKey = getEmailMfaSetupCacheKey(username);
+    String verificationKey = getMfaSetupKey(username, mfaType);
     validateSmsAndEmailVerificationCode(verificationKey, code);
     clearMfaSetupOtp(username, mfaType);
   }

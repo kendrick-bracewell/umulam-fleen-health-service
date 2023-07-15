@@ -142,14 +142,16 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
 
   @Override
   @Transactional
-  public void reEnableMfa(Integer memberId) {
-    repository.reEnableTwoFa(memberId);
+  public void reEnableMfa(FleenUser user) {
+    getMember(user.getEmailAddress());
+    repository.reEnableTwoFa(user.getId());
   }
 
   @Override
   @Transactional
-  public void disableMfa(Integer memberId) {
-    repository.disableTwoFa(memberId);
+  public void disableMfa(FleenUser user) {
+    getMember(user.getEmailAddress());
+    repository.disableTwoFa(user.getId());
   }
 
   @Override
@@ -188,11 +190,11 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
 
     switch (mfaType) {
       case SMS:
-        authenticationService.sendMfaVerification(member, VerificationType.SMS, MfaType.SMS);
+        authenticationService.saveAndSendMfaVerification(member, VerificationType.SMS, MfaType.SMS);
         break;
 
       case EMAIL:
-        authenticationService.sendMfaVerification(member, VerificationType.EMAIL, MfaType.EMAIL);
+        authenticationService.saveAndSendMfaVerification(member, VerificationType.EMAIL, MfaType.EMAIL);
         break;
 
       case AUTHENTICATOR:
