@@ -26,7 +26,7 @@ public class DateOfBirthValidator implements ConstraintValidator<DateOfBirth, St
     if (Objects.nonNull(date)) {
       try {
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATE);
-         dtf.parse(date);
+        dtf.parse(date);
         LocalDate setDate = LocalDate.parse(date, dtf);
         return setDate.getYear() < LocalDate.now().getYear();
       } catch (DateTimeParseException ex) {
