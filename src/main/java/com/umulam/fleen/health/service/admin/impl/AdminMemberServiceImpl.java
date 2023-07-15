@@ -1,17 +1,19 @@
 package com.umulam.fleen.health.service.admin.impl;
 
 import com.umulam.fleen.health.configuration.aws.s3.S3BucketNames;
-import com.umulam.fleen.health.constant.MemberStatusType;
+import com.umulam.fleen.health.constant.CommonEmailMessageTemplateDetails;
+import com.umulam.fleen.health.constant.VerificationMessageType;
 import com.umulam.fleen.health.constant.authentication.RoleType;
+import com.umulam.fleen.health.constant.authentication.VerificationType;
 import com.umulam.fleen.health.constant.base.ProfileType;
-import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.role.RoleNotFoundException;
 import com.umulam.fleen.health.model.domain.Member;
-import com.umulam.fleen.health.model.domain.MemberStatus;
 import com.umulam.fleen.health.model.domain.Role;
 import com.umulam.fleen.health.model.dto.admin.CreateMemberDto;
 import com.umulam.fleen.health.model.mapper.MemberMapper;
 import com.umulam.fleen.health.model.request.MemberSearchRequest;
+import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequest;
+import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.MemberView;
 import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.MemberJpaRepository;
@@ -31,10 +33,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import static com.umulam.fleen.health.util.DateTimeUtil.getDefaultDateOfBirth;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
@@ -110,7 +110,21 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
     member.setPassword(createEncodedPassword(newPassword));
     member.setUserType(userType);
 
+    FleenUser user = FleenUser.fromMemberBasic(member);
+    PreVerificationOrAuthenticationRequest request = createPreOnboardingRequest(newPassword, user);
+    sendVerificationMessage(request, VerificationType.EMAIL);
     save(member);
+  }
+
+  private PreVerificationOrAuthenticationRequest createPreOnboardingRequest(String code, FleenUser user) {
+    CommonEmailMessageTemplateDetails templateDetails = CommonEmailMessageTemplateDetails.PRE_ONBOARDING;
+    PreVerificationOrAuthenticationRequest request = createVerificationRequest(code, user);
+    request.setEmailMessageTitle(templateDetails.getEmailMessageSubject());
+    request.setSmsMessage(getVerificationSmsMessage(VerificationMessageType.PRE_ONBOARDING));
+
+    String emailBody = getVerificationEmailBody(templateDetails.getTemplateName(), request);
+    request.setEmailMessageBody(emailBody);
+    return request;
   }
 
 }

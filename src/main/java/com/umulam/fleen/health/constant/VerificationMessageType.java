@@ -10,4 +10,5 @@ public enum VerificationMessageType {
   FORGOT_PASSWORD,
   PRE_AUTHENTICATION,
   MFA_SETUP,
+  PRE_ONBOARDING;
 }

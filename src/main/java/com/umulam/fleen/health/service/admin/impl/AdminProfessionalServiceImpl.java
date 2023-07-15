@@ -181,4 +181,9 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
     return verificationHistoryService;
   }
 
+  @Override
+  public MemberStatusService getMemberStatusService() {
+    return null;
+  }
+
 }

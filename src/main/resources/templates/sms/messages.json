@@ -18,5 +18,9 @@
   {
     "title": "PROFILE_UPDATE",
     "body": "Hi, kindly use this code {0} to complete the verification process"
+  },
+  {
+    "title": "PRE_ONBOARDING",
+    "body": "Hi, kindly use this password {0} to complete the onboarding process"
   }
 ]

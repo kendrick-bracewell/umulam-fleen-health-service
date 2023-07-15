@@ -1108,4 +1108,13 @@ public class AuthenticationServiceImpl implements
   public PasswordEncoder getPasswordEncoder() {
     return passwordEncoder;
   }
+
+  public MemberService getMemberService() {
+    return memberService;
+  }
+
+  @Override
+  public MemberStatusService getMemberStatusService() {
+    return memberStatusService;
+  }
 }
