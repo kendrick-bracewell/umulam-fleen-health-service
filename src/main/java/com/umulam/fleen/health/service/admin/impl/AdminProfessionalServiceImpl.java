@@ -1,10 +1,8 @@
 package com.umulam.fleen.health.service.admin.impl;
 
-import com.umulam.fleen.health.constant.MemberStatusType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotFoundException;
 import com.umulam.fleen.health.model.domain.Member;
-import com.umulam.fleen.health.model.domain.MemberStatus;
 import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalDetailsDto;
@@ -47,7 +45,6 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
   private final EmailServiceImpl emailService;
   private final VerificationHistoryService verificationHistoryService;
   private final ProfileVerificationMessageService profileVerificationMessageService;
-  private final MemberStatusService memberStatusService;
 
   public AdminProfessionalServiceImpl(MemberService memberService,
                                       S3Service s3Service,
@@ -58,8 +55,7 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
                                       MobileTextService mobileTextService,
                                       EmailServiceImpl emailService,
                                       VerificationHistoryService verificationHistoryService,
-                                      ProfileVerificationMessageService verificationMessageService,
-                                      MemberStatusService memberStatusService) {
+                                      ProfileVerificationMessageService verificationMessageService) {
     super(memberService, s3Service, countryService, verificationDocumentService, repository);
     this.verificationMessageService = verificationMessageService;
     this.cacheService = cacheService;
@@ -67,7 +63,6 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
     this.emailService = emailService;
     this.verificationHistoryService = verificationHistoryService;
     this.profileVerificationMessageService = verificationMessageService;
-    this.memberStatusService = memberStatusService;
   }
 
 

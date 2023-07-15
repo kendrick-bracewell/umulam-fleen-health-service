@@ -12,6 +12,7 @@ import com.umulam.fleen.health.model.response.member.UpdateEmailAddressOrPhoneNu
 import com.umulam.fleen.health.model.response.member.UpdateMemberDetailsResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
+import com.umulam.fleen.health.model.view.MemberView;
 import com.umulam.fleen.health.model.view.RoleView;
 import lombok.NonNull;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,13 @@ import java.util.List;
 public interface MemberService {
 
   Member getMemberByEmailAddress(String emailAddress);
+
+  @Transactional(readOnly = true)
+  MemberView findMemberById(Integer id);
+
+  List<MemberView> toMemberViews(List<Member> members);
+
+  MemberView toMemberView(Member member);
 
   boolean isMemberExists(@NonNull String emailAddress);
 
@@ -51,6 +59,9 @@ public interface MemberService {
   GetMemberUpdateDetailsResponse getMemberGetUpdateDetailsResponse(FleenUser user);
 
   UpdateMemberDetailsResponse updateMemberDetails(UpdateMemberDetailsDto dto, FleenUser user);
+
+  @Transactional
+  UpdateMemberDetailsResponse updateMemberDetails(UpdateMemberDetailsDto dto, Integer memberId);
 
   void sendUpdateEmailAddressOrPhoneNumberCode(UpdateEmailAddressOrPhoneNumberDto dto, FleenUser user);
 

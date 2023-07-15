@@ -1,16 +1,23 @@
 package com.umulam.fleen.health.repository.jpa;
 
+import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
+import com.umulam.fleen.health.constant.member.ProfessionalType;
+import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.MemberStatus;
+import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.domain.Role;
 import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
@@ -54,9 +61,26 @@ public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
   @Transactional
   @Query(value = "UPDATE Member m SET m.memberStatus = :memberStatus WHERE m.id = :id")
   void updateMemberStatus(@Param("id") Integer memberId, @Param("memberStatus") MemberStatus memberStatus);
-
   @Transactional(readOnly = true)
   @Query(value = "SELECT m.roles FROM Member m where m.id = :id")
   Set<Role> getMemberRole(@Param("id") Integer memberId);
+
+  @Query(value = "SELECT m FROM Member m WHERE m.emailAddress = :emailAddress")
+  Page<Member> findByEmailAddress(@Param("emailAddress") String emailAddress, Pageable pageable);
+
+  @Query(value = "SELECT m FROM Member m WHERE m.firstName LIKE CONCAT('%',INITCAP(?1),'%') AND m.lastName LIKE CONCAT('%',INITCAP(?2),'%')")
+  Page<Member> findByFirstNameAndLastName(String firstName, String lastName, Pageable pageable);
+
+  @Query(value = "SELECT m FROM Member m WHERE m.createdOn <= :created")
+  Page<Member> findByCreatedOnBefore(@Param("created") LocalDateTime createdOn, Pageable pageable);
+
+  @Query(value = "SELECT m FROM Member m WHERE m.createdOn >= :created")
+  Page<Member> findByCreatedOnAfter(@Param("created") LocalDateTime createdOn, Pageable pageable);
+
+  @Query(value = "SELECT m FROM Member m WHERE m.createdOn BETWEEN :startDate AND :endDate")
+  Page<Member> findByCreatedOnAndUpdatedOnBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
+
+  @Query(value = "SELECT m FROM Member m WHERE m.verificationStatus = :verificationStatus")
+  Page<Member> findByVerificationStatus(ProfileVerificationStatus verificationStatus, Pageable pageable);
 
 }

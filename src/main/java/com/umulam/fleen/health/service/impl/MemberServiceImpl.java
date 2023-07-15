@@ -23,6 +23,7 @@ import com.umulam.fleen.health.model.dto.authentication.MfaTypeDto;
 import com.umulam.fleen.health.model.dto.authentication.UpdatePasswordDto;
 import com.umulam.fleen.health.model.dto.member.*;
 import com.umulam.fleen.health.model.dto.role.UpdateMemberRoleDto;
+import com.umulam.fleen.health.model.mapper.MemberMapper;
 import com.umulam.fleen.health.model.mapper.RoleMapper;
 import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequest;
 import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsResponse;
@@ -30,6 +31,7 @@ import com.umulam.fleen.health.model.response.member.UpdateEmailAddressOrPhoneNu
 import com.umulam.fleen.health.model.response.member.UpdateMemberDetailsResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
+import com.umulam.fleen.health.model.view.MemberView;
 import com.umulam.fleen.health.model.view.RoleView;
 import com.umulam.fleen.health.repository.jpa.MemberJpaRepository;
 import com.umulam.fleen.health.service.*;
@@ -43,7 +45,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.UPDATE_EMAIL_CACHE_PREFIX;
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.UPDATE_PHONE_NUMBER_CACHE_PREFIX;
@@ -96,6 +101,27 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
             .findByEmailAddress(emailAddress)
             .orElse(null);
   }
+
+  @Override
+  @Transactional(readOnly = true)
+  public MemberView findMemberById(Integer id) {
+    Optional<Member> memberExists = repository.findById(id);
+    if (memberExists.isEmpty()) {
+      throw new MemberNotFoundException(id);
+    }
+    return toMemberView(memberExists.get());
+  }
+
+  @Override
+  public List<MemberView> toMemberViews(List<Member> members) {
+    return MemberMapper.toMemberViews(members);
+  }
+
+  @Override
+  public MemberView toMemberView(Member member) {
+    return MemberMapper.toMemberView(member);
+  }
+
 
   @Override
   public boolean isMemberExists(@NonNull String emailAddress) {
@@ -256,12 +282,25 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   @Transactional
   public UpdateMemberDetailsResponse updateMemberDetails(UpdateMemberDetailsDto dto, FleenUser user) {
     Member member = getMember(user.getEmailAddress());
+    setUpdateMemberDetails(member, dto);
+    save(member);
+    return new UpdateMemberDetailsResponse(dto.getFirstName(), dto.getLastName(), member.getGender(), member.getDateOfBirth());
+  }
+
+  @Override
+  @Transactional
+  public UpdateMemberDetailsResponse updateMemberDetails(UpdateMemberDetailsDto dto, Integer memberId) {
+    Member member = getMember(memberId);
+    setUpdateMemberDetails(member, dto);
+    save(member);
+    return new UpdateMemberDetailsResponse(dto.getFirstName(), dto.getLastName(), member.getGender(), member.getDateOfBirth());
+  }
+
+  private void setUpdateMemberDetails(Member member, UpdateMemberDetailsDto dto) {
     member.setFirstName(capitalize(dto.getFirstName()));
     member.setLastName(capitalize(dto.getLastName()));
     member.setGender(MemberGender.valueOf(dto.getGender()));
     member.setDateOfBirth(toLocalDateTime(dto.getDateOfBirth()));
-    save(member);
-    return new UpdateMemberDetailsResponse(dto.getFirstName(), dto.getLastName(), member.getGender(), member.getDateOfBirth());
   }
 
   private Member getMember(String emailAddress) {

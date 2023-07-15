@@ -10,7 +10,6 @@ import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.admin.AdminProfessionalService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -35,7 +34,7 @@ public class AdminProfessionalController {
   }
 
   @GetMapping(value = "/entries/pending-verification")
-  public SearchResultView findProfessionalsPendingVerification(@SearchParam ProfessionalSearchRequest request, @AuthenticationPrincipal) {
+  public SearchResultView findProfessionalsPendingVerification(@SearchParam ProfessionalSearchRequest request) {
     return service.findProfessionalsByVerificationStatus(request);
   }
 

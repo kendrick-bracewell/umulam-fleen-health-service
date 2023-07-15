@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
 import com.umulam.fleen.health.constant.member.ProfessionalType;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
-import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
-import com.umulam.fleen.health.model.request.search.base.SearchRequest;
+import com.umulam.fleen.health.model.request.MemberSearchRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,16 +16,7 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfessionalSearchRequest extends SearchRequest {
-
-  @JsonProperty("first_name")
-  private String firstName;
-
-  @JsonProperty("last_name")
-  private String lastName;
-
-  @JsonProperty("email_address")
-  private String emailAddress;
+public class ProfessionalSearchRequest extends MemberSearchRequest {
 
   @JsonProperty("availability_status")
   private ProfessionalAvailabilityStatus availabilityStatus;
@@ -39,7 +29,4 @@ public class ProfessionalSearchRequest extends SearchRequest {
 
   @JsonProperty("language_spoken")
   private String languageSpoken;
-
-  @JsonProperty("verification_status")
-  private ProfileVerificationStatus verificationStatus;
 }
