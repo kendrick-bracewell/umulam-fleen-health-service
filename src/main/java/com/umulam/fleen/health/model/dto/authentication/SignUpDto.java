@@ -9,10 +9,7 @@ import com.umulam.fleen.health.validator.*;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 import static com.umulam.fleen.health.util.DateTimeUtil.toLocalDateTime;
 import static org.springframework.util.StringUtils.capitalize;
@@ -76,6 +73,7 @@ public class SignUpDto {
 
   @NotNull(message = "{signup.dateOfBirth.notEmpty}")
   @DateOfBirth(message = "{signup.dateOfBirth.invalid}")
+  @Past(message = "{signup.dateOfBirth.past}")
   @JsonProperty("date_of_birth")
   private String dateOfBirth;
 
