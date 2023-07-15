@@ -130,7 +130,7 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
     Member member = getMember(memberId);
 
     FleenUser user = FleenUser.fromMember(member);
-    if (MemberStatusType.ACTIVE.name().equals(user.getStatus()) {
+    if (MemberStatusType.ACTIVE.name().equals(user.getStatus())) {
       return;
     }
 
