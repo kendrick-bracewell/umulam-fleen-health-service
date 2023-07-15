@@ -453,7 +453,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
 
   @Override
   public void updateMemberStatus(UpdateMemberStatusDto dto, Integer memberId) {
-    Member member = getMember(memberId);
+    getMember(memberId);
     MemberStatusType memberStatusType = MemberStatusType.valueOf(dto.getMemberStatus());
     MemberStatus memberStatus = memberStatusService.getMemberStatusByCode(memberStatusType.name());
     repository.updateMemberStatus(memberId, memberStatus);
@@ -472,7 +472,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   @Transactional(readOnly = true)
   public List<RoleView> getMemberRoles(Integer memberId) {
     getMember(memberId);
-    List<Role> roles = new ArrayList(repository.getMemberRole(memberId));
+    List<Role> roles = new ArrayList<>(repository.getMemberRole(memberId));
     return RoleMapper.toRoleViews(roles);
   }
 
