@@ -7,10 +7,7 @@ import com.umulam.fleen.health.model.request.MemberSearchRequest;
 import com.umulam.fleen.health.model.view.MemberView;
 import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.MemberJpaRepository;
-import com.umulam.fleen.health.service.AuthenticationService;
-import com.umulam.fleen.health.service.MemberStatusService;
-import com.umulam.fleen.health.service.MfaService;
-import com.umulam.fleen.health.service.RoleService;
+import com.umulam.fleen.health.service.*;
 import com.umulam.fleen.health.service.admin.AdminMemberService;
 import com.umulam.fleen.health.service.external.aws.EmailServiceImpl;
 import com.umulam.fleen.health.service.external.aws.MobileTextService;
@@ -77,5 +74,16 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
 
     List<MemberView> views = MemberMapper.toMemberViews(page.getContent());
     return toSearchResult(views, page);
+  }
+
+
+  @Override
+  public ProfileVerificationMessageService getProfileVerificationMessageService() {
+    return null;
+  }
+
+  @Override
+  public VerificationHistoryService getVerificationHistoryService() {
+    return null;
   }
 }
