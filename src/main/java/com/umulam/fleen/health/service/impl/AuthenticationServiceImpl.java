@@ -207,7 +207,7 @@ public class AuthenticationServiceImpl implements
         && (PRE_VERIFIED_USER == roleType ||
             PRE_VERIFIED_PROFESSIONAL == roleType ||
             PRE_VERIFIED_BUSINESS == roleType)) {
-      String otp = mfaService.generateVerificationOtp(6);
+      String otp = generateOtp();
       PreVerificationOrAuthenticationRequest request = createPreVerificationRequest(otp, user);
 
       sendVerificationMessage(request, VerificationType.EMAIL);
@@ -223,7 +223,7 @@ public class AuthenticationServiceImpl implements
     if (user.isMfaEnabled()) {
       if (SMS == user.getMfaType() || EMAIL == user.getMfaType()) {
         VerificationType verificationType = VerificationType.valueOf(user.getMfaType().name());
-        String otp = mfaService.generateVerificationOtp(6);
+        String otp = generateOtp();
         PreVerificationOrAuthenticationRequest request = createPreAuthenticationRequest(otp, user);
 
         sendVerificationMessage(request, verificationType);
@@ -309,7 +309,7 @@ public class AuthenticationServiceImpl implements
     String accessToken = createAccessToken(user);
     String refreshToken = createRefreshToken(user);
 
-    String otp = mfaService.generateVerificationOtp(6);
+    String otp = generateOtp();
     PreVerificationOrAuthenticationRequest request = createPreVerificationRequest(otp, user);
 
     VerificationType verificationType = VerificationType.valueOf(dto.getVerificationType());
@@ -432,7 +432,7 @@ public class AuthenticationServiceImpl implements
   @Override
   public FleenHealthResponse resendPreVerificationCode(ResendVerificationCodeDto dto, FleenUser user) {
     VerificationType verificationType = VerificationType.valueOf(dto.getVerificationType());
-    String otp = mfaService.generateVerificationOtp(6);
+    String otp = generateOtp();
     PreVerificationOrAuthenticationRequest preVerification = createPreVerificationRequest(otp, user);
 
     sendVerificationMessage(preVerification, verificationType);
@@ -457,7 +457,7 @@ public class AuthenticationServiceImpl implements
   @Override
   public FleenHealthResponse resendPreAuthenticationCode(ResendVerificationCodeDto dto, FleenUser user) {
     VerificationType verificationType = VerificationType.valueOf(dto.getVerificationType());
-    String otp = mfaService.generateVerificationOtp(6);
+    String otp = generateOtp();
     PreVerificationOrAuthenticationRequest preVerification = createPreAuthenticationRequest(otp, user);
 
     sendVerificationMessage(preVerification, verificationType);
@@ -1134,6 +1134,10 @@ public class AuthenticationServiceImpl implements
   @Override
   public String createPassword(String rawPassword) {
     return getPasswordEncoder().encode(rawPassword);
+  }
+
+  private String generateOtp() {
+    return mfaService.generateVerificationOtp(6);
   }
 
   @Override
