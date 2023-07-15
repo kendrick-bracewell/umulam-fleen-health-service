@@ -5,9 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.constant.authentication.AuthenticationStatus;
 import com.umulam.fleen.health.constant.authentication.VerificationType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
@@ -25,4 +27,10 @@ public class SignUpResponse {
 
   @JsonProperty("verification_type")
   private VerificationType verificationType;
+
+  @JsonProperty("phone_number")
+  private String phoneNumber;
+
+  @JsonProperty("email_address")
+  private String emailAddress;
 }

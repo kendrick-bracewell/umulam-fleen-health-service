@@ -54,6 +54,7 @@ import static com.umulam.fleen.health.constant.base.FleenHealthConstant.VERIFICA
 import static com.umulam.fleen.health.util.DateTimeUtil.addMinutesFromNow;
 import static com.umulam.fleen.health.util.DateTimeUtil.toHours;
 import static com.umulam.fleen.health.util.FleenAuthorities.*;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Service
@@ -317,7 +318,7 @@ public class AuthenticationServiceImpl implements
     savePreVerificationOtp(user.getUsername(), otp);
 
     ProfileVerificationMessage verificationMessage = profileVerificationMessageService.getProfileVerificationMessageByType(ProfileVerificationMessageType.PENDING);
-    if (Objects.nonNull(verificationMessage)) {
+    if (nonNull(verificationMessage)) {
       SaveProfileVerificationMessageRequest verificationMessageRequest = SaveProfileVerificationMessageRequest
               .builder()
               .verificationMessageType(verificationMessage.getVerificationMessageType())
@@ -331,7 +332,14 @@ public class AuthenticationServiceImpl implements
 
     saveToken(user.getUsername(), accessToken);
     saveRefreshToken(user.getUsername(), refreshToken);
-    return new SignUpResponse(accessToken, refreshToken, IN_PROGRESS, verificationType);
+    return SignUpResponse.builder()
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .authenticationStatus(IN_PROGRESS)
+            .verificationType(verificationType)
+            .emailAddress(member.getEmailAddress())
+            .phoneNumber(member.getPhoneNumber())
+            .build();
   }
 
   /**
@@ -384,7 +392,7 @@ public class AuthenticationServiceImpl implements
     ProfileVerificationMessage verificationMessage = request.getVerificationMessage();
     ProfileVerificationStatus profileVerificationStatus = request.getProfileVerificationStatus();
 
-    if (Objects.nonNull(verificationMessage) && ProfileType.USER == member.getUserType()) {
+    if (nonNull(verificationMessage) && ProfileType.USER == member.getUserType()) {
       SaveProfileVerificationMessageRequest verificationMessageRequest = SaveProfileVerificationMessageRequest.builder()
               .verificationMessageType(verificationMessage.getVerificationMessageType())
               .verificationStatus(profileVerificationStatus)
@@ -942,7 +950,7 @@ public class AuthenticationServiceImpl implements
     }
 
     Optional<ProfileToken> profileTokenExists = profileTokenService.findByEmailAddress(username);
-    if (profileTokenExists.isPresent() && Objects.nonNull(profileTokenExists.get().getResetPasswordToken())) {
+    if (profileTokenExists.isPresent() && nonNull(profileTokenExists.get().getResetPasswordToken())) {
       ProfileToken profileToken = profileTokenExists.get();
       profileToken.setResetPasswordToken(null);
       profileToken.setResetPasswordTokenExpiryDate(null);
