@@ -16,7 +16,8 @@ public final class AuthenticationConstant {
   public static final String AUTH_CACHE_PREFIX = "JWT_TOKEN:::";
   public static final String AUTH_REFRESH_CACHE_PREFIX = "JWT_REFRESH_TOKEN:::";
   public static final String RESET_PASSWORD_CACHE_PREFIX = "RESET_PASSWORD_TOKEN:::";
-  public static final String MFA_SETUP_CACHE_PREFIX = "MFA_SETUP:::";
+  public static final String MFA_SETUP_EMAIL_CACHE_PREFIX = "MFA_SETUP_EMAIL:::";
+  public static final String MFA_SETUP_PHONE_CACHE_PREFIX = "MFA_SETUP_PHONE:::";
   public static final String PRE_VERIFICATION_PREFIX = "PRE_VERIFICATION:::";
   public static final String PRE_AUTHENTICATION_PREFIX = "PRE_AUTHENTICATION:::";
   public static final String AUTH_HEADER_KEY = "Authorization";

@@ -54,6 +54,7 @@ import static com.umulam.fleen.health.constant.base.FleenHealthConstant.VERIFICA
 import static com.umulam.fleen.health.util.DateTimeUtil.addMinutesFromNow;
 import static com.umulam.fleen.health.util.DateTimeUtil.toHours;
 import static com.umulam.fleen.health.util.FleenAuthorities.*;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Slf4j
@@ -363,7 +364,7 @@ public class AuthenticationServiceImpl implements
     validateSmsAndEmailVerificationCode(verificationKey, code);
 
     Member member = memberService.getMemberByEmailAddress(username);
-    if (Objects.isNull(member)) {
+    if (isNull(member)) {
       throw new VerificationFailedException();
     }
 
@@ -534,7 +535,7 @@ public class AuthenticationServiceImpl implements
     }
 
     Member member = memberService.getMemberByEmailAddress(username);
-    if (Objects.isNull(member)) {
+    if (isNull(member)) {
       throw new InvalidAuthenticationException(username);
     }
 
@@ -628,7 +629,7 @@ public class AuthenticationServiceImpl implements
 
     signOut(username);
     Member member = memberService.getMemberByEmailAddress(username);
-    if (Objects.isNull(member)) {
+    if (isNull(member)) {
       throw new InvalidAuthenticationException(username);
     }
 
@@ -762,8 +763,9 @@ public class AuthenticationServiceImpl implements
    * @param username the user's identifier to associate with the mfa setup otp or code
    * @param otp a random code associated with the user's identifier during the mfa setup process
    */
-  private void saveMfaSetupOtp(String username, String otp) {
-    cacheService.set(getMfaSetupCacheKey(username), otp, Duration.ofMinutes(3));
+  private void saveMfaSetupOtp(String username, String otp, MfaType mfaType) {
+    String key = getMfaSetupKey(username, mfaType);
+    cacheService.set(key, otp, Duration.ofMinutes(3));
   }
 
   /**
@@ -782,8 +784,12 @@ public class AuthenticationServiceImpl implements
    *
    * @param username the user's identifier associated with the mfa setup otp or code
    */
-  private void clearMfaSetupOtp(String username) {
-    cacheService.delete(getMfaSetupCacheKey(username));
+  private void clearMfaSetupOtp(String username, MfaType mfaType) {
+    cacheService.delete(getMfaSetupKey(username, mfaType));
+  }
+
+  private String getMfaSetupKey(String username, MfaType mfaType) {
+    return mfaType == EMAIL ? getEmailMfaSetupCacheKey(username) : getPhoneMfaSetupCacheKey(username);
   }
 
   /**
@@ -848,8 +854,19 @@ public class AuthenticationServiceImpl implements
    * @param username a user identifier found on the system or is to be registered on the system
    * @return a string concatenation of a predefined prefix and the user's identifier
    */
-  private String getMfaSetupCacheKey(String username) {
-    return MFA_SETUP_CACHE_PREFIX.concat(username);
+  private String getEmailMfaSetupCacheKey(String username) {
+    return MFA_SETUP_EMAIL_CACHE_PREFIX.concat(username);
+  }
+
+  /**
+   * <p>Prefix a user's identifier with a predefined key used to save a MFA setup token or OTP or code.</p>
+   * <br/>
+   *
+   * @param username a user identifier found on the system or is to be registered on the system
+   * @return a string concatenation of a predefined prefix and the user's identifier
+   */
+  private String getPhoneMfaSetupCacheKey(String username) {
+    return MFA_SETUP_PHONE_CACHE_PREFIX.concat(username);
   }
 
   /**
@@ -860,7 +877,7 @@ public class AuthenticationServiceImpl implements
   @Transactional
   public void forgotPassword(ForgotPasswordDto dto) {
     Member member = memberService.getMemberByEmailAddress(dto.getEmailAddress());
-    if (Objects.isNull(member)) {
+    if (isNull(member)) {
       throw new UserNotFoundException(dto.getEmailAddress());
     }
 
@@ -900,7 +917,7 @@ public class AuthenticationServiceImpl implements
   @Transactional(readOnly = true)
   public InitiatePasswordChangeResponse validateResetPasswordCode(ResetPasswordDto dto) {
     Member member = memberService.getMemberByEmailAddress(dto.getEmailAddress());
-    if (Objects.isNull(member)) {
+    if (isNull(member)) {
       throw new UserNotFoundException(dto.getEmailAddress());
     }
 
@@ -910,7 +927,7 @@ public class AuthenticationServiceImpl implements
     }
 
     ProfileToken profileToken = profileTokenExists.get();
-    if (Objects.isNull(profileToken.getResetPasswordToken())) {
+    if (isNull(profileToken.getResetPasswordToken())) {
       throw new ResetPasswordCodeInvalidException();
     }
 
@@ -936,7 +953,7 @@ public class AuthenticationServiceImpl implements
   @Transactional
   public void changePassword(String username, ChangePasswordDto dto) {
     Member member = memberService.getMemberByEmailAddress(username);
-    if (Objects.isNull(member)) {
+    if (isNull(member)) {
       throw new UserNotFoundException(username);
     }
 
@@ -956,7 +973,7 @@ public class AuthenticationServiceImpl implements
   @Transactional
   public SignInResponse completeOnboarding(String username, ChangePasswordDto dto) {
     Member member = memberService.getMemberByEmailAddress(username);
-    if (Objects.isNull(member)) {
+    if (isNull(member)) {
       throw new UserNotFoundException(username);
     }
 
@@ -1110,22 +1127,21 @@ public class AuthenticationServiceImpl implements
     return request;
   }
 
-  @Override
   @Transactional
-  public void sendMfaVerification(Member member, VerificationType verificationType) {
+  public void sendAndSaveMfaVerification(Member member, VerificationType verificationType, MfaType mfaType) {
     String code = getRandomSixDigitOtp();
     FleenUser user = FleenUser.fromMemberBasic(member);
     PreVerificationOrAuthenticationRequest request = createMfaSetupRequest(code, user);
 
     sendVerificationMessage(request, verificationType);
-    saveMfaSetupOtp(member.getEmailAddress(), code);
+    saveMfaSetupOtp(member.getEmailAddress(), code, mfaType);
   }
 
   @Override
-  public void validateMfaSetupCode(String username, String code) {
-    String verificationKey = getMfaSetupCacheKey(username);
+  public void validateMfaSetupCode(String username, String code, MfaType mfaType) {
+    String verificationKey = getEmailMfaSetupCacheKey(username);
     validateSmsAndEmailVerificationCode(verificationKey, code);
-    clearMfaSetupOtp(username);
+    clearMfaSetupOtp(username, mfaType);
   }
 
   private void initSignInDetails(FleenUser user, SignInResponse response) {
