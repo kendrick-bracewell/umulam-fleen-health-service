@@ -1,19 +1,19 @@
 package com.umulam.fleen.health.model.dto.admin;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.umulam.fleen.health.constant.authentication.VerificationType;
 import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.constant.member.MemberGender;
 import com.umulam.fleen.health.model.domain.Member;
-import com.umulam.fleen.health.validator.*;
+import com.umulam.fleen.health.validator.EmailAddressExists;
+import com.umulam.fleen.health.validator.EnumValid;
+import com.umulam.fleen.health.validator.MobilePhoneNumber;
+import com.umulam.fleen.health.validator.PhoneNumberExists;
 import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import static com.umulam.fleen.health.util.DateTimeUtil.toLocalDateTime;
 import static org.springframework.util.StringUtils.capitalize;
 
 @Builder

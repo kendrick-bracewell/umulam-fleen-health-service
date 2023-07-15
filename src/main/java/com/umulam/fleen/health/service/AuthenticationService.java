@@ -54,10 +54,15 @@ public interface AuthenticationService {
   @Transactional
   void changePassword(String username, ChangePasswordDto dto);
 
+  @Transactional
+  SignInResponse completeOnboarding(String username, ChangePasswordDto dto);
+
   ReCaptchaResponse verifyReCaptcha(String reCaptchaToken);
 
   @Transactional
   void sendMfaVerification(Member member, VerificationType verificationType);
 
   void validateMfaSetupCode(String username, String code);
+
+  String createPassword(String rawPassword);
 }

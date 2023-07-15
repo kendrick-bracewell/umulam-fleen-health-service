@@ -193,6 +193,16 @@ public class AuthenticationServiceImpl implements
             .build();
 
     RoleType roleType = RoleType.valueOf(role.getCode());
+
+    if (MemberStatusType.INACTIVE.name().equals(user.getStatus())
+        && (PRE_ONBOARDED == roleType)) {
+      user.setAuthorities(getUserPreOnboardedAuthorities());
+      initSignInDetails(user, signInResponse);
+
+      signInResponse.setNextAuthentication(NextAuthentication.PRE_ONBOARDING);
+      return signInResponse;
+    }
+
     if (MemberStatusType.INACTIVE.name().equals(user.getStatus())
         && (PRE_VERIFIED_USER == roleType ||
             PRE_VERIFIED_PROFESSIONAL == roleType ||
@@ -204,18 +214,9 @@ public class AuthenticationServiceImpl implements
       savePreVerificationOtp(user.getUsername(), otp);
 
       setPreVerificationAuthorities(user, roleType);
-      Authentication authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-      accessToken = createAccessToken(user);
-      refreshToken = createRefreshToken(user);
-
-      setContext(authenticationToken);
-      saveToken(user.getUsername(), accessToken);
-      saveRefreshToken(user.getUsername(), refreshToken);
+      initSignInDetails(user, signInResponse);
 
       signInResponse.setNextAuthentication(NextAuthentication.PRE_VERIFICATION);
-      signInResponse.setAccessToken(accessToken);
-      signInResponse.setRefreshToken(refreshToken);
-      signInResponse.setPhoneNumber(user.getPhoneNumber());
       return signInResponse;
     }
 
@@ -504,7 +505,7 @@ public class AuthenticationServiceImpl implements
    * <p>The {@link ConfirmMfaDto#getMfaType() MfaType} will be used to decide what service to deliver the and validate the OTP or code against. For example, if the user
    * has enabled the {@link MfaType#AUTHENTICATOR Authenticator} type of MFA_OR_PRE_AUTHENTICATION on their profile, the code will be validated through
    * {@link MfaService#verifyAuthenticatorOtp(String, String) verifyAuthenticatorOtp} by retrieving the secret associated with the user's profile. If the MFA_OR_PRE_AUTHENTICATION type is for example
-   * {@link MfaType#EMAIL EMAIL}, the code will be validated through {@link #validateSmsAndEmailMfa(String, String) validateSmsAndEmailMfa}.</p>
+   * {@link MfaType#EMAIL EMAIL}, the code will be validated through {@link #validateMfaSetupCode(String, String)} (String, String) validateSmsAndEmailMfa}.</p>
    * <br/>
    *
    * @param fleenUser The user that has started the sign-in process at {@link #signIn(SignInDto) signIn}.
@@ -952,6 +953,43 @@ public class AuthenticationServiceImpl implements
     memberService.save(member);
   }
 
+  @Override
+  @Transactional
+  public SignInResponse completeOnboarding(String username, ChangePasswordDto dto) {
+    Member member = memberService.getMemberByEmailAddress(username);
+    if (Objects.isNull(member)) {
+      throw new UserNotFoundException(username);
+    }
+
+    CompleteUserSignUpRequest request = createCompleteUserSignUpRequest(member);
+    Set<Role> roles = new HashSet<>();
+    roles.add(request.getRole());
+    member.setRoles(roles);
+    member.setPassword(createEncodedPassword(dto.getPassword()));
+    memberService.save(member);
+
+    FleenUser user = FleenUser.fromMember(member);
+    Authentication authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+    String accessToken = createAccessToken(user);
+    String refreshToken = createRefreshToken(user);
+
+    setContext(authenticationToken);
+    saveToken(user.getUsername(), accessToken);
+    saveRefreshToken(user.getUsername(), refreshToken);
+
+    SignInResponse signInResponse = SignInResponse
+            .builder()
+            .emailAddress(member.getEmailAddress())
+            .authenticationStatus(COMPLETED)
+            .nextAuthentication(NextAuthentication.NONE)
+            .mfaEnabled(false)
+            .build();
+
+    signInResponse.setAccessToken(accessToken);
+    signInResponse.setRefreshToken(refreshToken);
+    return signInResponse;
+  }
+
   /**
    * It verifies the validity of the reCaptcha details
    *
@@ -1077,6 +1115,25 @@ public class AuthenticationServiceImpl implements
     String verificationKey = getMfaSetupCacheKey(username);
     validateSmsAndEmailVerificationCode(verificationKey, code);
     clearMfaSetupOtp(username);
+  }
+
+  private void initSignInDetails(FleenUser user, SignInResponse response) {
+    Authentication authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+    String accessToken = createAccessToken(user);
+    String refreshToken = createRefreshToken(user);
+
+    setContext(authenticationToken);
+    saveToken(user.getUsername(), accessToken);
+    saveRefreshToken(user.getUsername(), refreshToken);
+
+    response.setAccessToken(accessToken);
+    response.setRefreshToken(refreshToken);
+    response.setPhoneNumber(user.getPhoneNumber());
+  }
+
+  @Override
+  public String createPassword(String rawPassword) {
+    return getPasswordEncoder().encode(rawPassword);
   }
 
   @Override

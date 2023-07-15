@@ -40,9 +40,10 @@ public class VerificationController {
   }
 
   @PostMapping(value = "/resend-pre-verification-code")
-  @PreAuthorize("hasAnyRole('PRE_VERIFIED_USER', 'PRE_VERIFIED_PROFESSIONAL', 'PRE_VERIFIED_BUSINESS')")
-  public FleenHealthResponse resendPreVerificationCode(@AuthenticationPrincipal FleenUser user,
-                                                    @Valid @RequestBody ResendVerificationCodeDto dto) {
+  @PreAuthorize("hasAnyRole('PRE_VERIFIED_USER', 'PRE_VERIFIED_PROFESSIONAL', 'PRE_VERIFIED_BUSINESS', 'PRE_ONBOARDED')")
+  public FleenHealthResponse resendPreVerificationCode(
+          @AuthenticationPrincipal FleenUser user,
+          @Valid @RequestBody ResendVerificationCodeDto dto) {
     return authenticationService.resendPreVerificationCode(dto, user);
   }
 
@@ -56,23 +57,33 @@ public class VerificationController {
 
   @PostMapping(value = "/validate-sign-in-mfa")
   @PreAuthorize("hasRole('PRE_AUTHENTICATED_USER')")
-  public SignInResponse validateSignInMfa(@AuthenticationPrincipal FleenUser user,
-                                    @Valid @RequestBody ConfirmMfaDto dto) {
+  public SignInResponse validateSignInMfa(
+          @AuthenticationPrincipal FleenUser user,
+          @Valid @RequestBody ConfirmMfaDto dto) {
     return authenticationService.validateSignInMfa(user, dto);
   }
 
   @PostMapping(value = "/resend-pre-authentication-code")
   @PreAuthorize("hasAnyRole('PRE_AUTHENTICATED_USER')")
-  public FleenHealthResponse resendPreAuthenticationCode(@AuthenticationPrincipal FleenUser user,
-                                                       @Valid @RequestBody ResendVerificationCodeDto dto) {
+  public FleenHealthResponse resendPreAuthenticationCode(
+          @AuthenticationPrincipal FleenUser user,
+          @Valid @RequestBody ResendVerificationCodeDto dto) {
     return authenticationService.resendPreAuthenticationCode(dto, user);
   }
 
   @PostMapping(value = "/reset-change-password")
   @PreAuthorize("hasRole('RESET_PASSWORD_USER')")
-  public FleenHealthResponse resetAndChangePassword(@AuthenticationPrincipal FleenUser user,
-                                            @Valid @RequestBody ChangePasswordDto dto) {
+  public FleenHealthResponse resetAndChangePassword(
+          @AuthenticationPrincipal FleenUser user,
+          @Valid @RequestBody ChangePasswordDto dto) {
     authenticationService.changePassword(user.getUsername(), dto);
     return new FleenHealthResponse(PASSWORD_CHANGED_UPDATED);
+  }
+
+  @PostMapping(value = "/reset-change-password")
+  @PreAuthorize("hasRole('PRE_ONBOARDED')")
+  public SignInResponse completeOnboarding(@AuthenticationPrincipal FleenUser user,
+                                                    @Valid @RequestBody ChangePasswordDto dto) {
+    return authenticationService.completeOnboarding(user.getUsername(), dto);
   }
 }
