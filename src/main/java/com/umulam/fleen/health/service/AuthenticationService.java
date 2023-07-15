@@ -56,8 +56,6 @@ public interface AuthenticationService {
 
   ReCaptchaResponse verifyReCaptcha(String reCaptchaToken);
 
-  String createEncodedPassword(String rawPassword);
-
   @Transactional
   void sendMfaVerification(Member member, VerificationType verificationType);
 

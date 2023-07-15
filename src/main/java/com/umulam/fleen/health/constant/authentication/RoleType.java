@@ -20,7 +20,8 @@ public enum RoleType {
   EMPLOYEE("Employee"),
   PRE_AUTH("PreAuth"),
   PRE_OTP_AUTHENTICATED_USER("PreOtpAuthenticatedUser"),
-  RESET_PASSWORD_USER("ResetPasswordUser");
+  RESET_PASSWORD_USER("ResetPasswordUser"),
+  PRE_ONBOARDED("PreOnboarded");
 
   private final String value;
 

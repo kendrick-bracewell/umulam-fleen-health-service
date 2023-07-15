@@ -44,12 +44,12 @@
     "code": "PRE_VERIFIED_PROFESSIONAL"
   },
   {
-    "title": "Pre Approved Professional",
-    "code": "PRE_APPROVED_PROFESSIONAL"
-  },
-  {
     "title": "Pre Verified Business",
     "code": "PRE_VERIFIED_BUSINESS"
+  },
+  {
+    "title": "Pre Approved Professional",
+    "code": "PRE_APPROVED_PROFESSIONAL"
   },
   {
     "title": "Pre Approved Business",
@@ -62,5 +62,9 @@
   {
     "title": "Pre Approved Employee",
     "code": "PRE_APPROVED_EMPLOYEE"
+  },
+  {
+    "title": "Pre Onboarded",
+    "code": "PRE_ONBOARDED"
   }
 ]

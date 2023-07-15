@@ -1,13 +1,14 @@
 package com.umulam.fleen.health.service;
 
 import com.umulam.fleen.health.constant.EmailMessageSource;
+import com.umulam.fleen.health.constant.MemberStatusType;
 import com.umulam.fleen.health.constant.VerificationMessageType;
 import com.umulam.fleen.health.constant.authentication.VerificationType;
+import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.authentication.ExpiredVerificationCodeException;
 import com.umulam.fleen.health.exception.authentication.InvalidVerificationCodeException;
 import com.umulam.fleen.health.exception.authentication.VerificationFailedException;
-import com.umulam.fleen.health.model.domain.ProfileVerificationHistory;
-import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
+import com.umulam.fleen.health.model.domain.*;
 import com.umulam.fleen.health.model.dto.authentication.VerificationCodeDto;
 import com.umulam.fleen.health.model.dto.mail.EmailDetails;
 import com.umulam.fleen.health.model.json.SmsMessage;
@@ -20,9 +21,7 @@ import com.umulam.fleen.health.service.impl.CacheService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.VERIFICATION_CODE_KEY;
@@ -143,6 +142,16 @@ public interface CommonAuthAndVerificationService {
     }
   }
 
+  default void initNewUserDetails(Member member, List<Role> newRoles) {
+    Set<Role> roles = new HashSet<>(newRoles);
+    member.setRoles(roles);
+
+    ProfileVerificationStatus verificationStatus = ProfileVerificationStatus.PENDING;
+    MemberStatus memberStatus = getMemberStatusService().getMemberStatusByCode(MemberStatusType.INACTIVE.name());
+    member.setMemberStatus(memberStatus);
+    member.setVerificationStatus(verificationStatus);
+  }
+
   @Transactional
   default void saveProfileVerificationMessage(SaveProfileVerificationMessageRequest request) {
     ProfileVerificationMessage verificationMessage = getProfileVerificationMessageService()
@@ -197,5 +206,7 @@ public interface CommonAuthAndVerificationService {
   ProfileVerificationMessageService getProfileVerificationMessageService();
 
   VerificationHistoryService getVerificationHistoryService();
+
+  MemberStatusService getMemberStatusService();
 
 }

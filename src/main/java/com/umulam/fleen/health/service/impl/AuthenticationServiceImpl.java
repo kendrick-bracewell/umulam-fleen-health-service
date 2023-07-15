@@ -57,7 +57,10 @@ import static com.umulam.fleen.health.util.FleenAuthorities.*;
 
 @Slf4j
 @Service
-public class AuthenticationServiceImpl implements AuthenticationService, CommonAuthAndVerificationService {
+public class AuthenticationServiceImpl implements
+        AuthenticationService,
+        CommonAuthAndVerificationService,
+        PasswordService {
 
   private final AuthenticationManager authenticationManager;
   private final MemberService memberService;
@@ -293,13 +296,9 @@ public class AuthenticationServiceImpl implements AuthenticationService, CommonA
     ProfileType userType = ProfileType.valueOf(dto.getProfileType());
 
     Role role = setNewUserRole(userType);
-    Set<Role> roles = new HashSet<>();
-    roles.add(role);
-    member.setRoles(roles);
+    initNewUserDetails(member, List.of(role));
 
     ProfileVerificationStatus verificationStatus = ProfileVerificationStatus.PENDING;
-    MemberStatus memberStatus = memberStatusService.getMemberStatusByCode(MemberStatusType.INACTIVE.name());
-    member.setMemberStatus(memberStatus);
     member.setVerificationStatus(verificationStatus);
     member.setUserType(userType);
     member.setPassword(createEncodedPassword(member.getPassword()));
@@ -1063,11 +1062,6 @@ public class AuthenticationServiceImpl implements AuthenticationService, CommonA
   }
 
   @Override
-  public String createEncodedPassword(String rawPassword) {
-    return passwordEncoder.encode(rawPassword);
-  }
-
-  @Override
   @Transactional
   public void sendMfaVerification(Member member, VerificationType verificationType) {
     String code = getRandomSixDigitOtp();
@@ -1108,5 +1102,10 @@ public class AuthenticationServiceImpl implements AuthenticationService, CommonA
   @Override
   public VerificationHistoryService getVerificationHistoryService() {
     return verificationHistoryService;
+  }
+
+  @Override
+  public PasswordEncoder getPasswordEncoder() {
+    return passwordEncoder;
   }
 }

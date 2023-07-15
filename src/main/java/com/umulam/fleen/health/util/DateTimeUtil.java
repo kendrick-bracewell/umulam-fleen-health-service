@@ -66,4 +66,8 @@ public class DateTimeUtil {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE);
     return LocalDate.parse(date, formatter).atStartOfDay();
   }
+
+  public static LocalDateTime getDefaultDateOfBirth() {
+    return LocalDateTime.of(2000, 1, 1, 0, 0, 0);
+  }
 }

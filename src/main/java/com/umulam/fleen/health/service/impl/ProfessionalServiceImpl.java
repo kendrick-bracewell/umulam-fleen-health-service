@@ -33,10 +33,10 @@ import java.util.Optional;
 @Primary
 public class ProfessionalServiceImpl implements ProfessionalService, ProfileService {
 
-  private final MemberService memberService;
-  private final S3Service s3Service;
-  private final CountryService countryService;
-  private final VerificationDocumentService verificationDocumentService;
+  protected final MemberService memberService;
+  protected final S3Service s3Service;
+  protected final CountryService countryService;
+  protected final VerificationDocumentService verificationDocumentService;
   protected final ProfessionalJpaRepository repository;
 
   public ProfessionalServiceImpl(MemberService memberService,

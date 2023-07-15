@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.controller.admin;
 
+import com.umulam.fleen.health.model.dto.admin.CreateMemberDto;
 import com.umulam.fleen.health.model.dto.member.UpdateMemberDetailsDto;
 import com.umulam.fleen.health.model.dto.member.UpdateMemberStatusDto;
 import com.umulam.fleen.health.model.dto.role.UpdateMemberRoleDto;
@@ -41,6 +42,11 @@ public class AdminMemberController {
   @GetMapping(value = "/detail/{id}")
   public MemberView findMemberDetail(@PathVariable(name = "id") Integer professionalId) {
     return service.findMemberById(professionalId);
+  }
+
+  @PostMapping(value = "/create")
+  public void createMember(CreateMemberDto dto) {
+
   }
 
   @PutMapping(value = "/update/{id}")

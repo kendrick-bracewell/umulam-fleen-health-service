@@ -59,19 +59,19 @@ import static org.springframework.util.StringUtils.capitalize;
 @Slf4j
 @Service
 @Primary
-public class MemberServiceImpl implements MemberService, CommonAuthAndVerificationService {
+public class MemberServiceImpl implements MemberService, CommonAuthAndVerificationService, PasswordService {
 
-  private final MemberJpaRepository repository;
-  private final MfaService mfaService;
-  private final AuthenticationService authenticationService;
-  private final CacheService cacheService;
-  private final MobileTextService mobileTextService;
-  private final EmailServiceImpl emailService;
-  private final S3Service s3Service;
-  private final MemberStatusService memberStatusService;
-  private final RoleService roleService;
-  private final S3BucketNames bucketNames;
-  private final PasswordEncoder passwordEncoder;
+  protected final MemberJpaRepository repository;
+  protected final MfaService mfaService;
+  protected final AuthenticationService authenticationService;
+  protected  final CacheService cacheService;
+  protected final MobileTextService mobileTextService;
+  protected final EmailServiceImpl emailService;
+  protected final S3Service s3Service;
+  protected final MemberStatusService memberStatusService;
+  protected final RoleService roleService;
+  protected final S3BucketNames bucketNames;
+  protected final PasswordEncoder passwordEncoder;
 
   public MemberServiceImpl(MemberJpaRepository repository,
                            MfaService mfaService,
@@ -260,7 +260,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   public void updatePassword(String username, UpdatePasswordDto dto) {
     Member member = getMember(username);
     if (passwordEncoder.matches(dto.getOldPassword(), member.getPassword())) {
-      repository.updatePassword(member.getId(), passwordEncoder.encode(dto.getPassword()));
+      repository.updatePassword(member.getId(), createEncodedPassword(dto.getPassword()));
       return;
     }
     throw new UpdatePasswordFailedException();
@@ -519,5 +519,15 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   @Override
   public VerificationHistoryService getVerificationHistoryService() {
     return null;
+  }
+
+  @Override
+  public PasswordEncoder getPasswordEncoder() {
+    return passwordEncoder;
+  }
+
+  @Override
+  public MemberStatusService getMemberStatusService() {
+    return memberStatusService;
   }
 }
