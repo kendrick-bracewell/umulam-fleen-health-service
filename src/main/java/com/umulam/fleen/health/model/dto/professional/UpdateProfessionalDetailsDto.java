@@ -1,7 +1,6 @@
 package com.umulam.fleen.health.model.dto.professional;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.umulam.fleen.health.constant.authentication.VerificationType;
 import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
 import com.umulam.fleen.health.constant.member.ProfessionalType;
 import com.umulam.fleen.health.model.domain.Country;

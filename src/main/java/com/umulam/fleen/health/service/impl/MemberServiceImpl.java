@@ -40,6 +40,7 @@ import com.umulam.fleen.health.service.external.aws.MobileTextService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +58,7 @@ import static org.springframework.util.StringUtils.capitalize;
 
 @Slf4j
 @Service
+@Primary
 public class MemberServiceImpl implements MemberService, CommonAuthAndVerificationService {
 
   private final MemberJpaRepository repository;
@@ -507,5 +509,15 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   @Override
   public CacheService getCacheService() {
     return cacheService;
+  }
+
+  @Override
+  public ProfileVerificationMessageService getProfileVerificationMessageService() {
+    return null;
+  }
+
+  @Override
+  public VerificationHistoryService getVerificationHistoryService() {
+    return null;
   }
 }

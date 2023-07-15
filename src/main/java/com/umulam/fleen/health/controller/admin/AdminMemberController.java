@@ -7,12 +7,12 @@ import com.umulam.fleen.health.model.request.MemberSearchRequest;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.response.member.UpdateMemberDetailsResponse;
 import com.umulam.fleen.health.model.view.MemberView;
-import com.umulam.fleen.health.model.view.ProfessionalView;
 import com.umulam.fleen.health.model.view.RoleView;
 import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.admin.AdminMemberService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,7 +28,8 @@ public class AdminMemberController {
 
   private final AdminMemberService service;
 
-  public AdminMemberController(AdminMemberService service) {
+  public AdminMemberController(
+          @Qualifier("adminMemberService") AdminMemberService service) {
     this.service = service;
   }
 
