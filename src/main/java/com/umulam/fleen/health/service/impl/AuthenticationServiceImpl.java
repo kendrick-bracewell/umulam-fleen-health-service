@@ -316,18 +316,7 @@ public class AuthenticationServiceImpl implements
     sendVerificationMessage(request, verificationType);
     savePreVerificationOtp(user.getUsername(), otp);
 
-    ProfileVerificationMessage verificationMessage = profileVerificationMessageService.getProfileVerificationMessageByType(ProfileVerificationMessageType.PENDING);
-    if (nonNull(verificationMessage)) {
-      SaveProfileVerificationMessageRequest verificationMessageRequest = SaveProfileVerificationMessageRequest
-              .builder()
-              .verificationMessageType(verificationMessage.getVerificationMessageType())
-              .verificationStatus(verificationStatus)
-              .member(member)
-              .emailAddress(member.getEmailAddress())
-              .build();
-
-      saveProfileVerificationMessage(verificationMessageRequest);
-    }
+    createProfileVerificationMessageNewPendingRegistration(member);
 
     saveToken(user.getUsername(), accessToken);
     saveRefreshToken(user.getUsername(), refreshToken);

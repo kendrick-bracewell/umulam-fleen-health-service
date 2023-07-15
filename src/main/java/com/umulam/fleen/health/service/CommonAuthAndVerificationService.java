@@ -4,6 +4,7 @@ import com.umulam.fleen.health.constant.EmailMessageSource;
 import com.umulam.fleen.health.constant.MemberStatusType;
 import com.umulam.fleen.health.constant.VerificationMessageType;
 import com.umulam.fleen.health.constant.authentication.VerificationType;
+import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.authentication.ExpiredVerificationCodeException;
 import com.umulam.fleen.health.exception.authentication.InvalidVerificationCodeException;
@@ -25,6 +26,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.VERIFICATION_CODE_KEY;
+import static java.util.Objects.nonNull;
 
 public interface CommonAuthAndVerificationService {
 
@@ -195,6 +197,22 @@ public interface CommonAuthAndVerificationService {
 
   default String getRandomSixDigitOtp() {
     return String.valueOf(ThreadLocalRandom.current().nextInt(100000, 1000000));
+  }
+
+  default void createProfileVerificationMessageNewPendingRegistration(Member member) {
+    ProfileVerificationStatus verificationStatus = ProfileVerificationStatus.PENDING;
+    ProfileVerificationMessage verificationMessage = getProfileVerificationMessageService().getProfileVerificationMessageByType(ProfileVerificationMessageType.PENDING);
+    if (nonNull(verificationMessage)) {
+      SaveProfileVerificationMessageRequest verificationMessageRequest = SaveProfileVerificationMessageRequest
+              .builder()
+              .verificationMessageType(verificationMessage.getVerificationMessageType())
+              .verificationStatus(verificationStatus)
+              .member(member)
+              .emailAddress(member.getEmailAddress())
+              .build();
+
+      saveProfileVerificationMessage(verificationMessageRequest);
+    }
   }
 
   MobileTextService getMobileTextService();
