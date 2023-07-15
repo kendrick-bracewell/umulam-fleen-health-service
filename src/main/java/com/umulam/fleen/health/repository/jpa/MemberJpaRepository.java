@@ -48,6 +48,8 @@ public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
           "phone_number as phoneNumber, gender, date_of_birth as dateOfBirth from member where id = :id", nativeQuery = true)
   GetMemberUpdateDetailsResponse findMemberDetailsById(@Param("id") Integer memberId);
 
+  @Modifying
+  @Transactional
   @Query(value = "UPDATE Member m SET m.memberStatus = :memberStatus WHERE m.id = :id")
   void updateMemberStatus(@Param("id") Integer memberId, @Param("memberStatus") MemberStatus memberStatus);
 

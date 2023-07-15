@@ -1,12 +1,14 @@
 package com.umulam.fleen.health.controller.admin;
 
 import com.umulam.fleen.health.model.dto.member.UpdateMemberStatusDto;
+import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.MEMBER_STATUS_UPDATED;
 
 @Slf4j
 @RestController
@@ -19,12 +21,16 @@ public class AdminMemberController {
     this.memberService = memberService;
   }
 
-  @GetMapping(value = "/update-profile-status/{id}")
-  public void updateMemberProfileStatus(UpdateMemberStatusDto dto, @PathVariable(name = "id") Integer memberId) {
+  @GetMapping(value = "/update-member-status/{id}")
+  public FleenHealthResponse updateMemberProfileStatus(
+          @Valid @RequestBody UpdateMemberStatusDto dto,
+          @PathVariable(name = "id") Integer memberId) {
     memberService.updateMemberStatus(dto, memberId);
+    return new FleenHealthResponse(MEMBER_STATUS_UPDATED);
   }
 
-  public void updateMemberRole() {
-
+  @GetMapping(value = "/update-role/{id}")
+  public void updateMemberRole(@PathVariable(name = "id") Integer memberId) {
+    
   }
 }

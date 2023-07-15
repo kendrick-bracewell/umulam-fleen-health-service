@@ -415,7 +415,6 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
       throw new MemberNotFoundException(memberId);
     }
 
-    Member member = memberExists.get();
     MemberStatusType memberStatusType = MemberStatusType.valueOf(dto.getMemberStatus());
     MemberStatus memberStatus = memberStatusService.getMemberStatusByCode(memberStatusType.name());
     repository.updateMemberStatus(memberId, memberStatus);
