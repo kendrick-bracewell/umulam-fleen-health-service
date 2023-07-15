@@ -129,8 +129,7 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
   public void resendOnboardingDetails(Integer memberId) {
     Member member = getMember(memberId);
 
-    FleenUser user = FleenUser.fromMember(member);
-    if (MemberStatusType.ACTIVE.name().equals(user.getStatus())) {
+    if (MemberStatusType.ACTIVE.name().equals(member.getMemberStatus().getCode())) {
       return;
     }
 
