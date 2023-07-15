@@ -420,7 +420,14 @@ public class AuthenticationServiceImpl implements
     clearPreVerificationOtp(freshUser.getUsername());
     saveToken(freshUser.getUsername(), accessToken);
     saveRefreshToken(freshUser.getUsername(), refreshToken);
-    return new SignUpResponse(accessToken, refreshToken, COMPLETED, null);
+    return SignUpResponse.builder()
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .authenticationStatus(COMPLETED)
+            .verificationType(null)
+            .emailAddress(null)
+            .phoneNumber(null)
+            .build();
   }
 
   /**
