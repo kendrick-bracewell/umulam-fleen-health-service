@@ -27,5 +27,6 @@ public class FleenHealthConstant {
   public static final String PROFILE_PHOTO_UPDATED = "Profile photo updated successfully";
   public static final String AVAILABILITY_STATUS_UPDATED = "Availability Status Updated";
   public static final String MEMBER_STATUS_UPDATED = "Member Status Updated";
+  public static final String MEMBER_ROLE_UPDATED = "Member Role Updated";
 
 }

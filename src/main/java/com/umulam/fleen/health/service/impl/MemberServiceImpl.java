@@ -15,15 +15,14 @@ import com.umulam.fleen.health.exception.authentication.MfaVerificationFailed;
 import com.umulam.fleen.health.exception.member.MemberNotFoundException;
 import com.umulam.fleen.health.exception.member.UpdatePasswordFailedException;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
-import com.umulam.fleen.health.exception.memberstatus.MemberStatusNotFoundException;
-import com.umulam.fleen.health.exception.professional.ProfessionalNotFoundException;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.MemberStatus;
-import com.umulam.fleen.health.model.domain.Professional;
+import com.umulam.fleen.health.model.domain.Role;
 import com.umulam.fleen.health.model.dto.authentication.ConfirmMfaDto;
 import com.umulam.fleen.health.model.dto.authentication.MfaTypeDto;
 import com.umulam.fleen.health.model.dto.authentication.UpdatePasswordDto;
 import com.umulam.fleen.health.model.dto.member.*;
+import com.umulam.fleen.health.model.dto.role.UpdateMemberRoleDto;
 import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequest;
 import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsResponse;
 import com.umulam.fleen.health.model.response.member.UpdateEmailAddressOrPhoneNumberResponse;
@@ -42,6 +41,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -62,6 +62,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   private final EmailServiceImpl emailService;
   private final S3Service s3Service;
   private final MemberStatusService memberStatusService;
+  private final RoleService roleService;
   private final S3BucketNames bucketNames;
   private final PasswordEncoder passwordEncoder;
 
@@ -73,6 +74,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
                            EmailServiceImpl emailService,
                            S3Service s3Service,
                            MemberStatusService memberStatusService,
+                           RoleService roleService,
                            S3BucketNames bucketNames,
                            PasswordEncoder passwordEncoder) {
     this.repository = repository;
@@ -83,6 +85,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
     this.emailService = emailService;
     this.s3Service = s3Service;
     this.memberStatusService = memberStatusService;
+    this.roleService = roleService;
     this.bucketNames = bucketNames;
     this.passwordEncoder = passwordEncoder;
   }
@@ -409,15 +412,18 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
 
   @Override
   public void updateMemberStatus(UpdateMemberStatusDto dto, Integer memberId) {
-    Optional<Member> memberExists = repository.findById(memberId);
-
-    if (memberExists.isEmpty()) {
-      throw new MemberNotFoundException(memberId);
-    }
-
+    Member member = getMember(memberId);
     MemberStatusType memberStatusType = MemberStatusType.valueOf(dto.getMemberStatus());
     MemberStatus memberStatus = memberStatusService.getMemberStatusByCode(memberStatusType.name());
     repository.updateMemberStatus(memberId, memberStatus);
+  }
+
+  @Override
+  public void updateMemberRole(UpdateMemberRoleDto dto, Integer memberId) {
+    Member member = getMember(memberId);
+    List<Role> roles = roleService.getRolesById(dto.getIds());
+    member.getRoles().addAll(roles);
+    save(member);
   }
 
   private PreVerificationOrAuthenticationRequest createUpdateProfileRequest(String code, FleenUser user) {
@@ -429,6 +435,15 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
     String emailBody = getVerificationEmailBody(templateDetails.getTemplateName(), request);
     request.setEmailMessageBody(emailBody);
     return request;
+  }
+
+  private Member getMember(Integer memberId) {
+    Optional<Member> memberExists = repository.findById(memberId);
+
+    if (memberExists.isEmpty()) {
+      throw new MemberNotFoundException(memberId);
+    }
+    return memberExists.get();
   }
 
   @Override

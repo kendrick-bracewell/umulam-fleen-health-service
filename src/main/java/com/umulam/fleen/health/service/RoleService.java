@@ -14,6 +14,8 @@ public interface RoleService {
 
   List<Role> getRoles();
 
+  List<Role> getRolesById(List<Integer> ids);
+
   Role saveRole(RoleDto dto);
 
   Role updateRole(Integer id, RoleDto dto);

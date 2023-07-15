@@ -17,34 +17,39 @@ import java.util.stream.Collectors;
 @Service
 public class RoleServiceImpl implements RoleService {
 
-  private final RoleJpaRepository roleJpaRepository;
+  private final RoleJpaRepository repository;
   private final static String DEFAULT_USER_ROLE = "USER";
 
-  public RoleServiceImpl(RoleJpaRepository roleJpaRepository) {
-    this.roleJpaRepository = roleJpaRepository;
+  public RoleServiceImpl(RoleJpaRepository repository) {
+    this.repository = repository;
   }
 
   @Override
   public Role getRole(Integer id) {
-    return roleJpaRepository.findById(id)
+    return repository.findById(id)
             .orElseThrow(() -> new RoleNotFoundException(id));
   }
 
   @Override
   public Role getRoleByCode(String code) {
-    return roleJpaRepository.findByCode(Objects.isNull(code) ? DEFAULT_USER_ROLE : code)
+    return repository.findByCode(Objects.isNull(code) ? DEFAULT_USER_ROLE : code)
             .orElseThrow(() -> new RoleNotFoundException(code));
   }
 
   @Override
   public List<Role> getRoles() {
-    return roleJpaRepository.findAll();
+    return repository.findAll();
+  }
+
+  @Override
+  public List<Role> getRolesById(List<Integer> ids) {
+    return repository.findManyByIds(ids);
   }
 
   @Override
   public Role saveRole(RoleDto dto) {
     Role Role = dto.toRole();
-    return roleJpaRepository.save(Role);
+    return repository.save(Role);
   }
 
   @Override
@@ -52,7 +57,7 @@ public class RoleServiceImpl implements RoleService {
     getRole(id);
     Role Role = dto.toRole();
     Role.setId(id);
-    return roleJpaRepository.save(Role);
+    return repository.save(Role);
   }
 
   @Override
@@ -63,17 +68,17 @@ public class RoleServiceImpl implements RoleService {
             .map(id -> Role.builder()
                     .id(id).build())
             .collect(Collectors.toList());
-    roleJpaRepository.deleteAll(roles);
+    repository.deleteAll(roles);
   }
 
   @Override
   public void deleteAllRole() {
-    roleJpaRepository.deleteAll();
+    repository.deleteAll();
   }
 
   @Override
   public boolean isRoleExists(Integer id) {
-    return roleJpaRepository.findById(id).isPresent();
+    return repository.findById(id).isPresent();
   }
 
 }

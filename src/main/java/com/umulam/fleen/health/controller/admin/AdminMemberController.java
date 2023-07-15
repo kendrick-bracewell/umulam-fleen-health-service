@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.controller.admin;
 
 import com.umulam.fleen.health.model.dto.member.UpdateMemberStatusDto;
+import com.umulam.fleen.health.model.dto.role.UpdateMemberRoleDto;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.MEMBER_ROLE_UPDATED;
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.MEMBER_STATUS_UPDATED;
 
 @Slf4j
@@ -30,7 +32,10 @@ public class AdminMemberController {
   }
 
   @GetMapping(value = "/update-role/{id}")
-  public void updateMemberRole(@PathVariable(name = "id") Integer memberId) {
-
+  public FleenHealthResponse updateMemberRole(
+          @Valid @RequestBody UpdateMemberRoleDto dto,
+          @PathVariable(name = "id") Integer memberId) {
+    memberService.updateMemberRole(dto, memberId);
+    return new FleenHealthResponse(MEMBER_ROLE_UPDATED);
   }
 }

@@ -6,6 +6,7 @@ import com.umulam.fleen.health.model.dto.authentication.ConfirmMfaDto;
 import com.umulam.fleen.health.model.dto.authentication.MfaTypeDto;
 import com.umulam.fleen.health.model.dto.authentication.UpdatePasswordDto;
 import com.umulam.fleen.health.model.dto.member.*;
+import com.umulam.fleen.health.model.dto.role.UpdateMemberRoleDto;
 import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsResponse;
 import com.umulam.fleen.health.model.response.member.UpdateEmailAddressOrPhoneNumberResponse;
 import com.umulam.fleen.health.model.response.member.UpdateMemberDetailsResponse;
@@ -70,5 +71,5 @@ public interface MemberService {
   void updateMemberStatus(UpdateMemberStatusDto dto, Integer memberId);
 
   @Transactional
-  void enableProfessionalProfile(Integer professionalId);
+  void updateMemberRole(UpdateMemberRoleDto dto, Integer memberId);
 }

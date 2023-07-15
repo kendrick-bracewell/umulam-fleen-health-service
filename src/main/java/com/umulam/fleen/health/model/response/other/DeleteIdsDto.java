@@ -12,6 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 public class DeleteIdsDto {
 
-  @NotEmpty
+  @NotEmpty(message = "{entity.ids.notEmpty}")
   private List<Integer> ids;
 }
