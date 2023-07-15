@@ -2,6 +2,7 @@ package com.umulam.fleen.health.service.admin.impl;
 
 import com.umulam.fleen.health.configuration.aws.s3.S3BucketNames;
 import com.umulam.fleen.health.constant.CommonEmailMessageTemplateDetails;
+import com.umulam.fleen.health.constant.MemberStatusType;
 import com.umulam.fleen.health.constant.VerificationMessageType;
 import com.umulam.fleen.health.constant.authentication.RoleType;
 import com.umulam.fleen.health.constant.authentication.VerificationType;
@@ -35,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static com.umulam.fleen.health.util.DateTimeUtil.getDefaultDateOfBirth;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
@@ -126,6 +128,21 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
   @Transactional
   public void resendOnboardingDetails(Integer memberId) {
     Member member = getMember(memberId);
+
+    FleenUser user = FleenUser.fromMember(member);
+    if (MemberStatusType.ACTIVE.name().equals(user.getStatus()) {
+      return;
+    }
+
+    Set<Role> roles = member.getRoles();
+    boolean isPreOnboarded = roles
+            .stream()
+            .anyMatch(role -> RoleType.PRE_ONBOARDED.name().equals(role.getCode()));
+
+    if (!isPreOnboarded) {
+      return;
+    }
+
     String newPassword = passwordGenerator.generatePassword();
     member.setPassword(createEncodedPassword(newPassword));
     sendOnboardingDetails(member, newPassword);
