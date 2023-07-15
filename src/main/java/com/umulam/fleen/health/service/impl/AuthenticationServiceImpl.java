@@ -13,6 +13,7 @@ import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.authentication.*;
+import com.umulam.fleen.health.exception.member.MemberAlreadyOnboarded;
 import com.umulam.fleen.health.exception.member.MemberNotFoundException;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.model.domain.*;
@@ -985,7 +986,7 @@ public class AuthenticationServiceImpl implements
             .anyMatch(role -> RoleType.PRE_ONBOARDED.name().equals(role.getCode()));
 
     if (!isPreOnboarded) {
-
+      throw new MemberAlreadyOnboarded(username);
     }
 
     CompleteUserSignUpRequest request = createCompleteUserSignUpRequest(member);
