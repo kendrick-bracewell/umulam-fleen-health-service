@@ -135,7 +135,6 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
   }
 
 
-
   @Override
   @Transactional
   public void resendOnboardingDetails(Integer memberId) {
