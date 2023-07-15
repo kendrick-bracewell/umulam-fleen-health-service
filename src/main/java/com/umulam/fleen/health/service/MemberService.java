@@ -12,8 +12,11 @@ import com.umulam.fleen.health.model.response.member.UpdateEmailAddressOrPhoneNu
 import com.umulam.fleen.health.model.response.member.UpdateMemberDetailsResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
+import com.umulam.fleen.health.model.view.RoleView;
 import lombok.NonNull;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 public interface MemberService {
 
@@ -72,4 +75,7 @@ public interface MemberService {
 
   @Transactional
   void updateMemberRole(UpdateMemberRoleDto dto, Integer memberId);
+
+  @Transactional(readOnly = true)
+  List<RoleView> getMemberRoles(Integer memberId);
 }

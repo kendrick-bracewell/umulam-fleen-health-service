@@ -3,6 +3,7 @@ package com.umulam.fleen.health.repository.jpa;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.MemberStatus;
+import com.umulam.fleen.health.model.domain.Role;
 import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
 
@@ -52,5 +54,9 @@ public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
   @Transactional
   @Query(value = "UPDATE Member m SET m.memberStatus = :memberStatus WHERE m.id = :id")
   void updateMemberStatus(@Param("id") Integer memberId, @Param("memberStatus") MemberStatus memberStatus);
+
+  @Transactional(readOnly = true)
+  @Query(value = "SELECT m.roles FROM Member m where m.id = :id")
+  Set<Role> getMemberRole(@Param("id") Integer memberId);
 
 }

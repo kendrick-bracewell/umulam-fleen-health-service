@@ -23,12 +23,14 @@ import com.umulam.fleen.health.model.dto.authentication.MfaTypeDto;
 import com.umulam.fleen.health.model.dto.authentication.UpdatePasswordDto;
 import com.umulam.fleen.health.model.dto.member.*;
 import com.umulam.fleen.health.model.dto.role.UpdateMemberRoleDto;
+import com.umulam.fleen.health.model.mapper.RoleMapper;
 import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequest;
 import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsResponse;
 import com.umulam.fleen.health.model.response.member.UpdateEmailAddressOrPhoneNumberResponse;
 import com.umulam.fleen.health.model.response.member.UpdateMemberDetailsResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
+import com.umulam.fleen.health.model.view.RoleView;
 import com.umulam.fleen.health.repository.jpa.MemberJpaRepository;
 import com.umulam.fleen.health.service.*;
 import com.umulam.fleen.health.service.external.aws.EmailServiceImpl;
@@ -41,9 +43,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.UPDATE_EMAIL_CACHE_PREFIX;
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.UPDATE_PHONE_NUMBER_CACHE_PREFIX;
@@ -419,11 +419,20 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   }
 
   @Override
+  @Transactional
   public void updateMemberRole(UpdateMemberRoleDto dto, Integer memberId) {
     Member member = getMember(memberId);
     List<Role> roles = roleService.getRolesById(dto.getIds());
     member.getRoles().addAll(roles);
     save(member);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<RoleView> getMemberRoles(Integer memberId) {
+    getMember(memberId);
+    List<Role> roles = new ArrayList(repository.getMemberRole(memberId));
+    return RoleMapper.toRoleViews(roles);
   }
 
   private PreVerificationOrAuthenticationRequest createUpdateProfileRequest(String code, FleenUser user) {
