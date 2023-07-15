@@ -1,12 +1,8 @@
 package com.umulam.fleen.health.repository.jpa;
 
-import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
-import com.umulam.fleen.health.constant.member.ProfessionalType;
-import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.MemberStatus;
-import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.domain.Role;
 import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsResponse;
 import org.springframework.data.domain.Page;
@@ -83,4 +79,6 @@ public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
   @Query(value = "SELECT m FROM Member m WHERE m.verificationStatus = :verificationStatus")
   Page<Member> findByVerificationStatus(ProfileVerificationStatus verificationStatus, Pageable pageable);
 
+  @Query("SELECT m FROM Member m JOIN m.roles r WHERE r.code = :code")
+  Page<Member> findAllPreOnboardedMembers(@Param("code") String roleType, Pageable pageable);
 }

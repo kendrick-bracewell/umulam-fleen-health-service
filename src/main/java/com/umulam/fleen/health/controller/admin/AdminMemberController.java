@@ -38,6 +38,11 @@ public class AdminMemberController {
     return service.findMembers(request);
   }
 
+  @GetMapping(value = "/entries/pre-onboarded")
+  public SearchResultView findPreOnboardedMembers(@SearchParam MemberSearchRequest request) {
+    return service.findMembers(request);
+  }
+
   @GetMapping(value = "/detail/{id}")
   public MemberView findMemberDetail(@PathVariable(name = "id") Integer memberId) {
     return service.findMemberById(memberId);

@@ -93,6 +93,15 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
   }
 
   @Override
+  @Transactional(readOnly = true)
+  public SearchResultView findPreOnboardedMembers(MemberSearchRequest req) {
+    Page<Member> page;
+    page = repository.findAllPreOnboardedMembers(RoleType.PRE_ONBOARDED.name(), req.getPage());
+    List<MemberView> views = MemberMapper.toMemberViews(page.getContent());
+    return toSearchResult(views, page);
+  }
+
+  @Override
   @Transactional
   public void createMember(CreateMemberDto dto) {
     String roleType = RoleType.PRE_ONBOARDED.name();

@@ -10,6 +10,9 @@ public interface AdminMemberService extends MemberService {
   @Transactional(readOnly = true)
   SearchResultView findMembers(MemberSearchRequest req);
 
+  @Transactional(readOnly = true)
+  SearchResultView findPreOnboardedMembers(MemberSearchRequest req);
+
   @Transactional
   void createMember(CreateMemberDto dto);
 }
