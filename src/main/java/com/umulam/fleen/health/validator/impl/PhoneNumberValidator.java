@@ -10,7 +10,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import static com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
-import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Component
@@ -21,18 +21,17 @@ public class PhoneNumberValidator implements ConstraintValidator<MobilePhoneNumb
 
   @Override
   public boolean isValid(String number, ConstraintValidatorContext context) {
-    if (!isNull(number)) {
+    if (nonNull(number)) {
       PhoneNumberUtil util = PhoneNumberUtil.getInstance();
       PhoneNumber phoneNumber;
       try {
         phoneNumber = util.parse(number, null);
+        return util.isValidNumber(phoneNumber);
       } catch (NumberParseException ex) {
         log.error(ex.getMessage(), ex);
-        return false;
       }
-      return util.isValidNumber(phoneNumber);
     }
-    return true;
+    return false;
   }
 
 }
