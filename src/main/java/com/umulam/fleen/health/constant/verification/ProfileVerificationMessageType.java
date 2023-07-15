@@ -8,7 +8,8 @@ public enum ProfileVerificationMessageType {
   PENDING("Pending"),
   IN_PROGRESS("In Progress"),
   DISAPPROVED("Disapproved"),
-  APPROVED("Approved");
+  APPROVED("Approved"),
+  SIGNUP_COMPLETE("Sign Up Complete");
 
   private final String value;
 

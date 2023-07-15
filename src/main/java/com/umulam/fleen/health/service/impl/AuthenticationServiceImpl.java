@@ -316,8 +316,6 @@ public class AuthenticationServiceImpl implements
     sendVerificationMessage(request, verificationType);
     savePreVerificationOtp(user.getUsername(), otp);
 
-    createProfileVerificationMessageNewPendingRegistration(member);
-
     saveToken(user.getUsername(), accessToken);
     saveRefreshToken(user.getUsername(), refreshToken);
     return SignUpResponse.builder()
@@ -380,7 +378,7 @@ public class AuthenticationServiceImpl implements
     ProfileVerificationMessage verificationMessage = request.getVerificationMessage();
     ProfileVerificationStatus profileVerificationStatus = request.getProfileVerificationStatus();
 
-    if (nonNull(verificationMessage) && ProfileType.USER == member.getUserType()) {
+    if (nonNull(verificationMessage)) {
       SaveProfileVerificationMessageRequest verificationMessageRequest = SaveProfileVerificationMessageRequest.builder()
               .verificationMessageType(verificationMessage.getVerificationMessageType())
               .verificationStatus(profileVerificationStatus)
@@ -389,6 +387,11 @@ public class AuthenticationServiceImpl implements
               .build();
 
       saveProfileVerificationMessage(verificationMessageRequest);
+    }
+
+    if (ProfileType.BUSINESS == member.getUserType() ||
+        ProfileType.PROFESSIONAL == member.getUserType()) {
+      createProfileVerificationMessageNewPendingRegistration(member);
     }
 
     Set<Role> roles = new HashSet<>();
@@ -1090,7 +1093,7 @@ public class AuthenticationServiceImpl implements
       case USER:
         request.setRole(roleService.getRoleByCode(USER.name()));
         request.setProfileVerificationStatus(ProfileVerificationStatus.APPROVED);
-        request.setVerificationMessage(profileVerificationMessageService.getProfileVerificationMessageByType(ProfileVerificationMessageType.APPROVED));
+        request.setVerificationMessage(profileVerificationMessageService.getProfileVerificationMessageByType(ProfileVerificationMessageType.SIGNUP_COMPLETE));
         member.setVerificationStatus(request.getProfileVerificationStatus());
         break;
 

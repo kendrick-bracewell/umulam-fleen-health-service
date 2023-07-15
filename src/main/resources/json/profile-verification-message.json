@@ -26,5 +26,12 @@
     "message": "Congratulations!!! Your account or profile verification has been approved. Please kindly understand the reasons why it was disapproved and resubmit.",
     "htmlMessage": "<p>Congratulations!!! Your account or profile verification has been approved. Please kindly understand the reasons why it was disapproved and resubmit.</p>",
     "plainText": "Congratulations!!! Your account or profile verification has been approved. Please kindly understand the reasons why it was disapproved and resubmit."
+  },
+  {
+    "title": "Sign Up Complete",
+    "verificationMessageType": "SIGNUP_COMPLETE",
+    "message": "Congratulations!!! Your sign up is complete. You can now sign in to use the application.",
+    "htmlMessage": "<p>Congratulations!!! Your sign up is complete. You can now sign in to use the application.</p>",
+    "plainText": "Congratulations!!! Your sign up is complete. You can now sign in to use the application."
   }
 ]
