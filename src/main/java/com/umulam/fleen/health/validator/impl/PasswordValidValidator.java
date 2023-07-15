@@ -10,6 +10,8 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static org.passay.EnglishCharacterData.*;
+
 @Slf4j
 @Component
 public class PasswordValidValidator implements ConstraintValidator<PasswordValid, String> {
@@ -26,10 +28,10 @@ public class PasswordValidValidator implements ConstraintValidator<PasswordValid
     if (Objects.nonNull(password)) {
       PasswordValidator validator = new PasswordValidator(null, Arrays.asList(
               new LengthRule(8, 24),
-              new CharacterRule(EnglishCharacterData.UpperCase, 1),
-              new CharacterRule(EnglishCharacterData.LowerCase, 1),
-              new CharacterRule(EnglishCharacterData.Digit, 1),
-              new CharacterRule(EnglishCharacterData.Special, 1),
+              new CharacterRule(UpperCase, 1),
+              new CharacterRule(LowerCase, 1),
+              new CharacterRule(Digit, 1),
+              new CharacterRule(Special, 1),
               new WhitespaceRule()));
 
       RuleResult result = validator.validate(new PasswordData(password));
