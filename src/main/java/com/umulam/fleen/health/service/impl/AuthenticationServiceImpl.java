@@ -199,7 +199,7 @@ public class AuthenticationServiceImpl implements
       user.setAuthorities(getUserPreOnboardedAuthorities());
       initSignInDetails(user, signInResponse);
 
-      signInResponse.setNextAuthentication(NextAuthentication.PRE_ONBOARDING);
+      signInResponse.setNextAuthentication(NextAuthentication.PRE_ONBOARDED);
       return signInResponse;
     }
 
@@ -980,6 +980,9 @@ public class AuthenticationServiceImpl implements
     roles.add(request.getRole());
     member.setRoles(roles);
     member.setPassword(createEncodedPassword(dto.getPassword()));
+    member.setEmailAddressVerified(true);
+    MemberStatus memberStatus = memberStatusService.getMemberStatusByCode(MemberStatusType.ACTIVE.name());
+    member.setMemberStatus(memberStatus);
     memberService.save(member);
 
     FleenUser user = FleenUser.fromMember(member);

@@ -40,7 +40,7 @@ public class VerificationController {
   }
 
   @PostMapping(value = "/resend-pre-verification-code")
-  @PreAuthorize("hasAnyRole('PRE_VERIFIED_USER', 'PRE_VERIFIED_PROFESSIONAL', 'PRE_VERIFIED_BUSINESS', 'PRE_ONBOARDED')")
+  @PreAuthorize("hasAnyRole('PRE_VERIFIED_USER', 'PRE_VERIFIED_PROFESSIONAL', 'PRE_VERIFIED_BUSINESS')")
   public FleenHealthResponse resendPreVerificationCode(
           @AuthenticationPrincipal FleenUser user,
           @Valid @RequestBody ResendVerificationCodeDto dto) {
@@ -83,7 +83,7 @@ public class VerificationController {
   @PostMapping(value = "/complete-onboarding")
   @PreAuthorize("hasRole('PRE_ONBOARDED')")
   public SignInResponse completeOnboarding(@AuthenticationPrincipal FleenUser user,
-                                                    @Valid @RequestBody ChangePasswordDto dto) {
+                                            @Valid @RequestBody ChangePasswordDto dto) {
     return authenticationService.completeOnboarding(user.getUsername(), dto);
   }
 }
