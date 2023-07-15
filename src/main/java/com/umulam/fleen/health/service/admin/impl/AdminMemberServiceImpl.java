@@ -7,17 +7,13 @@ import com.umulam.fleen.health.constant.VerificationMessageType;
 import com.umulam.fleen.health.constant.authentication.RoleType;
 import com.umulam.fleen.health.constant.authentication.VerificationType;
 import com.umulam.fleen.health.constant.base.ProfileType;
-import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
-import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.role.RoleNotFoundException;
 import com.umulam.fleen.health.model.domain.Member;
-import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
 import com.umulam.fleen.health.model.domain.Role;
 import com.umulam.fleen.health.model.dto.admin.CreateMemberDto;
 import com.umulam.fleen.health.model.mapper.MemberMapper;
 import com.umulam.fleen.health.model.request.MemberSearchRequest;
 import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequest;
-import com.umulam.fleen.health.model.request.SaveProfileVerificationMessageRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.MemberView;
 import com.umulam.fleen.health.model.view.SearchResultView;
@@ -39,7 +35,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import static com.umulam.fleen.health.util.DateTimeUtil.getDefaultDateOfBirth;
@@ -56,10 +51,12 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
   private final MemberJpaRepository repository;
   private final PasswordGenerator passwordGenerator;
   private final ProfileVerificationMessageService profileVerificationMessageService;
+  private final VerificationHistoryService verificationHistoryService;
 
   public AdminMemberServiceImpl(MemberJpaRepository repository,
                                 PasswordGenerator passwordGenerator,
                                 ProfileVerificationMessageService profileVerificationMessageService,
+                                VerificationHistoryService verificationHistoryService,
                                 MfaService mfaService,
                                 @Lazy AuthenticationService authenticationService,
                                 CacheService cacheService,
@@ -75,6 +72,7 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
     this.repository = repository;
     this.passwordGenerator = passwordGenerator;
     this.profileVerificationMessageService = profileVerificationMessageService;
+    this.verificationHistoryService = verificationHistoryService;
   }
 
   @Override
@@ -116,7 +114,7 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
   public void createMember(CreateMemberDto dto) {
     String roleType = RoleType.PRE_ONBOARDED.name();
     Role role = roleService.getRoleByCode(roleType);
-     if (isNull(role)) {
+    if (isNull(role)) {
       throw new RoleNotFoundException(roleType);
     }
 
@@ -130,8 +128,8 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
     member.setUserType(userType);
     sendOnboardingDetails(member, newPassword);
 
-    createProfileVerificationMessageNewPendingRegistration(member);
     save(member);
+    createProfileVerificationMessageNewPendingRegistration(member);
   }
 
 
@@ -176,4 +174,13 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
     return request;
   }
 
+  @Override
+  public ProfileVerificationMessageService getProfileVerificationMessageService() {
+    return profileVerificationMessageService;
+  }
+
+  @Override
+  public VerificationHistoryService getVerificationHistoryService() {
+    return verificationHistoryService;
+  }
 }

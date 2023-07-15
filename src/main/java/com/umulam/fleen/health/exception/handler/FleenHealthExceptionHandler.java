@@ -164,6 +164,7 @@ public class FleenHealthExceptionHandler {
   @ResponseStatus(value = INTERNAL_SERVER_ERROR)
   @ExceptionHandler(value = { Exception.class })
   public Object handleException(Exception ex) {
+    log.error(ex.getMessage(), ex);
     return buildErrorMap(ex.getMessage(), INTERNAL_SERVER_ERROR);
   }
 

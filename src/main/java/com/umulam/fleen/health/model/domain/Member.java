@@ -21,7 +21,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "member", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"email_address", "phone_number"})
+        @UniqueConstraint(columnNames = {"email_address"}),
+        @UniqueConstraint(columnNames = {"phone_number"})
 })
 public class Member {
 
