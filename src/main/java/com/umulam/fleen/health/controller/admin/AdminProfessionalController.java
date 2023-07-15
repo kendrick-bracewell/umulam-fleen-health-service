@@ -3,6 +3,7 @@ package com.umulam.fleen.health.controller.admin;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalDetailsDto;
 import com.umulam.fleen.health.model.dto.verification.UpdateProfileVerificationStatusDto;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
+import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.view.ProfessionalView;
 import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.resolver.SearchParam;
@@ -13,6 +14,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.SUCCESS_MESSAGE;
 
 @Slf4j
 @RestController
@@ -49,17 +52,11 @@ public class AdminProfessionalController {
   }
 
   @PutMapping(value = "/update-verification-status/{id}")
-  public void updateProfessionalVerificationStatus(
-          @PathVariable(name = "id") Integer professionalId,
-          @Valid @RequestBody UpdateProfileVerificationStatusDto dto) {
-
+  public FleenHealthResponse updateProfessionalVerificationStatus(
+          @Valid @RequestBody UpdateProfileVerificationStatusDto dto,
+          @PathVariable(name = "id") Integer professionalId) {
+    service.updateProfessionalVerificationStatus(dto, professionalId);
+    return new FleenHealthResponse(SUCCESS_MESSAGE);
   }
 
-  public void disableProfessional() {
-
-  }
-
-  public void updateProfessionalRole() {
-
-  }
 }

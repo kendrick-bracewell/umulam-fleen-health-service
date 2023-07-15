@@ -3,7 +3,6 @@ package com.umulam.fleen.health.service.impl;
 import com.umulam.fleen.health.adapter.google.recaptcha.ReCaptchaAdapter;
 import com.umulam.fleen.health.adapter.google.recaptcha.model.response.ReCaptchaResponse;
 import com.umulam.fleen.health.constant.CommonEmailMessageTemplateDetails;
-import com.umulam.fleen.health.constant.EmailMessageSource;
 import com.umulam.fleen.health.constant.MemberStatusType;
 import com.umulam.fleen.health.constant.VerificationMessageType;
 import com.umulam.fleen.health.constant.authentication.MfaType;
@@ -17,7 +16,6 @@ import com.umulam.fleen.health.exception.authentication.*;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.model.domain.*;
 import com.umulam.fleen.health.model.dto.authentication.*;
-import com.umulam.fleen.health.model.dto.mail.EmailDetails;
 import com.umulam.fleen.health.model.request.CompleteUserSignUpRequest;
 import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequest;
 import com.umulam.fleen.health.model.request.SaveProfileVerificationMessageRequest;
@@ -59,7 +57,7 @@ import static com.umulam.fleen.health.util.FleenAuthorities.*;
 
 @Slf4j
 @Service
-public class AuthenticationServiceImpl implements AuthenticationService, CommonAuthService {
+public class AuthenticationServiceImpl implements AuthenticationService, CommonAuthAndVerificationService {
 
   private final AuthenticationManager authenticationManager;
   private final MemberService memberService;
@@ -856,42 +854,6 @@ public class AuthenticationServiceImpl implements AuthenticationService, CommonA
   }
 
   /**
-   * <p>Send a message to the user's email address that inform them about the current stage, the state of their profile verification or status.</p>
-   * <br/>
-   *
-   * @param details contains the message either in HTML or plain text and the recipient to send the message to
-   */
-  private void sendAVerificationEmail(EmailDetails details) {
-    emailService.sendHtmlMessage(details);
-  }
-
-  private void saveProfileVerificationMessage(SaveProfileVerificationMessageRequest request) {
-    ProfileVerificationMessage verificationMessage = profileVerificationMessageService
-            .getProfileVerificationMessageByType(request.getVerificationMessageType());
-
-    if (Objects.nonNull(verificationMessage)) {
-      ProfileVerificationHistory history = new ProfileVerificationHistory();
-      history.setProfileVerificationStatus(request.getVerificationStatus());
-      history.setMember(request.getMember());
-      history.setMessage(verificationMessage.getMessage());
-      verificationHistoryService.saveVerificationHistory(history);
-      sendProfilePreVerificationMessage(request.getEmailAddress(), verificationMessage);
-    }
-  }
-
-  private void sendProfilePreVerificationMessage(String emailAddress, ProfileVerificationMessage verificationMessage) {
-    EmailDetails emailDetails = EmailDetails.builder()
-            .from(EmailMessageSource.BASE.getValue())
-            .to(emailAddress)
-            .subject(verificationMessage.getTitle())
-            .htmlText(verificationMessage.getHtmlMessage())
-            .plainText(verificationMessage.getPlainText())
-            .build();
-    sendAVerificationEmail(emailDetails);
-  }
-
-
-  /**
    * <p>A way for the user to be able to recover their lost or forgotten credentials so that they can regain access to the system</p>
    * @param dto contains details including email address or username of the user whose account is being recovered
    */
@@ -1136,5 +1098,15 @@ public class AuthenticationServiceImpl implements AuthenticationService, CommonA
   @Override
   public CacheService getCacheService() {
     return cacheService;
+  }
+
+  @Override
+  public ProfileVerificationMessageService getProfileVerificationMessageService() {
+    return profileVerificationMessageService;
+  }
+
+  @Override
+  public VerificationHistoryService getVerificationHistoryService() {
+    return verificationHistoryService;
   }
 }

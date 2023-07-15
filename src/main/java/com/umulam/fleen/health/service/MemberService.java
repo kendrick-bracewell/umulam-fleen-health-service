@@ -65,4 +65,10 @@ public interface MemberService {
   void saveUpdateEmailOtp(String subject, String otp);
 
   void saveUpdatePhoneNumberOtp(String subject, String otp);
+
+  @Transactional
+  void updateMemberStatus(UpdateMemberStatusDto dto, Integer memberId);
+
+  @Transactional
+  void enableProfessionalProfile(Integer professionalId);
 }

@@ -18,5 +18,5 @@ public interface AdminProfessionalService extends ProfessionalService {
   ProfessionalView updateProfessionalDetail(UpdateProfessionalDetailsDto dto, Integer professionalId);
 
   @Transactional
-  Object updateProfessionalVerificationStatus(UpdateProfileVerificationStatusDto dto, Integer professionalId);
+  void updateProfessionalVerificationStatus(UpdateProfileVerificationStatusDto dto, Integer professionalId);
 }

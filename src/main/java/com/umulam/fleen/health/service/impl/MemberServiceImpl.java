@@ -2,6 +2,7 @@ package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.configuration.aws.s3.S3BucketNames;
 import com.umulam.fleen.health.constant.CommonEmailMessageTemplateDetails;
+import com.umulam.fleen.health.constant.MemberStatusType;
 import com.umulam.fleen.health.constant.VerificationMessageType;
 import com.umulam.fleen.health.constant.authentication.MfaSetupStatus;
 import com.umulam.fleen.health.constant.authentication.MfaType;
@@ -11,9 +12,14 @@ import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.authentication.InvalidVerificationCodeException;
 import com.umulam.fleen.health.exception.authentication.MfaGenerationFailedException;
 import com.umulam.fleen.health.exception.authentication.MfaVerificationFailed;
+import com.umulam.fleen.health.exception.member.MemberNotFoundException;
 import com.umulam.fleen.health.exception.member.UpdatePasswordFailedException;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
+import com.umulam.fleen.health.exception.memberstatus.MemberStatusNotFoundException;
+import com.umulam.fleen.health.exception.professional.ProfessionalNotFoundException;
 import com.umulam.fleen.health.model.domain.Member;
+import com.umulam.fleen.health.model.domain.MemberStatus;
+import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.dto.authentication.ConfirmMfaDto;
 import com.umulam.fleen.health.model.dto.authentication.MfaTypeDto;
 import com.umulam.fleen.health.model.dto.authentication.UpdatePasswordDto;
@@ -25,10 +31,7 @@ import com.umulam.fleen.health.model.response.member.UpdateMemberDetailsResponse
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
 import com.umulam.fleen.health.repository.jpa.MemberJpaRepository;
-import com.umulam.fleen.health.service.AuthenticationService;
-import com.umulam.fleen.health.service.CommonAuthService;
-import com.umulam.fleen.health.service.MemberService;
-import com.umulam.fleen.health.service.MfaService;
+import com.umulam.fleen.health.service.*;
 import com.umulam.fleen.health.service.external.aws.EmailServiceImpl;
 import com.umulam.fleen.health.service.external.aws.MobileTextService;
 import lombok.NonNull;
@@ -40,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.UPDATE_EMAIL_CACHE_PREFIX;
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.UPDATE_PHONE_NUMBER_CACHE_PREFIX;
@@ -48,7 +52,7 @@ import static org.springframework.util.StringUtils.capitalize;
 
 @Slf4j
 @Service
-public class MemberServiceImpl implements MemberService, CommonAuthService {
+public class MemberServiceImpl implements MemberService, CommonAuthAndVerificationService {
 
   private final MemberJpaRepository repository;
   private final MfaService mfaService;
@@ -57,6 +61,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
   private final MobileTextService mobileTextService;
   private final EmailServiceImpl emailService;
   private final S3Service s3Service;
+  private final MemberStatusService memberStatusService;
   private final S3BucketNames bucketNames;
   private final PasswordEncoder passwordEncoder;
 
@@ -67,6 +72,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
                            MobileTextService mobileTextService,
                            EmailServiceImpl emailService,
                            S3Service s3Service,
+                           MemberStatusService memberStatusService,
                            S3BucketNames bucketNames,
                            PasswordEncoder passwordEncoder) {
     this.repository = repository;
@@ -76,6 +82,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
     this.mobileTextService = mobileTextService;
     this.emailService = emailService;
     this.s3Service = s3Service;
+    this.memberStatusService = memberStatusService;
     this.bucketNames = bucketNames;
     this.passwordEncoder = passwordEncoder;
   }
@@ -398,6 +405,20 @@ public class MemberServiceImpl implements MemberService, CommonAuthService {
    */
   private void clearUpdatePhoneNumberOtp(String username) {
     cacheService.delete(getUpdatePhoneNumberCacheKey(username));
+  }
+
+  @Override
+  public void updateMemberStatus(UpdateMemberStatusDto dto, Integer memberId) {
+    Optional<Member> memberExists = repository.findById(memberId);
+
+    if (memberExists.isEmpty()) {
+      throw new MemberNotFoundException(memberId);
+    }
+
+    Member member = memberExists.get();
+    MemberStatusType memberStatusType = MemberStatusType.valueOf(dto.getMemberStatus());
+    MemberStatus memberStatus = memberStatusService.getMemberStatusByCode(memberStatusType.name());
+    repository.updateMemberStatus(memberId, memberStatus);
   }
 
   private PreVerificationOrAuthenticationRequest createUpdateProfileRequest(String code, FleenUser user) {

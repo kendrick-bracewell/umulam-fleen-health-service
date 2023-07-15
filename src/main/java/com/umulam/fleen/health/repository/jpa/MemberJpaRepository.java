@@ -2,6 +2,7 @@ package com.umulam.fleen.health.repository.jpa;
 
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.model.domain.Member;
+import com.umulam.fleen.health.model.domain.MemberStatus;
 import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -46,5 +47,8 @@ public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
           "SELECT first_name as firstName, last_name as lastName, email_address as emailAddress," +
           "phone_number as phoneNumber, gender, date_of_birth as dateOfBirth from member where id = :id", nativeQuery = true)
   GetMemberUpdateDetailsResponse findMemberDetailsById(@Param("id") Integer memberId);
+
+  @Query(value = "UPDATE Member m SET m.memberStatus = :memberStatus WHERE m.id = :id")
+  void updateMemberStatus(@Param("id") Integer memberId, @Param("memberStatus") MemberStatus memberStatus);
 
 }

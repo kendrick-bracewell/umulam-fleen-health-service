@@ -20,7 +20,6 @@ import com.umulam.fleen.health.model.view.VerificationDocumentView;
 import com.umulam.fleen.health.repository.jpa.ProfessionalJpaRepository;
 import com.umulam.fleen.health.service.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -181,4 +180,5 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   public VerificationDocumentService getVerificationDocumentService() {
     return verificationDocumentService;
   }
+
 }

@@ -1,22 +1,24 @@
 package com.umulam.fleen.health.service.admin.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umulam.fleen.health.constant.MemberStatusType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotFoundException;
+import com.umulam.fleen.health.model.domain.Member;
+import com.umulam.fleen.health.model.domain.MemberStatus;
 import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalDetailsDto;
 import com.umulam.fleen.health.model.dto.verification.UpdateProfileVerificationStatusDto;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
+import com.umulam.fleen.health.model.request.SaveProfileVerificationMessageRequest;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.view.ProfessionalView;
 import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.ProfessionalJpaRepository;
-import com.umulam.fleen.health.service.CountryService;
-import com.umulam.fleen.health.service.MemberService;
-import com.umulam.fleen.health.service.ProfileVerificationMessageService;
-import com.umulam.fleen.health.service.VerificationDocumentService;
+import com.umulam.fleen.health.service.*;
 import com.umulam.fleen.health.service.admin.AdminProfessionalService;
+import com.umulam.fleen.health.service.external.aws.EmailServiceImpl;
+import com.umulam.fleen.health.service.external.aws.MobileTextService;
 import com.umulam.fleen.health.service.impl.CacheService;
 import com.umulam.fleen.health.service.impl.ProfessionalServiceImpl;
 import com.umulam.fleen.health.service.impl.S3Service;
@@ -27,9 +29,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.PROFILE_VERIFICATION_MESSAGE_TEMPLATE_CACHE_PREFIX;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
 import static java.util.Objects.nonNull;
@@ -37,9 +39,15 @@ import static java.util.Objects.nonNull;
 @Slf4j
 @Service
 @Qualifier("adminProfessionalService")
-public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implements AdminProfessionalService {
+public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implements AdminProfessionalService, CommonAuthAndVerificationService {
 
   private final ProfileVerificationMessageService verificationMessageService;
+  private final CacheService cacheService;
+  private final MobileTextService mobileTextService;
+  private final EmailServiceImpl emailService;
+  private final VerificationHistoryService verificationHistoryService;
+  private final ProfileVerificationMessageService profileVerificationMessageService;
+  private final MemberStatusService memberStatusService;
 
   public AdminProfessionalServiceImpl(MemberService memberService,
                                       S3Service s3Service,
@@ -47,10 +55,19 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
                                       VerificationDocumentService verificationDocumentService,
                                       ProfessionalJpaRepository repository,
                                       CacheService cacheService,
-                                      ObjectMapper mapper,
-                                      ProfileVerificationMessageService verificationMessageService) {
+                                      MobileTextService mobileTextService,
+                                      EmailServiceImpl emailService,
+                                      VerificationHistoryService verificationHistoryService,
+                                      ProfileVerificationMessageService verificationMessageService,
+                                      MemberStatusService memberStatusService) {
     super(memberService, s3Service, countryService, verificationDocumentService, repository);
     this.verificationMessageService = verificationMessageService;
+    this.cacheService = cacheService;
+    this.mobileTextService = mobileTextService;
+    this.emailService = emailService;
+    this.verificationHistoryService = verificationHistoryService;
+    this.profileVerificationMessageService = verificationMessageService;
+    this.memberStatusService = memberStatusService;
   }
 
 
@@ -120,13 +137,53 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
   }
 
   @Override
-  public Object updateProfessionalVerificationStatus(UpdateProfileVerificationStatusDto dto, Integer professionalId) {
+  @Transactional
+  public void updateProfessionalVerificationStatus(UpdateProfileVerificationStatusDto dto, Integer professionalId) {
     ProfileVerificationMessage verificationMessage = verificationMessageService.getProfileVerificationMessageFromCache(Integer.parseInt(dto.getVerificationMessageTemplateId()));
+    Optional<Professional> professionalExists = repository.findById(professionalId);
 
-    return null;
+    if (professionalExists.isEmpty()) {
+      throw new ProfessionalNotFoundException(professionalId);
+    }
+
+    Professional professional = professionalExists.get();
+    Member member = professional.getMember();
+    ProfileVerificationStatus verificationStatus = ProfileVerificationStatus.valueOf(dto.getVerificationStatus());
+    if (Objects.nonNull(verificationMessage)) {
+      SaveProfileVerificationMessageRequest verificationMessageRequest = SaveProfileVerificationMessageRequest.builder()
+              .verificationMessageType(verificationMessage.getVerificationMessageType())
+              .verificationStatus(verificationStatus)
+              .member(member)
+              .emailAddress(member.getEmailAddress())
+              .build();
+
+      saveProfileVerificationHistoryWithProfileVerificationMessage(verificationMessage, verificationMessageRequest);
+    }
   }
 
+  @Override
+  public MobileTextService getMobileTextService() {
+    return mobileTextService;
+  }
 
+  @Override
+  public EmailServiceImpl getEmailService() {
+    return emailService;
+  }
 
+  @Override
+  public CacheService getCacheService() {
+    return cacheService;
+  }
+
+  @Override
+  public ProfileVerificationMessageService getProfileVerificationMessageService() {
+    return profileVerificationMessageService;
+  }
+
+  @Override
+  public VerificationHistoryService getVerificationHistoryService() {
+    return verificationHistoryService;
+  }
 
 }

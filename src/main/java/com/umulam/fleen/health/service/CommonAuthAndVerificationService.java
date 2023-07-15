@@ -6,14 +6,18 @@ import com.umulam.fleen.health.constant.authentication.VerificationType;
 import com.umulam.fleen.health.exception.authentication.ExpiredVerificationCodeException;
 import com.umulam.fleen.health.exception.authentication.InvalidVerificationCodeException;
 import com.umulam.fleen.health.exception.authentication.VerificationFailedException;
+import com.umulam.fleen.health.model.domain.ProfileVerificationHistory;
+import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
 import com.umulam.fleen.health.model.dto.authentication.VerificationCodeDto;
 import com.umulam.fleen.health.model.dto.mail.EmailDetails;
 import com.umulam.fleen.health.model.json.SmsMessage;
 import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequest;
+import com.umulam.fleen.health.model.request.SaveProfileVerificationMessageRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.service.external.aws.EmailServiceImpl;
 import com.umulam.fleen.health.service.external.aws.MobileTextService;
 import com.umulam.fleen.health.service.impl.CacheService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.Map;
@@ -23,7 +27,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.VERIFICATION_CODE_KEY;
 
-public interface CommonAuthService {
+public interface CommonAuthAndVerificationService {
 
 
   /**
@@ -139,6 +143,47 @@ public interface CommonAuthService {
     }
   }
 
+  @Transactional
+  default void saveProfileVerificationMessage(SaveProfileVerificationMessageRequest request) {
+    ProfileVerificationMessage verificationMessage = getProfileVerificationMessageService()
+            .getProfileVerificationMessageByType(request.getVerificationMessageType());
+    saveProfileVerificationHistoryWithProfileVerificationMessage(verificationMessage, request);
+  }
+
+  @Transactional
+  default void saveProfileVerificationHistoryWithProfileVerificationMessage(ProfileVerificationMessage verificationMessage,
+                                                                            SaveProfileVerificationMessageRequest request) {
+    if (Objects.nonNull(verificationMessage)) {
+      ProfileVerificationHistory history = new ProfileVerificationHistory();
+      history.setProfileVerificationStatus(request.getVerificationStatus());
+      history.setMember(request.getMember());
+      history.setMessage(verificationMessage.getMessage());
+      getVerificationHistoryService().saveVerificationHistory(history);
+      sendProfilePreVerificationMessage(request.getEmailAddress(), verificationMessage);
+    }
+  }
+
+  default void sendProfilePreVerificationMessage(String emailAddress, ProfileVerificationMessage verificationMessage) {
+    EmailDetails emailDetails = EmailDetails.builder()
+            .from(EmailMessageSource.BASE.getValue())
+            .to(emailAddress)
+            .subject(verificationMessage.getTitle())
+            .htmlText(verificationMessage.getHtmlMessage())
+            .plainText(verificationMessage.getPlainText())
+            .build();
+    sendAVerificationEmail(emailDetails);
+  }
+
+  /**
+   * <p>Send a message to the user's email address that inform them about the current stage, the state of their profile verification or status.</p>
+   * <br/>
+   *
+   * @param details contains the message either in HTML or plain text and the recipient to send the message to
+   */
+  private void sendAVerificationEmail(EmailDetails details) {
+    getEmailService().sendHtmlMessage(details);
+  }
+
   default String getRandomSixDigitOtp() {
     return String.valueOf(ThreadLocalRandom.current().nextInt(100000, 1000000));
   }
@@ -148,4 +193,9 @@ public interface CommonAuthService {
   EmailServiceImpl getEmailService();
 
   CacheService getCacheService();
+
+  ProfileVerificationMessageService getProfileVerificationMessageService();
+
+  VerificationHistoryService getVerificationHistoryService();
+
 }
