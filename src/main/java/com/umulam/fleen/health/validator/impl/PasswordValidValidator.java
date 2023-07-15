@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -22,15 +23,18 @@ public class PasswordValidValidator implements ConstraintValidator<PasswordValid
   }
 
   public boolean validatePassword(String password) {
-    PasswordValidator validator = new PasswordValidator(null, Arrays.asList(
-      new LengthRule(8, 24),
-      new CharacterRule(EnglishCharacterData.UpperCase, 1),
-      new CharacterRule(EnglishCharacterData.LowerCase, 1),
-      new CharacterRule(EnglishCharacterData.Digit, 1),
-      new CharacterRule(EnglishCharacterData.Special, 1),
-      new WhitespaceRule()));
+    if (Objects.nonNull(password)) {
+      PasswordValidator validator = new PasswordValidator(null, Arrays.asList(
+              new LengthRule(8, 24),
+              new CharacterRule(EnglishCharacterData.UpperCase, 1),
+              new CharacterRule(EnglishCharacterData.LowerCase, 1),
+              new CharacterRule(EnglishCharacterData.Digit, 1),
+              new CharacterRule(EnglishCharacterData.Special, 1),
+              new WhitespaceRule()));
 
-    RuleResult result = validator.validate(new PasswordData(password));
-    return result.isValid();
+      RuleResult result = validator.validate(new PasswordData(password));
+      return result.isValid();
+    }
+    return false;
   }
 }
