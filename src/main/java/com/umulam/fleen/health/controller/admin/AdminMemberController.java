@@ -31,6 +31,6 @@ public class AdminMemberController {
 
   @GetMapping(value = "/update-role/{id}")
   public void updateMemberRole(@PathVariable(name = "id") Integer memberId) {
-    
+
   }
 }
