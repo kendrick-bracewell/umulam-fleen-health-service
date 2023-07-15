@@ -152,7 +152,8 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
               .emailAddress(member.getEmailAddress())
               .build();
 
-      saveProfileVerificationHistoryWithProfileVerificationMessage(verificationMessage, verificationMessageRequest);
+      saveProfileVerificationHistory(verificationMessage, verificationMessageRequest);
+      sendProfilePreVerificationMessage(member.getEmailAddress(), verificationMessage);
     }
   }
 

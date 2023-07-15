@@ -155,34 +155,35 @@ public interface CommonAuthAndVerificationService {
   }
 
   @Transactional
-  default void saveProfileVerificationMessage(SaveProfileVerificationMessageRequest request) {
+  default void saveProfileVerificationHistory(SaveProfileVerificationMessageRequest request) {
     ProfileVerificationMessage verificationMessage = getProfileVerificationMessageService()
             .getProfileVerificationMessageByType(request.getVerificationMessageType());
-    saveProfileVerificationHistoryWithProfileVerificationMessage(verificationMessage, request);
+    saveProfileVerificationHistory(verificationMessage, request);
   }
 
   @Transactional
-  default void saveProfileVerificationHistoryWithProfileVerificationMessage(ProfileVerificationMessage verificationMessage,
-                                                                            SaveProfileVerificationMessageRequest request) {
-    if (Objects.nonNull(verificationMessage)) {
+  default void saveProfileVerificationHistory(ProfileVerificationMessage verificationMessage,
+                                              SaveProfileVerificationMessageRequest request) {
+    if (nonNull(verificationMessage)) {
       ProfileVerificationHistory history = new ProfileVerificationHistory();
       history.setProfileVerificationStatus(request.getVerificationStatus());
       history.setMember(request.getMember());
       history.setMessage(verificationMessage.getMessage());
       getVerificationHistoryService().saveVerificationHistory(history);
-      sendProfilePreVerificationMessage(request.getEmailAddress(), verificationMessage);
     }
   }
 
   default void sendProfilePreVerificationMessage(String emailAddress, ProfileVerificationMessage verificationMessage) {
-    EmailDetails emailDetails = EmailDetails.builder()
-            .from(EmailMessageSource.BASE.getValue())
-            .to(emailAddress)
-            .subject(verificationMessage.getTitle())
-            .htmlText(verificationMessage.getHtmlMessage())
-            .plainText(verificationMessage.getPlainText())
-            .build();
-    sendAVerificationEmail(emailDetails);
+    if (nonNull(verificationMessage)) {
+      EmailDetails emailDetails = EmailDetails.builder()
+              .from(EmailMessageSource.BASE.getValue())
+              .to(emailAddress)
+              .subject(verificationMessage.getTitle())
+              .htmlText(verificationMessage.getHtmlMessage())
+              .plainText(verificationMessage.getPlainText())
+              .build();
+      sendAVerificationEmail(emailDetails);
+    }
   }
 
   /**
@@ -199,20 +200,17 @@ public interface CommonAuthAndVerificationService {
     return String.valueOf(ThreadLocalRandom.current().nextInt(100000, 1000000));
   }
 
+  @Transactional
   default void createProfileVerificationMessageNewPendingRegistration(Member member) {
     ProfileVerificationStatus verificationStatus = ProfileVerificationStatus.PENDING;
-    ProfileVerificationMessage verificationMessage = getProfileVerificationMessageService().getProfileVerificationMessageByType(ProfileVerificationMessageType.PENDING);
-    if (nonNull(verificationMessage)) {
       SaveProfileVerificationMessageRequest verificationMessageRequest = SaveProfileVerificationMessageRequest
               .builder()
-              .verificationMessageType(verificationMessage.getVerificationMessageType())
+              .verificationMessageType(ProfileVerificationMessageType.PENDING)
               .verificationStatus(verificationStatus)
               .member(member)
               .emailAddress(member.getEmailAddress())
               .build();
-
-      saveProfileVerificationMessage(verificationMessageRequest);
-    }
+    saveProfileVerificationHistory(verificationMessageRequest);
   }
 
   MobileTextService getMobileTextService();

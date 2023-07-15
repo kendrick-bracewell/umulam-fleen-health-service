@@ -316,6 +316,8 @@ public class AuthenticationServiceImpl implements
     sendVerificationMessage(request, verificationType);
     savePreVerificationOtp(user.getUsername(), otp);
 
+    createProfileVerificationMessageNewPendingRegistration(member);
+
     saveToken(user.getUsername(), accessToken);
     saveRefreshToken(user.getUsername(), refreshToken);
     return SignUpResponse.builder()
@@ -386,12 +388,8 @@ public class AuthenticationServiceImpl implements
               .emailAddress(member.getEmailAddress())
               .build();
 
-      saveProfileVerificationMessage(verificationMessageRequest);
-    }
-
-    if (ProfileType.BUSINESS == member.getUserType() ||
-        ProfileType.PROFESSIONAL == member.getUserType()) {
-      createProfileVerificationMessageNewPendingRegistration(member);
+      saveProfileVerificationHistory(verificationMessage, verificationMessageRequest);
+      sendProfilePreVerificationMessage(member.getEmailAddress(), verificationMessage);
     }
 
     Set<Role> roles = new HashSet<>();
@@ -982,6 +980,24 @@ public class AuthenticationServiceImpl implements
     String accessToken = createAccessToken(user);
     String refreshToken = createRefreshToken(user);
 
+    SaveProfileVerificationMessageRequest verificationMessageRequest = SaveProfileVerificationMessageRequest.builder()
+            .member(member)
+            .emailAddress(member.getEmailAddress())
+            .build();
+
+    ProfileVerificationMessage verificationMessage = request.getVerificationMessage();
+    if (nonNull(verificationMessage)) {
+      sendProfilePreVerificationMessage(member.getEmailAddress(), verificationMessage);
+
+      if (member.getUserType() == ProfileType.USER) {
+        verificationMessageRequest.setVerificationStatus(request.getProfileVerificationStatus());
+        saveProfileVerificationHistory(request.getVerificationMessage(), verificationMessageRequest);
+
+        ProfileVerificationMessage approvedVerificationMessage = profileVerificationMessageService.getProfileVerificationMessageByType(ProfileVerificationMessageType.APPROVED);
+        sendProfilePreVerificationMessage(member.getEmailAddress(), approvedVerificationMessage);
+      }
+    }
+
     setContext(authenticationToken);
     saveToken(user.getUsername(), accessToken);
     saveRefreshToken(user.getUsername(), refreshToken);
@@ -1093,7 +1109,6 @@ public class AuthenticationServiceImpl implements
       case USER:
         request.setRole(roleService.getRoleByCode(USER.name()));
         request.setProfileVerificationStatus(ProfileVerificationStatus.APPROVED);
-        request.setVerificationMessage(profileVerificationMessageService.getProfileVerificationMessageByType(ProfileVerificationMessageType.SIGNUP_COMPLETE));
         member.setVerificationStatus(request.getProfileVerificationStatus());
         break;
 
@@ -1105,6 +1120,7 @@ public class AuthenticationServiceImpl implements
         request.setRole(roleService.getRoleByCode(PRE_APPROVED_BUSINESS.name()));
         break;
     }
+    request.setVerificationMessage(profileVerificationMessageService.getProfileVerificationMessageByType(ProfileVerificationMessageType.SIGNUP_COMPLETE));
     return request;
   }
 
