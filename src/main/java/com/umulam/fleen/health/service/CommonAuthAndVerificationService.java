@@ -182,6 +182,9 @@ public interface CommonAuthAndVerificationService {
 
       ProfileVerificationMessage approvedVerificationMessage = getProfileVerificationMessageService().getProfileVerificationMessageByType(ProfileVerificationMessageType.APPROVED);
       sendProfileVerificationMessage(member.getEmailAddress(), approvedVerificationMessage);
+    } else {
+      ProfileVerificationMessage pendingVerificationMessage = getProfileVerificationMessageService().getProfileVerificationMessageByType(ProfileVerificationMessageType.PENDING);
+      sendProfileVerificationMessage(member.getEmailAddress(), pendingVerificationMessage);
     }
   }
 
@@ -215,13 +218,13 @@ public interface CommonAuthAndVerificationService {
   @Transactional
   default void createProfileVerificationMessageNewPendingRegistration(Member member) {
     ProfileVerificationStatus verificationStatus = ProfileVerificationStatus.PENDING;
-      SaveProfileVerificationMessageRequest verificationMessageRequest = SaveProfileVerificationMessageRequest
-              .builder()
-              .verificationMessageType(ProfileVerificationMessageType.PENDING)
-              .verificationStatus(verificationStatus)
-              .member(member)
-              .emailAddress(member.getEmailAddress())
-              .build();
+    SaveProfileVerificationMessageRequest verificationMessageRequest = SaveProfileVerificationMessageRequest
+            .builder()
+            .verificationMessageType(ProfileVerificationMessageType.PENDING)
+            .verificationStatus(verificationStatus)
+            .member(member)
+            .emailAddress(member.getEmailAddress())
+            .build();
     saveProfileVerificationHistory(verificationMessageRequest);
   }
 

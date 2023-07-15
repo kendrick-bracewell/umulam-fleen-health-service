@@ -378,17 +378,14 @@ public class AuthenticationServiceImpl implements
     CompleteUserSignUpRequest request = createCompleteUserSignUpRequest(member);
     Role role = request.getRole();
     ProfileVerificationMessage verificationMessage = request.getVerificationMessage();
-    ProfileVerificationStatus profileVerificationStatus = request.getProfileVerificationStatus();
 
-    if (nonNull(verificationMessage)) {
-      SaveProfileVerificationMessageRequest verificationMessageRequest = SaveProfileVerificationMessageRequest.builder()
-              .verificationMessageType(verificationMessage.getVerificationMessageType())
-              .verificationStatus(profileVerificationStatus)
-              .member(member)
-              .emailAddress(member.getEmailAddress())
-              .build();
-      completeAndApproveUserSignUp(member, verificationMessageRequest, verificationMessage);
-    }
+    SaveProfileVerificationMessageRequest verificationMessageRequest = SaveProfileVerificationMessageRequest.builder()
+            .member(member)
+            .emailAddress(member.getEmailAddress())
+            .build();
+
+    sendProfileVerificationMessage(member.getEmailAddress(), verificationMessage);
+    completeAndApproveUserSignUp(member, verificationMessageRequest, verificationMessage);
 
     Set<Role> roles = new HashSet<>();
     roles.add(role);
