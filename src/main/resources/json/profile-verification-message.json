@@ -1,5 +1,33 @@
 [
   {
+    "title": "Profile Verification Pending",
+    "verificationMessageType": "PENDING",
+    "message": "Your account or profile status is pending. You may be required to complete some verification before it can be approved.",
+    "htmlMessage": "<p>Your account or profile status is pending. You may be required to complete some verification before it can be approved</p>",
+    "plainText": "Your account or profile status is pending. You may be required to complete some verification before it can be approved"
+  },
+  {
+    "title": "Profile Verification In Progress",
+    "verificationMessageType": "IN_PROGRESS",
+    "message": "Your account or profile verification is in progress. Processing can take 3 working days or more before getting a response. Thank you.",
+    "htmlMessage": "<p>Your account or profile verification is in progress. Processing can take 3 working days or more before getting a response. Thank you.</p>",
+    "plainText": "Your account or profile verification is in progress. Processing can take 3 working days or more before getting a response. Thank you."
+  },
+  {
+    "title": "Profile Verification Disapproved",
+    "verificationMessageType": "DISAPPROVED",
+    "message": "Your account or profile verification has been disapproved. Please kindly understand the reasons why it was disapproved and resubmit.",
+    "htmlMessage": "<p>Your account or profile verification has been disapproved. Please kindly understand the reasons why it was disapproved and resubmit.</p>",
+    "plainText": "Your account or profile verification has been disapproved. Please kindly understand the reasons why it was disapproved and resubmit."
+  },
+  {
+    "title": "Profile Verification Approved",
+    "verificationMessageType": "APPROVED",
+    "message": "Congratulations!!! Your account or profile verification has been approved. Please kindly understand the reasons why it was disapproved and resubmit.",
+    "htmlMessage": "<p>Congratulations!!! Your account or profile verification has been approved. Please kindly understand the reasons why it was disapproved and resubmit.</p>",
+    "plainText": "Congratulations!!! Your account or profile verification has been approved. Please kindly understand the reasons why it was disapproved and resubmit."
+  },
+  {
     "title": "Sign Up Complete",
     "verificationMessageType": "SIGNUP_COMPLETE",
     "message": "Congratulations!!! Your sign up is complete. You can now sign in to use the application.",
