@@ -40,7 +40,7 @@ public class AdminMemberController {
 
   @GetMapping(value = "/entries/pre-onboarded")
   public SearchResultView findPreOnboardedMembers(@SearchParam MemberSearchRequest request) {
-    return service.findMembers(request);
+    return service.findPreOnboardedMembers(request);
   }
 
   @GetMapping(value = "/detail/{id}")
