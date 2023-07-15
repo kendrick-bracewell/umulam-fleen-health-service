@@ -80,7 +80,7 @@ public class VerificationController {
     return new FleenHealthResponse(PASSWORD_CHANGED_UPDATED);
   }
 
-  @PostMapping(value = "/reset-change-password")
+  @PostMapping(value = "/complete-onboarding")
   @PreAuthorize("hasRole('PRE_ONBOARDED')")
   public SignInResponse completeOnboarding(@AuthenticationPrincipal FleenUser user,
                                                     @Valid @RequestBody ChangePasswordDto dto) {
