@@ -17,6 +17,10 @@ public class PasswordGenerator {
   private static final String NUMBERS = "0123456789";
   private static final String SPECIAL_CHARACTERS = "!@#$%^&*()-_=+[]{};:,.<>/?";
 
+  public String generatePassword() {
+    return generatePassword(10);
+  }
+
   public String generatePassword(int length) {
     if (length < 8) {
       length = 8;

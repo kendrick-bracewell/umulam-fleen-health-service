@@ -19,8 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.MEMBER_ROLE_UPDATED;
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.MEMBER_STATUS_UPDATED;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.*;
 
 @Slf4j
 @RestController
@@ -40,13 +39,14 @@ public class AdminMemberController {
   }
 
   @GetMapping(value = "/detail/{id}")
-  public MemberView findMemberDetail(@PathVariable(name = "id") Integer professionalId) {
-    return service.findMemberById(professionalId);
+  public MemberView findMemberDetail(@PathVariable(name = "id") Integer memberId) {
+    return service.findMemberById(memberId);
   }
 
   @PostMapping(value = "/create")
-  public void createMember(CreateMemberDto dto) {
-
+  public FleenHealthResponse createMember(@Valid @RequestBody CreateMemberDto dto) {
+    service.createMember(dto);
+    return new FleenHealthResponse(MEMBER_CREATED);
   }
 
   @PutMapping(value = "/update/{id}")

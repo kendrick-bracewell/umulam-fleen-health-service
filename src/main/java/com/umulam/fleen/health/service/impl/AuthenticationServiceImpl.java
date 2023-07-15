@@ -192,7 +192,6 @@ public class AuthenticationServiceImpl implements
             .nextAuthentication(NextAuthentication.NONE)
             .mfaEnabled(false)
             .build();
-
     RoleType roleType = RoleType.valueOf(role.getCode());
 
     if (MemberStatusType.INACTIVE.name().equals(user.getStatus())

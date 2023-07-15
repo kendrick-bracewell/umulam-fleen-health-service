@@ -102,7 +102,7 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
     }
 
     ProfileType userType = ProfileType.valueOf(dto.getProfileType());
-    String newPassword = passwordGenerator.generatePassword(0);
+    String newPassword = passwordGenerator.generatePassword();
     Member member = dto.toMember();
     initNewUserDetails(member, List.of(role));
 

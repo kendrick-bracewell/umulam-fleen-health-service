@@ -28,5 +28,6 @@ public class FleenHealthConstant {
   public static final String AVAILABILITY_STATUS_UPDATED = "Availability Status Updated";
   public static final String MEMBER_STATUS_UPDATED = "Member Status Updated";
   public static final String MEMBER_ROLE_UPDATED = "Member Role Updated";
+  public static final String MEMBER_CREATED = "Member created successfully";
 
 }
