@@ -81,4 +81,10 @@ public class AdminMemberController {
     service.updateMemberRole(dto, memberId);
     return new FleenHealthResponse(MEMBER_ROLE_UPDATED);
   }
+
+  @PutMapping(value = "/resend-onboarding-details/{id}")
+  public FleenHealthResponse resendOnboardingDetails(@PathVariable(name = "id") Integer memberId) {
+    service.resendOnboardingDetails(memberId);
+    return new FleenHealthResponse(RESEND_ONBOARDING_DETAILS);
+  }
 }

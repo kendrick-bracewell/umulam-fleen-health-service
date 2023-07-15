@@ -305,7 +305,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
     member.setDateOfBirth(toLocalDateTime(dto.getDateOfBirth()));
   }
 
-  private Member getMember(String emailAddress) {
+  protected Member getMember(String emailAddress) {
     Member member = getMemberByEmailAddress(emailAddress);
     if (Objects.isNull(member)) {
       throw new UserNotFoundException(emailAddress);
@@ -487,7 +487,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
     return request;
   }
 
-  private Member getMember(Integer memberId) {
+  protected Member getMember(Integer memberId) {
     Optional<Member> memberExists = repository.findById(memberId);
 
     if (memberExists.isEmpty()) {

@@ -30,4 +30,6 @@ public class FleenHealthConstant {
   public static final String MEMBER_ROLE_UPDATED = "Member Role Updated";
   public static final String MEMBER_CREATED = "Member created successfully";
 
+  public static final String RESEND_ONBOARDING_DETAILS = "Onboarding details resent";
+
 }

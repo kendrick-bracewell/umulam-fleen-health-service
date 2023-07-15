@@ -118,11 +118,24 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
     member.setDateOfBirth(getDefaultDateOfBirth());
     member.setPassword(createEncodedPassword(newPassword));
     member.setUserType(userType);
+    sendOnboardingDetails(member, newPassword);
+    save(member);
+  }
 
+  @Override
+  @Transactional
+  public void resendOnboardingDetails(Integer memberId) {
+    Member member = getMember(memberId);
+    String newPassword = passwordGenerator.generatePassword();
+    member.setPassword(createEncodedPassword(newPassword));
+    sendOnboardingDetails(member, newPassword);
+    save(member);
+  }
+
+  private void sendOnboardingDetails(Member member, String newPassword) {
     FleenUser user = FleenUser.fromMemberBasic(member);
     PreVerificationOrAuthenticationRequest request = createPreOnboardingRequest(newPassword, user);
     sendVerificationMessage(request, VerificationType.EMAIL);
-    save(member);
   }
 
   private PreVerificationOrAuthenticationRequest createPreOnboardingRequest(String code, FleenUser user) {

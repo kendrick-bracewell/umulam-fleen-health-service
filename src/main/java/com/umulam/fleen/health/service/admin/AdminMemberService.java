@@ -15,4 +15,7 @@ public interface AdminMemberService extends MemberService {
 
   @Transactional
   void createMember(CreateMemberDto dto);
+
+  @Transactional
+  void resendOnboardingDetails(Integer memberId);
 }
