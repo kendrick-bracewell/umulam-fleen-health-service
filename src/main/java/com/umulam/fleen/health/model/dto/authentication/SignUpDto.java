@@ -73,7 +73,6 @@ public class SignUpDto {
 
   @NotNull(message = "{signup.dateOfBirth.notEmpty}")
   @DateOfBirth(message = "{signup.dateOfBirth.invalid}")
-  @Past(message = "{signup.dateOfBirth.past}")
   @JsonProperty("date_of_birth")
   private String dateOfBirth;
 

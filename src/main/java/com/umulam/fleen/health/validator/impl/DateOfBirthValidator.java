@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Objects;
@@ -26,7 +27,8 @@ public class DateOfBirthValidator implements ConstraintValidator<DateOfBirth, St
       try {
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATE);
          dtf.parse(date);
-        return true;
+        LocalDate setDate = LocalDate.parse(date, dtf);
+        return setDate.getYear() < LocalDate.now().getYear();
       } catch (DateTimeParseException ex) {
         log.error(ex.getMessage(), ex);
       }
