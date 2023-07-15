@@ -387,9 +387,7 @@ public class AuthenticationServiceImpl implements
               .member(member)
               .emailAddress(member.getEmailAddress())
               .build();
-
-      saveProfileVerificationHistory(verificationMessage, verificationMessageRequest);
-      sendProfilePreVerificationMessage(member.getEmailAddress(), verificationMessage);
+      completeAndApproveUserSignUp(member, verificationMessageRequest, verificationMessage);
     }
 
     Set<Role> roles = new HashSet<>();
@@ -986,17 +984,8 @@ public class AuthenticationServiceImpl implements
             .build();
 
     ProfileVerificationMessage verificationMessage = request.getVerificationMessage();
-    if (nonNull(verificationMessage)) {
-      sendProfilePreVerificationMessage(member.getEmailAddress(), verificationMessage);
-
-      if (member.getUserType() == ProfileType.USER) {
-        verificationMessageRequest.setVerificationStatus(request.getProfileVerificationStatus());
-        saveProfileVerificationHistory(request.getVerificationMessage(), verificationMessageRequest);
-
-        ProfileVerificationMessage approvedVerificationMessage = profileVerificationMessageService.getProfileVerificationMessageByType(ProfileVerificationMessageType.APPROVED);
-        sendProfilePreVerificationMessage(member.getEmailAddress(), approvedVerificationMessage);
-      }
-    }
+    sendProfileVerificationMessage(member.getEmailAddress(), verificationMessage);
+    completeAndApproveUserSignUp(member, verificationMessageRequest, verificationMessage);
 
     setContext(authenticationToken);
     saveToken(user.getUsername(), accessToken);

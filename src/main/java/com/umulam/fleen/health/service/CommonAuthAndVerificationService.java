@@ -4,6 +4,7 @@ import com.umulam.fleen.health.constant.EmailMessageSource;
 import com.umulam.fleen.health.constant.MemberStatusType;
 import com.umulam.fleen.health.constant.VerificationMessageType;
 import com.umulam.fleen.health.constant.authentication.VerificationType;
+import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.authentication.ExpiredVerificationCodeException;
@@ -173,7 +174,18 @@ public interface CommonAuthAndVerificationService {
     }
   }
 
-  default void sendProfilePreVerificationMessage(String emailAddress, ProfileVerificationMessage verificationMessage) {
+  @Transactional
+  default void completeAndApproveUserSignUp(Member member, SaveProfileVerificationMessageRequest verificationMessageRequest, ProfileVerificationMessage verificationMessage) {
+    if (member.getUserType() == ProfileType.USER) {
+      verificationMessageRequest.setVerificationStatus(member.getVerificationStatus());
+      saveProfileVerificationHistory(verificationMessage, verificationMessageRequest);
+
+      ProfileVerificationMessage approvedVerificationMessage = getProfileVerificationMessageService().getProfileVerificationMessageByType(ProfileVerificationMessageType.APPROVED);
+      sendProfileVerificationMessage(member.getEmailAddress(), approvedVerificationMessage);
+    }
+  }
+
+  default void sendProfileVerificationMessage(String emailAddress, ProfileVerificationMessage verificationMessage) {
     if (nonNull(verificationMessage)) {
       EmailDetails emailDetails = EmailDetails.builder()
               .from(EmailMessageSource.BASE.getValue())

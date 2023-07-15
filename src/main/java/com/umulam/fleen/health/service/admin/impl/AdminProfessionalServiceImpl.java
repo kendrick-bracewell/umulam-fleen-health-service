@@ -153,7 +153,7 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
               .build();
 
       saveProfileVerificationHistory(verificationMessage, verificationMessageRequest);
-      sendProfilePreVerificationMessage(member.getEmailAddress(), verificationMessage);
+      sendProfileVerificationMessage(member.getEmailAddress(), verificationMessage);
     }
   }
 
