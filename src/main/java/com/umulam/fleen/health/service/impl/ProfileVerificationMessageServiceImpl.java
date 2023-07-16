@@ -1,7 +1,5 @@
 package com.umulam.fleen.health.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
 import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessages;
@@ -25,15 +23,12 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
 
   private final CacheService cacheService;
   private final ProfileVerificationMessageRepository repository;
-  private final ObjectMapper mapper;
 
   public ProfileVerificationMessageServiceImpl(
           CacheService cacheService,
-          ProfileVerificationMessageRepository repository,
-          ObjectMapper mapper) {
+          ProfileVerificationMessageRepository repository) {
     this.cacheService = cacheService;
     this.repository = repository;
-    this.mapper = mapper;
   }
 
   @Override
