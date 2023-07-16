@@ -75,7 +75,7 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
     } else if (nonNull(req.getVerificationMessageType())) {
       page = repository.findByVerificationMessageType(req.getVerificationMessageType(), req.getPage());
     } else {
-      page = repository.findAll(req.getPage());
+      page = repository.findAllBasic(req.getPage());
     }
 
     List<ProfileVerificationMessageView> views = ProfileVerificationMessageMapper.toProfileVerificationMessageViews(page.getContent());

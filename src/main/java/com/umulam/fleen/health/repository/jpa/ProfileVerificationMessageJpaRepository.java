@@ -33,4 +33,7 @@ public interface ProfileVerificationMessageJpaRepository extends JpaRepository<P
 
   @Query(value = "SELECT m.id, m.title, m.verificationMessageType, m.createdOn, m.updatedOn FROM ProfileVerificationMessage m WHERE m.verificationMessageType = :messageType")
   Page<ProfileVerificationMessage> findByVerificationMessageType(@Param("messageType") ProfileVerificationMessageType verificationMessageType, Pageable pageable);
+
+  @Query(value = "SELECT m.id, m.title, m.verificationMessageType, m.createdOn, m.updatedOn FROM ProfileVerificationMessage m")
+  Page<ProfileVerificationMessage> findAllBasic(Pageable pageable);
 }
