@@ -125,9 +125,10 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
     }
 
     Professional existingProfessional = professionalExists.get();
-    professional.setCountry(professional.getCountry());
+    professional.setId(existingProfessional.getId());
+    professional.setMember(existingProfessional.getMember());
 
-    Professional savedProfessional = repository.save(existingProfessional);
+    Professional savedProfessional = repository.save(professional);
     return toProfessionalView(savedProfessional);
   }
 
