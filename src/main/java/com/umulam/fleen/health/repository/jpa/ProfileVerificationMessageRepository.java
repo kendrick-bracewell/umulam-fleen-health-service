@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface ProfileVerificationMessageRepository extends JpaRepository<ProfileVerificationMessage, Integer> {
 
-  @Query("SELECT m FROM ProfileVerificationMessage m WHERE m.type = :type LIMIT 1")
+  @Query("SELECT m FROM ProfileVerificationMessage m WHERE m.verificationMessageType = :type LIMIT 1")
   Optional<ProfileVerificationMessage> findByVerificationMessageType(@Param("type") ProfileVerificationMessageType messageType);
 
   boolean existsById(Integer id);
