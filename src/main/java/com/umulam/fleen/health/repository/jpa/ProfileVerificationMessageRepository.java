@@ -18,8 +18,8 @@ public interface ProfileVerificationMessageRepository extends JpaRepository<Prof
 
   boolean existsById(Integer id);
 
-  @Query(value ="SELECT title from profile_verification_message", nativeQuery = true)
-  List<GetProfileVerificationMessages> getTitles();
+  @Query(value ="SELECT id, title from profile_verification_message", nativeQuery = true)
+  List<GetProfileVerificationMessages> getBasicDetails();
 
   @Query(value ="SELECT id from profile_verification_message WHERE id = :id", nativeQuery = true)
   GetProfileVerificationMessageId getId(@Param("id") Integer id);

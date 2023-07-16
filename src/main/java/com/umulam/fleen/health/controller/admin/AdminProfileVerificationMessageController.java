@@ -27,7 +27,7 @@ public class AdminProfileVerificationMessageController {
   
   @GetMapping(value = "/titles")
   public List<GetProfileVerificationMessages> getProfileVerificationMessageTitles() {
-    return service.getTitles();
+    return service.getBasicDetails();
   }
 
   @PostMapping(value = "/save")

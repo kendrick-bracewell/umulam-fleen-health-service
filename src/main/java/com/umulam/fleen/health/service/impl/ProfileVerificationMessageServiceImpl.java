@@ -88,8 +88,8 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
   }
 
   @Override
-  public List<GetProfileVerificationMessages> getTitles() {
-    return repository.getTitles();
+  public List<GetProfileVerificationMessages> getBasicDetails() {
+    return repository.getBasicDetails();
   }
 
   @Override

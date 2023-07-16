@@ -18,7 +18,7 @@ public interface ProfileVerificationMessageService {
 
   ProfileVerificationMessage getProfileVerificationMessageFromCache(Integer messageId);
 
-  List<GetProfileVerificationMessages> getTitles();
+  List<GetProfileVerificationMessages> getBasicDetails();
 
   ProfileVerificationMessage saveProfileVerificationMessage(ProfileVerificationMessageDto dto);
 
