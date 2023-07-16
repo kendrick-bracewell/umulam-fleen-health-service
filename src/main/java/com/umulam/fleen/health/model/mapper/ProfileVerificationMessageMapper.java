@@ -20,6 +20,7 @@ public class ProfileVerificationMessageMapper {
               .message(entry.getMessage())
               .htmlMessage(entry.getHtmlMessage())
               .plainText(entry.getPlainText())
+              .verificationMessageType(entry.getVerificationMessageType().name())
               .createdOn(entry.getCreatedOn())
               .updatedOn(entry.getUpdatedOn())
               .build();
