@@ -4,7 +4,7 @@ import com.umulam.fleen.health.model.dto.admin.CreateMemberDto;
 import com.umulam.fleen.health.model.dto.member.UpdateMemberDetailsDto;
 import com.umulam.fleen.health.model.dto.member.UpdateMemberStatusDto;
 import com.umulam.fleen.health.model.dto.role.UpdateMemberRoleDto;
-import com.umulam.fleen.health.model.request.MemberSearchRequest;
+import com.umulam.fleen.health.model.request.search.MemberSearchRequest;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.response.member.UpdateMemberDetailsResponse;
 import com.umulam.fleen.health.model.view.MemberView;

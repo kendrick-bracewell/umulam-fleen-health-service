@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.model.request;
+package com.umulam.fleen.health.model.request.search;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;

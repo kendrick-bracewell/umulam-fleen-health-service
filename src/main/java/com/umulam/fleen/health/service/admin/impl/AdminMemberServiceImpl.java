@@ -12,7 +12,7 @@ import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Role;
 import com.umulam.fleen.health.model.dto.admin.CreateMemberDto;
 import com.umulam.fleen.health.model.mapper.MemberMapper;
-import com.umulam.fleen.health.model.request.MemberSearchRequest;
+import com.umulam.fleen.health.model.request.search.MemberSearchRequest;
 import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.MemberView;
