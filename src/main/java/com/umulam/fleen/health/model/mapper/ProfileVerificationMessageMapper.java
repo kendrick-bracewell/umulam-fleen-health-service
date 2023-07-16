@@ -28,14 +28,4 @@ public class ProfileVerificationMessageMapper {
     return null;
   }
 
-  public static List<ProfileVerificationMessageView> toProfileVerificationMessageViews(List<ProfileVerificationMessage> entries) {
-    if (entries != null && !entries.isEmpty()) {
-      return entries
-              .stream()
-              .filter(Objects::nonNull)
-              .map(ProfileVerificationMessageMapper::toProfileVerificationMessageView)
-              .collect(Collectors.toList());
-    }
-    return Collections.emptyList();
-  }
 }
