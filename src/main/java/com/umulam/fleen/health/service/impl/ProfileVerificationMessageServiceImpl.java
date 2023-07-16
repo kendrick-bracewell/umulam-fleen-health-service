@@ -2,16 +2,24 @@ package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import com.umulam.fleen.health.exception.profileverificationmessage.ProfileVerificationMessageNotFoundException;
+import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
 import com.umulam.fleen.health.model.dto.profileverificationmessage.ProfileVerificationMessageDto;
+import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
+import com.umulam.fleen.health.model.mapper.ProfileVerificationMessageMapper;
+import com.umulam.fleen.health.model.request.search.ProfileVerificationMessageSearchRequest;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
 import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessageId;
 import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessages;
+import com.umulam.fleen.health.model.view.ProfessionalView;
+import com.umulam.fleen.health.model.view.ProfileVerificationMessageView;
+import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.ProfileVerificationMessageJpaRepository;
 import com.umulam.fleen.health.service.ProfileVerificationMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.domain.Page;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,9 +27,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.PROFILE_VERIFICATION_MESSAGE_TEMPLATE_CACHE_PREFIX;
+import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
+import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Service
@@ -42,6 +54,32 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
     return repository
             .findByVerificationMessageType(messageType)
             .orElse(null);
+  }
+
+  @Override
+  public ProfileVerificationMessageView getById(Integer profileVerificationMessageId) {
+    Optional<ProfileVerificationMessage> messageExists = repository.findById(profileVerificationMessageId);
+    if (messageExists.isEmpty()) {
+      throw new ProfileVerificationMessageNotFoundException(profileVerificationMessageId);
+    }
+    return ProfileVerificationMessageMapper.toProfileVerificationMessageView(messageExists.get());
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public SearchResultView findProfileVerificationMessages(ProfileVerificationMessageSearchRequest req) {
+    Page<ProfileVerificationMessage> page;
+
+    if (areNotEmpty(req.getStartDate(), req.getEndDate())) {
+      page = repository.findByDateBetween(req.getStartDate().atStartOfDay(), req.getEndDate().atStartOfDay(), req.getPage());
+    } else if (nonNull(req.getVerificationMessageType())) {
+      page = repository.findByVerificationMessageType(req.getVerificationMessageType(), req.getPage());
+    } else {
+      page = repository.findAll(req.getPage());
+    }
+
+    List<ProfileVerificationMessageView> views = ProfileVerificationMessageMapper.toProfileVerificationMessageViews(page.getContent());
+    return toSearchResult(views, page);
   }
 
   @Override

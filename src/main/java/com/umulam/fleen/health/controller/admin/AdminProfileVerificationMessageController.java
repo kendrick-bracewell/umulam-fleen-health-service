@@ -1,10 +1,14 @@
 package com.umulam.fleen.health.controller.admin;
 
 import com.umulam.fleen.health.model.dto.profileverificationmessage.ProfileVerificationMessageDto;
+import com.umulam.fleen.health.model.request.search.ProfileVerificationMessageSearchRequest;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
 import com.umulam.fleen.health.model.response.other.DeleteResponse;
 import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessages;
+import com.umulam.fleen.health.model.view.ProfileVerificationMessageView;
+import com.umulam.fleen.health.model.view.SearchResultView;
+import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.ProfileVerificationMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +27,16 @@ public class AdminProfileVerificationMessageController {
   
   public AdminProfileVerificationMessageController(ProfileVerificationMessageService service) {
     this.service = service;
+  }
+
+  @GetMapping(value = "/entries")
+  public SearchResultView findProfileVerificationMessages(@SearchParam ProfileVerificationMessageSearchRequest searchRequest) {
+    return service.findProfileVerificationMessages(searchRequest);
+  }
+
+  @GetMapping(value = "/detail/{id}")
+  public ProfileVerificationMessageView getById(@PathVariable(name = "id") Integer profileVerificationMessageId) {
+    return service.getById(profileVerificationMessageId);
   }
   
   @GetMapping(value = "/titles")

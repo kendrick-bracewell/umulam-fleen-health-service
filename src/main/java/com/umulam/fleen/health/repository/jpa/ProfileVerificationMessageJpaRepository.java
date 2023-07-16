@@ -28,6 +28,9 @@ public interface ProfileVerificationMessageJpaRepository extends JpaRepository<P
   @Query(value ="SELECT id from profile_verification_message WHERE id = :id", nativeQuery = true)
   GetProfileVerificationMessageId getId(@Param("id") Integer id);
 
-  @Query(value = "SELECT m FROM ProfileVerificationMessage m WHERE m.createdOn BETWEEN :startDate AND :endDate")
-  Page<Professional> findByDateBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
+  @Query(value = "SELECT m.id, m.title, m.verificationMessageType, m.createdOn, m.updatedOn FROM ProfileVerificationMessage m WHERE m.createdOn BETWEEN :startDate AND :endDate")
+  Page<ProfileVerificationMessage> findByDateBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
+
+  @Query(value = "SELECT m.id, m.title, m.verificationMessageType, m.createdOn, m.updatedOn FROM ProfileVerificationMessage m WHERE m.verificationMessageType = :messageType")
+  Page<ProfileVerificationMessage> findByVerificationMessageType(@Param("messageType") ProfileVerificationMessageType verificationMessageType, Pageable pageable);
 }
