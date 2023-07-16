@@ -31,6 +31,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -153,6 +154,14 @@ public class FleenHealthExceptionHandler {
   public Object handleMissingParameter(MissingServletRequestParameterException ex) {
     log.error(ex.getMessage(), ex);
     String message = String.format(MISSING_HTTP_REQUEST_PARAMETERS, ex.getParameterName(), ex.getParameterType());
+    return buildErrorMap(message, BAD_REQUEST);
+  }
+
+  @ResponseStatus(value = BAD_REQUEST)
+  @ExceptionHandler(value = { MethodArgumentTypeMismatchException.class })
+  public Object handleMissingPathVariable(MethodArgumentTypeMismatchException ex) {
+    log.error(ex.getMessage(), ex);
+    String message = String.format(MISSING_PATH_VARIABLE, ex.getName());
     return buildErrorMap(message, BAD_REQUEST);
   }
 

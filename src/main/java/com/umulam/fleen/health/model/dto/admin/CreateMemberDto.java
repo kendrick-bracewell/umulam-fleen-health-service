@@ -24,12 +24,12 @@ import static org.springframework.util.StringUtils.capitalize;
 public class CreateMemberDto {
 
   @NotBlank(message = "{signUp.firstName.notEmpty}")
-  @Size(min = 1, max = 100, message = "{signUp.firstName.size}")
+  @Size(min = 2, max = 100, message = "{signUp.firstName.size}")
   @JsonProperty("first_name")
   private String firstName;
 
   @NotBlank(message = "{signUp.lastName.notEmpty}")
-  @Size(min = 1, max = 100, message = "{signUp.lastName.size}")
+  @Size(min = 2, max = 100, message = "{signUp.lastName.size}")
   @JsonProperty("last_name")
   private String lastName;
 

@@ -55,13 +55,13 @@ public class AdminMemberController {
   }
 
   @PutMapping(value = "/update/{id}")
-  public UpdateMemberDetailsResponse updateProfessionalDetail(
-          @PathVariable(name = "id") Integer memberId,
-          @Valid @RequestBody UpdateMemberDetailsDto dto) {
+  public UpdateMemberDetailsResponse updateMemberDetail(
+          @Valid @RequestBody UpdateMemberDetailsDto dto,
+          @PathVariable(name = "id") Integer memberId) {
     return service.updateMemberDetails(dto, memberId);
   }
 
-  @GetMapping(value = "/update-member-status/{id}")
+  @PutMapping(value = "/update-member-status/{id}")
   public FleenHealthResponse updateMemberProfileStatus(
           @Valid @RequestBody UpdateMemberStatusDto dto,
           @PathVariable(name = "id") Integer memberId) {

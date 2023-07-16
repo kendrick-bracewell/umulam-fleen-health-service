@@ -18,12 +18,12 @@ import javax.validation.constraints.Size;
 public class UpdateMemberDetailsDto {
 
   @NotBlank(message = "{member.firstName.notEmpty}")
-  @Size(min = 2, max = 5, message = "{member.firstName.size}")
+  @Size(min = 2, max = 100, message = "{member.firstName.size}")
   @JsonProperty("first_name")
   private String firstName;
 
   @NotBlank(message = "{member.lastName.notEmpty}")
-  @Size(min = 2, max = 5, message = "{member.lastName.size}")
+  @Size(min = 2, max = 100, message = "{member.lastName.size}")
   @JsonProperty("last_name")
   private String lastName;
 
