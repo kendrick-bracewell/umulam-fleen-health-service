@@ -81,7 +81,7 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
     Page<Member> page;
 
     if (areNotEmpty(req.getStartDate(), req.getEndDate())) {
-      page = repository.findByCreatedOnAndUpdatedOnBetween(req.getStartDate().atStartOfDay(), req.getEndDate().atStartOfDay(), req.getPage());
+      page = repository.findByDateBetween(req.getStartDate().atStartOfDay(), req.getEndDate().atStartOfDay(), req.getPage());
     } else if (areNotEmpty(req.getFirstName(), req.getLastName())) {
       page = repository.findByFirstNameAndLastName(req.getFirstName(), req.getLastName(), req.getPage());
     } else if (nonNull(req.getEmailAddress())) {
@@ -91,7 +91,7 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
     } else if (nonNull(req.getBeforeDate())) {
       page = repository.findByCreatedOnBefore(req.getBeforeDate().atStartOfDay(), req.getPage());
     } else if (nonNull(req.getAfterDate())) {
-      page = repository.findByCreatedOnBefore(req.getAfterDate().atStartOfDay(), req.getPage());
+      page = repository.findByCreatedOnAfter(req.getAfterDate().atStartOfDay(), req.getPage());
     } else {
       page = repository.findAll(req.getPage());
     }

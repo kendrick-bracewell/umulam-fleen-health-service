@@ -74,7 +74,7 @@ public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
   Page<Member> findByCreatedOnAfter(@Param("created") LocalDateTime createdOn, Pageable pageable);
 
   @Query(value = "SELECT m FROM Member m WHERE m.createdOn BETWEEN :startDate AND :endDate")
-  Page<Member> findByCreatedOnAndUpdatedOnBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
+  Page<Member> findByDateBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 
   @Query(value = "SELECT m FROM Member m WHERE m.verificationStatus = :verificationStatus")
   Page<Member> findByVerificationStatus(ProfileVerificationStatus verificationStatus, Pageable pageable);
