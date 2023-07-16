@@ -2,16 +2,14 @@ package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import com.umulam.fleen.health.exception.profileverificationmessage.ProfileVerificationMessageNotFoundException;
-import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
 import com.umulam.fleen.health.model.dto.profileverificationmessage.ProfileVerificationMessageDto;
-import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.mapper.ProfileVerificationMessageMapper;
 import com.umulam.fleen.health.model.request.search.ProfileVerificationMessageSearchRequest;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
 import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessageId;
 import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessages;
-import com.umulam.fleen.health.model.view.ProfessionalView;
+import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessagesBasic;
 import com.umulam.fleen.health.model.view.ProfileVerificationMessageView;
 import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.ProfileVerificationMessageJpaRepository;
@@ -68,7 +66,7 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
   @Override
   @Transactional(readOnly = true)
   public SearchResultView findProfileVerificationMessages(ProfileVerificationMessageSearchRequest req) {
-    Page<ProfileVerificationMessage> page;
+    Page<GetProfileVerificationMessages> page;
 
     if (areNotEmpty(req.getStartDate(), req.getEndDate())) {
       page = repository.findByDateBetween(req.getStartDate().atStartOfDay(), req.getEndDate().atStartOfDay(), req.getPage());
@@ -78,8 +76,7 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
       page = repository.findAllBasic(req.getPage());
     }
 
-    List<ProfileVerificationMessageView> views = ProfileVerificationMessageMapper.toProfileVerificationMessageViews(page.getContent());
-    return toSearchResult(views, page);
+    return toSearchResult(page.getContent(), page);
   }
 
   @Override
@@ -129,7 +126,7 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
   }
 
   @Override
-  public List<GetProfileVerificationMessages> getBasicDetails() {
+  public List<GetProfileVerificationMessagesBasic> getBasicDetails() {
     return repository.getBasicDetails();
   }
 

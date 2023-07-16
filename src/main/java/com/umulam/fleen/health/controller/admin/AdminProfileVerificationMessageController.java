@@ -5,7 +5,7 @@ import com.umulam.fleen.health.model.request.search.ProfileVerificationMessageSe
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
 import com.umulam.fleen.health.model.response.other.DeleteResponse;
-import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessages;
+import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessagesBasic;
 import com.umulam.fleen.health.model.view.ProfileVerificationMessageView;
 import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.resolver.SearchParam;
@@ -40,7 +40,7 @@ public class AdminProfileVerificationMessageController {
   }
   
   @GetMapping(value = "/titles")
-  public List<GetProfileVerificationMessages> getProfileVerificationMessageTitles() {
+  public List<GetProfileVerificationMessagesBasic> getProfileVerificationMessageTitles() {
     return service.getBasicDetails();
   }
 

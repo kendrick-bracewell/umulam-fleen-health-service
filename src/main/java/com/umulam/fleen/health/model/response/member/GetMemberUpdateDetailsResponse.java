@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.constant.member.MemberGender;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static com.umulam.fleen.health.util.DateFormatUtil.DATE;
 
@@ -26,5 +26,5 @@ public interface GetMemberUpdateDetailsResponse {
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE)
   @JsonProperty("date_of_birth")
-  LocalDate getDateOfBirth();
+  LocalDateTime getDateOfBirth();
 }

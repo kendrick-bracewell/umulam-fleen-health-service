@@ -3,10 +3,9 @@ package com.umulam.fleen.health.service;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
 import com.umulam.fleen.health.model.dto.profileverificationmessage.ProfileVerificationMessageDto;
-import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.request.search.ProfileVerificationMessageSearchRequest;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
-import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessages;
+import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessagesBasic;
 import com.umulam.fleen.health.model.view.ProfileVerificationMessageView;
 import com.umulam.fleen.health.model.view.SearchResultView;
 
@@ -22,7 +21,7 @@ public interface ProfileVerificationMessageService {
 
   ProfileVerificationMessage getProfileVerificationMessageFromCache(Integer messageId);
 
-  List<GetProfileVerificationMessages> getBasicDetails();
+  List<GetProfileVerificationMessagesBasic> getBasicDetails();
 
   void saveProfileVerificationMessage(ProfileVerificationMessageDto dto);
 
