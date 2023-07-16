@@ -2,7 +2,6 @@ package com.umulam.fleen.health.configuration.cache;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -19,10 +18,16 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import java.time.Duration;
 
 @Configuration
-@AllArgsConstructor
 public class CacheConfig {
 
   private final CacheCredentials credentials;
+  private final ObjectMapper mapper;
+
+  public CacheConfig(CacheCredentials credentials,
+                     ObjectMapper mapper) {
+    this.credentials = credentials;
+    this.mapper = mapper;
+  }
 
   @Bean
   public JedisConnectionFactory connectionFactory() {
@@ -53,7 +58,7 @@ public class CacheConfig {
 
   @Bean
   public GenericJackson2JsonRedisSerializer jackson2JsonSerializer() {
-    return new GenericJackson2JsonRedisSerializer();
+    return new GenericJackson2JsonRedisSerializer(mapper);
   }
 
   @Bean

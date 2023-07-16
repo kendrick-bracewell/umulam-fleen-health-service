@@ -67,7 +67,10 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
     if (Objects.isNull(messages) || messages.isEmpty()) {
       messages = getMessagesForCache();
     }
-    messages.forEach(message -> saveProfileVerificationVerificationMessageToCache(message.getId(), message));
+    messages
+            .stream()
+            .filter(Objects::nonNull)
+            .forEach(message -> saveProfileVerificationVerificationMessageToCache(message.getId(), message));
   }
 
   public List<ProfileVerificationMessage> getMessagesForCache() {
@@ -75,21 +78,15 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
   }
 
   @Override
-  public void saveProfileVerificationVerificationMessageToCache(Integer messageId, ProfileVerificationMessage profileVerificationMessage) {
-    try {
-      String value = mapper.writeValueAsString(profileVerificationMessage);
-      String key = getProfileVerificationMessageCacheKey(messageId);
-      cacheService.set(key, value);
-    } catch (JsonProcessingException ex) {
-      log.error(ex.getMessage(), ex);
-    }
+  public void saveProfileVerificationVerificationMessageToCache(Integer messageId, ProfileVerificationMessage verificationMessage) {
+    String key = getProfileVerificationMessageCacheKey(messageId);
+    cacheService.set(key, verificationMessage);
   }
 
   @Override
   public ProfileVerificationMessage getProfileVerificationMessageFromCache(Integer messageId) {
     String key = getProfileVerificationMessageCacheKey(messageId);
-    Object value = cacheService.get(key);
-    return mapper.convertValue(value, ProfileVerificationMessage.class);
+    return cacheService.get(key, ProfileVerificationMessage.class);
   }
 
   @Override

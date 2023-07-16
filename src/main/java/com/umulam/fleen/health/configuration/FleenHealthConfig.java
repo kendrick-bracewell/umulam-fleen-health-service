@@ -3,6 +3,9 @@ package com.umulam.fleen.health.configuration;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.umulam.fleen.health.resolver.impl.SearchParamArgResolver;
 import dev.samstevens.totp.code.CodeVerifier;
 import dev.samstevens.totp.code.DefaultCodeGenerator;
@@ -43,11 +46,15 @@ public class FleenHealthConfig implements WebMvcConfigurer {
 
   @Bean
   public ObjectMapper objectMapper() {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-    mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
-    mapper.findAndRegisterModules();
-    return mapper;
+    return JsonMapper.builder()
+            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, true)
+            .addModule(new JavaTimeModule())
+            .findAndAddModules()
+            .build();
   }
 
   @Primary
