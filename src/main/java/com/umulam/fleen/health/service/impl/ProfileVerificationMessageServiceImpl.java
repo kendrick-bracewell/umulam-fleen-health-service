@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
+import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessages;
 import com.umulam.fleen.health.repository.jpa.ProfileVerificationMessageRepository;
 import com.umulam.fleen.health.service.ProfileVerificationMessageService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +13,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
 
 import java.util.List;
 import java.util.Objects;
@@ -91,5 +90,10 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
     String key = getProfileVerificationMessageCacheKey(messageId);
     Object value = cacheService.get(key);
     return mapper.convertValue(value, ProfileVerificationMessage.class);
+  }
+
+  @Override
+  public List<GetProfileVerificationMessages> getTitles() {
+    return repository.getTitles();
   }
 }

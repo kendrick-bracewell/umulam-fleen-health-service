@@ -2,6 +2,9 @@ package com.umulam.fleen.health.service;
 
 import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
+import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessages;
+
+import java.util.List;
 
 public interface ProfileVerificationMessageService {
 
@@ -12,4 +15,6 @@ public interface ProfileVerificationMessageService {
   void saveProfileVerificationVerificationMessageToCache(Integer messageId, ProfileVerificationMessage profileVerificationMessage);
 
   ProfileVerificationMessage getProfileVerificationMessageFromCache(Integer messageId);
+
+  List<GetProfileVerificationMessages> getTitles();
 }
