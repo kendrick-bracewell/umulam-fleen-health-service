@@ -15,6 +15,6 @@ public interface CountryJpaRepository extends JpaRepository<Country, Integer> {
 
   Optional<Country> findByCode(String code);
 
-  @Query(value = "SELECT c FROM Country c WHERE p.createdOn BETWEEN :startDate AND :endDate")
+  @Query(value = "SELECT c FROM Country c WHERE c.createdOn BETWEEN :startDate AND :endDate")
   Page<Country> findByDateBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 }
