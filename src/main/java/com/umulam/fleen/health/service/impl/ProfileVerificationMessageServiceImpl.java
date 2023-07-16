@@ -7,7 +7,7 @@ import com.umulam.fleen.health.model.dto.profileverificationmessage.ProfileVerif
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
 import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessageId;
 import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessages;
-import com.umulam.fleen.health.repository.jpa.ProfileVerificationMessageRepository;
+import com.umulam.fleen.health.repository.jpa.ProfileVerificationMessageJpaRepository;
 import com.umulam.fleen.health.service.ProfileVerificationMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -28,11 +28,11 @@ import static com.umulam.fleen.health.constant.authentication.AuthenticationCons
 public class ProfileVerificationMessageServiceImpl implements ProfileVerificationMessageService {
 
   private final CacheService cacheService;
-  private final ProfileVerificationMessageRepository repository;
+  private final ProfileVerificationMessageJpaRepository repository;
 
   public ProfileVerificationMessageServiceImpl(
           CacheService cacheService,
-          ProfileVerificationMessageRepository repository) {
+          ProfileVerificationMessageJpaRepository repository) {
     this.cacheService = cacheService;
     this.repository = repository;
   }

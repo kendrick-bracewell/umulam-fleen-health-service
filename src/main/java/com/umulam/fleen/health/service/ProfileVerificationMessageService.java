@@ -3,8 +3,10 @@ package com.umulam.fleen.health.service;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
 import com.umulam.fleen.health.model.dto.profileverificationmessage.ProfileVerificationMessageDto;
+import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
 import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessages;
+import com.umulam.fleen.health.model.view.SearchResultView;
 
 import java.util.List;
 
@@ -25,4 +27,6 @@ public interface ProfileVerificationMessageService {
   void updateProfileVerificationMessage(Integer id, ProfileVerificationMessageDto dto);
 
   void deleteMany(DeleteIdsDto dto);
+
+  SearchResultView findProfileVerificationMessages(ProfessionalSearchRequest searchRequest);
 }

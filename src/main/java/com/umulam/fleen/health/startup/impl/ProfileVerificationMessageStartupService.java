@@ -1,7 +1,7 @@
 package com.umulam.fleen.health.startup.impl;
 
 import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
-import com.umulam.fleen.health.repository.jpa.ProfileVerificationMessageRepository;
+import com.umulam.fleen.health.repository.jpa.ProfileVerificationMessageJpaRepository;
 import com.umulam.fleen.health.startup.StartupService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 public class ProfileVerificationMessageStartupService implements StartupService<ProfileVerificationMessage> {
   
-  private final ProfileVerificationMessageRepository repository;
+  private final ProfileVerificationMessageJpaRepository repository;
 
   @Override
   @Transactional

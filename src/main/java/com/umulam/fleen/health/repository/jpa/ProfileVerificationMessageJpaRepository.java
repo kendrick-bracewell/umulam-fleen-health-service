@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProfileVerificationMessageRepository extends JpaRepository<ProfileVerificationMessage, Integer> {
+public interface ProfileVerificationMessageJpaRepository extends JpaRepository<ProfileVerificationMessage, Integer> {
 
   @Query(value = "SELECT m FROM ProfileVerificationMessage m WHERE m.verification_message_type = :type LIMIT 1", nativeQuery = true)
   Optional<ProfileVerificationMessage> findByVerificationMessageType(@Param("type") ProfileVerificationMessageType messageType);
