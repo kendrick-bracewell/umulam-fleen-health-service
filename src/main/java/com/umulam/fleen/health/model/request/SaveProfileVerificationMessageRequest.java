@@ -16,4 +16,5 @@ public class SaveProfileVerificationMessageRequest {
   private ProfileVerificationStatus verificationStatus;
   private Member member;
   private String emailAddress;
+  private String comment;
 }

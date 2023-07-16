@@ -5,6 +5,7 @@ import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.validator.CountryExists;
 import com.umulam.fleen.health.validator.EnumValid;
 import com.umulam.fleen.health.validator.IsNumber;
+import com.umulam.fleen.health.validator.VerificationMessageTemplateExists;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -23,7 +24,7 @@ public class UpdateProfileVerificationStatusDto {
 
   @NotBlank(message = "{profile.verificationTemplate.notEmpty}")
   @IsNumber(message = "{profile.verificationTemplate.isNumber}")
-  @CountryExists(message = "{profile.verificationTemplate.exists}")
+  @VerificationMessageTemplateExists(message = "{profile.verificationTemplate.exists}")
   @JsonProperty("verification_message_template_id")
   private String verificationMessageTemplateId;
 

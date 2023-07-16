@@ -9,5 +9,7 @@ public interface ProfileVerificationMessageService {
 
   boolean existsById(Integer id);
 
+  void saveProfileVerificationVerificationMessageToCache(Integer messageId, ProfileVerificationMessage profileVerificationMessage);
+
   ProfileVerificationMessage getProfileVerificationMessageFromCache(Integer messageId);
 }

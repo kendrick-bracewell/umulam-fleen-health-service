@@ -151,11 +151,14 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
               .verificationStatus(verificationStatus)
               .member(member)
               .emailAddress(member.getEmailAddress())
+              .comment(dto.getComment())
               .build();
 
       saveProfileVerificationHistory(verificationMessage, verificationMessageRequest);
       sendProfileVerificationMessage(member.getEmailAddress(), verificationMessage);
     }
+    member.setVerificationStatus(verificationStatus);
+    save(professional);
   }
 
   @Override

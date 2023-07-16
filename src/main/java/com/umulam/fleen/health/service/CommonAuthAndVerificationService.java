@@ -170,6 +170,7 @@ public interface CommonAuthAndVerificationService {
       history.setProfileVerificationStatus(request.getVerificationStatus());
       history.setMember(request.getMember());
       history.setMessage(verificationMessage.getMessage());
+      history.setComment(request.getComment());
       getVerificationHistoryService().saveVerificationHistory(history);
     }
   }
