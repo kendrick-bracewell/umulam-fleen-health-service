@@ -2,6 +2,8 @@ package com.umulam.fleen.health.model.dto.profileverificationmessage;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.constant.authentication.MfaType;
+import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
+import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
 import com.umulam.fleen.health.validator.EnumValid;
 import lombok.*;
 
@@ -19,7 +21,7 @@ public class ProfileVerificationMessageDto {
   @Size(min = 15, max = 300, message = "{profileVerificationMessage.title.size}")
   private String title;
 
-  @EnumValid(enumClass = MfaType.class, message = "{profileVerificationMessage.type.invalid}")
+  @EnumValid(enumClass = ProfileVerificationMessageType.class, message = "{profileVerificationMessage.type.invalid}")
   @JsonProperty("verification_message_type")
   private String verificationMessageType;
 
@@ -33,4 +35,14 @@ public class ProfileVerificationMessageDto {
   @NotBlank(message = "{profileVerificationMessage.plainText.notEmpty}")
   @JsonProperty("plain_text")
   private String plainText;
+
+  public ProfileVerificationMessage toProfileVerificationMessage() {
+    return ProfileVerificationMessage.builder()
+            .title(title)
+            .verificationMessageType(ProfileVerificationMessageType.valueOf(verificationMessageType))
+            .message(message)
+            .htmlMessage(htmlMessage)
+            .plainText(plainText)
+            .build();
+  }
 }

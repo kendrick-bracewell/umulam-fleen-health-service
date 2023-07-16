@@ -1,7 +1,10 @@
 package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
+import com.umulam.fleen.health.exception.profileverificationmessage.ProfileVerificationMessageNotFoundException;
 import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
+import com.umulam.fleen.health.model.dto.profileverificationmessage.ProfileVerificationMessageDto;
+import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessageId;
 import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessages;
 import com.umulam.fleen.health.repository.jpa.ProfileVerificationMessageRepository;
 import com.umulam.fleen.health.service.ProfileVerificationMessageService;
@@ -87,5 +90,23 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
   @Override
   public List<GetProfileVerificationMessages> getTitles() {
     return repository.getTitles();
+  }
+
+  @Override
+  public ProfileVerificationMessage saveProfileVerificationMessage(ProfileVerificationMessageDto dto) {
+    ProfileVerificationMessage verificationMessage = dto.toProfileVerificationMessage();
+    return repository.save(verificationMessage);
+  }
+
+  @Override
+  public ProfileVerificationMessage updateProfileVerificationMessage(Integer id, ProfileVerificationMessageDto dto) {
+    GetProfileVerificationMessageId verificationMessageId = repository.getId(id);
+    if (Objects.isNull(verificationMessageId)) {
+      throw new ProfileVerificationMessageNotFoundException(id);
+    }
+
+    ProfileVerificationMessage verificationMessage = dto.toProfileVerificationMessage();
+    verificationMessage.setId(id);
+    return repository.save(verificationMessage);
   }
 }
