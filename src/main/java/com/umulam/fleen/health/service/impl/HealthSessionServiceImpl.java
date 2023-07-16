@@ -56,6 +56,6 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   @Override
   public ProfessionalViewBasic viewProfessionalDetail(Integer professionalId) {
-    professionalService.findProfessionalBasicById(professionalId);
+    return professionalService.findProfessionalBasicById(professionalId);
   }
 }
