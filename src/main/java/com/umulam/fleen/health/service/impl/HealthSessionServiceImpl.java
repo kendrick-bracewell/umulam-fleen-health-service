@@ -8,6 +8,7 @@ import com.umulam.fleen.health.model.view.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.service.HealthSessionService;
+import com.umulam.fleen.health.service.ProfessionalService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -23,9 +24,13 @@ import static java.util.Objects.nonNull;
 public class HealthSessionServiceImpl implements HealthSessionService {
   
   private final HealthSessionJpaRepository sessionJpaRepository;
+  private final ProfessionalService professionalService;
 
-  public HealthSessionServiceImpl(HealthSessionJpaRepository sessionJpaRepository) {
+  public HealthSessionServiceImpl(
+          HealthSessionJpaRepository sessionJpaRepository,
+          ProfessionalService professionalService) {
     this.sessionJpaRepository = sessionJpaRepository;
+    this.professionalService = professionalService;
   }
 
   @Override
@@ -47,5 +52,10 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
     List<ProfessionalViewBasic> views = ProfessionalMapper.toProfessionalViewsBasic(page.getContent());
     return toSearchResult(views, page);
+  }
+
+  @Override
+  public ProfessionalViewBasic viewProfessionalDetail(Integer professionalId) {
+    professionalService.findProfessionalBasicById(professionalId);
   }
 }

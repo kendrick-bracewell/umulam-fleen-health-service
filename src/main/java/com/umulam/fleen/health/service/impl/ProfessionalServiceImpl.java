@@ -17,6 +17,7 @@ import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdate
 import com.umulam.fleen.health.model.response.professional.GetUpdateVerificationDetailResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalView;
+import com.umulam.fleen.health.model.view.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.VerificationDocumentView;
 import com.umulam.fleen.health.repository.jpa.ProfessionalJpaRepository;
 import com.umulam.fleen.health.service.*;
@@ -55,13 +56,17 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   @Override
   @Transactional(readOnly = true)
   public ProfessionalView findProfessionalById(Integer id) {
-    Optional<Professional> professionalExists = repository.findById(id);
-    if (professionalExists.isEmpty()) {
-      throw new ProfessionalNotFoundException(id);
-    }
-    ProfessionalView view = toProfessionalView(professionalExists.get());
+    Professional professional = getProfessional(id);
+    ProfessionalView view = toProfessionalView(professional);
     setVerificationDocument(view);
     return view;
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public ProfessionalViewBasic findProfessionalBasicById(Integer id) {
+    Professional professional = getProfessional(id);
+    return ProfessionalMapper.toProfessionalViewBasic(professional);
   }
 
   @Override
@@ -165,6 +170,14 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
       throw new UserNotFoundException(emailAddress);
     }
     return member;
+  }
+
+  private Professional getProfessional(Integer id) {
+    Optional<Professional> professionalExists = repository.findById(id);
+    if (professionalExists.isEmpty()) {
+      throw new ProfessionalNotFoundException(id);
+    }
+    return professionalExists.get();
   }
 
   @Override

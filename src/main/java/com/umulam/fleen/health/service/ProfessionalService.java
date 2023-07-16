@@ -9,6 +9,7 @@ import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdate
 import com.umulam.fleen.health.model.response.professional.GetUpdateVerificationDetailResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalView;
+import com.umulam.fleen.health.model.view.ProfessionalViewBasic;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -41,6 +42,9 @@ public interface ProfessionalService {
 
   @Transactional
   void updateAvailabilityStatus(UpdateProfessionalAvailabilityStatusDto dto, FleenUser user);
+
+  @Transactional(readOnly = true)
+  ProfessionalViewBasic findProfessionalBasicById(Integer id);
 
   @Transactional
   Professional save(Professional professional);
