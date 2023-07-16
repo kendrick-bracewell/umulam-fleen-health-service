@@ -1,0 +1,29 @@
+package com.umulam.fleen.health.repository.jpa;
+
+import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
+import com.umulam.fleen.health.constant.member.ProfessionalType;
+import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
+import com.umulam.fleen.health.model.domain.Professional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+public interface HealthSessionJpaRepository extends JpaRepository<Professional, Integer> {
+
+  @Query(value = "SELECT p FROM Professional p WHERE p.member.firstName LIKE CONCAT('%',INITCAP(?1),'%') AND p.member.lastName LIKE CONCAT('%',INITCAP(?2),'%')")
+  Page<Professional> findByFirstNameAndLastName(String firstName, String lastName, @Param("availability") ProfessionalAvailabilityStatus status, Pageable pageable);
+
+  @Query(value = "SELECT p FROM Professional p WHERE p.professionalType = :type")
+  Page<Professional> findByProfessionalType(@Param("type") ProfessionalType type, @Param("availability") ProfessionalAvailabilityStatus status, Pageable pageable);
+
+  @Query(value = "SELECT p FROM Professional p WHERE p.qualificationType = :qualification")
+  Page<Professional> findByQualification(@Param("qualification") ProfessionalQualificationType qualification, @Param("availability") ProfessionalAvailabilityStatus status, Pageable pageable);
+
+  @Query(value = "SELECT p FROM Professional p WHERE p.languagesSpoken LIKE CONCAT('%',INITCAP(?1),'%')")
+  Page<Professional> findByLanguageSpoken(@Param("language") String languageSpoken, @Param("availability") ProfessionalAvailabilityStatus status, Pageable pageable);
+
+  @Query(value = "SELECT p FROM Professional p WHERE p.availabilityStatus = :availability")
+  Page<Professional> findByAvailabilityStatus(@Param("availability") ProfessionalAvailabilityStatus status, Pageable pageable);
+}

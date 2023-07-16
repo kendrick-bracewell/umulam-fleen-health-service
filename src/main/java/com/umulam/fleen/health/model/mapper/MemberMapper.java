@@ -3,6 +3,7 @@ package com.umulam.fleen.health.model.mapper;
 import com.umulam.fleen.health.constant.member.MemberGender;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.view.MemberView;
+import com.umulam.fleen.health.model.view.MemberViewBasic;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +39,19 @@ public class MemberMapper {
     return null;
   }
 
+  public static MemberViewBasic toMemberViewBasic(Member entry) {
+    if (Objects.nonNull(entry)) {
+      return MemberViewBasic.builder()
+              .id(entry.getId())
+              .firstName(entry.getFirstName())
+              .lastName(entry.getLastName())
+              .profilePhoto(entry.getProfilePhoto())
+              .gender(entry.getGender().name())
+              .build();
+    }
+    return null;
+  }
+
   public static List<MemberView> toMemberViews(List<Member> entries) {
     if (Objects.nonNull(entries) && !entries.isEmpty()) {
       return entries
@@ -47,4 +61,5 @@ public class MemberMapper {
     }
     return Collections.emptyList();
   }
+
 }

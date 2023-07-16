@@ -2,6 +2,7 @@ package com.umulam.fleen.health.model.mapper;
 
 import com.umulam.fleen.health.model.domain.Country;
 import com.umulam.fleen.health.model.view.CountryView;
+import com.umulam.fleen.health.model.view.CountryViewBasic;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
@@ -26,6 +27,15 @@ public class CountryMapper {
     return null;
   }
 
+  public static CountryViewBasic toCountryViewBasic(Country entry) {
+    if (Objects.nonNull(entry)) {
+      return CountryViewBasic.builder()
+              .title(entry.getTitle())
+              .build();
+    }
+    return null;
+  }
+
   public static List<CountryView> toCountryViews(List<Country> entries) {
     if (entries != null && !entries.isEmpty()) {
       return entries
@@ -36,4 +46,5 @@ public class CountryMapper {
     }
     return Collections.emptyList();
   }
+
 }
