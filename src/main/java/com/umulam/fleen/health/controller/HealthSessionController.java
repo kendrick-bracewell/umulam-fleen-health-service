@@ -5,7 +5,6 @@ import com.umulam.fleen.health.model.view.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.HealthSessionService;
-import com.umulam.fleen.health.service.impl.HealthSessionServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
