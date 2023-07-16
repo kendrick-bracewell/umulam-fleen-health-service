@@ -3,7 +3,9 @@ package com.umulam.fleen.health.service;
 import com.umulam.fleen.health.model.domain.Country;
 import com.umulam.fleen.health.model.dto.country.CountryDto;
 import com.umulam.fleen.health.model.dto.country.UpdateCountryDto;
+import com.umulam.fleen.health.model.request.search.CountrySearchRequest;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
+import com.umulam.fleen.health.model.view.SearchResultView;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -18,7 +20,7 @@ public interface CountryService {
   @Transactional(readOnly = true)
   Country getReference(Integer id);
 
-  List<Country> getCountries();
+  SearchResultView findCountries(CountrySearchRequest searchRequest);
 
   Country saveCountry(CountryDto dto);
 

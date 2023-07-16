@@ -5,17 +5,25 @@ import com.umulam.fleen.health.exception.country.CountryNotFoundException;
 import com.umulam.fleen.health.model.domain.Country;
 import com.umulam.fleen.health.model.dto.country.CountryDto;
 import com.umulam.fleen.health.model.dto.country.UpdateCountryDto;
+import com.umulam.fleen.health.model.mapper.CountryMapper;
+import com.umulam.fleen.health.model.request.search.CountrySearchRequest;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
+import com.umulam.fleen.health.model.view.CountryView;
+import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.CountryJpaRepository;
 import com.umulam.fleen.health.service.CountryService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
+import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
 
 @Slf4j
 @Service
@@ -55,8 +63,17 @@ public class CountryServiceImpl implements CountryService {
   }
 
   @Override
-  public List<Country> getCountries() {
-    return repository.findAll();
+  public SearchResultView findCountries(CountrySearchRequest req) {
+    Page<Country> page;
+
+    if (areNotEmpty(req.getStartDate(), req.getEndDate())) {
+      page = repository.findByDateBetween(req.getStartDate().atStartOfDay(), req.getEndDate().atStartOfDay(), req.getPage());
+    } else {
+      page = repository.findAll(req.getPage());
+    }
+
+    List<CountryView> views = CountryMapper.toCountryViews(page.getContent());
+    return toSearchResult(views, page);
   }
 
   @Override

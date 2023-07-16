@@ -2,18 +2,19 @@ package com.umulam.fleen.health.controller;
 
 import com.umulam.fleen.health.model.dto.country.CountryDto;
 import com.umulam.fleen.health.model.dto.country.UpdateCountryDto;
+import com.umulam.fleen.health.model.request.search.CountrySearchRequest;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
 import com.umulam.fleen.health.model.response.other.DeleteResponse;
 import com.umulam.fleen.health.model.view.CountryView;
+import com.umulam.fleen.health.model.view.SearchResultView;
+import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.CountryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 import static com.umulam.fleen.health.model.mapper.CountryMapper.toCountryView;
-import static com.umulam.fleen.health.model.mapper.CountryMapper.toCountryViews;
 
 @Slf4j
 @RestController
@@ -27,8 +28,8 @@ public class CountryController {
   }
 
   @GetMapping(value = "/entries")
-  public List<CountryView> findAll() {
-    return toCountryViews(countryService.getCountries());
+  public SearchResultView findAll(@SearchParam CountrySearchRequest searchRequest) {
+    return countryService.findCountries(searchRequest);
   }
 
   @GetMapping(value = "/detail/{id}")
