@@ -20,7 +20,7 @@ public interface RoleService {
 
   Role updateRole(Integer id, RoleDto dto);
 
-  void deleteMany(DeleteIdsDto ids);
+  void deleteMany(DeleteIdsDto dto);
 
   void deleteAllRole();
 

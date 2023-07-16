@@ -4,6 +4,7 @@ import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageT
 import com.umulam.fleen.health.exception.profileverificationmessage.ProfileVerificationMessageNotFoundException;
 import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
 import com.umulam.fleen.health.model.dto.profileverificationmessage.ProfileVerificationMessageDto;
+import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
 import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessageId;
 import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessages;
 import com.umulam.fleen.health.repository.jpa.ProfileVerificationMessageRepository;
@@ -14,9 +15,11 @@ import org.springframework.context.event.EventListener;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.PROFILE_VERIFICATION_MESSAGE_TEMPLATE_CACHE_PREFIX;
 
@@ -93,13 +96,15 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
   }
 
   @Override
-  public ProfileVerificationMessage saveProfileVerificationMessage(ProfileVerificationMessageDto dto) {
+  @Transactional
+  public void saveProfileVerificationMessage(ProfileVerificationMessageDto dto) {
     ProfileVerificationMessage verificationMessage = dto.toProfileVerificationMessage();
-    return repository.save(verificationMessage);
+    repository.save(verificationMessage);
   }
 
   @Override
-  public ProfileVerificationMessage updateProfileVerificationMessage(Integer id, ProfileVerificationMessageDto dto) {
+  @Transactional
+  public void updateProfileVerificationMessage(Integer id, ProfileVerificationMessageDto dto) {
     GetProfileVerificationMessageId verificationMessageId = repository.getId(id);
     if (Objects.isNull(verificationMessageId)) {
       throw new ProfileVerificationMessageNotFoundException(id);
@@ -107,6 +112,19 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
 
     ProfileVerificationMessage verificationMessage = dto.toProfileVerificationMessage();
     verificationMessage.setId(id);
-    return repository.save(verificationMessage);
+    repository.save(verificationMessage);
+  }
+
+  @Override
+  @Transactional
+  public void deleteMany(DeleteIdsDto dto) {
+    List<ProfileVerificationMessage> messages = dto
+            .getIds()
+            .stream()
+            .map(id -> ProfileVerificationMessage.builder()
+                    .id(id).build())
+            .collect(Collectors.toList());
+
+    repository.deleteAll(messages);
   }
 }

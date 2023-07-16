@@ -20,9 +20,9 @@ public interface ProfileVerificationMessageService {
 
   List<GetProfileVerificationMessages> getBasicDetails();
 
-  ProfileVerificationMessage saveProfileVerificationMessage(ProfileVerificationMessageDto dto);
+  void saveProfileVerificationMessage(ProfileVerificationMessageDto dto);
 
-  ProfileVerificationMessage updateProfileVerificationMessage(Integer id, ProfileVerificationMessageDto dto);
+  void updateProfileVerificationMessage(Integer id, ProfileVerificationMessageDto dto);
 
-  void deleteMany(DeleteIdsDto ids);
+  void deleteMany(DeleteIdsDto dto);
 }

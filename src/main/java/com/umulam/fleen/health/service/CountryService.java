@@ -24,7 +24,7 @@ public interface CountryService {
 
   Country updateCountry(Integer id, UpdateCountryDto dto);
 
-  void deleteMany(DeleteIdsDto ids);
+  void deleteMany(DeleteIdsDto dto);
 
   void deleteAllCountry();
 
