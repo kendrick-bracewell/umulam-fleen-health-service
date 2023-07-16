@@ -14,10 +14,15 @@ import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_FORMAT;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoleView extends FleenHealthView {
+public class FleenHealthView {
 
-  private String title;
-  private String code;
-  private String description;
+  private Integer id;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+  @JsonProperty("created_on")
+  private LocalDateTime createdOn;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+  @JsonProperty("updated_on")
+  private LocalDateTime updatedOn;
 }

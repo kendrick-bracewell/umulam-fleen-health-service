@@ -3,20 +3,20 @@ package com.umulam.fleen.health.model.view;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_FORMAT;
 
-@Builder
+@SuperBuilder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfessionalView {
+public class ProfessionalView extends FleenHealthView {
 
-  private Integer id;
   private String title;
 
   @JsonProperty("type")
@@ -36,14 +36,6 @@ public class ProfessionalView {
 
   @JsonProperty("languages_spoken")
   private String languagesSpoken;
-
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
-  @JsonProperty("created_on")
-  private LocalDateTime createdOn;
-
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
-  @JsonProperty("updated_on")
-  private LocalDateTime updatedOn;
 
   private MemberView member;
   private CountryView country;
