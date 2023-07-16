@@ -22,20 +22,20 @@ public class ProfileVerificationMessage {
   @Column(name = "id")
   private Integer id;
 
-  @Column(name = "title", nullable = false)
+  @Column(name = "title", nullable = false, length = 300)
   private String title;
 
   @Column(name = "verification_message_type", nullable = false)
   @Enumerated(EnumType.STRING)
   private ProfileVerificationMessageType verificationMessageType;
 
-  @Column(name = "message", nullable = false)
+  @Column(name = "message", nullable = false, columnDefinition = "TEXT")
   private String message;
 
-  @Column(name = "html_message", nullable = false)
+  @Column(name = "html_message", nullable = false, columnDefinition = "TEXT")
   private String htmlMessage;
 
-  @Column(name = "plain_text", nullable = false)
+  @Column(name = "plain_text", nullable = false, columnDefinition = "TEXT")
   private String plainText;
 
   @CreationTimestamp
