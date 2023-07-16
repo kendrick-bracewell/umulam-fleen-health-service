@@ -28,7 +28,7 @@ public class CountryController {
   }
 
   @GetMapping(value = "/entries")
-  public SearchResultView findAll(@SearchParam CountrySearchRequest searchRequest) {
+  public SearchResultView findCountries(@SearchParam CountrySearchRequest searchRequest) {
     return countryService.findCountries(searchRequest);
   }
 
