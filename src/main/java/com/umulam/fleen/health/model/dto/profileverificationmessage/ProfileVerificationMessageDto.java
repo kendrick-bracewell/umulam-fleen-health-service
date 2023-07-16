@@ -18,7 +18,7 @@ import javax.validation.constraints.Size;
 public class ProfileVerificationMessageDto {
 
   @NotBlank(message = "{profileVerificationMessage.title.notEmpty}")
-  @Size(min = 15, max = 300, message = "{profileVerificationMessage.title.size}")
+  @Size(min = 5, max = 300, message = "{profileVerificationMessage.title.size}")
   private String title;
 
   @EnumValid(enumClass = ProfileVerificationMessageType.class, message = "{profileVerificationMessage.type.invalid}")
