@@ -33,4 +33,6 @@ public interface CountryService {
   boolean isCountryExists(Integer id);
 
   boolean isCountryExistsByCode(String code);
+
+  List getCountriesFromCache();
 }

@@ -95,11 +95,11 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
   }
 
   @Scheduled(cron = "0 0 */3 * * *")
-  public void saveMessagesToCache() {
+  private void saveMessagesToCache() {
     saveMessagesToCache(null);
   }
 
-  public void saveMessagesToCache(List<ProfileVerificationMessage> messages) {
+  private void saveMessagesToCache(List<ProfileVerificationMessage> messages) {
     if (Objects.isNull(messages) || messages.isEmpty()) {
       messages = getMessagesForCache();
     }
@@ -109,7 +109,7 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
             .forEach(message -> saveProfileVerificationVerificationMessageToCache(message.getId(), message));
   }
 
-  public List<ProfileVerificationMessage> getMessagesForCache() {
+  private List<ProfileVerificationMessage> getMessagesForCache() {
     return repository.findAll();
   }
 

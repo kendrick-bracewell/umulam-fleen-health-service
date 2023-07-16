@@ -58,5 +58,4 @@ public class CountryController {
     countryService.deleteAllCountry();
     return new DeleteResponse();
   }
-
 }

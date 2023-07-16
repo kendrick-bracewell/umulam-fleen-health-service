@@ -14,6 +14,7 @@ import com.umulam.fleen.health.model.dto.professional.UploadProfessionalDocument
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.mapper.VerificationDocumentMapper;
 import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateAvailabilityStatusResponse;
+import com.umulam.fleen.health.model.response.professional.GetUpdateVerificationDetailResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalView;
 import com.umulam.fleen.health.model.view.VerificationDocumentView;
@@ -164,6 +165,14 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
       throw new UserNotFoundException(emailAddress);
     }
     return member;
+  }
+
+  @Override
+  public GetUpdateVerificationDetailResponse getUpdateVerificationDetail() {
+    List<?> countries = countryService.getCountriesFromCache();
+    return GetUpdateVerificationDetailResponse.builder()
+            .countries(countries)
+            .build();
   }
 
   @Override

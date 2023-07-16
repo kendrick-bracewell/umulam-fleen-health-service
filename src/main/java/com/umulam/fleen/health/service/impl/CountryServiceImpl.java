@@ -14,7 +14,10 @@ import com.umulam.fleen.health.repository.jpa.CountryJpaRepository;
 import com.umulam.fleen.health.service.CountryService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.COUNTRY_CACHE_PREFIX;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
 
@@ -31,11 +35,14 @@ public class CountryServiceImpl implements CountryService {
 
   private final CountryJpaRepository repository;
   private final ModelMapper modelMapper;
+  private final CacheService cacheService;
 
   public CountryServiceImpl(CountryJpaRepository repository,
-                            ModelMapper mapper) {
+                            ModelMapper mapper,
+                            CacheService cacheService) {
     this.repository = repository;
     this.modelMapper = mapper;
+    this.cacheService = cacheService;
   }
 
   @Override
@@ -126,6 +133,39 @@ public class CountryServiceImpl implements CountryService {
     return repository
             .findByCode(code)
             .isPresent();
+  }
+
+  private String getCountryCacheKey() {
+    return COUNTRY_CACHE_PREFIX;
+  }
+
+  @EventListener(ApplicationReadyEvent.class)
+  public void saveCountriesToCacheOnStartup() {
+    List<CountryView> countries = getCountriesForCache();
+    saveCountriesToCache(countries);
+  }
+
+  @Scheduled(cron = "0 0 */12 * * *")
+  private void saveCountriesToCache() {
+    saveCountriesToCache(null);
+  }
+
+  private void saveCountriesToCache(List<CountryView> views) {
+    if (views == null || views.isEmpty()) {
+      views = getCountriesForCache();
+    }
+    String key = getCountryCacheKey();
+    cacheService.set(key, views);
+  }
+
+  private List<CountryView> getCountriesForCache() {
+    return CountryMapper.toCountryViews(repository.findAll());
+  }
+
+  @Override
+  public List<?> getCountriesFromCache() {
+    String key = getCountryCacheKey();
+    return cacheService.get(key, List.class);
   }
 
 }

@@ -31,4 +31,5 @@ public final class AuthenticationConstant {
   public static final String UPDATE_EMAIL_CACHE_PREFIX = "UPDATE_EMAIL:::";
   public static final String UPDATE_PHONE_NUMBER_CACHE_PREFIX = "UPDATE_PHONE_NUMBER:::";
   public static final String PROFILE_VERIFICATION_MESSAGE_TEMPLATE_CACHE_PREFIX = "PROFILE_VERIFICATION_MESSAGE_TEMPLATE:::";
+  public static final String COUNTRY_CACHE_PREFIX = "COUNTRY:::";
 }

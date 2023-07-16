@@ -6,6 +6,7 @@ import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalAvailabi
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalDetailsDto;
 import com.umulam.fleen.health.model.dto.professional.UploadProfessionalDocumentDto;
 import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateAvailabilityStatusResponse;
+import com.umulam.fleen.health.model.response.professional.GetUpdateVerificationDetailResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalView;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,4 +44,6 @@ public interface ProfessionalService {
 
   @Transactional
   Professional save(Professional professional);
+
+  GetUpdateVerificationDetailResponse getUpdateVerificationDetail();
 }

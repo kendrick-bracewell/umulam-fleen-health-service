@@ -7,6 +7,7 @@ import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalDetailsD
 import com.umulam.fleen.health.model.dto.professional.UploadProfessionalDocumentDto;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateAvailabilityStatusResponse;
+import com.umulam.fleen.health.model.response.professional.GetUpdateVerificationDetailResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalView;
 import com.umulam.fleen.health.model.view.UserVerificationStatusView;
@@ -24,47 +25,52 @@ import static com.umulam.fleen.health.constant.base.FleenHealthConstant.*;
 @RequestMapping(value = "professional")
 public class ProfessionalController {
 
-  private final ProfessionalService professionalService;
+  private final ProfessionalService service;
 
-  public ProfessionalController(ProfessionalService professionalService) {
-    this.professionalService = professionalService;
+  public ProfessionalController(ProfessionalService service) {
+    this.service = service;
+  }
+
+  @GetMapping(value = "/verification/update-details")
+  public GetUpdateVerificationDetailResponse getUpdateVerificationDetails() {
+    return service.getUpdateVerificationDetail();
   }
 
   @PutMapping(value = "/verification/update-details")
   public ProfessionalView updateDetails(@Valid @RequestBody UpdateProfessionalDetailsDto dto, @AuthenticationPrincipal FleenUser user) {
-    Professional professional = professionalService.updateDetails(dto, user);
-    ProfessionalView professionalView = professionalService.toProfessionalView(professional);
-    professionalService.setVerificationDocument(professionalView);
+    Professional professional = service.updateDetails(dto, user);
+    ProfessionalView professionalView = service.toProfessionalView(professional);
+    service.setVerificationDocument(professionalView);
     return professionalView;
   }
 
   @PutMapping(value = "/verification/upload-documents")
   public FleenHealthResponse uploadDocuments(@Valid @RequestBody UploadProfessionalDocumentDto dto, @AuthenticationPrincipal FleenUser user) {
-    professionalService.uploadDocuments(dto, user);
+    service.uploadDocuments(dto, user);
     return new FleenHealthResponse(VERIFICATION_DOCUMENT_UPDATED);
   }
 
   @PutMapping(value = "/request-verification")
   public FleenHealthResponse requestVerification(@AuthenticationPrincipal FleenUser user) {
-    professionalService.requestForVerification(user);
+    service.requestForVerification(user);
     return new FleenHealthResponse(REQUEST_FOR_VERIFICATION);
   }
 
   @GetMapping(value = "/check-verification-status")
   public UserVerificationStatusView checkVerificationStatus(@AuthenticationPrincipal FleenUser user) {
-    ProfileVerificationStatus status = professionalService.checkVerificationStatus(user);
+    ProfileVerificationStatus status = service.checkVerificationStatus(user);
     return new UserVerificationStatusView(status.name());
   }
 
   @GetMapping(value = "/update-availability-status")
   public GetProfessionalUpdateAvailabilityStatusResponse getUpdateAvailabilityStatus(@AuthenticationPrincipal FleenUser user) {
-    return professionalService.getProfessionalAvailabilityStatus(user);
+    return service.getProfessionalAvailabilityStatus(user);
   }
 
   @PutMapping(value = "/update-availability-status")
   public FleenHealthResponse updateAvailabilityStatus(@Valid @RequestBody UpdateProfessionalAvailabilityStatusDto dto,
                                                       @AuthenticationPrincipal FleenUser user) {
-    professionalService.updateAvailabilityStatus(dto, user);
+    service.updateAvailabilityStatus(dto, user);
     return new FleenHealthResponse(AVAILABILITY_STATUS_UPDATED);
   }
 
