@@ -37,7 +37,7 @@ public class MaxAvailabilityTimeInADayValidator implements ConstraintValidator<M
       }
 
       for (var entry: availabilityTimes.entrySet()) {
-        int TOTAL_NUMBER_OF_WORKING_HOURS = 9;
+        final int TOTAL_NUMBER_OF_WORKING_HOURS = 9;
         if (entry.getValue().size() > TOTAL_NUMBER_OF_WORKING_HOURS) {
           return false;
         }
