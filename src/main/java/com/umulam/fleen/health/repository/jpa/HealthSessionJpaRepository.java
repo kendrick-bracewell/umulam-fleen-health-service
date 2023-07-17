@@ -12,16 +12,16 @@ import org.springframework.data.repository.query.Param;
 
 public interface HealthSessionJpaRepository extends JpaRepository<Professional, Integer> {
 
-  @Query(value = "SELECT p FROM Professional p WHERE p.member.firstName LIKE CONCAT('%',INITCAP(?1),'%') AND p.member.lastName LIKE CONCAT('%',INITCAP(?2),'%')")
+  @Query(value = "SELECT p FROM Professional p WHERE p.member.firstName LIKE CONCAT('%',INITCAP(?1),'%') AND p.member.lastName LIKE CONCAT('%',INITCAP(?2),'%') AND p.availabilityStatus = :availability")
   Page<Professional> findByFirstNameAndLastName(String firstName, String lastName, @Param("availability") ProfessionalAvailabilityStatus status, Pageable pageable);
 
-  @Query(value = "SELECT p FROM Professional p WHERE p.professionalType = :type")
+  @Query(value = "SELECT p FROM Professional p WHERE p.professionalType = :type AND p.availabilityStatus = :availability")
   Page<Professional> findByProfessionalType(@Param("type") ProfessionalType type, @Param("availability") ProfessionalAvailabilityStatus status, Pageable pageable);
 
-  @Query(value = "SELECT p FROM Professional p WHERE p.qualificationType = :qualification")
+  @Query(value = "SELECT p FROM Professional p WHERE p.qualificationType = :qualification AND p.availabilityStatus = :availability")
   Page<Professional> findByQualification(@Param("qualification") ProfessionalQualificationType qualification, @Param("availability") ProfessionalAvailabilityStatus status, Pageable pageable);
 
-  @Query(value = "SELECT p FROM Professional p WHERE p.languagesSpoken LIKE CONCAT('%',INITCAP(?1),'%')")
+  @Query(value = "SELECT p FROM Professional p WHERE p.languagesSpoken LIKE CONCAT('%',INITCAP(?1),'%') AND p.availabilityStatus = :availability")
   Page<Professional> findByLanguageSpoken(@Param("language") String languageSpoken, @Param("availability") ProfessionalAvailabilityStatus status, Pageable pageable);
 
   @Query(value = "SELECT p FROM Professional p WHERE p.availabilityStatus = :availability")
