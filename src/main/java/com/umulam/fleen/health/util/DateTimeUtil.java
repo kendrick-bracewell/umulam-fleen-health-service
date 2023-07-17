@@ -1,13 +1,19 @@
 package com.umulam.fleen.health.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.umulam.fleen.health.util.DateFormatUtil.DATE;
+import static com.umulam.fleen.health.util.DateFormatUtil.TIME;
+import static java.util.Objects.nonNull;
 
+@Slf4j
 public class DateTimeUtil {
   public static Date asDate(LocalDate localDate) {
     return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
@@ -77,6 +83,19 @@ public class DateTimeUtil {
 
   public static LocalTime getWorkingHoursEnd() {
     return LocalTime.of(18, 0);
+  }
+
+  public static boolean validateWorkingHour(String time) {
+    if (nonNull(time)) {
+      try {
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(TIME);
+        LocalTime workingTime = LocalTime.parse(time, dtf);
+        return workingTime.isBefore(getWorkingHoursStart()) || workingTime.isAfter(getWorkingHoursEnd());
+      } catch (DateTimeParseException ex) {
+        log.error(ex.getMessage(), ex);
+      }
+    }
+    return false;
   }
 
 }

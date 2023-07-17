@@ -5,20 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.time.LocalTime;
-import java.util.Objects;
+
+import static com.umulam.fleen.health.util.DateTimeUtil.validateWorkingHour;
 
 @Slf4j
-public class ValidAvailabilityStartTimeValidator implements ConstraintValidator<ValidAvailabilityStartTime, LocalTime> {
-
-  LocalTime workingHoursStart = LocalTime.of(9, 0);
-  LocalTime workingHoursEnd = LocalTime.of(18, 0);
+public class ValidAvailabilityStartTimeValidator implements ConstraintValidator<ValidAvailabilityStartTime, String> {
 
   @Override
   public void initialize(ValidAvailabilityStartTime constraintAnnotation) { }
 
   @Override
-  public boolean isValid(LocalTime startTime, ConstraintValidatorContext constraintValidatorContext) {
-    return !Objects.isNull(startTime) && !startTime.isBefore(workingHoursStart) && !startTime.isAfter(workingHoursEnd);
+  public boolean isValid(String time, ConstraintValidatorContext constraintValidatorContext) {
+    return validateWorkingHour(time);
   }
 }
