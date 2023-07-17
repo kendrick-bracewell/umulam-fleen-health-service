@@ -93,9 +93,21 @@ public class DateTimeUtil {
         return !workingTime.isBefore(getWorkingHoursStart()) && !workingTime.isAfter(getWorkingHoursEnd());
       } catch (DateTimeParseException ex) {
         log.error(ex.getMessage(), ex);
-      } // 9 9 17 //
+      }
     }
     return false;
+  }
+
+  public static LocalTime toTime(String time) {
+    if (nonNull(time)) {
+      try {
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(TIME);
+        return LocalTime.parse(time, dtf);
+      } catch (DateTimeParseException ex) {
+        log.error(ex.getMessage(), ex);
+      }
+    }
+    return null;
   }
 
 }

@@ -9,7 +9,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Objects;
+
+import static com.umulam.fleen.health.util.DateTimeUtil.toTime;
 
 @Builder
 @Getter
@@ -43,5 +47,34 @@ public class UpdateProfessionalAvailabilityDto {
     @ValidAvailabilityEndTime
     @JsonProperty("end_time")
     private String endTime;
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+
+      if (!(o instanceof AvailabilityPeriod)) {
+        return false;
+      }
+
+      AvailabilityPeriod that = (AvailabilityPeriod) o;
+      return Objects.equals(
+          AvailabilityDayOfTheWeek.valueOf(dayOfTheWeek),
+          AvailabilityDayOfTheWeek.valueOf(that.dayOfTheWeek)) &&
+        Objects.equals(toTime(startTime), toTime(that.startTime)) &&
+        Objects.equals(toTime(endTime), toTime(that.endTime));
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(dayOfTheWeek, startTime, endTime);
+    }
+
+    public boolean overlapsWith(AvailabilityPeriod otherEntry) {
+      return Objects.equals(dayOfTheWeek, otherEntry.dayOfTheWeek) &&
+        Objects.requireNonNull(toTime(startTime)).isBefore(toTime(otherEntry.endTime)) &&
+        Objects.requireNonNull(toTime(endTime)).isAfter(toTime(otherEntry.startTime));
+    }
   }
 }
