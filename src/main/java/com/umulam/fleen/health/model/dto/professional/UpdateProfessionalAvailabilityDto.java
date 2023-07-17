@@ -20,7 +20,7 @@ public class UpdateProfessionalAvailabilityDto {
 
   @Valid
   @NotEmpty
-  @Size(max = 81)
+  @Size(max = 63)
   @MaxAvailabilityTimeInADay
   List<AvailabilityPeriod> periods;
 

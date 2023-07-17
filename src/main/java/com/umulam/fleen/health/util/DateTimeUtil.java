@@ -90,10 +90,10 @@ public class DateTimeUtil {
       try {
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(TIME);
         LocalTime workingTime = LocalTime.parse(time, dtf);
-        return workingTime.isBefore(getWorkingHoursStart()) || workingTime.isAfter(getWorkingHoursEnd());
+        return !workingTime.isBefore(getWorkingHoursStart()) && !workingTime.isAfter(getWorkingHoursEnd());
       } catch (DateTimeParseException ex) {
         log.error(ex.getMessage(), ex);
-      }
+      } // 9 9 17 //
     }
     return false;
   }
