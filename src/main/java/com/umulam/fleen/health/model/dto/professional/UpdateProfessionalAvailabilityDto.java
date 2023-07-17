@@ -26,11 +26,12 @@ public class UpdateProfessionalAvailabilityDto {
   @Size(max = 63)
   @MaxAvailabilityTimeInADay
   @NoDuplicateAvailabilityPeriod
-  @NoAvailabilityPeriodOverlap
   List<AvailabilityPeriod> periods;
 
   @Getter
   @Setter
+  @NoArgsConstructor
+  @AllArgsConstructor
   public static class AvailabilityPeriod {
 
     @EnumValid(enumClass = AvailabilityDayOfTheWeek.class)
@@ -61,8 +62,8 @@ public class UpdateProfessionalAvailabilityDto {
 
       AvailabilityPeriod that = (AvailabilityPeriod) o;
       return Objects.equals(
-          AvailabilityDayOfTheWeek.valueOf(dayOfTheWeek),
-          AvailabilityDayOfTheWeek.valueOf(that.dayOfTheWeek)) &&
+        AvailabilityDayOfTheWeek.valueOf(dayOfTheWeek),
+        AvailabilityDayOfTheWeek.valueOf(that.dayOfTheWeek)) &&
         Objects.equals(toTime(startTime), toTime(that.startTime)) &&
         Objects.equals(toTime(endTime), toTime(that.endTime));
     }
