@@ -30,5 +30,6 @@ public class TimeValidValidator implements ConstraintValidator<TimeValid, String
         log.error(ex.getMessage(), ex);
       }
     }
-    return false;  }
+    return false;
+  }
 }
