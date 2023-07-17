@@ -19,9 +19,6 @@ public class ValidAvailabilityEndTimeValidator implements ConstraintValidator<Va
 
   @Override
   public boolean isValid(LocalTime startTime, ConstraintValidatorContext constraintValidatorContext) {
-    if (Objects.isNull(startTime) || startTime.isBefore(workingHoursStart) || startTime.isAfter(workingHoursEnd)) {
-      return false;
-    }
-    return true;
+    return !Objects.isNull(startTime) && !startTime.isBefore(workingHoursStart) && !startTime.isAfter(workingHoursEnd);
   }
 }
