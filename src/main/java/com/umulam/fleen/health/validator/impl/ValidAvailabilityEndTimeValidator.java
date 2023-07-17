@@ -26,7 +26,7 @@ public class ValidAvailabilityEndTimeValidator implements ConstraintValidator<Va
       try {
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(TIME);
         LocalTime startTime = LocalTime.parse(time, dtf);
-        return startTime.isBefore(getWorkingHoursStart()) && startTime.isAfter(getWorkingHoursEnd());
+        return startTime.isBefore(getWorkingHoursStart()) || startTime.isAfter(getWorkingHoursEnd());
       } catch (DateTimeParseException ex) {
         log.error(ex.getMessage(), ex);
       }
