@@ -1,13 +1,13 @@
 package com.umulam.fleen.health.validator;
 
-import com.umulam.fleen.health.validator.impl.IsNumberValidator;
+import com.umulam.fleen.health.validator.impl.NoDuplicationAvailabilityPeriodValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = IsNumberValidator.class)
+@Constraint(validatedBy = NoDuplicationAvailabilityPeriodValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NoDuplicateAvailabilityPeriod {
