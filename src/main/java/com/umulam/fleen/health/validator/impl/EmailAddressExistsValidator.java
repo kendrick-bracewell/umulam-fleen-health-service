@@ -21,7 +21,7 @@ public class EmailAddressExistsValidator implements ConstraintValidator<EmailAdd
   }
 
   @Override
-  public void initialize(EmailAddressExists emailAddressExists) {}
+  public void initialize(EmailAddressExists constraintAnnotation) {}
 
   @Override
   public boolean isValid(String emailAddress, ConstraintValidatorContext context) {

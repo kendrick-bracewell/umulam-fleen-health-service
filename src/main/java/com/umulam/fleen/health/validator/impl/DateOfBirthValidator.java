@@ -18,7 +18,7 @@ import static com.umulam.fleen.health.util.DateFormatUtil.DATE;
 public class DateOfBirthValidator implements ConstraintValidator<DateOfBirth, String> {
 
   @Override
-  public void initialize(DateOfBirth dateOfBirth) {}
+  public void initialize(DateOfBirth constraintAnnotation) {}
 
   @Override
   public boolean isValid(String date, ConstraintValidatorContext context) {

@@ -20,7 +20,7 @@ public class VerificationMessageTemplateExistsValidator implements ConstraintVal
   }
 
   @Override
-  public void initialize(VerificationMessageTemplateExists templateExists) { }
+  public void initialize(VerificationMessageTemplateExists constraintAnnotation) { }
 
   @Override
   public boolean isValid(String id, ConstraintValidatorContext context) {

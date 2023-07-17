@@ -17,7 +17,7 @@ import static java.util.Objects.nonNull;
 public class PhoneNumberValidator implements ConstraintValidator<MobilePhoneNumber, String> {
 
   @Override
-  public void initialize(MobilePhoneNumber isNumber) {}
+  public void initialize(MobilePhoneNumber constraintAnnotation) {}
 
   @Override
   public boolean isValid(String number, ConstraintValidatorContext context) {

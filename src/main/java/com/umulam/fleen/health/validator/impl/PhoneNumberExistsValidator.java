@@ -19,7 +19,7 @@ public class PhoneNumberExistsValidator implements ConstraintValidator<PhoneNumb
   }
 
   @Override
-  public void initialize(PhoneNumberExists emailAddressExists) {}
+  public void initialize(PhoneNumberExists constraintAnnotation) {}
 
   @Override
   public boolean isValid(String phoneNumber, ConstraintValidatorContext context) {

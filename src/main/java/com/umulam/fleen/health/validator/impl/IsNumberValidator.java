@@ -11,7 +11,7 @@ import javax.validation.ConstraintValidatorContext;
 public class IsNumberValidator implements ConstraintValidator<IsNumber, String> {
 
   @Override 
-  public void initialize(IsNumber isNumber) {}
+  public void initialize(IsNumber constraintAnnotation) {}
 
   @Override
   public boolean isValid(String number, ConstraintValidatorContext context) {

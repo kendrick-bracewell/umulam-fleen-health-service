@@ -15,7 +15,7 @@ import static com.umulam.fleen.health.util.DateFormatUtil.DATE;
 @Slf4j
 public class AfterValidator implements ConstraintValidator<After, String> {
 
-  public void initialize(After after) { }
+  public void initialize(After constraintAnnotation) { }
 
   public boolean isValid(String date, ConstraintValidatorContext context) {
     if (Objects.nonNull(date)) {

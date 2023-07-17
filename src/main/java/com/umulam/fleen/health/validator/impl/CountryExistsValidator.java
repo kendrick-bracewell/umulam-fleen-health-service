@@ -18,7 +18,7 @@ public class CountryExistsValidator implements ConstraintValidator<CountryExists
   }
 
   @Override
-  public void initialize(CountryExists countryExists) {}
+  public void initialize(CountryExists constraintAnnotation) {}
 
   @Override
   public boolean isValid(String id, ConstraintValidatorContext context) {
