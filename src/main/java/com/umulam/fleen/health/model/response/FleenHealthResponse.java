@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
-import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_FORMAT;
+import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME;
 
 @Getter
 @AllArgsConstructor
@@ -16,7 +16,7 @@ public class FleenHealthResponse {
 
   private String message;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
   private LocalDateTime timestamp;
 
   @JsonProperty("status_code")

@@ -6,7 +6,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_FORMAT;
+import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME;
 
 @Getter
 @Setter
@@ -14,7 +14,7 @@ public class SendUpdateEmailAddressOrPhoneNumberVerificationCodeResponse {
 
   private final String message;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
   private LocalDateTime timestamp;
 
   public SendUpdateEmailAddressOrPhoneNumberVerificationCodeResponse(String message) {

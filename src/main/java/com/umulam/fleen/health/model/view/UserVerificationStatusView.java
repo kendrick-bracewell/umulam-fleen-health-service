@@ -5,7 +5,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_FORMAT;
+import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME;
 
 @Builder
 @Getter
@@ -16,7 +16,7 @@ public class UserVerificationStatusView {
 
   private String status;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
   private LocalDateTime timestamp;
 
   public UserVerificationStatusView(String status) {

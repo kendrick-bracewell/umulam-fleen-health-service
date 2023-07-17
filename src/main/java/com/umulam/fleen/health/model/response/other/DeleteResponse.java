@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.SUCCESS_MESSAGE;
-import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_FORMAT;
+import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME;
 
 @Builder
 @Getter
@@ -21,7 +21,7 @@ public class DeleteResponse {
 
   private final String message;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
   private final String timestamp;
 
   @JsonProperty("status_code")

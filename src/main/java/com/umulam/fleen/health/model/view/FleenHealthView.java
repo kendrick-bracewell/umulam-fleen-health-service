@@ -7,7 +7,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
-import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_FORMAT;
+import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME;
 
 @SuperBuilder
 @Getter
@@ -18,11 +18,11 @@ public class FleenHealthView {
 
   private Integer id;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
   @JsonProperty("created_on")
   private LocalDateTime createdOn;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
   @JsonProperty("updated_on")
   private LocalDateTime updatedOn;
 }

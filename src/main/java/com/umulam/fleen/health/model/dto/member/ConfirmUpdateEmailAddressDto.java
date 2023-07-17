@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.model.dto.member;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.umulam.fleen.health.validator.EmailValid;
 import lombok.*;
 
 import javax.validation.constraints.Email;
@@ -22,6 +23,7 @@ public class ConfirmUpdateEmailAddressDto {
   @NotBlank(message = "{signUp.emailAddress.notEmpty}")
   @Size(min = 1, max = 150, message = "{signUp.emailAddress.size}")
   @Email(message = "{signUp.emailAddress.format}")
+  @EmailValid(message = "{signUp.emailAddress.format}")
   @JsonProperty("email_address")
   private String emailAddress;
 }

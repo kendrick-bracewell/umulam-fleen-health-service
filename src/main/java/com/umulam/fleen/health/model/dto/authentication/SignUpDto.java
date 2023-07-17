@@ -39,6 +39,7 @@ public class SignUpDto {
   @NotBlank(message = "{signUp.emailAddress.notEmpty}")
   @Size(min = 4, max = 150, message = "{signUp.emailAddress.size}")
   @Email(message = "{signUp.emailAddress.format}")
+  @EmailValid(message = "{signUp.emailAddress.format}")
   @EmailAddressExists(message = "{signUp.emailAddress.exists}")
   @JsonProperty("email_address")
   private String emailAddress;

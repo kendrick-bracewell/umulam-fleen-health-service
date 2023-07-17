@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.SUCCESS_MESSAGE;
 import static com.umulam.fleen.health.util.DateFormatUtil.DATE;
-import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_FORMAT;
+import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME;
 
 @Getter
 @Setter
@@ -34,7 +34,7 @@ public class UpdateMemberDetailsResponse {
   @Builder.Default
   private String message;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
   private String timestamp;
 
   @JsonProperty("status_code")

@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.constant.member.MemberGender;
 import com.umulam.fleen.health.model.domain.Member;
-import com.umulam.fleen.health.validator.EmailAddressExists;
-import com.umulam.fleen.health.validator.EnumValid;
-import com.umulam.fleen.health.validator.MobilePhoneNumber;
-import com.umulam.fleen.health.validator.PhoneNumberExists;
+import com.umulam.fleen.health.validator.*;
 import lombok.*;
 
 import javax.validation.constraints.Email;
@@ -36,6 +33,7 @@ public class CreateMemberDto {
   @NotBlank(message = "{signUp.emailAddress.notEmpty}")
   @Size(min = 1, max = 150, message = "{signUp.emailAddress.size}")
   @Email(message = "{signUp.emailAddress.format}")
+  @EmailValid(message = "{signUp.emailAddress.format}")
   @EmailAddressExists(message = "{signUp.emailAddress.exists}")
   @JsonProperty("email_address")
   private String emailAddress;

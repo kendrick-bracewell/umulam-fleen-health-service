@@ -2,15 +2,15 @@ package com.umulam.fleen.health.model.dto.professional;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.constant.professional.AvailabilityDayOfTheWeek;
-import com.umulam.fleen.health.validator.EnumValid;
-import com.umulam.fleen.health.validator.ValidAvailabilityEndTime;
-import com.umulam.fleen.health.validator.ValidAvailabilityStartTime;
+import com.umulam.fleen.health.validator.*;
+import com.umulam.fleen.health.validator.impl.TimeValidValidator;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -25,6 +25,8 @@ public class UpdateProfessionalAvailabilityDto {
 
   @Valid
   @NotEmpty
+  @Size(max = 81)
+  @MaxAvailabilityTimeInADay
   List<AvailabilityPeriod> periods;
 
   @Getter
@@ -36,15 +38,15 @@ public class UpdateProfessionalAvailabilityDto {
     private String dayOfTheWeek;
 
     @NotNull
-    @DateTimeFormat(iso = TIME)
+    @TimeValid
     @ValidAvailabilityStartTime
     @JsonProperty("start_time")
-    private LocalTime startTime;
+    private String startTime;
 
     @NotNull
-    @DateTimeFormat(iso = TIME)
+    @TimeValid
     @ValidAvailabilityEndTime
     @JsonProperty("end_time")
-    private LocalTime endTime;
+    private String endTime;
   }
 }

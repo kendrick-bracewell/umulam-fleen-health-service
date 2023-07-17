@@ -2,6 +2,7 @@ package com.umulam.fleen.health.model.dto.authentication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.constant.authentication.VerificationType;
+import com.umulam.fleen.health.validator.EmailValid;
 import com.umulam.fleen.health.validator.EnumValid;
 import com.umulam.fleen.health.validator.MobilePhoneNumber;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ import javax.validation.constraints.Size;
 public class ResendVerificationCodeDto {
 
   @Email(message = "{signUp.emailAddress.format}")
+  @EmailValid(message = "{signUp.emailAddress.format}")
   @JsonProperty("email_address")
   private String emailAddress;
 

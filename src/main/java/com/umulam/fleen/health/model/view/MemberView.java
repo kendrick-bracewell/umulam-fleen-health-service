@@ -8,7 +8,6 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDateTime;
 
 import static com.umulam.fleen.health.util.DateFormatUtil.DATE;
-import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_FORMAT;
 
 @SuperBuilder
 @Getter

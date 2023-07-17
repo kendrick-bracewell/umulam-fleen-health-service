@@ -6,7 +6,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_FORMAT;
+import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME;
 
 @Getter
 @AllArgsConstructor
@@ -15,7 +15,7 @@ public class CreateEncodedPasswordResponse {
   private String encodedPassword;
   private String rawPassword;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
   private LocalDateTime timestamp;
 
   public CreateEncodedPasswordResponse(String encodedPassword, String rawPassword) {

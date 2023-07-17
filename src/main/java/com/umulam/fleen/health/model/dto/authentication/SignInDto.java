@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.model.dto.authentication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.umulam.fleen.health.validator.EmailValid;
 import lombok.*;
 
 import javax.validation.constraints.Email;
@@ -17,6 +18,7 @@ public class SignInDto {
   @NotBlank(message = "{signIn.emailAddress.notEmpty}")
   @Size(min = 1, max = 150, message = "{signIn.emailAddress.size}")
   @Email(message = "{signIn.emailAddress.format}")
+  @EmailValid(message = "{signIn.emailAddress.format}")
   @JsonProperty("email_address")
   private String emailAddress;
 
