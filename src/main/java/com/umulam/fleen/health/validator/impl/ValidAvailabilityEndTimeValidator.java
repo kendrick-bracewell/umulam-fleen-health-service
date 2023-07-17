@@ -10,13 +10,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 import static com.umulam.fleen.health.util.DateFormatUtil.TIME;
+import static com.umulam.fleen.health.util.DateTimeUtil.getWorkingHoursEnd;
+import static com.umulam.fleen.health.util.DateTimeUtil.getWorkingHoursStart;
 import static java.util.Objects.nonNull;
 
 @Slf4j
 public class ValidAvailabilityEndTimeValidator implements ConstraintValidator<ValidAvailabilityEndTime, String> {
-
-  LocalTime workingHoursStart = LocalTime.of(9, 0);
-  LocalTime workingHoursEnd = LocalTime.of(18, 0);
 
   @Override
   public void initialize(ValidAvailabilityEndTime constraintAnnotation) {}
@@ -27,7 +26,7 @@ public class ValidAvailabilityEndTimeValidator implements ConstraintValidator<Va
       try {
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(TIME);
         LocalTime startTime = LocalTime.parse(time, dtf);
-        return startTime.isBefore(workingHoursStart) && !startTime.isAfter(workingHoursEnd);
+        return startTime.isBefore(getWorkingHoursStart()) && !startTime.isAfter(getWorkingHoursEnd());
       } catch (DateTimeParseException ex) {
         log.error(ex.getMessage(), ex);
       }

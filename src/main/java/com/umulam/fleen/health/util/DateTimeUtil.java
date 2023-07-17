@@ -70,4 +70,13 @@ public class DateTimeUtil {
   public static LocalDateTime getDefaultDateOfBirth() {
     return LocalDateTime.of(2000, 1, 1, 0, 0, 0);
   }
+
+  public static LocalTime getWorkingHoursStart() {
+    return LocalTime.of(9, 0);
+  }
+
+  public static LocalTime getWorkingHoursEnd() {
+    return LocalTime.of(18, 0);
+  }
+
 }
