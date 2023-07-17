@@ -26,6 +26,7 @@ public class UpdateProfessionalAvailabilityDto {
   @Size(max = 63)
   @MaxAvailabilityTimeInADay
   @NoDuplicateAvailabilityPeriod
+  @NoAvailabilityPeriodOverlap
   List<AvailabilityPeriod> periods;
 
   @Getter
