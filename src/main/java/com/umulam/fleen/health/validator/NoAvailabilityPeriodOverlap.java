@@ -10,9 +10,9 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = IsNumberValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface NoDuplicateAvailabilityPeriod {
+public @interface NoAvailabilityPeriodOverlap {
 
-  String message() default "No duplicate availability periods allowed";
+  String message() default "No overlapping time slots allowed";
 
   Class<?>[] groups() default {};
 
