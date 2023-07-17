@@ -10,7 +10,7 @@ import javax.validation.ConstraintValidatorContext;
 @Slf4j
 public class IsNumberValidator implements ConstraintValidator<IsNumber, String> {
 
-  @Override
+  @Override 
   public void initialize(IsNumber isNumber) {}
 
   @Override

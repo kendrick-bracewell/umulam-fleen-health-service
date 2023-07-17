@@ -2,6 +2,7 @@ package com.umulam.fleen.health.controller;
 
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.model.domain.Professional;
+import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalAvailabilityDto;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalAvailabilityStatusDto;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalDetailsDto;
 import com.umulam.fleen.health.model.dto.professional.UploadProfessionalDocumentDto;
@@ -17,6 +18,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.time.LocalTime;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.*;
 
@@ -72,6 +75,11 @@ public class ProfessionalController {
                                                       @AuthenticationPrincipal FleenUser user) {
     service.updateAvailabilityStatus(dto, user);
     return new FleenHealthResponse(AVAILABILITY_STATUS_UPDATED);
+  }
+
+  @PutMapping(value = "/update-availability")
+  public Object updateAvailability(@Valid @RequestBody UpdateProfessionalAvailabilityDto dto) {
+    return dto;
   }
 
   public void viewSessions() {
