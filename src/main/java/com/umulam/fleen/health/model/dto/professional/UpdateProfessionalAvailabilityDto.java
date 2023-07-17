@@ -34,6 +34,7 @@ public class UpdateProfessionalAvailabilityDto {
   @AllArgsConstructor
   public static class AvailabilityPeriod {
 
+    @NotNull
     @EnumValid(enumClass = AvailabilityDayOfTheWeek.class)
     @JsonProperty("day_of_the_week")
     private String dayOfTheWeek;

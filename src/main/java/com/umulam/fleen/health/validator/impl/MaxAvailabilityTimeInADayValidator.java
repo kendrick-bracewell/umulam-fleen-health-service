@@ -30,7 +30,7 @@ public class MaxAvailabilityTimeInADayValidator implements ConstraintValidator<M
         try {
           AvailabilityDayOfTheWeek dayOfTheWeek = AvailabilityDayOfTheWeek.valueOf(period.getDayOfTheWeek());
           addToMap(availabilityTimes, dayOfTheWeek, null);
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException | NullPointerException ex) {
           log.error(ex.getMessage(), ex);
           return false;
         }
