@@ -6,6 +6,7 @@ import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.validator.*;
 import lombok.*;
+import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -20,24 +21,25 @@ import static com.umulam.fleen.health.util.DateTimeUtil.toTime;
 @AllArgsConstructor
 public class BookHealthSessionDto {
 
-  @Size(max = 1000)
+  @Size(max = 1000, message = "{session.comment.size}")
   private String comment;
 
-  @NotNull
-  @ProfessionalValid
+  @NotNull(message = "{session.professional.notNull}")
+  @ProfessionalValid(message = "{session.professional.valid}")
   private String professional;
 
-  @NotNull
-  @DateValid
+  @NotNull(message = "{session.date.notNull}")
+  @DateValid(message = "{session.date.valid}")
   @Future
   private String date;
 
-  @NotNull
-  @TimeValid
-  @WorkingHour
+  @NotNull(message = "{session.time.notNull}")
+  @TimeValid(message = "{session.time.valid}")
+  @WorkingHour(message = "{session.time.workingHour}")
   private String time;
 
-  @Size(max = 500)
+  @URL(message = "{session.document.isUrl}")
+  @Size(max = 500, message = "{session.document.size}")
   private String document;
 
   public HealthSession toHealthSession() {

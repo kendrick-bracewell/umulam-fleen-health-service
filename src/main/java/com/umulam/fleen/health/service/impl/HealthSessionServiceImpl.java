@@ -2,6 +2,7 @@ package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import com.umulam.fleen.health.model.domain.HealthSession;
+import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
@@ -17,6 +18,7 @@ import com.umulam.fleen.health.util.UniqueReferenceGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -46,6 +48,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public SearchResultView viewProfessionals(ProfessionalSearchRequest req) {
     Page<Professional> page;
     ProfessionalAvailabilityStatus availability = ProfessionalAvailabilityStatus.AVAILABLE;
@@ -67,14 +70,20 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public ProfessionalViewBasic viewProfessionalDetail(Integer professionalId) {
     return professionalService.findProfessionalBasicById(professionalId);
   }
 
   @Override
+  @Transactional
   public void bookSession(BookHealthSessionDto dto, FleenUser user) {
     HealthSession healthSession = dto.toHealthSession();
     healthSession.setReference(generateSessionReference());
+    Member member = Member.builder()
+        .id(user.getId())
+        .build();
+    healthSession.setPatient(member);
     sessionJpaRepository.save(healthSession);
   }
 
