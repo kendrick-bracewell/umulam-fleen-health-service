@@ -68,7 +68,8 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       page = sessionProfessionalJpaRepository.findByAvailabilityStatus(availability, verificationStatus, req.getPage());
     }
 
-    List<ProfessionalViewBasic> views = ProfessionalMapper.toProfessionalViewsBasic(Collections.shuffle(page.getContent()));
+    Collections.shuffle(page.getContent());
+    List<ProfessionalViewBasic> views = ProfessionalMapper.toProfessionalViewsBasic(page.getContent());
     return toSearchResult(views, page);
   }
 
