@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
+import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
@@ -52,17 +53,18 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   public SearchResultView viewProfessionals(ProfessionalSearchRequest req) {
     Page<Professional> page;
     ProfessionalAvailabilityStatus availability = ProfessionalAvailabilityStatus.AVAILABLE;
+    ProfileVerificationStatus verificationStatus = ProfileVerificationStatus.APPROVED;
 
     if (areNotEmpty(req.getFirstName(), req.getLastName())) {
-      page = sessionProfessionalJpaRepository.findByFirstNameAndLastName(req.getFirstName(), req.getLastName(), availability, req.getPage());
+      page = sessionProfessionalJpaRepository.findByFirstNameAndLastName(req.getFirstName(), req.getLastName(), availability, verificationStatus, req.getPage());
     } else if (nonNull(req.getProfessionalType())) {
-      page = sessionProfessionalJpaRepository.findByProfessionalType(req.getProfessionalType(), availability,  req.getPage());
+      page = sessionProfessionalJpaRepository.findByProfessionalType(req.getProfessionalType(), availability, verificationStatus, req.getPage());
     } else if (nonNull(req.getQualificationType())) {
-      page = sessionProfessionalJpaRepository.findByQualification(req.getQualificationType(), availability, req.getPage());
+      page = sessionProfessionalJpaRepository.findByQualification(req.getQualificationType(), availability, verificationStatus, req.getPage());
     } else if (nonNull(req.getLanguageSpoken())) {
-      page = sessionProfessionalJpaRepository.findByLanguageSpoken(req.getLanguageSpoken(), availability, req.getPage());
+      page = sessionProfessionalJpaRepository.findByLanguageSpoken(req.getLanguageSpoken(), availability, verificationStatus, req.getPage());
     } else {
-      page = sessionProfessionalJpaRepository.findByAvailabilityStatus(availability, req.getPage());
+      page = sessionProfessionalJpaRepository.findByAvailabilityStatus(availability, verificationStatus, req.getPage());
     }
 
     List<ProfessionalViewBasic> views = ProfessionalMapper.toProfessionalViewsBasic(page.getContent());
