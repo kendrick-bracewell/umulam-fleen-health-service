@@ -5,7 +5,7 @@ import com.umulam.fleen.health.constant.authentication.MfaType;
 import com.umulam.fleen.health.validator.EnumValid;
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Builder
 @Getter
@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class MfaTypeDto {
 
-  @NotBlank(message = "{mfa.type.notEmpty}")
+  @NotNull(message = "{mfa.type.notNull}")
   @EnumValid(enumClass = MfaType.class, message = "{mfa.type.type}")
   @JsonProperty("mfa_type")
   private String mfaType;

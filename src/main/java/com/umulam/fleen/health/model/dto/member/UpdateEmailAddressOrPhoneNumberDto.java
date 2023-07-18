@@ -5,6 +5,8 @@ import com.umulam.fleen.health.constant.authentication.VerificationType;
 import com.umulam.fleen.health.validator.EnumValid;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
+
 @Builder
 @Getter
 @Setter
@@ -12,6 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 public class UpdateEmailAddressOrPhoneNumberDto {
 
+  @NotNull(message = "{verification.notNull}")
   @EnumValid(enumClass = VerificationType.class, message = "{verification.type}")
   @JsonProperty("verification_type")
   private String verificationType;

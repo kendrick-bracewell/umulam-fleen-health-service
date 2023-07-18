@@ -9,6 +9,7 @@ import com.umulam.fleen.health.validator.VerificationMessageTemplateExists;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Builder
@@ -18,6 +19,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class UpdateProfileVerificationStatusDto {
 
+  @NotNull(message = "{profile.verificationStatus.notNull}")
   @EnumValid(enumClass = ProfileVerificationStatus.class, message = "{profile.verificationStatus}")
   @JsonProperty("verification_status")
   private String verificationStatus;

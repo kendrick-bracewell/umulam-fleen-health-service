@@ -9,6 +9,7 @@ import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Builder
@@ -25,6 +26,7 @@ public class ForgotPasswordDto {
   @JsonProperty("email_address")
   private String emailAddress;
 
+  @NotNull(message = "{verification.notNull}")
   @EnumValid(enumClass = VerificationType.class, message = "{verification.type}")
   @JsonProperty("verification_type")
   private String verificationType;

@@ -46,10 +46,12 @@ public class UpdateProfessionalDetailsDto {
   @JsonProperty("languages_spoken")
   private String languagesSpoken;
 
-  @EnumValid(enumClass = ProfessionalType.class, message = "{professional.type}")
+  @NotNull(message = "{professional.professionalType.notNull}")
+  @EnumValid(enumClass = ProfessionalType.class, message = "{professional.professionalType}")
   @JsonProperty("professional_type")
   private String professionalType;
 
+  @NotNull(message = "{professional.qualificationType.notNull}")
   @EnumValid(enumClass = ProfessionalQualificationType.class, message = "{professional.qualificationType}")
   @JsonProperty("qualification_type")
   private String qualificationType;

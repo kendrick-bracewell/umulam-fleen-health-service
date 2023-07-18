@@ -62,14 +62,17 @@ public class SignUpDto {
   @JsonProperty("confirm_password")
   private String confirmPassword;
 
+  @NotNull(message = "{verification.notNull}")
   @EnumValid(enumClass = VerificationType.class, message = "{verification.type}")
   @JsonProperty("verification_type")
   private String verificationType;
 
+  @NotNull(message = "{member.profileType.notNull}")
   @EnumValid(enumClass = ProfileType.class, message = "{platform.entity.type.type}")
   @JsonProperty("profile_type")
   private String profileType;
 
+  @NotNull(message = "{member.gender.notNull}")
   @EnumValid(enumClass = MemberGender.class, message = "{signup.gender}")
   @JsonProperty("gender")
   private String gender;

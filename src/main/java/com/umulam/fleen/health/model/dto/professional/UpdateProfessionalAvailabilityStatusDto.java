@@ -5,6 +5,8 @@ import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilitySta
 import com.umulam.fleen.health.validator.EnumValid;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
+
 @Builder
 @Getter
 @Setter
@@ -12,6 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 public class UpdateProfessionalAvailabilityStatusDto {
 
+  @NotNull(message = "{professional.availabilityStatus.notNull}")
   @EnumValid(enumClass = ProfessionalAvailabilityStatus.class, message = "{professional.availabilityStatus}")
   @JsonProperty("availability_status")
   private String availabilityStatus;

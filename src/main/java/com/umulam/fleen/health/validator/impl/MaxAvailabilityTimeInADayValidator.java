@@ -20,7 +20,7 @@ public class MaxAvailabilityTimeInADayValidator implements ConstraintValidator<M
   @Override
   public boolean isValid(List<AvailabilityPeriod> availabilityPeriods, ConstraintValidatorContext constraintValidatorContext) {
     if (!Objects.isNull(availabilityPeriods) && !availabilityPeriods.isEmpty()) {
-      Map<AvailabilityDayOfTheWeek, List<String>> availabilityTimes = new HashMap<>();
+      Map<AvailabilityDayOfTheWeek, List<Boolean>> availabilityTimes = new HashMap<>();
       availabilityPeriods = availabilityPeriods
         .stream()
         .filter(Objects::nonNull)
@@ -29,7 +29,7 @@ public class MaxAvailabilityTimeInADayValidator implements ConstraintValidator<M
       for (AvailabilityPeriod period : availabilityPeriods) {
         try {
           AvailabilityDayOfTheWeek dayOfTheWeek = AvailabilityDayOfTheWeek.valueOf(period.getDayOfTheWeek());
-          addToMap(availabilityTimes, dayOfTheWeek, null);
+          addToMap(availabilityTimes, dayOfTheWeek);
         } catch (IllegalArgumentException | NullPointerException ex) {
           log.error(ex.getMessage(), ex);
           return false;
@@ -47,15 +47,15 @@ public class MaxAvailabilityTimeInADayValidator implements ConstraintValidator<M
     return false;
   }
 
-  private static void addToMap(Map<AvailabilityDayOfTheWeek, List<String>> map, AvailabilityDayOfTheWeek key, String value) {
+  private static void addToMap(Map<AvailabilityDayOfTheWeek, List<Boolean>> map, AvailabilityDayOfTheWeek key) {
     // Check if the key already exists in the map
     if (map.containsKey(key)) {
       // Key exists, add the value to the existing list
-      map.get(key).add(value);
+      map.get(key).add(true);
     } else {
       // Key does not exist, create a new list and add the value
-      List<String> newList = new ArrayList<>();
-      newList.add(value);
+      List<Boolean> newList = new ArrayList<>();
+      newList.add(null);
       map.put(key, newList);
     }
   }

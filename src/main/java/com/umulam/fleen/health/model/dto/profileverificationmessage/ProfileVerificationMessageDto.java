@@ -8,6 +8,7 @@ import com.umulam.fleen.health.validator.EnumValid;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Builder
@@ -21,6 +22,7 @@ public class ProfileVerificationMessageDto {
   @Size(min = 5, max = 300, message = "{profileVerificationMessage.title.size}")
   private String title;
 
+  @NotNull(message = "{profileVerificationMessage.notNull}")
   @EnumValid(enumClass = ProfileVerificationMessageType.class, message = "{profileVerificationMessage.type.invalid}")
   @JsonProperty("verification_message_type")
   private String verificationMessageType;

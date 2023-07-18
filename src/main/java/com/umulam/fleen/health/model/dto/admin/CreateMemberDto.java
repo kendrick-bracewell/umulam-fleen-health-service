@@ -9,6 +9,7 @@ import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import static org.springframework.util.StringUtils.capitalize;
@@ -45,10 +46,12 @@ public class CreateMemberDto {
   @JsonProperty("phone_number")
   private String phoneNumber;
 
-  @EnumValid(enumClass = ProfileType.class, message = "{platform.entity.type.type}")
+  @NotNull(message = "{member.profileType.notNull}")
+  @EnumValid(enumClass = ProfileType.class, message = "{member.profileType}")
   @JsonProperty("profile_type")
   private String profileType;
 
+  @NotNull(message = "{member.gender.notNull}")
   @EnumValid(enumClass = MemberGender.class, message = "{signup.gender}")
   @JsonProperty("gender")
   private String gender;

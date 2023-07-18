@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Builder
@@ -29,6 +30,7 @@ public class ResendVerificationCodeDto {
   @JsonProperty("phone_number")
   private String phoneNumber;
 
+  @NotNull(message = "{verification.notNull}")
   @EnumValid(enumClass = VerificationType.class, message = "{verification.type}")
   @JsonProperty("verification_type")
   private String verificationType;

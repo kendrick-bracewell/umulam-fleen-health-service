@@ -22,11 +22,11 @@ import static com.umulam.fleen.health.util.DateTimeUtil.toTime;
 public class UpdateProfessionalAvailabilityDto {
 
   @Valid
-  @NotEmpty
-  @Size(max = 63)
-  @MaxAvailabilityTimeInADay
-  @NoDuplicateAvailabilityPeriod
-  @NoAvailabilityPeriodOverlap
+  @NotEmpty(message = "{period.notEmpty}")
+  @Size(min = 1, max = 63, message = "{period.size}")
+  @MaxAvailabilityTimeInADay(message = "{period.maxAvailabilityInADay}")
+  @NoDuplicateAvailabilityPeriod(message = "{period.noDuplicate}")
+  @NoAvailabilityPeriodOverlap(message = "{period.noOverlap}")
   List<AvailabilityPeriod> periods;
 
   @Getter
@@ -35,20 +35,20 @@ public class UpdateProfessionalAvailabilityDto {
   @AllArgsConstructor
   public static class AvailabilityPeriod {
 
-    @NotNull
-    @EnumValid(enumClass = AvailabilityDayOfTheWeek.class)
+    @NotNull(message = "{period.dayOfTheWeek.notNull}")
+    @EnumValid(enumClass = AvailabilityDayOfTheWeek.class, message = "{period.dayOfTheWeek.type}")
     @JsonProperty("day_of_the_week")
     private String dayOfTheWeek;
 
-    @NotNull
-    @TimeValid
-    @ValidAvailabilityStartTime
+    @NotNull(message = "{period.startTime.notNull}")
+    @TimeValid(message = "{period.startTime.valid}")
+    @ValidAvailabilityStartTime(message = "{period.startTime.validStartTime}")
     @JsonProperty("start_time")
     private String startTime;
 
-    @NotNull
-    @TimeValid
-    @ValidAvailabilityEndTime
+    @NotNull(message = "{period.endTime.notNull}")
+    @TimeValid(message = "{period.endTime.valid}")
+    @ValidAvailabilityEndTime(message = "{period.endTime.validEndTime}")
     @JsonProperty("end_time")
     private String endTime;
 
