@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.model.dto.healthsession;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.constant.session.HealthSessionStatus;
 import com.umulam.fleen.health.constant.session.SessionLocation;
 import com.umulam.fleen.health.model.domain.HealthSession;
@@ -8,6 +9,7 @@ import com.umulam.fleen.health.validator.*;
 import lombok.*;
 import org.hibernate.validator.constraints.URL;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -41,6 +43,21 @@ public class BookHealthSessionDto {
   @URL(message = "{session.document.isUrl}")
   @Size(max = 500, message = "{session.document.size}")
   private String document;
+
+  @Valid
+  @NotNull(message = "{session.transaction.notNull}")
+  @JsonProperty("transaction_data")
+  private TransactionData transactionData;
+
+  @Getter
+  @Setter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class TransactionData {
+
+    @NotNull(message = "{session.transaction.amount.noNutll}")
+    private Double amount;
+  }
 
   public HealthSession toHealthSession() {
     return HealthSession.builder()

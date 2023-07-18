@@ -1,10 +1,10 @@
 package com.umulam.fleen.health.constant.session;
 
-public enum TransactionStatus {
+
+public enum WithdrawalStatus {
 
   PENDING,
-  FAILED,
-  SUCCESS,
   REFUNDED,
-  CANCELLED;
+  CANCELED,
+  SUCCESSFUL;
 }

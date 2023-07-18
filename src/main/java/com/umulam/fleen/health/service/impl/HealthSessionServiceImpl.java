@@ -1,10 +1,16 @@
 package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
+import com.umulam.fleen.health.constant.session.PaymentGateway;
+import com.umulam.fleen.health.constant.session.TransactionStatus;
+import com.umulam.fleen.health.constant.session.TransactionSubType;
+import com.umulam.fleen.health.constant.session.TransactionType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
+import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
+import com.umulam.fleen.health.model.domain.transaction.Transaction;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
@@ -13,6 +19,7 @@ import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.HealthSessionProfessionalJpaRepository;
+import com.umulam.fleen.health.repository.jpa.TransactionJpaRepository;
 import com.umulam.fleen.health.service.HealthSessionService;
 import com.umulam.fleen.health.service.ProfessionalService;
 import com.umulam.fleen.health.util.UniqueReferenceGenerator;
@@ -25,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.REFERENCE_PREFIX;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.TRANSACTION_REFERENCE_PREFIX;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
 import static java.util.Objects.nonNull;
@@ -32,21 +40,24 @@ import static java.util.Objects.nonNull;
 @Slf4j
 @Service
 public class HealthSessionServiceImpl implements HealthSessionService {
-  
+
   private final HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository;
   private final HealthSessionJpaRepository sessionJpaRepository;
   private final ProfessionalService professionalService;
   private final UniqueReferenceGenerator referenceGenerator;
+  private final TransactionJpaRepository transactionJpaRepository;
 
   public HealthSessionServiceImpl(
           HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository,
           HealthSessionJpaRepository sessionJpaRepository,
           ProfessionalService professionalService,
-          UniqueReferenceGenerator referenceGenerator) {
+          UniqueReferenceGenerator referenceGenerator,
+          TransactionJpaRepository transactionJpaRepository) {
     this.sessionProfessionalJpaRepository = sessionProfessionalJpaRepository;
     this.sessionJpaRepository = sessionJpaRepository;
     this.professionalService = professionalService;
     this.referenceGenerator = referenceGenerator;
+    this.transactionJpaRepository = transactionJpaRepository;
   }
 
   @Override
@@ -88,10 +99,25 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         .id(user.getId())
         .build();
     healthSession.setPatient(member);
+    SessionTransaction transaction = SessionTransaction.builder()
+        .reference(generateTransactionReference())
+        .payer(member)
+        .status(TransactionStatus.PENDING)
+        .gateway(PaymentGateway.PAYSTACK)
+        .amount(dto.getTransactionData().getAmount())
+        .type(TransactionType.SESSION)
+        .subType(TransactionSubType.DEBIT)
+        .build();
+
     sessionJpaRepository.save(healthSession);
+    transactionJpaRepository.save(transaction);
   }
 
   private String generateSessionReference() {
     return REFERENCE_PREFIX.concat(referenceGenerator.generateUniqueReference());
+  }
+
+  private String generateTransactionReference() {
+    return TRANSACTION_REFERENCE_PREFIX.concat(referenceGenerator.generateUniqueReference());
   }
 }
