@@ -78,11 +78,11 @@ public class DateTimeUtil {
     return LocalDateTime.of(2000, 1, 1, 0, 0, 0);
   }
 
-  public static LocalTime getWorkingHoursStart() {
+  public static LocalTime getWorkingHourStart() {
     return LocalTime.of(9, 0);
   }
 
-  public static LocalTime getWorkingHoursEnd() {
+  public static LocalTime getWorkingHourEnd() {
     return LocalTime.of(18, 0);
   }
 
@@ -91,7 +91,7 @@ public class DateTimeUtil {
       try {
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(TIME);
         LocalTime workingTime = LocalTime.parse(time, dtf);
-        return !workingTime.isBefore(getWorkingHoursStart()) && !workingTime.isAfter(getWorkingHoursEnd());
+        return !workingTime.isBefore(getWorkingHourStart()) && !workingTime.isAfter(getWorkingHourEnd());
       } catch (DateTimeParseException ex) {
         log.error(ex.getMessage(), ex);
       }

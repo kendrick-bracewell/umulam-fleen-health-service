@@ -1,8 +1,6 @@
 package com.umulam.fleen.health.model.dto.healthsession;
 
-import com.umulam.fleen.health.validator.DateValid;
-import com.umulam.fleen.health.validator.MemberExists;
-import com.umulam.fleen.health.validator.TimeValid;
+import com.umulam.fleen.health.validator.*;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -25,10 +23,12 @@ public class BookHealthSessionDto {
 
   @NotNull
   @DateValid
+  @Future
   private String date;
 
   @NotNull
   @TimeValid
+  @WorkingHour
   private String time;
 
   @Size(max = 500)
