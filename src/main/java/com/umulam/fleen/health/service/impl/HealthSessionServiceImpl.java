@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
+import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
@@ -11,12 +12,14 @@ import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.service.HealthSessionService;
 import com.umulam.fleen.health.service.ProfessionalService;
+import com.umulam.fleen.health.util.UniqueReferenceGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.REFERENCE_PREFIX;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
 import static java.util.Objects.nonNull;
@@ -27,12 +30,15 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   
   private final HealthSessionJpaRepository sessionJpaRepository;
   private final ProfessionalService professionalService;
+  private final UniqueReferenceGenerator referenceGenerator;
 
   public HealthSessionServiceImpl(
           HealthSessionJpaRepository sessionJpaRepository,
-          ProfessionalService professionalService) {
+          ProfessionalService professionalService,
+          UniqueReferenceGenerator referenceGenerator) {
     this.sessionJpaRepository = sessionJpaRepository;
     this.professionalService = professionalService;
+    this.referenceGenerator = referenceGenerator;
   }
 
   @Override
@@ -63,6 +69,11 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   @Override
   public void bookSession(BookHealthSessionDto dto, FleenUser user) {
+    HealthSession healthSession = dto.toHealthSession();
+    healthSession.setReference(generateSessionReference());
+  }
 
+  private String generateSessionReference() {
+    return REFERENCE_PREFIX.concat(referenceGenerator.generateUniqueReference());
   }
 }

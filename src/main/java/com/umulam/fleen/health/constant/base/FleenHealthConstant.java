@@ -2,6 +2,7 @@ package com.umulam.fleen.health.constant.base;
 
 public class FleenHealthConstant {
 
+  public static final String REFERENCE_PREFIX = "FLEEN-HEALTH-";
   public static final String PAYSTACK_INITIALIZE_PAYMENT_URL = "https://api.paystack.co/transaction/initialize";
   public static final String PAYSTACK_VERIFY_PAYMENT_URL = "https://api.paystack.co/transaction/verify/";
   private static final String GOOGLE_RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
