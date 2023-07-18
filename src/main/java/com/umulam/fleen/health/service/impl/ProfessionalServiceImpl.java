@@ -219,6 +219,17 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   }
 
   @Override
+  public Object getUpdateAvailabilityOrSchedule(FleenUser user) {
+    Member member = memberService.getMemberById(user.getId());
+
+    if (member.getUserType() != ProfileType.PROFESSIONAL) {
+      throw new NotAProfessionalException(member.getId());
+    }
+    professionalAvailabilityJpaRepository.findAllByMember(member);
+    return null;
+  }
+
+  @Override
   public S3Service getS3Service() {
     return s3Service;
   }

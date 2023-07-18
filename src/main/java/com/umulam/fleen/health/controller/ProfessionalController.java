@@ -77,9 +77,15 @@ public class ProfessionalController {
     return new FleenHealthResponse(AVAILABILITY_STATUS_UPDATED);
   }
 
+  @GetMapping(value = "/update-availability")
+  public Object getUpdateAvailabilityOrSchedule(@AuthenticationPrincipal FleenUser user) {
+    service.getUpdateAvailabilityOrSchedule(user);
+    return new FleenHealthResponse(PROFESSIONAL_AVAILABILITY_OR_SCHEDULED_UPDATED);
+  }
+
   @PutMapping(value = "/update-availability")
   public Object updateAvailabilityOrSchedule(@Valid @RequestBody UpdateProfessionalAvailabilityDto dto,
-                                   @AuthenticationPrincipal FleenUser user) {
+                                             @AuthenticationPrincipal FleenUser user) {
     service.updateAvailabilityOrSchedule(dto, user);
     return new FleenHealthResponse(PROFESSIONAL_AVAILABILITY_OR_SCHEDULED_UPDATED);
   }

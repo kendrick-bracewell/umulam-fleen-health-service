@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ProfessionalAvailabilityJpaRepository extends JpaRepository<ProfessionalAvailability, Integer> {
 
   void deleteAllByMember(Member member);
+
+  void findAllByMember(Member member);
 }

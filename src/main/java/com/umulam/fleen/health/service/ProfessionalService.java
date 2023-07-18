@@ -52,5 +52,7 @@ public interface ProfessionalService {
 
   GetUpdateVerificationDetailResponse getUpdateVerificationDetail();
 
+  Object getUpdateAvailabilityOrSchedule(FleenUser user);
+
   void updateAvailabilityOrSchedule(UpdateProfessionalAvailabilityDto dto, FleenUser user);
 }
