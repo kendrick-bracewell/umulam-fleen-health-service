@@ -19,8 +19,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
-import java.time.LocalTime;
 import java.util.List;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.*;
