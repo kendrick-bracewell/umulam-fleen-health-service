@@ -16,7 +16,7 @@ import com.umulam.fleen.health.model.request.search.MemberSearchRequest;
 import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.MemberView;
-import com.umulam.fleen.health.model.view.SearchResultView;
+import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.MemberJpaRepository;
 import com.umulam.fleen.health.service.*;
 import com.umulam.fleen.health.service.admin.AdminMemberService;

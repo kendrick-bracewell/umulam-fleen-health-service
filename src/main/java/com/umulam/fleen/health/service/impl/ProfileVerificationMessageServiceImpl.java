@@ -11,7 +11,7 @@ import com.umulam.fleen.health.model.response.profileverificationmessage.GetProf
 import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessages;
 import com.umulam.fleen.health.model.response.profileverificationmessage.GetProfileVerificationMessagesBasic;
 import com.umulam.fleen.health.model.view.ProfileVerificationMessageView;
-import com.umulam.fleen.health.model.view.SearchResultView;
+import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.ProfileVerificationMessageJpaRepository;
 import com.umulam.fleen.health.service.ProfileVerificationMessageService;
 import lombok.extern.slf4j.Slf4j;

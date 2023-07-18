@@ -32,7 +32,7 @@ public class MemberView extends FleenHealthView {
   private String profilePhoto;
 
   @JsonProperty("mfa_enabled")
-  private boolean mfaEnabled;
+  private Boolean mfaEnabled;
 
   @JsonProperty("mfa_type")
   private String mfaType;
@@ -51,10 +51,10 @@ public class MemberView extends FleenHealthView {
   private LocalDateTime dateOfBirth;
 
   @JsonProperty("email_address_verified")
-  private boolean emailAddressVerified;
+  private Boolean emailAddressVerified;
 
   @JsonProperty("phone_number_verified")
-  private boolean phoneNumberVerified;
+  private Boolean phoneNumberVerified;
 
   @JsonProperty("member_status")
   private MemberStatusView memberStatus;

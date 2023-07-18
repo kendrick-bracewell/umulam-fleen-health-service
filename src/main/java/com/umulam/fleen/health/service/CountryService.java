@@ -5,7 +5,7 @@ import com.umulam.fleen.health.model.dto.country.CountryDto;
 import com.umulam.fleen.health.model.dto.country.UpdateCountryDto;
 import com.umulam.fleen.health.model.request.search.CountrySearchRequest;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
-import com.umulam.fleen.health.model.view.SearchResultView;
+import com.umulam.fleen.health.model.view.search.SearchResultView;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

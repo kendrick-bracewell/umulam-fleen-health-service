@@ -20,7 +20,7 @@ import com.umulam.fleen.health.model.response.professional.GetUpdateVerification
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
 import com.umulam.fleen.health.model.view.ProfessionalView;
-import com.umulam.fleen.health.model.view.ProfessionalViewBasic;
+import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.VerificationDocumentView;
 import com.umulam.fleen.health.repository.jpa.ProfessionalAvailabilityJpaRepository;
 import com.umulam.fleen.health.repository.jpa.ProfessionalJpaRepository;

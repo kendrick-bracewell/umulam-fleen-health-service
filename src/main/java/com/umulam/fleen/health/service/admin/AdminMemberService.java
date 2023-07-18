@@ -2,7 +2,7 @@ package com.umulam.fleen.health.service.admin;
 
 import com.umulam.fleen.health.model.dto.admin.CreateMemberDto;
 import com.umulam.fleen.health.model.request.search.MemberSearchRequest;
-import com.umulam.fleen.health.model.view.SearchResultView;
+import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.service.MemberService;
 import org.springframework.transaction.annotation.Transactional;
 

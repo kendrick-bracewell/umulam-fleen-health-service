@@ -9,7 +9,7 @@ import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.response.member.UpdateMemberDetailsResponse;
 import com.umulam.fleen.health.model.view.MemberView;
 import com.umulam.fleen.health.model.view.RoleView;
-import com.umulam.fleen.health.model.view.SearchResultView;
+import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.admin.AdminMemberService;
 import lombok.extern.slf4j.Slf4j;

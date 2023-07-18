@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.model.view;
+package com.umulam.fleen.health.model.view.search;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

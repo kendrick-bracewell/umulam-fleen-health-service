@@ -1,6 +1,6 @@
 package com.umulam.fleen.health.util;
 
-import com.umulam.fleen.health.model.view.SearchResultView;
+import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.service.impl.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;

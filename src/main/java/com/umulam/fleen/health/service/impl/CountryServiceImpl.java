@@ -9,7 +9,7 @@ import com.umulam.fleen.health.model.mapper.CountryMapper;
 import com.umulam.fleen.health.model.request.search.CountrySearchRequest;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
 import com.umulam.fleen.health.model.view.CountryView;
-import com.umulam.fleen.health.model.view.SearchResultView;
+import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.CountryJpaRepository;
 import com.umulam.fleen.health.service.CountryService;
 import lombok.extern.slf4j.Slf4j;

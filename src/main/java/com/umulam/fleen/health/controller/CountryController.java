@@ -6,7 +6,7 @@ import com.umulam.fleen.health.model.request.search.CountrySearchRequest;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
 import com.umulam.fleen.health.model.response.other.DeleteResponse;
 import com.umulam.fleen.health.model.view.CountryView;
-import com.umulam.fleen.health.model.view.SearchResultView;
+import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.CountryService;
 import lombok.extern.slf4j.Slf4j;
