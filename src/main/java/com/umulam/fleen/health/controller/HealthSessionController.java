@@ -2,6 +2,7 @@ package com.umulam.fleen.health.controller;
 
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
+import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.SearchResultView;
@@ -39,8 +40,9 @@ public class HealthSessionController {
   }
 
   @PostMapping(value = "/book-session")
-  public void bookSession(@Valid @RequestBody BookHealthSessionDto dto, @AuthenticationPrincipal FleenUser user) {
+  public FleenHealthResponse bookSession(@Valid @RequestBody BookHealthSessionDto dto, @AuthenticationPrincipal FleenUser user) {
     healthSessionService.bookSession(dto, user);
+    return new FleenHealthResponse("Success");
 
   }
 
