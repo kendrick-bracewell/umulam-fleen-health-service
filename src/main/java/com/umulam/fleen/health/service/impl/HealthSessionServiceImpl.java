@@ -10,6 +10,7 @@ import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
+import com.umulam.fleen.health.repository.jpa.HealthSessionProfessionalJpaRepository;
 import com.umulam.fleen.health.service.HealthSessionService;
 import com.umulam.fleen.health.service.ProfessionalService;
 import com.umulam.fleen.health.util.UniqueReferenceGenerator;
@@ -28,14 +29,17 @@ import static java.util.Objects.nonNull;
 @Service
 public class HealthSessionServiceImpl implements HealthSessionService {
   
+  private final HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository;
   private final HealthSessionJpaRepository sessionJpaRepository;
   private final ProfessionalService professionalService;
   private final UniqueReferenceGenerator referenceGenerator;
 
   public HealthSessionServiceImpl(
+          HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository,
           HealthSessionJpaRepository sessionJpaRepository,
           ProfessionalService professionalService,
           UniqueReferenceGenerator referenceGenerator) {
+    this.sessionProfessionalJpaRepository = sessionProfessionalJpaRepository;
     this.sessionJpaRepository = sessionJpaRepository;
     this.professionalService = professionalService;
     this.referenceGenerator = referenceGenerator;
@@ -47,15 +51,15 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     ProfessionalAvailabilityStatus availability = ProfessionalAvailabilityStatus.AVAILABLE;
 
     if (areNotEmpty(req.getFirstName(), req.getLastName())) {
-      page = sessionJpaRepository.findByFirstNameAndLastName(req.getFirstName(), req.getLastName(), availability, req.getPage());
+      page = sessionProfessionalJpaRepository.findByFirstNameAndLastName(req.getFirstName(), req.getLastName(), availability, req.getPage());
     } else if (nonNull(req.getProfessionalType())) {
-      page = sessionJpaRepository.findByProfessionalType(req.getProfessionalType(), availability,  req.getPage());
+      page = sessionProfessionalJpaRepository.findByProfessionalType(req.getProfessionalType(), availability,  req.getPage());
     } else if (nonNull(req.getQualificationType())) {
-      page = sessionJpaRepository.findByQualification(req.getQualificationType(), availability, req.getPage());
+      page = sessionProfessionalJpaRepository.findByQualification(req.getQualificationType(), availability, req.getPage());
     } else if (nonNull(req.getLanguageSpoken())) {
-      page = sessionJpaRepository.findByLanguageSpoken(req.getLanguageSpoken(), availability, req.getPage());
+      page = sessionProfessionalJpaRepository.findByLanguageSpoken(req.getLanguageSpoken(), availability, req.getPage());
     } else {
-      page = sessionJpaRepository.findByAvailabilityStatus(availability, req.getPage());
+      page = sessionProfessionalJpaRepository.findByAvailabilityStatus(availability, req.getPage());
     }
 
     List<ProfessionalViewBasic> views = ProfessionalMapper.toProfessionalViewsBasic(page.getContent());
@@ -71,6 +75,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   public void bookSession(BookHealthSessionDto dto, FleenUser user) {
     HealthSession healthSession = dto.toHealthSession();
     healthSession.setReference(generateSessionReference());
+    sessionJpaRepository.save(healthSession);
   }
 
   private String generateSessionReference() {

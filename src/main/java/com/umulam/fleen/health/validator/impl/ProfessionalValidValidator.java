@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.validator.impl;
 
+import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.service.MemberService;
@@ -13,6 +14,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.Optional;
 
 import static com.umulam.fleen.health.constant.base.ProfileType.PROFESSIONAL;
+import static com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus.AVAILABLE;
 import static com.umulam.fleen.health.constant.verification.ProfileVerificationStatus.APPROVED;
 import static java.util.Objects.nonNull;
 
@@ -39,7 +41,10 @@ public class ProfessionalValidValidator implements ConstraintValidator<Professio
       if (nonNull(member) && member.getUserType() == PROFESSIONAL && member.getVerificationStatus() == APPROVED) {
         Optional<Professional> professionalExists = professionalService.findProfessionalByMember(member);
         if (professionalExists.isPresent()) {
-          return true;
+          Professional professional = professionalExists.get();
+          if (professional.getAvailabilityStatus() == AVAILABLE) {
+            return true;
+          }
         }
       }
     } catch (Exception ex) {
