@@ -112,7 +112,7 @@ public class DateTimeUtil {
   }
 
   public static boolean isDateOrTimeValid(String dateTime, String pattern) {
-    if (Objects.nonNull(dateTime)) {
+    if (nonNull(dateTime)) {
       try {
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(pattern);
         dtf.parse(dateTime);

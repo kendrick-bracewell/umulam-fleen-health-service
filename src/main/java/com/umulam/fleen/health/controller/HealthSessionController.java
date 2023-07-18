@@ -43,7 +43,6 @@ public class HealthSessionController {
   public FleenHealthResponse bookSession(@Valid @RequestBody BookHealthSessionDto dto, @AuthenticationPrincipal FleenUser user) {
     healthSessionService.bookSession(dto, user);
     return new FleenHealthResponse("Success");
-
   }
 
   public void makePayment() {
