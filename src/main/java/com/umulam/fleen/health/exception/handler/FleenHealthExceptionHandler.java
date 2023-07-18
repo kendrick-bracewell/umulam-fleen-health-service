@@ -11,6 +11,7 @@ import com.umulam.fleen.health.exception.member.UpdatePasswordFailedException;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusCodeDuplicateException;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusNotFoundException;
+import com.umulam.fleen.health.exception.professional.NotAProfessionalException;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotFoundException;
 import com.umulam.fleen.health.exception.profileverificationmessage.ProfileVerificationMessageNotFoundException;
 import com.umulam.fleen.health.exception.role.RoleDuplicateException;
@@ -91,7 +92,8 @@ public class FleenHealthExceptionHandler {
           ResetPasswordCodeInvalidException.class,
           MfaVerificationFailed.class,
           UpdatePasswordFailedException.class,
-          MemberAlreadyOnboarded.class
+          MemberAlreadyOnboarded.class,
+          NotAProfessionalException.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);

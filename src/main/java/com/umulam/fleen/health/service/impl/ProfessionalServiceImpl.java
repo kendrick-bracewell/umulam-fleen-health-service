@@ -1,9 +1,11 @@
 package com.umulam.fleen.health.service.impl;
 
+import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.constant.professional.AvailabilityDayOfTheWeek;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
+import com.umulam.fleen.health.exception.professional.NotAProfessionalException;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotFoundException;
 import com.umulam.fleen.health.model.domain.*;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalAvailabilityDto;
@@ -198,6 +200,11 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   @Transactional
   public void updateAvailabilityOrSchedule(UpdateProfessionalAvailabilityDto dto, FleenUser user) {
     Member member = memberService.getMemberById(user.getId());
+
+    if (member.getUserType() != ProfileType.PROFESSIONAL) {
+      throw new NotAProfessionalException(member.getId());
+    }
+
     List<ProfessionalAvailability> availabilityPeriods = dto.getPeriods()
       .stream()
       .map(period -> ProfessionalAvailability.builder()
