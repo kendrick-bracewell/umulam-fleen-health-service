@@ -4,6 +4,7 @@ import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilitySta
 import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
+import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
@@ -57,5 +58,10 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   @Override
   public ProfessionalViewBasic viewProfessionalDetail(Integer professionalId) {
     return professionalService.findProfessionalBasicById(professionalId);
+  }
+
+  @Override
+  public void bookSession(Object dto, FleenUser user) {
+
   }
 }

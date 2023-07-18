@@ -10,41 +10,43 @@ import java.util.TimeZone;
 
 public class HealthSession {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   private Integer id;
 
-  @Column
+  @Column(name = "reference", nullable = false)
   private String reference;
 
   @ManyToOne
-  @JoinColumn(name = "patient")
+  @JoinColumn(name = "patient", nullable = false)
   private Member patient;
 
   @ManyToOne
-  @JoinColumn(name = "professional")
+  @JoinColumn(name = "professional", nullable = false)
   private Member professional;
 
-  @Column
-  private String description;
+  @Column(name = "comment")
+  private String comment;
 
-  @Column(name = "date")
+  @Column(name = "date", nullable = false)
   private LocalDate date;
 
-  @Column(name = "time")
+  @Column(name = "time", nullable = false)
   private LocalTime time;
 
   @Column(name = "timezone")
-  private TimeZone timeZone;
+  private String timeZone;
 
-  @Column(name = "status")
+  @Column(name = "status", nullable = false)
   @Enumerated(EnumType.STRING)
   private HealthSessionStatus status;
 
-  @Column(name = "location")
+  @Column(name = "location", nullable = false)
   @Enumerated(EnumType.STRING)
   private SessionLocation location;
 
+  @Column(name = "document_link")
   private String documentLink;
 
-  private String documentLink2;
 }
