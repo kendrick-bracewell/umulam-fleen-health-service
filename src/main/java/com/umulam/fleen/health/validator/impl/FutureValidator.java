@@ -1,6 +1,6 @@
 package com.umulam.fleen.health.validator.impl;
 
-import com.umulam.fleen.health.validator.After;
+import com.umulam.fleen.health.validator.Future;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.ConstraintValidator;
@@ -13,9 +13,9 @@ import java.util.Objects;
 import static com.umulam.fleen.health.util.DateFormatUtil.DATE;
 
 @Slf4j
-public class AfterValidator implements ConstraintValidator<After, String> {
+public class FutureValidator implements ConstraintValidator<Future, String> {
 
-  public void initialize(After constraintAnnotation) { }
+  public void initialize(Future constraintAnnotation) { }
 
   public boolean isValid(String date, ConstraintValidatorContext context) {
     if (Objects.nonNull(date)) {

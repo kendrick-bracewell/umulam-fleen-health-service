@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static com.umulam.fleen.health.util.DateFormatUtil.DATE;
@@ -108,6 +109,19 @@ public class DateTimeUtil {
       }
     }
     return null;
+  }
+
+  public static boolean isDateOrTimeValid(String dateTime, String pattern) {
+    if (Objects.nonNull(dateTime)) {
+      try {
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(pattern);
+        dtf.parse(dateTime);
+        return true;
+      } catch (DateTimeParseException ex) {
+        log.error(ex.getMessage(), ex);
+      }
+    }
+    return false;
   }
 
 }

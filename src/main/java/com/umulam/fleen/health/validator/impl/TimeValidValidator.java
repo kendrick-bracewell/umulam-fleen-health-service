@@ -6,11 +6,9 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Objects;
 
 import static com.umulam.fleen.health.util.DateFormatUtil.TIME;
+import static com.umulam.fleen.health.util.DateTimeUtil.isDateOrTimeValid;
 
 @Slf4j
 @Component
@@ -21,15 +19,6 @@ public class TimeValidValidator implements ConstraintValidator<TimeValid, String
 
   @Override
   public boolean isValid(String time, ConstraintValidatorContext constraintValidatorContext) {
-    if (Objects.nonNull(time)) {
-      try {
-        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(TIME);
-        dtf.parse(time);
-        return true;
-      } catch (DateTimeParseException ex) {
-        log.error(ex.getMessage(), ex);
-      }
-    }
-    return false;
+    return isDateOrTimeValid(time, TIME);
   }
 }
