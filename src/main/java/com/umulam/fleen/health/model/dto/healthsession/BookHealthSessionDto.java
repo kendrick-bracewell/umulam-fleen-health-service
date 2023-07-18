@@ -20,7 +20,6 @@ public class BookHealthSessionDto {
   @MemberExists
   private String professional;
 
-
   @NotNull
   @DateValid
   @Future

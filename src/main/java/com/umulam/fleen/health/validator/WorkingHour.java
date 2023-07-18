@@ -1,13 +1,13 @@
 package com.umulam.fleen.health.validator;
 
-import com.umulam.fleen.health.validator.impl.TimeValidValidator;
+import com.umulam.fleen.health.validator.impl.WorkingHourValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = TimeValidValidator.class)
+@Constraint(validatedBy = WorkingHourValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WorkingHour {
