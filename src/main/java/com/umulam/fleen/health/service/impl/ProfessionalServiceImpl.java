@@ -232,6 +232,11 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   }
 
   @Override
+  public Optional<Professional> findProfessionalByMember(Member member) {
+    return repository.findByMember(member);
+  }
+
+  @Override
   public S3Service getS3Service() {
     return s3Service;
   }

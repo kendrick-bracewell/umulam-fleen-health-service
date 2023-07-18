@@ -24,7 +24,7 @@ public class BookHealthSessionDto {
   private String comment;
 
   @NotNull
-  @ProfessionalExists
+  @ProfessionalValid
   private String professional;
 
   @NotNull

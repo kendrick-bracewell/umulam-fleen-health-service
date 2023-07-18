@@ -4,6 +4,7 @@ import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
 import com.umulam.fleen.health.constant.member.ProfessionalType;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
+import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateAvailabilityStatusResponse;
 import org.springframework.data.domain.Page;
@@ -60,4 +61,6 @@ public interface ProfessionalJpaRepository extends JpaRepository<Professional, I
 
   @Query(value = "SELECT p FROM Professional p WHERE p.member.verificationStatus = ?1 AND p.member.firstName LIKE CONCAT('%',INITCAP(?2),'%') OR p.member.lastName LIKE CONCAT('%',INITCAP(?3),'%')")
   Page<Professional> findByVerificationStatusAndFirstOrLastName(ProfileVerificationStatus verificationStatus, String firstName, String lastName, Pageable pageable);
+
+  Optional<Professional> findByMember(Member member);
 }

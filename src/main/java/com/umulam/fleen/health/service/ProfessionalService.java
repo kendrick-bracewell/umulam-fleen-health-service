@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.service;
 
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
+import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalAvailabilityDto;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalAvailabilityStatusDto;
@@ -15,6 +16,7 @@ import com.umulam.fleen.health.model.view.ProfessionalViewBasic;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProfessionalService {
 
@@ -56,4 +58,6 @@ public interface ProfessionalService {
   List<ProfessionalAvailabilityView> getUpdateAvailabilityOrSchedule(FleenUser user);
 
   void updateAvailabilityOrSchedule(UpdateProfessionalAvailabilityDto dto, FleenUser user);
+
+  Optional<Professional> findProfessionalByMember(Member member);
 }
