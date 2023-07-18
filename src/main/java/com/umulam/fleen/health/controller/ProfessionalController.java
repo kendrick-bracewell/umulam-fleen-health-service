@@ -10,6 +10,7 @@ import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateAvailabilityStatusResponse;
 import com.umulam.fleen.health.model.response.professional.GetUpdateVerificationDetailResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
 import com.umulam.fleen.health.model.view.ProfessionalView;
 import com.umulam.fleen.health.model.view.UserVerificationStatusView;
 import com.umulam.fleen.health.service.ProfessionalService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import java.time.LocalTime;
+import java.util.List;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.*;
 
@@ -78,13 +80,12 @@ public class ProfessionalController {
   }
 
   @GetMapping(value = "/update-availability")
-  public Object getUpdateAvailabilityOrSchedule(@AuthenticationPrincipal FleenUser user) {
-    service.getUpdateAvailabilityOrSchedule(user);
-    return new FleenHealthResponse(PROFESSIONAL_AVAILABILITY_OR_SCHEDULED_UPDATED);
+  public List<ProfessionalAvailabilityView> getUpdateAvailabilityOrSchedule(@AuthenticationPrincipal FleenUser user) {
+    return service.getUpdateAvailabilityOrSchedule(user);
   }
 
   @PutMapping(value = "/update-availability")
-  public Object updateAvailabilityOrSchedule(@Valid @RequestBody UpdateProfessionalAvailabilityDto dto,
+  public FleenHealthResponse updateAvailabilityOrSchedule(@Valid @RequestBody UpdateProfessionalAvailabilityDto dto,
                                              @AuthenticationPrincipal FleenUser user) {
     service.updateAvailabilityOrSchedule(dto, user);
     return new FleenHealthResponse(PROFESSIONAL_AVAILABILITY_OR_SCHEDULED_UPDATED);

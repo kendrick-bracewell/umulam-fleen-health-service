@@ -9,6 +9,7 @@ import com.umulam.fleen.health.model.dto.professional.UploadProfessionalDocument
 import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateAvailabilityStatusResponse;
 import com.umulam.fleen.health.model.response.professional.GetUpdateVerificationDetailResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
 import com.umulam.fleen.health.model.view.ProfessionalView;
 import com.umulam.fleen.health.model.view.ProfessionalViewBasic;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +53,7 @@ public interface ProfessionalService {
 
   GetUpdateVerificationDetailResponse getUpdateVerificationDetail();
 
-  Object getUpdateAvailabilityOrSchedule(FleenUser user);
+  List<ProfessionalAvailabilityView> getUpdateAvailabilityOrSchedule(FleenUser user);
 
   void updateAvailabilityOrSchedule(UpdateProfessionalAvailabilityDto dto, FleenUser user);
 }
