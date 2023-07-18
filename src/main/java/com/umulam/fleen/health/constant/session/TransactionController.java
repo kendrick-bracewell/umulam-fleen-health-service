@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.CompletableFuture;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.SUCCESS_MESSAGE;
@@ -16,9 +17,12 @@ import static com.umulam.fleen.health.constant.base.FleenHealthConstant.SUCCESS_
 @RequestMapping(value = "transaction")
 public class TransactionController {
 
+  @
+
   @Async
   @PostMapping(value = "/session-payment/verification")
-  public CompletableFuture<FleenHealthResponse> validateAndCompletePaymentTransaction() {
+  public CompletableFuture<FleenHealthResponse> validateAndCompletePaymentTransaction(HttpServletRequest request) {
+    if ()
     return CompletableFuture.completedFuture(new FleenHealthResponse(SUCCESS_MESSAGE));
   }
 }

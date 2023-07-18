@@ -113,6 +113,10 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     transactionJpaRepository.save(transaction);
   }
 
+  public void validateAndCompletePaymentTransaction(Object body) {
+
+  }
+
   private String generateSessionReference() {
     return REFERENCE_PREFIX.concat(referenceGenerator.generateUniqueReference());
   }
