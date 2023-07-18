@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.controller;
 
+import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalViewBasic;
@@ -9,6 +10,8 @@ import com.umulam.fleen.health.service.HealthSessionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -36,7 +39,8 @@ public class HealthSessionController {
   }
 
   @PostMapping(value = "/book-session")
-  public void bookSession(@AuthenticationPrincipal FleenUser user) {
+  public void bookSession(@Valid @RequestBody BookHealthSessionDto dto, @AuthenticationPrincipal FleenUser user) {
+    healthSessionService.bookSession(dto, user);
 
   }
 

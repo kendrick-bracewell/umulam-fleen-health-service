@@ -2,6 +2,7 @@ package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import com.umulam.fleen.health.model.domain.Professional;
+import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
@@ -61,7 +62,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   }
 
   @Override
-  public void bookSession(Object dto, FleenUser user) {
-
+  public void bookSession(BookHealthSessionDto dto, FleenUser user) {
+    
   }
 }
