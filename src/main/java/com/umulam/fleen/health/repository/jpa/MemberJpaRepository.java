@@ -81,4 +81,6 @@ public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
 
   @Query("SELECT m FROM Member m JOIN m.roles r WHERE r.code = :code")
   Page<Member> findAllPreOnboardedMembers(@Param("code") String roleType, Pageable pageable);
+
+  boolean existsById(Integer id);
 }

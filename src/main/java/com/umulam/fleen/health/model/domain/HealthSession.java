@@ -2,12 +2,20 @@ package com.umulam.fleen.health.model.domain;
 
 import com.umulam.fleen.health.constant.session.HealthSessionStatus;
 import com.umulam.fleen.health.constant.session.SessionLocation;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.TimeZone;
 
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "health_session")
 public class HealthSession {
 
   @Id
@@ -26,7 +34,7 @@ public class HealthSession {
   @JoinColumn(name = "professional", nullable = false)
   private Member professional;
 
-  @Column(name = "comment")
+  @Column(name = "comment", length = 1000)
   private String comment;
 
   @Column(name = "date", nullable = false)

@@ -14,7 +14,6 @@ import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
 import com.umulam.fleen.health.model.view.MemberView;
 import com.umulam.fleen.health.model.view.RoleView;
-import lombok.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -32,7 +31,9 @@ public interface MemberService {
 
   MemberView toMemberView(Member member);
 
-  boolean isMemberExists(@NonNull String emailAddress);
+  boolean isMemberExists(String emailAddress);
+
+  boolean isMemberExists(Integer id);
 
   boolean isEmailAddressExists(String emailAddress);
 
