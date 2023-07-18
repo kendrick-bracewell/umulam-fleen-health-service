@@ -49,6 +49,8 @@ public class BookHealthSessionDto {
       .timeZone("WAT")
       .time(toTime(time))
       .date(toDate(date))
+      .comment(comment)
+      .documentLink(document)
       .build();
   }
 }
