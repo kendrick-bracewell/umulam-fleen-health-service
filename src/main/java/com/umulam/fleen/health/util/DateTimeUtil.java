@@ -124,4 +124,15 @@ public class DateTimeUtil {
     return false;
   }
 
+  public static LocalDate toDate(String date) {
+    if (nonNull(date)) {
+      try {
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATE);
+        return LocalDate.parse(date, dtf);
+      } catch (DateTimeParseException ex) {
+        log.error(ex.getMessage(), ex);
+      }
+    }
+    return null;
+  }
 }

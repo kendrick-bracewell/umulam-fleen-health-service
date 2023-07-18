@@ -63,6 +63,6 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   @Override
   public void bookSession(BookHealthSessionDto dto, FleenUser user) {
-    
+
   }
 }
