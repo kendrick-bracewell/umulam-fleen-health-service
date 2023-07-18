@@ -23,6 +23,8 @@ public interface MemberService {
 
   Member getMemberByEmailAddress(String emailAddress);
 
+  Member getMemberById(Integer memberId);
+
   @Transactional(readOnly = true)
   MemberView findMemberById(Integer id);
 

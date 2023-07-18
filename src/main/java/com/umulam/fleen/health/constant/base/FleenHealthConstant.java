@@ -31,5 +31,6 @@ public class FleenHealthConstant {
   public static final String MEMBER_CREATED = "Member created successfully";
   public static final String RESEND_ONBOARDING_DETAILS = "Onboarding details resent";
   public static final String PROFILE_VERIFICATION_MESSAGE_SAVED = "Profile verification message saved and updated";
+  public static final String PROFESSIONAL_AVAILABILITY_OR_SCHEDULED_UPDATED = "Professional availability and schedule is updated";
 
 }

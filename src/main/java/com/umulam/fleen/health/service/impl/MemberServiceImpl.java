@@ -499,6 +499,16 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   }
 
   @Override
+  public Member getMemberById(Integer memberId) {
+    Optional<Member> memberExists = repository.findById(memberId);
+
+    if (memberExists.isEmpty()) {
+      throw new UserNotFoundException(memberId);
+    }
+    return memberExists.get();
+  }
+
+  @Override
   public MobileTextService getMobileTextService() {
     return mobileTextService;
   }

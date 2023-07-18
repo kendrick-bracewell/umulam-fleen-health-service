@@ -12,6 +12,7 @@ import com.umulam.fleen.health.model.request.SaveProfileVerificationMessageReque
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.view.ProfessionalView;
 import com.umulam.fleen.health.model.view.SearchResultView;
+import com.umulam.fleen.health.repository.jpa.ProfessionalAvailabilityJpaRepository;
 import com.umulam.fleen.health.repository.jpa.ProfessionalJpaRepository;
 import com.umulam.fleen.health.service.*;
 import com.umulam.fleen.health.service.admin.AdminProfessionalService;
@@ -55,8 +56,9 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
                                       MobileTextService mobileTextService,
                                       EmailServiceImpl emailService,
                                       VerificationHistoryService verificationHistoryService,
-                                      ProfileVerificationMessageService verificationMessageService) {
-    super(memberService, s3Service, countryService, verificationDocumentService, repository);
+                                      ProfileVerificationMessageService verificationMessageService,
+                                      ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository) {
+    super(memberService, s3Service, countryService, verificationDocumentService, repository, professionalAvailabilityJpaRepository);
     this.verificationMessageService = verificationMessageService;
     this.cacheService = cacheService;
     this.mobileTextService = mobileTextService;

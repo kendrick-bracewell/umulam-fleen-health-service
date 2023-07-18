@@ -78,8 +78,9 @@ public class ProfessionalController {
   }
 
   @PutMapping(value = "/update-availability")
-  public Object updateAvailability(@Valid @RequestBody UpdateProfessionalAvailabilityDto dto) {
-    return dto;
+  public Object updateAvailability(@Valid @RequestBody UpdateProfessionalAvailabilityDto dto, @AuthenticationPrincipal FleenUser user) {
+    service.updateAvailabilityOrSchedule(dto, user);
+    return new FleenHealthResponse(PROFESSIONAL_AVAILABILITY_OR_SCHEDULED_UPDATED);
   }
 
   public void viewSessions() {

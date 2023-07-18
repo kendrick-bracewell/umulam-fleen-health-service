@@ -20,6 +20,10 @@ public class ProfessionalAvailability {
   @Column(name = "id")
   private Integer id;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "member_id")
+  private Member member;
+
   @Column(name = "day_of_week", nullable = false)
   @Enumerated(EnumType.STRING)
   private AvailabilityDayOfTheWeek dayOfWeek;
@@ -29,7 +33,4 @@ public class ProfessionalAvailability {
 
   @Column(name = "end_time", nullable = false)
   private LocalTime endTime;
-
-  @Column(name = "timezone")
-  private String timezone;
 }
