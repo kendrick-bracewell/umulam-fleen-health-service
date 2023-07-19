@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.service.impl;
 
+import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import com.umulam.fleen.health.service.external.google.CalendarService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ public class FleenHealthEventListenerService {
 
   @Async
   @TransactionalEventListener
-  public void createSession() {
+  public void createSession(CreateSessionMeetingEvent meetingEvent) {
 
   }
 }
