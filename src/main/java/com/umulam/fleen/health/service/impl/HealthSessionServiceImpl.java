@@ -152,30 +152,34 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       Optional<SessionTransaction> transactionExist = sessionTransactionJpaRepository.findByReference(event.getData().getMetadata().getTransactionReference());
       if (transactionExist.isPresent()) {
         SessionTransaction transaction = transactionExist.get();
-        transaction.setExternalSystemReference(event.getData().getReference());
-        transaction.setCurrency(event.getData().getCurrency().toUpperCase());
-        if (TransactionStatus.SUCCESS.getValue().toLowerCase().equals(event.getData().getStatus())) {
-          transaction.setStatus(TransactionStatus.SUCCESS);
-          Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(transaction.getSessionReference());
-          if (healthSessionExist.isPresent()) {
-            HealthSession healthSession = healthSessionExist.get();
-            LocalDate meetingDate = healthSession.getDate();
-            LocalTime meetingTime = healthSession.getTime();
-            LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
-            LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMeetingSessionHourDuration());
-            String patientEmail = healthSession.getPatient().getEmailAddress();
-            String professionalEmail = healthSession.getProfessional().getEmailAddress();
-            CreateSessionMeetingEvent meetingEvent = CreateSessionMeetingEvent.builder()
-              .startDate(meetingStartDateTime)
-              .endDate(meetingEndDateTime)
-              .attendees(List.of(patientEmail, professionalEmail))
-              .timezone(healthSession.getTimeZone())
-              .metadata(Map.of("sessionReference", healthSession.getReference()))
-              .sessionReference(healthSession.getReference())
-              .build();
-            eventService.publishCreateSession(meetingEvent);
-          }
+        if (transaction.getStatus() != TransactionStatus.SUCCESS) {
+          transaction.setExternalSystemReference(event.getData().getReference());
+          transaction.setCurrency(event.getData().getCurrency().toUpperCase());
+          if (TransactionStatus.SUCCESS.getValue().toLowerCase().equals(event.getData().getStatus())) {
+            transaction.setStatus(TransactionStatus.SUCCESS);
+            Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(transaction.getSessionReference());
+            if (healthSessionExist.isPresent()) {
+              HealthSession healthSession = healthSessionExist.get();
+              if (healthSession.getStatus() != HealthSessionStatus.APPROVED && healthSession.getStatus() != HealthSessionStatus.RESCHEDULED) {
+                LocalDate meetingDate = healthSession.getDate();
+                LocalTime meetingTime = healthSession.getTime();
+                LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
+                LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMeetingSessionHourDuration());
+                String patientEmail = healthSession.getPatient().getEmailAddress();
+                String professionalEmail = healthSession.getProfessional().getEmailAddress();
+                CreateSessionMeetingEvent meetingEvent = CreateSessionMeetingEvent.builder()
+                  .startDate(meetingStartDateTime)
+                  .endDate(meetingEndDateTime)
+                  .attendees(List.of(patientEmail, professionalEmail))
+                  .timezone(healthSession.getTimeZone())
+                  .metadata(Map.of("sessionReference", healthSession.getReference()))
+                  .sessionReference(healthSession.getReference())
+                  .build();
+                eventService.publishCreateSession(meetingEvent);
+              }
+            }
           return;
+        }
         } else {
           transaction.setStatus(TransactionStatus.FAILED);
         }

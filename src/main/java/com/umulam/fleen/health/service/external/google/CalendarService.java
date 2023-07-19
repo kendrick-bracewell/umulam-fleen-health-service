@@ -102,17 +102,8 @@ public class CalendarService {
       conferenceData.setConferenceSolution(conferenceSolution);
       event.setConferenceData(conferenceData);
 
-      DateTime startDateTime = new DateTime(asDate(startDate));
-      EventDateTime start = new EventDateTime();
-      start.setDateTime(startDateTime);
-      start.setTimeZone(DEFAULT_TIMEZONE);
-      event.setStart(start);
-
-      DateTime endDateTime = new DateTime(asDate(endDate));
-      EventDateTime end = new EventDateTime();
-      end.setDateTime(endDateTime);
-      end.setTimeZone(DEFAULT_TIMEZONE);
-      event.setEnd(end);
+      setStartDate(startDate, event);
+      setEndDate(endDate, event);
 
       List<EventAttendee> attendees = new ArrayList<>();
       emails
@@ -146,25 +137,27 @@ public class CalendarService {
   public void cancelEvent(String eventId) {
     try {
       Event event = calendar.events().get(CALENDAR_ID, eventId).execute();
-      event.setStatus("cancelled");
-      calendar.events().update(CALENDAR_ID, eventId, event).execute();
+      if (Objects.nonNull(event)) {
+        event.setStatus("cancelled");
+        calendar.events().update(CALENDAR_ID, eventId, event).execute();
+      }
     } catch (IOException ex) {
       log.error(ex.getMessage(), ex);
     }
   }
 
-  public void rescheduleEvent(String eventId, LocalDateTime newStartDate, LocalDateTime newEndDate) {
+  public Event rescheduleEvent(String eventId, LocalDateTime newStartDate, LocalDateTime newEndDate) {
     try {
       Event event = calendar.events().get(CALENDAR_ID, eventId).execute();
       if (Objects.nonNull(event)) {
         setStartDate(newStartDate, event);
         setEndDate(newEndDate, event);
-        
+        return calendar.events().update(CALENDAR_ID, eventId, event).execute();
       }
-
     } catch (IOException ex) {
       log.error(ex.getMessage(), ex);
     }
+    return null;
   }
 
   private void setStartDate(LocalDateTime startDate, Event event) {
