@@ -1,16 +1,19 @@
 package com.umulam.fleen.health.service.external.google;
 
+import com.google.api.client.json.GenericJson;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.*;
 import com.umulam.fleen.health.constant.session.SessionLocation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.umulam.fleen.health.util.DateTimeUtil.asDate;
@@ -22,15 +25,19 @@ public class CalendarService {
 
   private final Calendar calendar;
   private static final String CALENDAR_ID = "primary";
-  private static final String EVENT_LOCATION = "Abuja, Nigeria";
   private static final String EVENT_SUMMARY = "Fleen Health Session";
   private static final String EVENT_DESCRIPTION = "Fleen Health Telehealth Session";
   private static final String EVENT_DISPLAY_NAME = "Fleen Health";
   private static final String DEFAULT_TIMEZONE = "Africa/Lagos";
   private static final String DEFAULT_CONFERENCE_NAME = "Lam Telehealth Session";
+  private final String ADMIN_EMAIL;
 
-  public CalendarService(Calendar calendar) {
+  public CalendarService(Calendar calendar,
+                         @Value("${google.admin.email}") String adminEmail) {
+
     this.calendar = calendar;
+    this.ADMIN_EMAIL = adminEmail;
+
   }
 
   public void listEvent() {
@@ -66,7 +73,7 @@ public class CalendarService {
     }
   }
 
-  public Object createEvent(LocalDateTime startDate, LocalDateTime endDate, List<String> emailAddresses) {
+  public void createEvent(LocalDateTime startDate, LocalDateTime endDate, List<String> emails, Map<String, String> metadata) {
     try {
       Event event = new Event();
       event.setLocation(SessionLocation.REMOTE.name());
@@ -74,7 +81,7 @@ public class CalendarService {
       event.setDescription(EVENT_DESCRIPTION);
 
       Event.Creator creator = new Event.Creator();
-      creator.setEmail("umulam@volunux.com");
+      creator.setEmail(ADMIN_EMAIL);
       creator.setDisplayName(EVENT_DISPLAY_NAME);
       event.setCreator(creator);
       event.setGuestsCanSeeOtherGuests(false);
@@ -109,7 +116,7 @@ public class CalendarService {
       event.setEnd(end);
 
       List<EventAttendee> attendees = new ArrayList<>();
-      emailAddresses
+      emails
               .stream()
               .filter(Objects::nonNull)
               .forEach(emailAddress -> {
@@ -125,13 +132,15 @@ public class CalendarService {
               .setOverrides(getEventReminders());
       event.setReminders(reminders);
 
+      event.setExtendedProperties(new Event.ExtendedProperties().setShared(metadata));
+
       Calendar.Events.Insert insert = calendar.events().insert(CALENDAR_ID, event);
       insert.setConferenceDataVersion(1);
       insert.setSendUpdates("all");
-      return insert.execute();
+      Event createdEvent = insert.execute();
+      String eventId = createdEvent.getId();
     } catch (IOException exception) {
       log.error(exception.getMessage(), exception);
-      return null;
     }
   }
 

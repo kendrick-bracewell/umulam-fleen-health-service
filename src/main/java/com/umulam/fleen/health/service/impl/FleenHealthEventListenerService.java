@@ -19,5 +19,6 @@ public class FleenHealthEventListenerService {
   @TransactionalEventListener
   public void createSession(CreateSessionMeetingEvent meetingEvent) {
 
+
   }
 }

@@ -37,10 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.REFERENCE_PREFIX;
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.TRANSACTION_REFERENCE_PREFIX;
@@ -172,6 +169,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
               .endDate(meetingEndDateTime)
               .attendees(List.of(patientEmail, professionalEmail))
               .timezone(healthSession.getTimeZone())
+              .metadata(Map.of("sessionReference", healthSession.getReference()))
               .build();
             eventService.publishCreateSession(meetingEvent);
           }
