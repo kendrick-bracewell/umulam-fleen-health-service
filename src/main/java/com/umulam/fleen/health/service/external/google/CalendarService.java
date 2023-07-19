@@ -1,6 +1,5 @@
 package com.umulam.fleen.health.service.external.google;
 
-import com.google.api.client.json.GenericJson;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.*;
@@ -73,7 +72,7 @@ public class CalendarService {
     }
   }
 
-  public void createEvent(LocalDateTime startDate, LocalDateTime endDate, List<String> emails, Map<String, String> metadata) {
+  public Event createEvent(LocalDateTime startDate, LocalDateTime endDate, List<String> emails, Map<String, String> metadata) {
     try {
       Event event = new Event();
       event.setLocation(SessionLocation.REMOTE.name());
@@ -137,10 +136,20 @@ public class CalendarService {
       Calendar.Events.Insert insert = calendar.events().insert(CALENDAR_ID, event);
       insert.setConferenceDataVersion(1);
       insert.setSendUpdates("all");
-      Event createdEvent = insert.execute();
-      String eventId = createdEvent.getId();
-    } catch (IOException exception) {
-      log.error(exception.getMessage(), exception);
+      return insert.execute();
+    } catch (IOException ex) {
+      log.error(ex.getMessage(), ex);
+    }
+    return null;
+  }
+
+  public void cancelEvent(String eventId) {
+    try {
+      Event event = calendar.events().get(CALENDAR_ID, eventId).execute();
+      event.setStatus("cancelled");
+      calendar.events().update(CALENDAR_ID, eventId, event).execute();
+    } catch (IOException ex) {
+      log.error(ex.getMessage(), ex);
     }
   }
 

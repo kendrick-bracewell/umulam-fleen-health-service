@@ -2,9 +2,7 @@ package com.umulam.fleen.health.event;
 
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -21,4 +19,5 @@ public class CreateSessionMeetingEvent {
   private String timezone;
   private List<String> attendees;
   private Map<String, String> metadata;
+  private String sessionReference;
 }

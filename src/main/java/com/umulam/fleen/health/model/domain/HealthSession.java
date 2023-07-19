@@ -59,11 +59,15 @@ public class HealthSession {
   @Column(name = "document_link")
   private String documentLink;
 
-  @Column(name = "meeting_reference_or_id")
-  private String meetingReferenceOrId;
+  @Column(name = "event_reference_or_id")
+  private String eventReferenceOrId;
 
-  @Column(name = "other_meetingReference")
-  private String otherMeetingReference;
+  @Column(name = "other_event_reference")
+  private String otherEventReference;
 
+  @Column(name = "meeting_url")
+  private String meetingUrl;
 
+  @Column(name = "event_link")
+  private String eventLink;
 }

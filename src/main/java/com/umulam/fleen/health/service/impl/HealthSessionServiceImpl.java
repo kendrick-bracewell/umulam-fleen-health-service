@@ -4,11 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.constant.paystack.PaystackWebhookEventType;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
-import com.umulam.fleen.health.constant.session.PaymentGateway;
-import com.umulam.fleen.health.constant.session.TransactionStatus;
-import com.umulam.fleen.health.constant.session.TransactionSubType;
-import com.umulam.fleen.health.constant.session.TransactionType;
+import com.umulam.fleen.health.constant.session.*;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
+import com.umulam.fleen.health.event.CancelSessionMeetingEvent;
 import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
@@ -27,6 +25,7 @@ import com.umulam.fleen.health.repository.jpa.HealthSessionProfessionalJpaReposi
 import com.umulam.fleen.health.repository.jpa.transaction.SessionTransactionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.TransactionJpaRepository;
 import com.umulam.fleen.health.service.HealthSessionService;
+import com.umulam.fleen.health.service.MemberService;
 import com.umulam.fleen.health.service.ProfessionalService;
 import com.umulam.fleen.health.util.UniqueReferenceGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +55,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   private final TransactionJpaRepository transactionJpaRepository;
   private final SessionTransactionJpaRepository sessionTransactionJpaRepository;
   private final FleenHealthEventService eventService;
+  private final MemberService memberService;
   private final ObjectMapper mapper;
 
   public HealthSessionServiceImpl(
@@ -66,6 +66,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
           TransactionJpaRepository transactionJpaRepository,
           SessionTransactionJpaRepository sessionTransactionJpaRepository,
           FleenHealthEventService eventService,
+          MemberService memberService,
           ObjectMapper mapper) {
     this.sessionProfessionalJpaRepository = sessionProfessionalJpaRepository;
     this.healthSessionRepository = healthSessionRepository;
@@ -74,6 +75,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     this.transactionJpaRepository = transactionJpaRepository;
     this.sessionTransactionJpaRepository = sessionTransactionJpaRepository;
     this.eventService = eventService;
+    this.memberService = memberService;
     this.mapper = mapper;
   }
 
@@ -144,7 +146,6 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     }
   }
 
-  @Transactional
   private void validateAndCompleteSessionTransaction(String body) {
     try {
       ChargeEvent event = mapper.readValue(body, ChargeEvent.class);
@@ -170,6 +171,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
               .attendees(List.of(patientEmail, professionalEmail))
               .timezone(healthSession.getTimeZone())
               .metadata(Map.of("sessionReference", healthSession.getReference()))
+              .sessionReference(healthSession.getReference())
               .build();
             eventService.publishCreateSession(meetingEvent);
           }
@@ -181,6 +183,23 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       }
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);
+    }
+  }
+
+  @Transactional
+  public void cancelSession(Integer sessionId, FleenUser user) {
+    Member member = memberService.getMemberById(user.getId());
+    Optional<HealthSession> healthSessionExist = healthSessionRepository.findByPatient(member);
+    if (healthSessionExist.isPresent()) {
+      HealthSession healthSession = healthSessionExist.get();
+      healthSession.setStatus(HealthSessionStatus.CANCELED);
+      healthSessionRepository.save(healthSession);
+      CancelSessionMeetingEvent event = CancelSessionMeetingEvent.builder()
+        .eventIdOrReference(healthSession.getEventReferenceOrId())
+        .otherEventReference(healthSession.getOtherEventReference())
+        .sessionReference(healthSession.getReference())
+        .build();
+      eventService.publishCancelSession(event);
     }
   }
 

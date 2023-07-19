@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.service.impl;
 
+import com.umulam.fleen.health.event.CancelSessionMeetingEvent;
 import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,10 @@ public class FleenHealthEventService {
   }
 
   public void publishCreateSession(CreateSessionMeetingEvent event) {
+    eventPublisher.publishEvent(event);
+  }
+
+  public void publishCancelSession(CancelSessionMeetingEvent event) {
     eventPublisher.publishEvent(event);
   }
 }
