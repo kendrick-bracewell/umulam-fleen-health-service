@@ -151,6 +151,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         } else {
           transaction.setStatus(TransactionStatus.FAILED);
         }
+        sessionTransactionJpaRepository.save(transaction);
       }
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);

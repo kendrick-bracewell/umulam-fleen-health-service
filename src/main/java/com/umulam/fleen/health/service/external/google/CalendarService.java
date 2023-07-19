@@ -3,7 +3,9 @@ package com.umulam.fleen.health.service.external.google;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.*;
+import com.umulam.fleen.health.constant.session.SessionLocation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -15,15 +17,17 @@ import static com.umulam.fleen.health.util.DateTimeUtil.asDate;
 import static com.umulam.fleen.health.util.DateTimeUtil.toMilliseconds;
 
 @Slf4j
-//@Component
+@Component
 public class CalendarService {
 
   private final Calendar calendar;
   private static final String CALENDAR_ID = "primary";
   private static final String EVENT_LOCATION = "Abuja, Nigeria";
-  private static final String EVENT_SUMMARY = "Lam Health Session";
-  private static final String EVENT_DESCRIPTION = "Lam Health Online Therapy and Telehealth Session";
+  private static final String EVENT_SUMMARY = "Fleen Health Session";
+  private static final String EVENT_DESCRIPTION = "Fleen Health Telehealth Session";
+  private static final String EVENT_DISPLAY_NAME = "Fleen Health";
   private static final String DEFAULT_TIMEZONE = "Africa/Lagos";
+  private static final String DEFAULT_CONFERENCE_NAME = "Lam Telehealth Session";
 
   public CalendarService(Calendar calendar) {
     this.calendar = calendar;
@@ -65,17 +69,19 @@ public class CalendarService {
   public Object createEvent(LocalDateTime startDate, LocalDateTime endDate, List<String> emailAddresses) {
     try {
       Event event = new Event();
-      event.setLocation(EVENT_LOCATION);
+      event.setLocation(SessionLocation.REMOTE.name());
       event.setSummary(EVENT_SUMMARY);
       event.setDescription(EVENT_DESCRIPTION);
 
       Event.Creator creator = new Event.Creator();
       creator.setEmail("umulam@volunux.com");
-      creator.setDisplayName("Fleen Health");
+      creator.setDisplayName(EVENT_DISPLAY_NAME);
       event.setCreator(creator);
+      event.setGuestsCanSeeOtherGuests(false);
+      event.setVisibility("private");
 
       ConferenceSolution conferenceSolution = new ConferenceSolution();
-      conferenceSolution.setName("Lam Telehealth Session");
+      conferenceSolution.setName(DEFAULT_CONFERENCE_NAME);
 
       ConferenceSolutionKey conferenceSolutionKey = new ConferenceSolutionKey();
       conferenceSolutionKey.setType("hangoutsMeet");
