@@ -1,5 +1,8 @@
 package com.umulam.fleen.health.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umulam.fleen.health.constant.paystack.PaystackWebhookEventType;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import com.umulam.fleen.health.constant.session.PaymentGateway;
 import com.umulam.fleen.health.constant.session.TransactionStatus;
@@ -11,6 +14,8 @@ import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
+import com.umulam.fleen.health.model.event.paystack.ChargeEvent;
+import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
@@ -18,7 +23,8 @@ import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.HealthSessionProfessionalJpaRepository;
-import com.umulam.fleen.health.repository.jpa.TransactionJpaRepository;
+import com.umulam.fleen.health.repository.jpa.transaction.SessionTransactionJpaRepository;
+import com.umulam.fleen.health.repository.jpa.transaction.TransactionJpaRepository;
 import com.umulam.fleen.health.service.HealthSessionService;
 import com.umulam.fleen.health.service.ProfessionalService;
 import com.umulam.fleen.health.util.UniqueReferenceGenerator;
@@ -29,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.REFERENCE_PREFIX;
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.TRANSACTION_REFERENCE_PREFIX;
@@ -45,18 +53,24 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   private final ProfessionalService professionalService;
   private final UniqueReferenceGenerator referenceGenerator;
   private final TransactionJpaRepository transactionJpaRepository;
+  private final SessionTransactionJpaRepository sessionTransactionJpaRepository;
+  private final ObjectMapper mapper;
 
   public HealthSessionServiceImpl(
           HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository,
           HealthSessionJpaRepository sessionJpaRepository,
           ProfessionalService professionalService,
           UniqueReferenceGenerator referenceGenerator,
-          TransactionJpaRepository transactionJpaRepository) {
+          TransactionJpaRepository transactionJpaRepository,
+          SessionTransactionJpaRepository sessionTransactionJpaRepository,
+          ObjectMapper mapper) {
     this.sessionProfessionalJpaRepository = sessionProfessionalJpaRepository;
     this.sessionJpaRepository = sessionJpaRepository;
     this.professionalService = professionalService;
     this.referenceGenerator = referenceGenerator;
     this.transactionJpaRepository = transactionJpaRepository;
+    this.sessionTransactionJpaRepository = sessionTransactionJpaRepository;
+    this.mapper = mapper;
   }
 
   @Override
@@ -113,8 +127,34 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   }
 
   @Override
-  public void validateAndCompletePaymentTransaction(Object body) {
+  public void validateAndCompleteTransaction(String body) {
+    try {
+      PaystackWebhookEvent event = mapper.readValue(body, PaystackWebhookEvent.class);
+      if (Objects.equals(event.getEvent(), PaystackWebhookEventType.CHARGE_SUCCESS.getValue())) {
+        validateAndCompleteSessionTransaction(body);
+      }
+    } catch (JsonProcessingException ex) {
+      log.error(ex.getMessage(), ex);
+    }
+  }
 
+  private void validateAndCompleteSessionTransaction(String body) {
+    try {
+      ChargeEvent event = mapper.readValue((String) body, ChargeEvent.class);
+      Optional<SessionTransaction> transactionExist = sessionTransactionJpaRepository.findByReference(event.getData().getMetadata().getTransactionReference());
+      if (transactionExist.isPresent()) {
+        SessionTransaction transaction = transactionExist.get();
+        transaction.setExternalSystemReference(event.getData().getReference());
+        transaction.setCurrency(event.getData().getCurrency().toUpperCase());
+        if (TransactionStatus.SUCCESS.getValue().toLowerCase().equals(event.getData().getStatus())) {
+          transaction.setStatus(TransactionStatus.SUCCESS);
+        } else {
+          transaction.setStatus(TransactionStatus.FAILED);
+        }
+      }
+    } catch (JsonProcessingException ex) {
+      log.error(ex.getMessage(), ex);
+    }
   }
 
   private String generateSessionReference() {

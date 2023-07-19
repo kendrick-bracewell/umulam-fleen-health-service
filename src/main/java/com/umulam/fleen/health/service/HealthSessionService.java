@@ -14,5 +14,5 @@ public interface HealthSessionService {
 
   void bookSession(BookHealthSessionDto dto, FleenUser user);
 
-  void validateAndCompletePaymentTransaction(Object body);
+  void validateAndCompleteTransaction(String body);
 }

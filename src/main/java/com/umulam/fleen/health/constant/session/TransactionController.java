@@ -1,13 +1,14 @@
 package com.umulam.fleen.health.constant.session;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.adapter.paystack.PaystackConfig;
-import com.umulam.fleen.health.model.event.paystack.ChargeEvent;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.service.HealthSessionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.CompletableFuture;
@@ -22,21 +23,18 @@ public class TransactionController {
 
   private final PaystackConfig config;
   private final HealthSessionService healthSessionService;
-  private final ObjectMapper mapper;
 
   public TransactionController(PaystackConfig config,
-                               HealthSessionService healthSessionService,
-                               ObjectMapper mapper) {
+                               HealthSessionService healthSessionService) {
     this.config = config;
     this.healthSessionService = healthSessionService;
-    this.mapper = mapper;
   }
 
   @Async
   @PostMapping(value = "/session-payment/verification")
   public CompletableFuture<FleenHealthResponse> validateAndCompletePaymentTransaction(@RequestBody String body, HttpServletRequest request) {
     if (config.getIpWhitelist().contains(request.getHeader(X_FORWARDED_HEADER))) {
-      healthSessionService.validateAndCompletePaymentTransaction(null);
+      healthSessionService.validateAndCompleteTransaction(body);
     }
     return CompletableFuture.completedFuture(new FleenHealthResponse(SUCCESS_MESSAGE));
   }

@@ -23,7 +23,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "transaction")
+@Table(name = "transaction", indexes = {
+  @Index(columnList = "reference", name = "ref_index", unique = true)
+})
 public class Transaction {
 
   @Id
