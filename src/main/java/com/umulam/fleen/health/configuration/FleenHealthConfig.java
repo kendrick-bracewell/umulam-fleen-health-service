@@ -21,7 +21,6 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.*;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
@@ -78,11 +77,6 @@ public class FleenHealthConfig implements WebMvcConfigurer {
   @Bean
   public CodeVerifier codeVerifier() {
     return new DefaultCodeVerifier(new DefaultCodeGenerator(HashingAlgorithm.SHA256), new SystemTimeProvider());
-  }
-
-  @Bean
-  public WebClient webClient() {
-    return WebClient.create();
   }
 
   @Override
