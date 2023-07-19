@@ -7,6 +7,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,32 +24,42 @@ import static com.google.api.services.calendar.CalendarScopes.CALENDAR_EVENTS;
 @Configuration
 public class GoogleWorkspaceAdapter {
 
-  private static final String APPLICATION_NAME = "Lam Health";
+  private final String APP_NAME;
+  private final String CREDENTIAL_PATH;
+  private final String ADMIN_EMAIL;
+
+  public GoogleWorkspaceAdapter(@Value("${app.name}") String appName,
+                                @Value("${google.credentials.path}") String credentialPath,
+                                @Value("${google.admin.email}") String adminEmail) {
+    this.APP_NAME = appName;
+    this.CREDENTIAL_PATH = credentialPath;
+    this.ADMIN_EMAIL = adminEmail;
+  }
+
   private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
   private static final List<String> SCOPES = List.of(CALENDAR, CALENDAR_EVENTS);
-  private static final String SERVICE_CREDENTIALS_FILE_PATH = "/secret/service-credential.json";
 
   @Bean
   public Calendar getCalendar() throws GeneralSecurityException, IOException {
     final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
     return new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpCredentialsAdapter(getServiceCredential()))
-            .setApplicationName(APPLICATION_NAME)
+            .setApplicationName(APP_NAME)
             .build();
   }
 
-  private static InputStream getCredentialInputStream() throws IOException {
-    InputStream in = GoogleWorkspaceAdapter.class.getResourceAsStream(GoogleWorkspaceAdapter.SERVICE_CREDENTIALS_FILE_PATH);
+  private InputStream getCredentialInputStream() throws IOException {
+    InputStream in = GoogleWorkspaceAdapter.class.getResourceAsStream(CREDENTIAL_PATH);
     if (in == null) {
-      throw new FileNotFoundException("Resource not found: ".concat(GoogleWorkspaceAdapter.SERVICE_CREDENTIALS_FILE_PATH));
+      throw new FileNotFoundException("Resource not found: ".concat(CREDENTIAL_PATH));
     }
     return in;
   }
 
-  public GoogleCredentials getServiceCredential() throws IOException {
+  private GoogleCredentials getServiceCredential() throws IOException {
     GoogleCredentials credentials = GoogleCredentials.fromStream(
             Objects.requireNonNull(getCredentialInputStream()))
             .createScoped(SCOPES)
-            .createDelegated("umulam@volunux.com");
+            .createDelegated(ADMIN_EMAIL);
     credentials.refreshIfExpired();
     System.out.println(credentials);
     return credentials;
