@@ -5,6 +5,7 @@ import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface HealthSessionService {
 
@@ -15,4 +16,7 @@ public interface HealthSessionService {
   void bookSession(BookHealthSessionDto dto, FleenUser user);
 
   void validateAndCompleteTransaction(String body);
+
+  @Transactional
+  void cancelSession(Integer sessionId, FleenUser user);
 }

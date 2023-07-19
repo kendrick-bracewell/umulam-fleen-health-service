@@ -6,5 +6,6 @@ public enum HealthSessionStatus {
   CONFIRMED,
   APPROVED,
   RESCHEDULED,
-  CANCELED;
+  CANCELED,
+  COMPLETED;
 }

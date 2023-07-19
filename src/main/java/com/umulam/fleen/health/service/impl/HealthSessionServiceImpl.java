@@ -186,6 +186,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     }
   }
 
+  @Override
   @Transactional
   public void cancelSession(Integer sessionId, FleenUser user) {
     Member member = memberService.getMemberById(user.getId());

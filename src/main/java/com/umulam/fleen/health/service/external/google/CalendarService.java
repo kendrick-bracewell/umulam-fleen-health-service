@@ -153,6 +153,36 @@ public class CalendarService {
     }
   }
 
+  public void rescheduleEvent(String eventId, LocalDateTime newStartDate, LocalDateTime newEndDate) {
+    try {
+      Event event = calendar.events().get(CALENDAR_ID, eventId).execute();
+      if (Objects.nonNull(event)) {
+        setStartDate(newStartDate, event);
+        setEndDate(newEndDate, event);
+        
+      }
+
+    } catch (IOException ex) {
+      log.error(ex.getMessage(), ex);
+    }
+  }
+
+  private void setStartDate(LocalDateTime startDate, Event event) {
+    DateTime startDateTime = new DateTime(asDate(startDate));
+    EventDateTime start = new EventDateTime();
+    start.setDateTime(startDateTime);
+    start.setTimeZone(DEFAULT_TIMEZONE);
+    event.setStart(start);
+  }
+
+  private void setEndDate(LocalDateTime endDate, Event event) {
+    DateTime endDateTime = new DateTime(asDate(endDate));
+    EventDateTime end = new EventDateTime();
+    end.setDateTime(endDateTime);
+    end.setTimeZone(DEFAULT_TIMEZONE);
+    event.setEnd(end);
+  }
+
   private List<EventReminder> getEventReminders() {
     List<EventReminder> eventReminders = new ArrayList<>();
     eventReminders.add(new EventReminder().setMethod("email").setMinutes(24 * 60));
