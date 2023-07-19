@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "transaction", indexes = {
-  @Index(columnList = "reference", name = "ref_index", unique = true)
+  @Index(columnList = "reference", name = "tx_ref_index", unique = true)
 })
 public class Transaction {
 

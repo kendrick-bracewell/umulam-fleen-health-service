@@ -15,7 +15,9 @@ import java.util.TimeZone;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "health_session")
+@Table(name = "health_session", indexes = {
+  @Index(columnList = "reference", name = "hs_ref_index", unique = true)
+})
 public class HealthSession {
 
   @Id
@@ -56,5 +58,6 @@ public class HealthSession {
 
   @Column(name = "document_link")
   private String documentLink;
+
 
 }

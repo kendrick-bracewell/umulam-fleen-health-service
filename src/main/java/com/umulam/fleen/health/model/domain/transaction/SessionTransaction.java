@@ -22,4 +22,7 @@ public class SessionTransaction extends Transaction {
 
   @Column(name = "external_system_reference")
   private String externalSystemReference;
+
+  @Column(name = "session_reference", nullable = false)
+  private String sessionReference;
 }

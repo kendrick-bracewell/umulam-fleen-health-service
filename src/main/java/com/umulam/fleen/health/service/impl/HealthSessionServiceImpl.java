@@ -9,6 +9,7 @@ import com.umulam.fleen.health.constant.session.TransactionStatus;
 import com.umulam.fleen.health.constant.session.TransactionSubType;
 import com.umulam.fleen.health.constant.session.TransactionType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
+import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
@@ -33,6 +34,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -49,27 +53,30 @@ import static java.util.Objects.nonNull;
 public class HealthSessionServiceImpl implements HealthSessionService {
 
   private final HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository;
-  private final HealthSessionJpaRepository sessionJpaRepository;
+  private final HealthSessionJpaRepository healthSessionRepository;
   private final ProfessionalService professionalService;
   private final UniqueReferenceGenerator referenceGenerator;
   private final TransactionJpaRepository transactionJpaRepository;
   private final SessionTransactionJpaRepository sessionTransactionJpaRepository;
+  private final FleenHealthEventService eventService;
   private final ObjectMapper mapper;
 
   public HealthSessionServiceImpl(
           HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository,
-          HealthSessionJpaRepository sessionJpaRepository,
+          HealthSessionJpaRepository healthSessionRepository,
           ProfessionalService professionalService,
           UniqueReferenceGenerator referenceGenerator,
           TransactionJpaRepository transactionJpaRepository,
           SessionTransactionJpaRepository sessionTransactionJpaRepository,
+          FleenHealthEventService eventService,
           ObjectMapper mapper) {
     this.sessionProfessionalJpaRepository = sessionProfessionalJpaRepository;
-    this.sessionJpaRepository = sessionJpaRepository;
+    this.healthSessionRepository = healthSessionRepository;
     this.professionalService = professionalService;
     this.referenceGenerator = referenceGenerator;
     this.transactionJpaRepository = transactionJpaRepository;
     this.sessionTransactionJpaRepository = sessionTransactionJpaRepository;
+    this.eventService = eventService;
     this.mapper = mapper;
   }
 
@@ -112,6 +119,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         .id(user.getId())
         .build();
     healthSession.setPatient(member);
+    HealthSession savedHealthSession = healthSessionRepository.save(healthSession);
     SessionTransaction transaction = SessionTransaction.builder()
         .reference(generateTransactionReference())
         .payer(member)
@@ -120,13 +128,14 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         .amount(dto.getTransactionData().getAmount())
         .type(TransactionType.SESSION)
         .subType(TransactionSubType.DEBIT)
+        .sessionReference(savedHealthSession.getReference())
         .build();
 
-    sessionJpaRepository.save(healthSession);
     transactionJpaRepository.save(transaction);
   }
 
   @Override
+  @Transactional
   public void validateAndCompleteTransaction(String body) {
     try {
       PaystackWebhookEvent event = mapper.readValue(body, PaystackWebhookEvent.class);
@@ -138,6 +147,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     }
   }
 
+  @Transactional
   private void validateAndCompleteSessionTransaction(String body) {
     try {
       ChargeEvent event = mapper.readValue(body, ChargeEvent.class);
@@ -148,6 +158,24 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         transaction.setCurrency(event.getData().getCurrency().toUpperCase());
         if (TransactionStatus.SUCCESS.getValue().toLowerCase().equals(event.getData().getStatus())) {
           transaction.setStatus(TransactionStatus.SUCCESS);
+          Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(transaction.getSessionReference());
+          if (healthSessionExist.isPresent()) {
+            HealthSession healthSession = healthSessionExist.get();
+            LocalDate meetingDate = healthSession.getDate();
+            LocalTime meetingTime = healthSession.getTime();
+            LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
+            LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMeetingSessionHourDuration());
+            String patientEmail = healthSession.getPatient().getEmailAddress();
+            String professionalEmail = healthSession.getProfessional().getEmailAddress();
+            CreateSessionMeetingEvent meetingEvent = CreateSessionMeetingEvent.builder()
+              .startDate(meetingStartDateTime)
+              .endDate(meetingEndDateTime)
+              .attendees(List.of(patientEmail, professionalEmail))
+              .timezone(healthSession.getTimeZone())
+              .build();
+            eventService.publishCreateSession(meetingEvent);
+          }
+          return;
         } else {
           transaction.setStatus(TransactionStatus.FAILED);
         }
@@ -164,5 +192,9 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   private String generateTransactionReference() {
     return TRANSACTION_REFERENCE_PREFIX.concat(referenceGenerator.generateUniqueReference());
+  }
+
+  private int getMeetingSessionHourDuration() {
+    return 1;
   }
 }

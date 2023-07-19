@@ -14,6 +14,6 @@ public class FleenHealthEventService {
   }
 
   public void publishCreateSession(CreateSessionMeetingEvent event) {
-
+    eventPublisher.publishEvent(event);
   }
 }
