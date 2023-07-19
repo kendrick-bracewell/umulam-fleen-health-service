@@ -1,14 +1,13 @@
 package com.umulam.fleen.health.constant.session;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.adapter.paystack.PaystackConfig;
+import com.umulam.fleen.health.model.event.paystack.ChargeEvent;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.service.HealthSessionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.CompletableFuture;
@@ -23,11 +22,14 @@ public class TransactionController {
 
   private final PaystackConfig config;
   private final HealthSessionService healthSessionService;
+  private final ObjectMapper mapper;
 
   public TransactionController(PaystackConfig config,
-                               HealthSessionService healthSessionService) {
+                               HealthSessionService healthSessionService,
+                               ObjectMapper mapper) {
     this.config = config;
     this.healthSessionService = healthSessionService;
+    this.mapper = mapper;
   }
 
   @Async
