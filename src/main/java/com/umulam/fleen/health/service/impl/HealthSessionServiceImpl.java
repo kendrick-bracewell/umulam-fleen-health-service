@@ -140,7 +140,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   private void validateAndCompleteSessionTransaction(String body) {
     try {
-      ChargeEvent event = mapper.readValue((String) body, ChargeEvent.class);
+      ChargeEvent event = mapper.readValue(body, ChargeEvent.class);
       Optional<SessionTransaction> transactionExist = sessionTransactionJpaRepository.findByReference(event.getData().getMetadata().getTransactionReference());
       if (transactionExist.isPresent()) {
         SessionTransaction transaction = transactionExist.get();
