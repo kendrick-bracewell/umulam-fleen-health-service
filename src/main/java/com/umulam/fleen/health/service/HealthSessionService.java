@@ -13,4 +13,6 @@ public interface HealthSessionService {
   ProfessionalViewBasic viewProfessionalDetail(Integer professionalId);
 
   void bookSession(BookHealthSessionDto dto, FleenUser user);
+
+  void validateAndCompletePaymentTransaction(Object body);
 }

@@ -10,7 +10,6 @@ import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
-import com.umulam.fleen.health.model.domain.transaction.Transaction;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
@@ -113,6 +112,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     transactionJpaRepository.save(transaction);
   }
 
+  @Override
   public void validateAndCompletePaymentTransaction(Object body) {
 
   }
