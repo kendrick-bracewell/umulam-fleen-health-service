@@ -203,7 +203,6 @@ public class HealthSessionServiceImpl implements HealthSessionService {
           sessionTransactionJpaRepository.save(transaction);
         }
       }
-
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);
     }
