@@ -2,7 +2,7 @@ package com.umulam.fleen.health.constant.base;
 
 public class FleenHealthConstant {
 
-  public static final String REFERENCE_PREFIX = "FLEENHEALTH-";
+  public static final String REFERENCE_PREFIX = "FLEENHEALTH-HS-";
   public static final String VERIFICATION_CODE_KEY = "code";
   public static final String LOGO_FILE_NAME = "logo.png";
   public static final String VERIFICATION_CODE_SENT_MESSAGE = "Verification code sent";

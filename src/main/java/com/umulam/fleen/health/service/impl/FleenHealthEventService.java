@@ -15,6 +15,7 @@ public class FleenHealthEventService {
   }
 
   public void publishCreateSession(CreateSessionMeetingEvent event) {
+    System.out.println("Was I triggered?");
     eventPublisher.publishEvent(event);
   }
 
