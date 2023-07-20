@@ -138,7 +138,6 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   public void validateAndCompleteTransaction(String body) {
     try {
       PaystackWebhookEvent event = mapper.readValue(body, PaystackWebhookEvent.class);
-      System.out.println("The event is " + event.getEvent());
       if (Objects.equals(event.getEvent(), PaystackWebhookEventType.CHARGE_SUCCESS.getValue())) {
         validateAndCompleteSessionTransaction(body);
       }
@@ -156,7 +155,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         if (transaction.getStatus() != TransactionStatus.SUCCESS) {
           transaction.setExternalSystemReference(event.getData().getReference());
           transaction.setCurrency(event.getData().getCurrency().toUpperCase());
-          if (TransactionStatus.SUCCESS.getValue().toLowerCase().equals(event.getData().getStatus())) {
+          if (TransactionStatus.SUCCESS.getValue().equalsIgnoreCase(event.getData().getStatus())) {
             transaction.setStatus(TransactionStatus.SUCCESS);
             Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(transaction.getSessionReference());
             if (healthSessionExist.isPresent()) {
