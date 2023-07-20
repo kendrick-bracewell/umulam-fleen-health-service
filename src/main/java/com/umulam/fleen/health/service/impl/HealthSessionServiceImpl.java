@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.constant.paystack.PaystackWebhookEventType;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
@@ -40,6 +41,8 @@ import java.util.*;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.REFERENCE_PREFIX;
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.TRANSACTION_REFERENCE_PREFIX;
+import static com.umulam.fleen.health.constant.session.TransactionStatus.SUCCESS;
+import static com.umulam.fleen.health.event.CreateSessionMeetingEvent.CreateSessionMeetingEventMetadata;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
 import static java.util.Objects.nonNull;
@@ -152,11 +155,11 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       Optional<SessionTransaction> transactionExist = sessionTransactionJpaRepository.findByReference(event.getData().getMetadata().getTransactionReference());
       if (transactionExist.isPresent()) {
         SessionTransaction transaction = transactionExist.get();
-        if (transaction.getStatus() != TransactionStatus.SUCCESS) {
+        if (transaction.getStatus() != SUCCESS) {
           transaction.setExternalSystemReference(event.getData().getReference());
           transaction.setCurrency(event.getData().getCurrency().toUpperCase());
-          if (TransactionStatus.SUCCESS.getValue().equalsIgnoreCase(event.getData().getStatus())) {
-            transaction.setStatus(TransactionStatus.SUCCESS);
+          if (SUCCESS.getValue().equalsIgnoreCase(event.getData().getStatus())) {
+            transaction.setStatus(SUCCESS);
             Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(transaction.getSessionReference());
             if (healthSessionExist.isPresent()) {
               HealthSession healthSession = healthSessionExist.get();
@@ -172,7 +175,11 @@ public class HealthSessionServiceImpl implements HealthSessionService {
                   .endDate(meetingEndDateTime)
                   .attendees(List.of(patientEmail, professionalEmail))
                   .timezone(healthSession.getTimeZone())
-                  .metadata(Map.of("sessionReference", healthSession.getReference()))
+                  .metadata(
+                    getCreateSessionMeetingEventMetadata(
+                      CreateSessionMeetingEventMetadata.builder()
+                      .sessionReference(healthSession.getReference())
+                      .build()))
                   .sessionReference(healthSession.getReference())
                   .build();
                 eventService.publishCreateSession(meetingEvent);
@@ -218,5 +225,9 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   private int getMeetingSessionHourDuration() {
     return 1;
+  }
+
+  private Map<String, String> getCreateSessionMeetingEventMetadata(CreateSessionMeetingEventMetadata metadata) {
+    return mapper.convertValue(metadata, new TypeReference<>() {});
   }
 }

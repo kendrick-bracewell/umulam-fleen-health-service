@@ -17,7 +17,16 @@ public class CreateSessionMeetingEvent {
   private LocalDateTime endDate;
 
   private String timezone;
+  private String sessionReference;
   private List<String> attendees;
   private Map<String, String> metadata;
-  private String sessionReference;
+
+  @Builder
+  @Getter
+  @Setter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class CreateSessionMeetingEventMetadata {
+    private String sessionReference;
+  }
 }
