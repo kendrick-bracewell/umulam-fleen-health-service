@@ -149,34 +149,24 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   private void validateAndCompleteSessionTransaction(String body) {
     try {
-      System.out.println("Stage XXXXXXXXXXXX");
       ChargeEvent event = mapper.readValue(body, ChargeEvent.class);
-      System.out.println("Stage xxxx)0000000000");
       Optional<SessionTransaction> transactionExist = sessionTransactionJpaRepository.findByReference(event.getData().getMetadata().getTransactionReference());
-      System.out.println("Stage 0000000000");
-      System.out.println(transactionExist.isPresent());
       if (transactionExist.isPresent()) {
         SessionTransaction transaction = transactionExist.get();
-        System.out.println(transaction.getStatus());
-        if (transaction.getStatus() != TransactionStatus.REFUNDED) {
-          System.out.println("Stage 1");
+        if (transaction.getStatus() != TransactionStatus.SUCCESS) {
           transaction.setExternalSystemReference(event.getData().getReference());
           transaction.setCurrency(event.getData().getCurrency().toUpperCase());
           if (TransactionStatus.SUCCESS.getValue().toLowerCase().equals(event.getData().getStatus())) {
             transaction.setStatus(TransactionStatus.SUCCESS);
-            System.out.println("Anybody here");
             Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(transaction.getSessionReference());
             if (healthSessionExist.isPresent()) {
-              System.out.println("Anyone here and does it exists : " + healthSessionExist.isPresent());
               HealthSession healthSession = healthSessionExist.get();
               if (healthSession.getStatus() != HealthSessionStatus.APPROVED && healthSession.getStatus() != HealthSessionStatus.RESCHEDULED) {
-                sessionTransactionJpaRepository.save(transaction);
                 LocalDate meetingDate = healthSession.getDate();
                 LocalTime meetingTime = healthSession.getTime();
                 LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
                 LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMeetingSessionHourDuration());
                 String patientEmail = healthSession.getPatient().getEmailAddress();
-                patientEmail = "yusuf.yusuf@testifi.io";
                 String professionalEmail = healthSession.getProfessional().getEmailAddress();
                 CreateSessionMeetingEvent meetingEvent = CreateSessionMeetingEvent.builder()
                   .startDate(meetingStartDateTime)
@@ -186,7 +176,6 @@ public class HealthSessionServiceImpl implements HealthSessionService {
                   .metadata(Map.of("sessionReference", healthSession.getReference()))
                   .sessionReference(healthSession.getReference())
                   .build();
-                System.out.println("I got here");
                 eventService.publishCreateSession(meetingEvent);
               }
             }
