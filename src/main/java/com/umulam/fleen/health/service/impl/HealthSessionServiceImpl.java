@@ -153,45 +153,57 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     try {
       ChargeEvent event = mapper.readValue(body, ChargeEvent.class);
       Optional<SessionTransaction> transactionExist = sessionTransactionJpaRepository.findByReference(event.getData().getMetadata().getTransactionReference());
-      if (transactionExist.isPresent()) {
-        SessionTransaction transaction = transactionExist.get();
-        if (transaction.getStatus() != SUCCESS) {
-          transaction.setExternalSystemReference(event.getData().getReference());
-          transaction.setCurrency(event.getData().getCurrency().toUpperCase());
-          if (SUCCESS.getValue().equalsIgnoreCase(event.getData().getStatus())) {
+      if (SUCCESS.getValue().equalsIgnoreCase(event.getData().getStatus())) {
+        if (transactionExist.isPresent()) {
+          SessionTransaction transaction = transactionExist.get();
+
+          if (transaction.getStatus() != SUCCESS) {
             transaction.setStatus(SUCCESS);
+            transaction.setExternalSystemReference(event.getData().getReference());
+            transaction.setCurrency(event.getData().getCurrency().toUpperCase());
+
             Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(transaction.getSessionReference());
             if (healthSessionExist.isPresent()) {
               HealthSession healthSession = healthSessionExist.get();
+
               if (healthSession.getStatus() != HealthSessionStatus.APPROVED && healthSession.getStatus() != HealthSessionStatus.RESCHEDULED) {
                 LocalDate meetingDate = healthSession.getDate();
                 LocalTime meetingTime = healthSession.getTime();
+
                 LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
                 LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMeetingSessionHourDuration());
+
                 String patientEmail = healthSession.getPatient().getEmailAddress();
                 String professionalEmail = healthSession.getProfessional().getEmailAddress();
+
                 CreateSessionMeetingEvent meetingEvent = CreateSessionMeetingEvent.builder()
                   .startDate(meetingStartDateTime)
                   .endDate(meetingEndDateTime)
                   .attendees(List.of(patientEmail, professionalEmail))
                   .timezone(healthSession.getTimeZone())
-                  .metadata(
-                    getCreateSessionMeetingEventMetadata(
-                      CreateSessionMeetingEventMetadata.builder()
-                      .sessionReference(healthSession.getReference())
-                      .build()))
                   .sessionReference(healthSession.getReference())
                   .build();
+
+                CreateSessionMeetingEventMetadata eventMetadata = CreateSessionMeetingEventMetadata.builder()
+                  .sessionReference(healthSession.getReference())
+                  .build();
+                meetingEvent.setMetadata(getCreateSessionMeetingEventMetadata(eventMetadata));
                 eventService.publishCreateSession(meetingEvent);
               }
+              sessionTransactionJpaRepository.save(transaction);
             }
-            return;
           }
-        } else {
-          transaction.setStatus(TransactionStatus.FAILED);
         }
-        sessionTransactionJpaRepository.save(transaction);
+      } else {
+        if (transactionExist.isPresent()) {
+          SessionTransaction transaction = transactionExist.get();
+          transaction.setStatus(TransactionStatus.FAILED);
+          transaction.setExternalSystemReference(event.getData().getReference());
+          transaction.setCurrency(event.getData().getCurrency().toUpperCase());
+          sessionTransactionJpaRepository.save(transaction);
+        }
       }
+
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);
     }
