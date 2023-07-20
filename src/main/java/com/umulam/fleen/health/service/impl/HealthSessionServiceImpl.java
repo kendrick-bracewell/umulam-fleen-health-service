@@ -171,7 +171,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
                 LocalTime meetingTime = healthSession.getTime();
 
                 LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
-                LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMeetingSessionHourDuration());
+                LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMaxMeetingSessionHourDuration());
 
                 String patientEmail = healthSession.getPatient().getEmailAddress();
                 String professionalEmail = healthSession.getProfessional().getEmailAddress();
@@ -235,7 +235,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     return TRANSACTION_REFERENCE_PREFIX.concat(referenceGenerator.generateUniqueReference());
   }
 
-  private int getMeetingSessionHourDuration() {
+  private int getMaxMeetingSessionHourDuration() {
     return 1;
   }
 
