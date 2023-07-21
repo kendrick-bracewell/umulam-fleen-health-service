@@ -136,6 +136,15 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   }
 
   @Override
+  public boolean isMemberExistsById(Integer id) {
+    boolean exists = repository.existsById(id);
+    if (exists) {
+      return true;
+    }
+    throw new UserNotFoundException(id);
+  }
+
+  @Override
   public boolean isEmailAddressExists(String emailAddress) {
     return repository.existsByEmailAddress(emailAddress);
   }

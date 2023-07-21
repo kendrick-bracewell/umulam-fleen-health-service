@@ -35,6 +35,8 @@ public interface MemberService {
 
   boolean isMemberExists(Integer id);
 
+  boolean isMemberExistsById(Integer id);
+
   boolean isEmailAddressExists(String emailAddress);
 
   boolean isPhoneNumberExists(String phoneNumber);

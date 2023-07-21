@@ -113,6 +113,9 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     return professionalService.findProfessionalBasicById(professionalId);
   }
 
+  @Transactional(readOnly = true)
+  public Object viewProfessionalAvailability(FleenUser user, Integer professionalId)
+
   @Override
   @Transactional(readOnly = true)
   public void getBookSession(FleenUser user, Integer professionalId) {

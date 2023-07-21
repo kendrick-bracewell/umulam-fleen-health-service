@@ -35,7 +35,7 @@ public class HealthSessionController {
     return healthSessionService.viewProfessionalDetail(professionalId);
   }
 
-  public void viewProfessionalAvailability() {
+  public Object viewProfessionalAvailability() {
 
   }
 
