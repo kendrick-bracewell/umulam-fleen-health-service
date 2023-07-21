@@ -12,18 +12,22 @@ import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
+import com.umulam.fleen.health.model.domain.ProfessionalAvailability;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.event.paystack.ChargeEvent;
 import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
+import com.umulam.fleen.health.model.mapper.ProfessionalAvailabilityMapper;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.response.professional.ProfessionalCheckAvailabilityResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
 import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.HealthSessionProfessionalJpaRepository;
+import com.umulam.fleen.health.repository.jpa.ProfessionalAvailabilityJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.SessionTransactionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.TransactionJpaRepository;
 import com.umulam.fleen.health.service.HealthSessionService;
@@ -59,6 +63,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   private final UniqueReferenceGenerator referenceGenerator;
   private final TransactionJpaRepository transactionJpaRepository;
   private final SessionTransactionJpaRepository sessionTransactionJpaRepository;
+  private final ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository;
   private final FleenHealthEventService eventService;
   private final MemberService memberService;
   private final ObjectMapper mapper;
@@ -70,6 +75,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
           UniqueReferenceGenerator referenceGenerator,
           TransactionJpaRepository transactionJpaRepository,
           SessionTransactionJpaRepository sessionTransactionJpaRepository,
+          ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository,
           FleenHealthEventService eventService,
           MemberService memberService,
           ObjectMapper mapper) {
@@ -79,6 +85,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     this.referenceGenerator = referenceGenerator;
     this.transactionJpaRepository = transactionJpaRepository;
     this.sessionTransactionJpaRepository = sessionTransactionJpaRepository;
+    this.professionalAvailabilityJpaRepository = professionalAvailabilityJpaRepository;
     this.eventService = eventService;
     this.memberService = memberService;
     this.mapper = mapper;
@@ -129,8 +136,11 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   @Override
   @Transactional(readOnly = true)
   public void getBookSession(FleenUser user, Integer professionalId) {
-    Member member = memberService.getMemberById(user.getId());
+    memberService.isMemberExistsById(user.getId());
     Professional professional = professionalService.getProfessional(professionalId);
+    List<ProfessionalAvailability> availabilities = professionalAvailabilityJpaRepository.findAllByMember(professional.getMember());
+    List<ProfessionalAvailabilityView> views = ProfessionalAvailabilityMapper.toProfessionalAvailabilityViews(availabilities);
+    List<HealthSession> healthSessions = healthSessionRepository.findByProfessionalAfter(professional.getMember(), LocalDate.now());
   }
 
   @Override
