@@ -17,12 +17,15 @@ import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.event.paystack.ChargeEvent;
 import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
+import com.umulam.fleen.health.model.mapper.HealthSessionMapper;
 import com.umulam.fleen.health.model.mapper.ProfessionalAvailabilityMapper;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
+import com.umulam.fleen.health.model.response.professional.GetProfessionalBookSessionResponse;
 import com.umulam.fleen.health.model.response.professional.ProfessionalCheckAvailabilityResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
+import com.umulam.fleen.health.model.view.ProfessionalScheduleHealthSessionView;
 import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
@@ -135,12 +138,17 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   @Override
   @Transactional(readOnly = true)
-  public void getBookSession(FleenUser user, Integer professionalId) {
+  public GetProfessionalBookSessionResponse getProfessionalBookSession(FleenUser user, Integer professionalId) {
     memberService.isMemberExistsById(user.getId());
     Professional professional = professionalService.getProfessional(professionalId);
     List<ProfessionalAvailability> availabilities = professionalAvailabilityJpaRepository.findAllByMember(professional.getMember());
-    List<ProfessionalAvailabilityView> views = ProfessionalAvailabilityMapper.toProfessionalAvailabilityViews(availabilities);
+    List<ProfessionalAvailabilityView> availabilityPeriod = ProfessionalAvailabilityMapper.toProfessionalAvailabilityViews(availabilities);
     List<HealthSession> healthSessions = healthSessionRepository.findByProfessionalAfter(professional.getMember(), LocalDate.now());
+    List<ProfessionalScheduleHealthSessionView> scheduledSessions = HealthSessionMapper.toProfessionalScheduledHealthSessionViews(healthSessions);
+    return GetProfessionalBookSessionResponse.builder()
+      .availabilityPeriods(availabilityPeriod)
+      .scheduledSessions(scheduledSessions)
+      .build();
   }
 
   @Override

@@ -8,7 +8,7 @@ import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalDetailsD
 import com.umulam.fleen.health.model.dto.professional.UploadProfessionalDocumentDto;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateAvailabilityStatusResponse;
-import com.umulam.fleen.health.model.response.professional.GetUpdateVerificationDetailResponse;
+import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateVerificationDetailResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
 import com.umulam.fleen.health.model.view.ProfessionalView;
@@ -35,7 +35,7 @@ public class ProfessionalController {
   }
 
   @GetMapping(value = "/verification/update-details")
-  public GetUpdateVerificationDetailResponse getUpdateVerificationDetails() {
+  public GetProfessionalUpdateVerificationDetailResponse getUpdateVerificationDetails() {
     return service.getUpdateVerificationDetail();
   }
 

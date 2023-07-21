@@ -8,7 +8,7 @@ import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalAvailabi
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalDetailsDto;
 import com.umulam.fleen.health.model.dto.professional.UploadProfessionalDocumentDto;
 import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateAvailabilityStatusResponse;
-import com.umulam.fleen.health.model.response.professional.GetUpdateVerificationDetailResponse;
+import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateVerificationDetailResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
 import com.umulam.fleen.health.model.view.ProfessionalView;
@@ -55,7 +55,7 @@ public interface ProfessionalService {
 
   Professional getProfessional(Integer id);
 
-  GetUpdateVerificationDetailResponse getUpdateVerificationDetail();
+  GetProfessionalUpdateVerificationDetailResponse getUpdateVerificationDetail();
 
   List<ProfessionalAvailabilityView> getUpdateAvailabilityOrSchedule(FleenUser user);
 

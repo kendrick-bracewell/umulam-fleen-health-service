@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetUpdateVerificationDetailResponse {
+public class GetProfessionalUpdateVerificationDetailResponse {
 
   private List<?> countries;
 }

@@ -3,6 +3,7 @@ package com.umulam.fleen.health.controller;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
+import com.umulam.fleen.health.model.response.professional.GetProfessionalBookSessionResponse;
 import com.umulam.fleen.health.model.response.professional.ProfessionalCheckAvailabilityResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
@@ -42,8 +43,8 @@ public class HealthSessionController {
   }
 
   @GetMapping(value = "/book-session/{id}")
-  public FleenHealthResponse getBookSession(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer professionalId) {
-    return null;
+  public GetProfessionalBookSessionResponse getProfessionalBookSession(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer professionalId) {
+    return healthSessionService.getProfessionalBookSession(user, professionalId);
   }
 
   @PostMapping(value = "/book-session")
