@@ -182,7 +182,8 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
     return member;
   }
 
-  private Professional getProfessional(Integer id) {
+  @Override
+  public Professional getProfessional(Integer id) {
     Optional<Professional> professionalExists = repository.findById(id);
     if (professionalExists.isEmpty()) {
       throw new ProfessionalNotFoundException(id);

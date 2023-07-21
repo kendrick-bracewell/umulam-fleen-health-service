@@ -19,4 +19,6 @@ public interface HealthSessionService {
 
   @Transactional
   void cancelSession(Integer sessionId, FleenUser user);
+
+  void getBookSession(FleenUser user, Integer professionalId);
 }

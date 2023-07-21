@@ -12,6 +12,7 @@ import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
+import com.umulam.fleen.health.model.domain.ProfessionalAvailability;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.event.paystack.ChargeEvent;
@@ -19,6 +20,7 @@ import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
 import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
@@ -113,6 +115,13 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   }
 
   @Override
+  @Transactional(readOnly = true)
+  public void getBookSession(FleenUser user, Integer professionalId) {
+    Member member = memberService.getMemberById(user.getId());
+    Professional professional = professionalService.getProfessional(professionalId);
+  }
+
+  @Override
   @Transactional
   public void bookSession(BookHealthSessionDto dto, FleenUser user) {
     HealthSession healthSession = dto.toHealthSession();
@@ -173,7 +182,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
                 LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
                 LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMaxMeetingSessionHourDuration());
 
-                String patientEmail = healthSession.getPatient().getEmailAddress();
+                String patientEmail = "mrkyoungy@gmail.com"; /*healthSession.getPatient().getEmailAddress();*/
                 String professionalEmail = healthSession.getProfessional().getEmailAddress();
 
                 CreateSessionMeetingEvent meetingEvent = CreateSessionMeetingEvent.builder()

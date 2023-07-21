@@ -26,6 +26,7 @@ public class CalendarService {
   private static final String CALENDAR_ID = "primary";
   private static final String EVENT_SUMMARY = "Fleen Health Session";
   private static final String EVENT_DESCRIPTION = "Fleen Health Telehealth Session";
+  private static final String EVENT_SUMMARY_KEY = "eventSummary";
   private static final String EVENT_DISPLAY_NAME = "Fleen Health";
   private static final String DEFAULT_TIMEZONE = "Africa/Lagos";
   private static final String DEFAULT_CONFERENCE_NAME = "Lam Telehealth Session";
@@ -76,7 +77,7 @@ public class CalendarService {
     try {
       Event event = new Event();
       event.setLocation(SessionLocation.REMOTE.name());
-      event.setSummary(EVENT_SUMMARY);
+      event.setSummary(Objects.toString(metadata.get(EVENT_SUMMARY_KEY), EVENT_SUMMARY));
       event.setDescription(EVENT_DESCRIPTION);
 
       Event.Creator creator = new Event.Creator();
@@ -114,8 +115,12 @@ public class CalendarService {
                 attendee.setEmail(emailAddress);
                 attendees.add(attendee);
               });
-      attendees.get(0).setOrganizer(true);
       event.setAttendees(attendees);
+
+      Event.Organizer organizer = new Event.Organizer()
+        .setEmail(ADMIN_EMAIL)
+        .setDisplayName(EVENT_DISPLAY_NAME);
+      event.setOrganizer(organizer);
 
       Event.Reminders reminders = new Event.Reminders()
               .setUseDefault(false)

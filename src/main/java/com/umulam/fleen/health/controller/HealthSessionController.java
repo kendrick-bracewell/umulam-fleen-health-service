@@ -39,11 +39,18 @@ public class HealthSessionController {
 
   }
 
+  @GetMapping(value = "/book-session/{id}")
+  public FleenHealthResponse getBookSession(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer professionalId) {
+    return null;
+  }
+
   @PostMapping(value = "/book-session")
   public FleenHealthResponse bookSession(@Valid @RequestBody BookHealthSessionDto dto, @AuthenticationPrincipal FleenUser user) {
     healthSessionService.bookSession(dto, user);
     return new FleenHealthResponse("Success");
   }
+
+  @PostMapping(value = "/reschedule-session")
 
   public void makePayment() {
 

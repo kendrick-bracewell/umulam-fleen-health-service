@@ -53,6 +53,8 @@ public interface ProfessionalService {
   @Transactional
   Professional save(Professional professional);
 
+  Professional getProfessional(Integer id);
+
   GetUpdateVerificationDetailResponse getUpdateVerificationDetail();
 
   List<ProfessionalAvailabilityView> getUpdateAvailabilityOrSchedule(FleenUser user);
