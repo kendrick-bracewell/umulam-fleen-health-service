@@ -15,6 +15,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.Optional;
 
+import static com.umulam.fleen.health.service.external.google.CalendarService.EVENT_SUMMARY_KEY;
+
 @Service
 public class FleenHealthEventListenerService {
 
@@ -30,6 +32,7 @@ public class FleenHealthEventListenerService {
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void createMeetingSession(CreateSessionMeetingEvent meetingEvent) {
+    meetingEvent.getMetadata().put(EVENT_SUMMARY_KEY, getMeetingEventSummary(meetingEvent.getPatientName(), meetingEvent.getProfessionalName()));
     Event event = calendarService.createEvent(meetingEvent.getStartDate(), meetingEvent.getEndDate(), meetingEvent.getAttendees(), meetingEvent.getMetadata());
     Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(meetingEvent.getSessionReference());
     if (healthSessionExist.isPresent()) {
@@ -46,5 +49,9 @@ public class FleenHealthEventListenerService {
   @TransactionalEventListener
   public void cancelMeetingSession(CancelSessionMeetingEvent meetingEvent) {
     calendarService.cancelEvent(meetingEvent.getEventIdOrReference());
+  }
+
+  private String getMeetingEventSummary(String patientName, String professionalName) {
+    return String.format("Fleen Health Session, %s/%s 1-on-1", patientName, professionalName);
   }
 }

@@ -12,7 +12,6 @@ import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
-import com.umulam.fleen.health.model.domain.ProfessionalAvailability;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.event.paystack.ChargeEvent;
@@ -20,7 +19,6 @@ import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
-import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
 import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
@@ -47,6 +45,7 @@ import static com.umulam.fleen.health.constant.session.TransactionStatus.SUCCESS
 import static com.umulam.fleen.health.event.CreateSessionMeetingEvent.CreateSessionMeetingEventMetadata;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
+import static com.umulam.fleen.health.util.StringUtil.getFullName;
 import static java.util.Objects.nonNull;
 
 @Slf4j
@@ -184,6 +183,8 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
                 String patientEmail = healthSession.getPatient().getEmailAddress();
                 String professionalEmail = healthSession.getProfessional().getEmailAddress();
+                String patientName = getFullName(healthSession.getPatient().getFirstName(), healthSession.getPatient().getLastName());
+                String professionalName = getFullName(healthSession.getProfessional().getFirstName(), healthSession.getProfessional().getLastName());
 
                 CreateSessionMeetingEvent meetingEvent = CreateSessionMeetingEvent.builder()
                   .startDate(meetingStartDateTime)
@@ -191,6 +192,8 @@ public class HealthSessionServiceImpl implements HealthSessionService {
                   .attendees(List.of(patientEmail, professionalEmail))
                   .timezone(healthSession.getTimeZone())
                   .sessionReference(healthSession.getReference())
+                  .patientName(patientName)
+                  .professionalName(professionalName)
                   .build();
 
                 CreateSessionMeetingEventMetadata eventMetadata = CreateSessionMeetingEventMetadata.builder()

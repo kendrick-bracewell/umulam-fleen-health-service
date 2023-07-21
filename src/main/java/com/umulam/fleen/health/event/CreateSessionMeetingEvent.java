@@ -21,6 +21,9 @@ public class CreateSessionMeetingEvent {
   private List<String> attendees;
   private Map<String, String> metadata;
 
+  private String patientName;
+  private String professionalName;
+
   @Builder
   @Getter
   @Setter

@@ -26,11 +26,12 @@ public class CalendarService {
   private static final String CALENDAR_ID = "primary";
   private static final String EVENT_SUMMARY = "Fleen Health Session";
   private static final String EVENT_DESCRIPTION = "Fleen Health Telehealth Session";
-  private static final String EVENT_SUMMARY_KEY = "eventSummary";
   private static final String EVENT_DISPLAY_NAME = "Fleen Health";
   private static final String DEFAULT_TIMEZONE = "Africa/Lagos";
   private static final String DEFAULT_CONFERENCE_NAME = "Lam Telehealth Session";
   private final String ADMIN_EMAIL;
+  public static final String EVENT_SUMMARY_KEY = "eventSummary";
+
 
   public CalendarService(Calendar calendar,
                          @Value("${google.admin.email}") String adminEmail) {

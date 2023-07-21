@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
+
 /**
  * The StringUtils contains implementations and methods for converting a number represented as a string to various type of numbers
  * for example an integer or whole number.
@@ -59,5 +61,16 @@ public class StringUtil {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static String getFullName(String firstName, String lastName) {
+    return getFullName(firstName, lastName, null);
+  }
+
+  public static String getFullName(String firstName, String lastName, String middleName) {
+    return
+      Objects.toString(firstName, "") + " "
+      + Objects.toString(lastName, "") + " "
+      + Objects.toString(middleName, "");
   }
 }
