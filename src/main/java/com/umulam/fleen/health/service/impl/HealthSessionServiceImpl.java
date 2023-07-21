@@ -18,6 +18,7 @@ import com.umulam.fleen.health.model.event.paystack.ChargeEvent;
 import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
+import com.umulam.fleen.health.model.response.professional.ProfessionalCheckAvailabilityResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
@@ -113,8 +114,17 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     return professionalService.findProfessionalBasicById(professionalId);
   }
 
+  @Override
   @Transactional(readOnly = true)
-  public Object viewProfessionalAvailability(FleenUser user, Integer professionalId)
+  public ProfessionalCheckAvailabilityResponse viewProfessionalAvailability(FleenUser user, Integer professionalId) {
+    memberService.isMemberExistsById(user.getId());
+    Professional professional = professionalService.getProfessional(professionalId);
+    if (professional.getAvailabilityStatus() == ProfessionalAvailabilityStatus.AVAILABLE) {
+      return new ProfessionalCheckAvailabilityResponse(true);
+    } else {
+      return new ProfessionalCheckAvailabilityResponse(false);
+    }
+  }
 
   @Override
   @Transactional(readOnly = true)

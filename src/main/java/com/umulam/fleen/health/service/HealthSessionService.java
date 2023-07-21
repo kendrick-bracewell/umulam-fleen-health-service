@@ -2,6 +2,7 @@ package com.umulam.fleen.health.service;
 
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
+import com.umulam.fleen.health.model.response.professional.ProfessionalCheckAvailabilityResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
@@ -19,6 +20,9 @@ public interface HealthSessionService {
 
   @Transactional
   void cancelSession(Integer sessionId, FleenUser user);
+
+  @Transactional(readOnly = true)
+  ProfessionalCheckAvailabilityResponse viewProfessionalAvailability(FleenUser user, Integer professionalId);
 
   void getBookSession(FleenUser user, Integer professionalId);
 }
