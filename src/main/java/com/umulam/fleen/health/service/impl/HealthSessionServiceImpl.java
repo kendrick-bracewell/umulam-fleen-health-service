@@ -182,7 +182,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
                 LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
                 LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMaxMeetingSessionHourDuration());
 
-                String patientEmail = "mrkyoungy@gmail.com"; /*healthSession.getPatient().getEmailAddress();*/
+                String patientEmail = healthSession.getPatient().getEmailAddress();
                 String professionalEmail = healthSession.getProfessional().getEmailAddress();
 
                 CreateSessionMeetingEvent meetingEvent = CreateSessionMeetingEvent.builder()
