@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.constant.session;
+package com.umulam.fleen.health.controller;
 
 import com.umulam.fleen.health.adapter.paystack.PaystackConfig;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
