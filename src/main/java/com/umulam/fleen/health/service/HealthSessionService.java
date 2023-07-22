@@ -21,7 +21,7 @@ public interface HealthSessionService {
   void validateAndCompleteTransaction(String body);
 
   @Transactional
-  void cancelSession(Integer sessionId, FleenUser user);
+  void cancelSession(FleenUser user, Integer sessionId);
 
   @Transactional(readOnly = true)
   ProfessionalCheckAvailabilityResponse viewProfessionalAvailability(FleenUser user, Integer professionalId);

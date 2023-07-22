@@ -256,9 +256,9 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   @Override
   @Transactional
-  public void cancelSession(Integer sessionId, FleenUser user) {
+  public void cancelSession(FleenUser user, Integer healthSessionId) {
     Member member = memberService.getMemberById(user.getId());
-    Optional<HealthSession> healthSessionExist = healthSessionRepository.findByPatient(member);
+    Optional<HealthSession> healthSessionExist = healthSessionRepository.findByPatientAndId(member, healthSessionId);
     if (healthSessionExist.isPresent()) {
       HealthSession healthSession = healthSessionExist.get();
       healthSession.setStatus(HealthSessionStatus.CANCELED);
@@ -270,6 +270,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         .build();
       eventService.publishCancelSession(event);
     }
+    throw new NoAssociatedHealthSessionException(healthSessionId);
   }
 
   @Override

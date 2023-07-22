@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.HEALTH_SESSION_RESCHEDULED;
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.SUCCESS_MESSAGE;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.*;
 
 @Slf4j
 @RestController
@@ -63,6 +62,12 @@ public class HealthSessionController {
                                   @PathVariable(name = "id") Integer healthSessionId) {
     healthSessionService.rescheduleSession(dto, user, healthSessionId);
     return new FleenHealthResponse(HEALTH_SESSION_RESCHEDULED);
+  }
+
+  @PutMapping(value = "/cancel-session/{id}")
+  public FleenHealthResponse cancelSession(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer healthSessionId) {
+    healthSessionService.cancelSession(user, healthSessionId);
+    return new FleenHealthResponse(HEALTH_SESSION_CANCELED);
   }
 
   public void makePayment() {
