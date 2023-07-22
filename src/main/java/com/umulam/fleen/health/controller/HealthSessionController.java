@@ -57,7 +57,7 @@ public class HealthSessionController {
     return new FleenHealthResponse(SUCCESS_MESSAGE);
   }
 
-  @PostMapping(value = "/reschedule-session/{id}")
+  @PutMapping(value = "/reschedule-session/{id}")
   public FleenHealthResponse rescheduleSession(@Valid @RequestBody ReScheduleHealthSessionDto dto,
                                   @AuthenticationPrincipal FleenUser user,
                                   @PathVariable(name = "id") Integer healthSessionId) {
