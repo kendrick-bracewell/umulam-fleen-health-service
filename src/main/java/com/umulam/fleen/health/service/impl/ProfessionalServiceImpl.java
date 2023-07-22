@@ -223,6 +223,10 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
       throw new NotAProfessionalException(member.getId());
     }
 
+    if (member.getVerificationStatus() != ProfileVerificationStatus.APPROVED) {
+      throw new ProfessionalProfileNotApproved();
+    }
+
     List<ProfessionalAvailability> availabilityPeriods = dto.getPeriods()
       .stream()
       .map(period -> ProfessionalAvailability.builder()
