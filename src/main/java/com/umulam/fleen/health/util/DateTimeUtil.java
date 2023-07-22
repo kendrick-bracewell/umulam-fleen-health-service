@@ -7,11 +7,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import static com.umulam.fleen.health.util.DateFormatUtil.DATE;
-import static com.umulam.fleen.health.util.DateFormatUtil.TIME;
+import static com.umulam.fleen.health.util.DateFormatUtil.*;
 import static java.util.Objects.nonNull;
 
 @Slf4j
@@ -134,5 +132,13 @@ public class DateTimeUtil {
       }
     }
     return null;
+  }
+
+  public static String asDateTimeWithNoSeconds(LocalDateTime dateTime) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_NO_SECONDS);
+    if (nonNull(dateTime)) {
+      return dateTime.format(formatter);
+    }
+    return LocalDateTime.now().format(formatter);
   }
 }

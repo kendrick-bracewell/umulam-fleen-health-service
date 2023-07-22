@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.constant.paystack.PaystackWebhookEventType;
+import com.umulam.fleen.health.constant.professional.AvailabilityDayOfTheWeek;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import com.umulam.fleen.health.constant.session.*;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
@@ -11,6 +12,7 @@ import com.umulam.fleen.health.event.CancelSessionMeetingEvent;
 import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import com.umulam.fleen.health.event.RescheduleSessionMeetingEvent;
 import com.umulam.fleen.health.exception.healthsession.*;
+import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionDateException;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionException;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
@@ -25,8 +27,9 @@ import com.umulam.fleen.health.model.mapper.HealthSessionMapper;
 import com.umulam.fleen.health.model.mapper.ProfessionalAvailabilityMapper;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
-import com.umulam.fleen.health.model.response.professional.GetProfessionalBookSessionResponse;
-import com.umulam.fleen.health.model.response.professional.ProfessionalCheckAvailabilityResponse;
+import com.umulam.fleen.health.model.response.healthsession.GetProfessionalBookSessionResponse;
+import com.umulam.fleen.health.model.response.healthsession.PendingHealthSessionBookingResponse;
+import com.umulam.fleen.health.model.response.healthsession.ProfessionalCheckAvailabilityResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
 import com.umulam.fleen.health.model.view.ProfessionalScheduleHealthSessionView;
@@ -46,6 +49,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -157,7 +161,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   @Override
   @Transactional
-  public void bookSession(BookHealthSessionDto dto, FleenUser user) {
+  public PendingHealthSessionBookingResponse bookSession(BookHealthSessionDto dto, FleenUser user) {
     memberService.isMemberExistsById(user.getId());
     HealthSession healthSession = dto.toHealthSession();
 
@@ -174,12 +178,36 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       if (!(bookedSessionExist.get().getPatient().getId().equals(user.getId()))) {
         throw new HealthSessionDateAlreadyBookedException(getFullName(professional.getFirstName(), professional.getLastName()), healthSession.getDate(), healthSession.getTime());
       }
+
     }
 
-    Optional<Professional> professional = professionalService.findProfessionalByMember(healthSession.getProfessional());
-    if (professional.isPresent() && professional.get().getAvailabilityStatus() == ProfessionalAvailabilityStatus.UNAVAILABLE) {
-      Member professionalMember = professional.get().getMember();
-      throw new ProfessionalNotAvailableForSessionException(getFullName(professionalMember.getFirstName(), professionalMember.getLastName()))
+    Optional<Professional> professionalExist = professionalService.findProfessionalByMember(healthSession.getProfessional());
+    if (professionalExist.isPresent() && professionalExist.get().getAvailabilityStatus() == ProfessionalAvailabilityStatus.UNAVAILABLE) {
+      Member professional = professionalExist.get().getMember();
+      throw new ProfessionalNotAvailableForSessionException(getFullName(professional.getFirstName(), professional.getLastName()));
+    }
+
+    if (professionalExist.isPresent()) {
+      Member professional = professionalExist.get().getMember();
+      DayOfWeek dayOfWeek = healthSession.getDate().getDayOfWeek();
+      AvailabilityDayOfTheWeek availabilityDayOfTheWeek = AvailabilityDayOfTheWeek.valueOf(dayOfWeek.toString());
+      List<ProfessionalAvailability> availabilities = professionalAvailabilityJpaRepository.findByMemberAndDayOfWeek(professional, availabilityDayOfTheWeek);
+      if (availabilities.isEmpty()) {
+        throw new ProfessionalNotAvailableForSessionException(getFullName(professional.getFirstName(), professional.getLastName()));
+      } else {
+        boolean timeAvailableForSession = false;
+        LocalTime proposedTimeForSession = healthSession.getTime();
+        for (ProfessionalAvailability availability : availabilities) {
+          if (availability.isTimeInRange(proposedTimeForSession)) {
+            timeAvailableForSession = true;
+            break;
+          }
+        }
+        if (!timeAvailableForSession) {
+          LocalDateTime proposedSessionDateTime = LocalDateTime.of(healthSession.getDate(), healthSession.getTime());
+          throw new ProfessionalNotAvailableForSessionDateException(getFullName(professional.getFirstName(), professional.getLastName()), proposedSessionDateTime);
+        }
+      }
     }
 
     healthSession.setReference(generateSessionReference());
@@ -188,6 +216,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         .build();
     healthSession.setPatient(member);
     HealthSession savedHealthSession = healthSessionRepository.save(healthSession);
+
     SessionTransaction transaction = SessionTransaction.builder()
         .reference(generateTransactionReference())
         .payer(member)
@@ -200,6 +229,17 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         .build();
 
     transactionJpaRepository.save(transaction);
+
+    LocalDateTime startDate = LocalDateTime.of(savedHealthSession.getDate(), savedHealthSession.getTime());
+    LocalDateTime endDate = startDate.plusHours(getMaxMeetingSessionHourDuration());
+    return PendingHealthSessionBookingResponse.builder()
+      .startDate(startDate)
+      .endDate(endDate)
+      .patientFirstName(savedHealthSession.getPatient().getFirstName())
+      .patientLastName(savedHealthSession.getPatient().getLastName())
+      .patientEmailAddress(savedHealthSession.getPatient().getEmailAddress())
+      .timezone(savedHealthSession.getTimeZone())
+      .build();
   }
 
   @Override

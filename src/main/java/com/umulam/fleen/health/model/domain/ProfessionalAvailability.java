@@ -33,4 +33,8 @@ public class ProfessionalAvailability {
 
   @Column(name = "end_time", nullable = false)
   private LocalTime endTime;
+
+  public boolean isTimeInRange(LocalTime time) {
+    return (time.equals(startTime) || time.isAfter(endTime)) && time.isBefore(endTime);
+  }
 }

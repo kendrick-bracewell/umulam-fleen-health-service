@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.model.response.professional;
+package com.umulam.fleen.health.model.response.healthsession;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;

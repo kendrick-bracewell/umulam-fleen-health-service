@@ -4,8 +4,9 @@ import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.dto.healthsession.ReScheduleHealthSessionDto;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
-import com.umulam.fleen.health.model.response.professional.GetProfessionalBookSessionResponse;
-import com.umulam.fleen.health.model.response.professional.ProfessionalCheckAvailabilityResponse;
+import com.umulam.fleen.health.model.response.healthsession.GetProfessionalBookSessionResponse;
+import com.umulam.fleen.health.model.response.healthsession.PendingHealthSessionBookingResponse;
+import com.umulam.fleen.health.model.response.healthsession.ProfessionalCheckAvailabilityResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
@@ -51,9 +52,8 @@ public class HealthSessionController {
   }
 
   @PostMapping(value = "/professional/book-session")
-  public FleenHealthResponse bookSession(@Valid @RequestBody BookHealthSessionDto dto, @AuthenticationPrincipal FleenUser user) {
-    healthSessionService.bookSession(dto, user);
-    return new FleenHealthResponse(SUCCESS_MESSAGE);
+  public PendingHealthSessionBookingResponse bookSession(@Valid @RequestBody BookHealthSessionDto dto, @AuthenticationPrincipal FleenUser user) {
+    return healthSessionService.bookSession(dto, user);
   }
 
   @PutMapping(value = "/reschedule-session/{id}")

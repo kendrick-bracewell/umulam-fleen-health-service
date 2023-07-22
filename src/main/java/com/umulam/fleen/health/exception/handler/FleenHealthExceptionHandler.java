@@ -13,6 +13,7 @@ import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusCodeDuplicateException;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusNotFoundException;
 import com.umulam.fleen.health.exception.professional.NotAProfessionalException;
+import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionDateException;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotFoundException;
 import com.umulam.fleen.health.exception.profileverificationmessage.ProfileVerificationMessageNotFoundException;
 import com.umulam.fleen.health.exception.role.RoleDuplicateException;
@@ -102,7 +103,8 @@ public class FleenHealthExceptionHandler {
           NoAssociatedHealthSessionException.class,
           HealthSessionInvalidTransactionException.class,
           HealthSessionAlreadyCompletedException.class,
-          PatientProfessionalAlreadyBookSessionException.class
+          PatientProfessionalAlreadyBookSessionException.class,
+          ProfessionalNotAvailableForSessionDateException.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);

@@ -3,8 +3,9 @@ package com.umulam.fleen.health.service;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.dto.healthsession.ReScheduleHealthSessionDto;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
-import com.umulam.fleen.health.model.response.professional.GetProfessionalBookSessionResponse;
-import com.umulam.fleen.health.model.response.professional.ProfessionalCheckAvailabilityResponse;
+import com.umulam.fleen.health.model.response.healthsession.GetProfessionalBookSessionResponse;
+import com.umulam.fleen.health.model.response.healthsession.PendingHealthSessionBookingResponse;
+import com.umulam.fleen.health.model.response.healthsession.ProfessionalCheckAvailabilityResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
@@ -16,7 +17,7 @@ public interface HealthSessionService {
 
   ProfessionalViewBasic viewProfessionalDetail(Integer professionalId);
 
-  void bookSession(BookHealthSessionDto dto, FleenUser user);
+  PendingHealthSessionBookingResponse bookSession(BookHealthSessionDto dto, FleenUser user);
 
   void validateAndCompleteTransaction(String body);
 
