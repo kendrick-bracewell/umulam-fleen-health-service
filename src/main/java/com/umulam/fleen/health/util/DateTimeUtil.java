@@ -135,10 +135,17 @@ public class DateTimeUtil {
   }
 
   public static String asDateTimeWithNoSeconds(LocalDateTime dateTime) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_NO_SECONDS);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_NO_PT_SECONDS);
+
     if (nonNull(dateTime)) {
-      return dateTime.format(formatter);
+      return dateTime.format(formatter) + getTimePeriod(dateTime);
     }
-    return LocalDateTime.now().format(formatter);
+
+    LocalDateTime now = LocalDateTime.now();
+    return now.format(formatter) + getTimePeriod(now);
+  }
+
+  private static String getTimePeriod(LocalDateTime dateTime) {
+    return (dateTime.getHour() < 12) ? "AM" : "PM";
   }
 }

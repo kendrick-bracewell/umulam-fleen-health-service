@@ -12,10 +12,7 @@ import com.umulam.fleen.health.exception.member.UpdatePasswordFailedException;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusCodeDuplicateException;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusNotFoundException;
-import com.umulam.fleen.health.exception.professional.NotAProfessionalException;
-import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionDateException;
-import com.umulam.fleen.health.exception.professional.ProfessionalNotFoundException;
-import com.umulam.fleen.health.exception.professional.ProfessionalProfileNotApproved;
+import com.umulam.fleen.health.exception.professional.*;
 import com.umulam.fleen.health.exception.profileverificationmessage.ProfileVerificationMessageNotFoundException;
 import com.umulam.fleen.health.exception.role.RoleDuplicateException;
 import com.umulam.fleen.health.exception.role.RoleNotFoundException;
@@ -106,7 +103,8 @@ public class FleenHealthExceptionHandler {
           HealthSessionAlreadyCompletedException.class,
           PatientProfessionalAlreadyBookSessionException.class,
           ProfessionalNotAvailableForSessionDateException.class,
-          ProfessionalProfileNotApproved.class
+          ProfessionalProfileNotApproved.class,
+          ProfessionalShouldHaveAtLeastOneAvailabilityPeriod.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);

@@ -8,6 +8,7 @@ import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.exception.professional.NotAProfessionalException;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotFoundException;
 import com.umulam.fleen.health.exception.professional.ProfessionalProfileNotApproved;
+import com.umulam.fleen.health.exception.professional.ProfessionalShouldHaveAtLeastOneAvailabilityPeriod;
 import com.umulam.fleen.health.model.domain.*;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalAvailabilityDto;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalAvailabilityStatusDto;
@@ -162,10 +163,18 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
       throw new ProfessionalProfileNotApproved();
     }
 
+    ProfessionalAvailabilityStatus status = ProfessionalAvailabilityStatus.valueOf(dto.getAvailabilityStatus());
+    if (status == ProfessionalAvailabilityStatus.AVAILABLE) {
+      long professionalHasAtLeastAvailabilityPeriod = professionalAvailabilityJpaRepository.countByMember(member);
+      if (professionalHasAtLeastAvailabilityPeriod < 1) {
+        throw new ProfessionalShouldHaveAtLeastOneAvailabilityPeriod();
+      }
+    }
+
     Optional<Professional> professionalExists = repository.findProfessionalByEmailAddress(member.getEmailAddress());
     if (professionalExists.isPresent()) {
       Professional professional = professionalExists.get();
-      professional.setAvailabilityStatus(ProfessionalAvailabilityStatus.valueOf(dto.getAvailabilityStatus()));
+      professional.setAvailabilityStatus(status);
       save(professional);
       return;
     }
