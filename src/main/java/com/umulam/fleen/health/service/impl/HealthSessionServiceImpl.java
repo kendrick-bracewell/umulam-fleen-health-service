@@ -146,7 +146,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     Professional professional = professionalService.getProfessional(professionalId);
     List<ProfessionalAvailability> availabilities = professionalAvailabilityJpaRepository.findAllByMember(professional.getMember());
     List<ProfessionalAvailabilityView> availabilityPeriod = ProfessionalAvailabilityMapper.toProfessionalAvailabilityViews(availabilities);
-    List<HealthSession> healthSessions = healthSessionRepository.findByProfessionalAfter(professional.getMember(), LocalDate.now());
+    List<HealthSession> healthSessions = healthSessionRepository.findByProfessionalAndDateAfter(professional.getMember(), LocalDate.now());
     List<ProfessionalScheduleHealthSessionView> scheduledSessions = HealthSessionMapper.toProfessionalScheduledHealthSessionViews(healthSessions);
     return GetProfessionalBookSessionResponse.builder()
       .availabilityPeriods(availabilityPeriod)

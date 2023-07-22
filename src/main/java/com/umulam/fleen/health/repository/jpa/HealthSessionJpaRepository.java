@@ -16,7 +16,7 @@ public interface HealthSessionJpaRepository extends JpaRepository<HealthSession,
 
   Optional<HealthSession> findByPatientAndId(Member member, Integer healthSessionId);
 
-  List<HealthSession> findByProfessionalAfter(Member member, LocalDate date);
+  List<HealthSession> findByProfessionalAndDateAfter(Member member, LocalDate date);
 
   boolean existsById(Integer healthSessionId);
 
