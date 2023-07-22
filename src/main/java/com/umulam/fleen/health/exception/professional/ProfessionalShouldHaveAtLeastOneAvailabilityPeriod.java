@@ -4,7 +4,7 @@ import com.umulam.fleen.health.exception.base.FleenHealthException;
 
 public class ProfessionalShouldHaveAtLeastOneAvailabilityPeriod extends FleenHealthException {
 
-  private static final String message = "Professional should have at least one professional availability period for schedule set before updating availability status";
+  private static final String message = "Professional should have at least one availability period or schedule set for booking sessions before updating availability status";
 
   public ProfessionalShouldHaveAtLeastOneAvailabilityPeriod() {
     super(message);

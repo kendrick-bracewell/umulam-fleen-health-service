@@ -14,6 +14,7 @@ import com.umulam.fleen.health.event.RescheduleSessionMeetingEvent;
 import com.umulam.fleen.health.exception.healthsession.*;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionDateException;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionException;
+import com.umulam.fleen.health.exception.professional.ProfessionalProfileNotApproved;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
@@ -189,6 +190,11 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
     if (professionalExist.isPresent()) {
       Member professional = professionalExist.get().getMember();
+
+      if (professional.getVerificationStatus() != ProfileVerificationStatus.APPROVED) {
+        throw new ProfessionalProfileNotApproved();
+      }
+
       DayOfWeek dayOfWeek = healthSession.getDate().getDayOfWeek();
       AvailabilityDayOfTheWeek availabilityDayOfTheWeek = AvailabilityDayOfTheWeek.valueOf(dayOfWeek.toString());
       List<ProfessionalAvailability> availabilities = professionalAvailabilityJpaRepository.findByMemberAndDayOfWeek(professional, availabilityDayOfTheWeek);
