@@ -24,6 +24,6 @@ public class FleenHealthConstant {
   public static final String RESEND_ONBOARDING_DETAILS = "Onboarding details resent";
   public static final String PROFILE_VERIFICATION_MESSAGE_SAVED = "Profile verification message saved and updated";
   public static final String PROFESSIONAL_AVAILABILITY_OR_SCHEDULED_UPDATED = "Professional availability and schedule is updated";
-
+  public static final String HEALTH_SESSION_RESCHEDULED = "Health Session Rescheduled";
   public static final String TRANSACTION_REFERENCE_PREFIX = "FLEENHEALTH-TX-";
 }

@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.HEALTH_SESSION_RESCHEDULED;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.SUCCESS_MESSAGE;
+
 @Slf4j
 @RestController
 @RequestMapping(value = "health")
@@ -51,14 +54,15 @@ public class HealthSessionController {
   @PostMapping(value = "/book-session")
   public FleenHealthResponse bookSession(@Valid @RequestBody BookHealthSessionDto dto, @AuthenticationPrincipal FleenUser user) {
     healthSessionService.bookSession(dto, user);
-    return new FleenHealthResponse("Success");
+    return new FleenHealthResponse(SUCCESS_MESSAGE);
   }
 
   @PostMapping(value = "/reschedule-session/{id}")
-  public Object rescheduleSession(@Valid @RequestBody ReScheduleHealthSessionDto dto,
+  public FleenHealthResponse rescheduleSession(@Valid @RequestBody ReScheduleHealthSessionDto dto,
                                   @AuthenticationPrincipal FleenUser user,
                                   @PathVariable(name = "id") Integer healthSessionId) {
-    return null;
+    healthSessionService.rescheduleSession(dto, user, healthSessionId);
+    return new FleenHealthResponse(HEALTH_SESSION_RESCHEDULED);
   }
 
   public void makePayment() {
