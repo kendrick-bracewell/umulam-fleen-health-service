@@ -45,12 +45,12 @@ public class HealthSessionController {
     return healthSessionService.viewProfessionalAvailability(user, professionalId);
   }
 
-  @GetMapping(value = "/book-session/{id}")
+  @GetMapping(value = "/professional/book-session/{id}")
   public GetProfessionalBookSessionResponse getProfessionalBookSession(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer professionalId) {
     return healthSessionService.getProfessionalBookSession(user, professionalId);
   }
 
-  @PostMapping(value = "/book-session")
+  @PostMapping(value = "/professional/book-session")
   public FleenHealthResponse bookSession(@Valid @RequestBody BookHealthSessionDto dto, @AuthenticationPrincipal FleenUser user) {
     healthSessionService.bookSession(dto, user);
     return new FleenHealthResponse(SUCCESS_MESSAGE);

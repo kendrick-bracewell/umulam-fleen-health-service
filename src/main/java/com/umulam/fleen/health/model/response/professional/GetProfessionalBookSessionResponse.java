@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.model.response.professional;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
 import com.umulam.fleen.health.model.view.ProfessionalScheduleHealthSessionView;
 import lombok.Builder;
@@ -13,6 +14,9 @@ import java.util.List;
 @Setter
 public class GetProfessionalBookSessionResponse {
 
+  @JsonProperty("availability_periods")
   private List<ProfessionalAvailabilityView> availabilityPeriods;
+
+  @JsonProperty("scheduled_sessions")
   private List<ProfessionalScheduleHealthSessionView> scheduledSessions;
 }

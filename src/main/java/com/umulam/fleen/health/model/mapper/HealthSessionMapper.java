@@ -8,14 +8,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
+
 
 public class HealthSessionMapper {
 
   private HealthSessionMapper() { }
 
   public static ProfessionalScheduleHealthSessionView toProfessionalScheduledHealthSessionView(HealthSession entry) {
-    if (Objects.nonNull(entry)) {
-      ProfessionalScheduleHealthSessionView.builder()
+    if (nonNull(entry)) {
+      return ProfessionalScheduleHealthSessionView.builder()
         .date(entry.getDate())
         .time(entry.getTime())
         .timezone(entry.getTimeZone())
