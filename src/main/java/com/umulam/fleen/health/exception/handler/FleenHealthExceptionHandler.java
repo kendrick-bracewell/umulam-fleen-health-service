@@ -101,7 +101,8 @@ public class FleenHealthExceptionHandler {
           HealthSessionCanceledAlreadyException.class,
           NoAssociatedHealthSessionException.class,
           HealthSessionInvalidTransactionException.class,
-          HealthSessionAlreadyCompletedException.class
+          HealthSessionAlreadyCompletedException.class,
+          PatientProfessionalAlreadyBookSessionException.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);

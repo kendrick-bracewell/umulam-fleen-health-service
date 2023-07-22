@@ -11,6 +11,7 @@ import com.umulam.fleen.health.event.CancelSessionMeetingEvent;
 import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import com.umulam.fleen.health.event.RescheduleSessionMeetingEvent;
 import com.umulam.fleen.health.exception.healthsession.*;
+import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionException;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
@@ -157,7 +158,29 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   @Override
   @Transactional
   public void bookSession(BookHealthSessionDto dto, FleenUser user) {
+    memberService.isMemberExistsById(user.getId());
     HealthSession healthSession = dto.toHealthSession();
+    Optional<HealthSession> bookedSessionExist = healthSessionRepository.findByProfessionalAndDateAndTime(healthSession.getProfessional(), healthSession.getDate(), healthSession.getTime());
+    if (bookedSessionExist.isPresent()) {
+      HealthSession bookedSession = bookedSessionExist.get();
+      Member professional = bookedSession.getProfessional();
+      if (bookedSession.getPatient().getId().equals(user.getId())
+        && (bookedSession.getStatus() == HealthSessionStatus.APPROVED ||
+            bookedSession.getStatus() == HealthSessionStatus.RESCHEDULED)) {
+        throw new PatientProfessionalAlreadyBookSessionException(getFullName(professional.getFirstName(), professional.getLastName()), healthSession.getDate(), healthSession.getTime());
+      }
+
+      if (!(bookedSessionExist.get().getPatient().getId().equals(user.getId()))) {
+        throw new HealthSessionDateAlreadyBookedException(getFullName(professional.getFirstName(), professional.getLastName()), healthSession.getDate(), healthSession.getTime());
+      }
+    }
+
+    Optional<Professional> professional = professionalService.findProfessionalByMember(healthSession.getProfessional());
+    if (professional.isPresent() && professional.get().getAvailabilityStatus() == ProfessionalAvailabilityStatus.UNAVAILABLE) {
+      Member professionalMember = professional.get().getMember();
+      throw new ProfessionalNotAvailableForSessionException(getFullName(professionalMember.getFirstName(), professionalMember.getLastName()))
+    }
+
     healthSession.setReference(generateSessionReference());
     Member member = Member.builder()
         .id(user.getId())
