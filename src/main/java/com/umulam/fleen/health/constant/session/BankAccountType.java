@@ -1,6 +1,6 @@
 package com.umulam.fleen.health.constant.session;
 
-public enum BankAccontType {
+public enum BankAccountType {
 
   SAVINGS,
   CURRENT;

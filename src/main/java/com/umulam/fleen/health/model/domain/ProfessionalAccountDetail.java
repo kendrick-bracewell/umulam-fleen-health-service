@@ -1,7 +1,7 @@
 package com.umulam.fleen.health.model.domain;
 
 
-import com.umulam.fleen.health.constant.session.BankAccontType;
+import com.umulam.fleen.health.constant.session.BankAccountType;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
@@ -20,7 +20,7 @@ public class ProfessionalAccountDetail {
 
   @Column
   @Enumerated(EnumType.STRING)
-  private BankAccontType bankAccontType;
+  private BankAccountType bankAccountType;
 
   @Column
   private String accountName;
