@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.controller;
 
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
+import com.umulam.fleen.health.model.dto.healthsession.ReScheduleHealthSessionDto;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.response.professional.GetProfessionalBookSessionResponse;
@@ -53,7 +54,12 @@ public class HealthSessionController {
     return new FleenHealthResponse("Success");
   }
 
-  @PostMapping(value = "/reschedule-session")
+  @PostMapping(value = "/reschedule-session/{id}")
+  public Object rescheduleSession(@Valid @RequestBody ReScheduleHealthSessionDto dto,
+                                  @AuthenticationPrincipal FleenUser user,
+                                  @PathVariable(name = "id") Integer healthSessionId) {
+    return null;
+  }
 
   public void makePayment() {
 

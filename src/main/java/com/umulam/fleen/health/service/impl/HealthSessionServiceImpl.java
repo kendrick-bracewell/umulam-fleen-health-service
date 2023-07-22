@@ -9,12 +9,15 @@ import com.umulam.fleen.health.constant.session.*;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.event.CancelSessionMeetingEvent;
 import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
+import com.umulam.fleen.health.event.RescheduleSessionMeetingEvent;
+import com.umulam.fleen.health.exception.healthsession.*;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.Professional;
 import com.umulam.fleen.health.model.domain.ProfessionalAvailability;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
+import com.umulam.fleen.health.model.dto.healthsession.ReScheduleHealthSessionDto;
 import com.umulam.fleen.health.model.event.paystack.ChargeEvent;
 import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
 import com.umulam.fleen.health.model.mapper.HealthSessionMapper;
@@ -267,6 +270,64 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         .build();
       eventService.publishCancelSession(event);
     }
+  }
+
+  @Override
+  @Transactional
+  public Object rescheduleSession(ReScheduleHealthSessionDto dto, FleenUser user, Integer healthSessionId) {
+    boolean healthSessionExist = healthSessionRepository.existsById(healthSessionId);
+    if (!healthSessionExist) {
+      throw new HealthSessionNotFoundException(healthSessionId);
+    }
+
+    Member patient = memberService.getMemberById(user.getId());
+    HealthSession newHealthSession = dto.toHealthSession();
+    Member professional = memberService.getMemberById(newHealthSession.getProfessional().getId());
+    Optional<HealthSession> existingHealthSession = healthSessionRepository.findById(healthSessionId);
+    if (existingHealthSession.isPresent()) {
+      HealthSession healthSession = existingHealthSession.get();
+      if (healthSession.getStatus() == HealthSessionStatus.CANCELED) {
+        throw new HealthSessionCanceledAlreadyException();
+      }
+
+      if (healthSession.getStatus() == HealthSessionStatus.COMPLETED) {
+        throw new HealthSessionAlreadyCompletedException();
+      }
+
+      if (healthSession.getStatus() == HealthSessionStatus.PENDING) {
+        throw new HealthSessionPaymentNotConfirmedException();
+      }
+
+      Optional<HealthSession> bookedSessionExist = healthSessionRepository.findByProfessionalAndDateAndTime(professional, newHealthSession.getDate(), newHealthSession.getTime());
+      if (bookedSessionExist.isPresent() && !(bookedSessionExist.get().getPatient().getId().equals(patient.getId()))) {
+        throw new HealthSessionDateAlreadyBookedException(getFullName(professional.getFirstName(), professional.getLastName()), newHealthSession.getDate(), newHealthSession.getTime());
+      }
+
+      if (healthSession.getDate().equals(newHealthSession.getDate()) && healthSession.getTime().equals(newHealthSession.getTime())) {
+        return null;
+      }
+
+      healthSession.setDate(newHealthSession.getDate());
+      healthSession.setTime(newHealthSession.getTime());
+      healthSession.setTimeZone(newHealthSession.getTimeZone());
+
+      LocalDate meetingDate = healthSession.getDate();
+      LocalTime meetingTime = healthSession.getTime();
+
+      LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
+      LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMaxMeetingSessionHourDuration());
+
+      RescheduleSessionMeetingEvent meetingEvent = RescheduleSessionMeetingEvent.builder()
+          .startDate(meetingStartDateTime)
+          .endDate(meetingEndDateTime)
+          .timezone(newHealthSession.getTimeZone())
+          .meetingEventId(healthSession.getEventReferenceOrId())
+          .build();
+
+      eventService.publishRescheduleSession(meetingEvent);
+      healthSessionRepository.save(healthSession);
+    }
+    throw new NoAssociatedHealthSessionException(healthSessionId);
   }
 
   private String generateSessionReference() {

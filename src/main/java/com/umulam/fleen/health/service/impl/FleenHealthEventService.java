@@ -2,6 +2,7 @@ package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.event.CancelSessionMeetingEvent;
 import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
+import com.umulam.fleen.health.event.RescheduleSessionMeetingEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -15,11 +16,14 @@ public class FleenHealthEventService {
   }
 
   public void publishCreateSession(CreateSessionMeetingEvent event) {
-    System.out.println("Was I triggered?");
     eventPublisher.publishEvent(event);
   }
 
   public void publishCancelSession(CancelSessionMeetingEvent event) {
+    eventPublisher.publishEvent(event);
+  }
+
+  public void publishRescheduleSession(RescheduleSessionMeetingEvent event) {
     eventPublisher.publishEvent(event);
   }
 }

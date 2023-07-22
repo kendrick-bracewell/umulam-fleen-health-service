@@ -6,6 +6,7 @@ import com.umulam.fleen.health.model.domain.Professional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,4 +17,8 @@ public interface HealthSessionJpaRepository extends JpaRepository<HealthSession,
   Optional<HealthSession> findByPatient(Member member);
 
   List<HealthSession> findByProfessionalAfter(Member member, LocalDate date);
+
+  boolean existsById(Integer healthSessionId);
+
+  Optional<HealthSession> findByProfessionalAndDateAndTime(Member member, LocalDate date, LocalTime time);
 }

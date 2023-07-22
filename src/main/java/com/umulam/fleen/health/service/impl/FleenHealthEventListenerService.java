@@ -4,6 +4,7 @@ import com.google.api.services.calendar.model.Event;
 import com.umulam.fleen.health.constant.session.HealthSessionStatus;
 import com.umulam.fleen.health.event.CancelSessionMeetingEvent;
 import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
+import com.umulam.fleen.health.event.RescheduleSessionMeetingEvent;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.service.external.google.CalendarService;
@@ -49,6 +50,12 @@ public class FleenHealthEventListenerService {
   @TransactionalEventListener
   public void cancelMeetingSession(CancelSessionMeetingEvent meetingEvent) {
     calendarService.cancelEvent(meetingEvent.getEventIdOrReference());
+  }
+
+  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public void reScheduleMeetingEvent(RescheduleSessionMeetingEvent meetingEvent) {
+    calendarService.rescheduleEvent(meetingEvent.getMeetingEventId(), meetingEvent.getStartDate(), meetingEvent.getEndDate());
   }
 
   private String getMeetingEventSummary(String patientName, String professionalName) {

@@ -61,7 +61,8 @@ public class FleenHealthExceptionHandler {
           BusinessNotFoundException.class,
           ProfessionalNotFoundException.class,
           MemberNotFoundException.class,
-          ProfileVerificationMessageNotFoundException.class
+          ProfileVerificationMessageNotFoundException.class,
+          HealthSessionNotFoundException.class
   })
   public Object handleNotFound(Exception ex) {
     log.error(ex.getMessage(), ex);
@@ -95,11 +96,12 @@ public class FleenHealthExceptionHandler {
           UpdatePasswordFailedException.class,
           MemberAlreadyOnboarded.class,
           NotAProfessionalException.class,
-          SessionDateAlreadyBookedException.class,
-          SessionPaymentHasNotBeenConfirmedException.class,
-          SessionCanceledAlreadyException.class,
-          NoAssociatedSessionException.class,
-          SessionInvalidTransactionException.class
+          HealthSessionDateAlreadyBookedException.class,
+          HealthSessionPaymentNotConfirmedException.class,
+          HealthSessionCanceledAlreadyException.class,
+          NoAssociatedHealthSessionException.class,
+          HealthSessionInvalidTransactionException.class,
+          HealthSessionAlreadyCompletedException.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);
