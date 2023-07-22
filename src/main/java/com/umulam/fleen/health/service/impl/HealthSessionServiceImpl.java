@@ -160,13 +160,14 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   public void bookSession(BookHealthSessionDto dto, FleenUser user) {
     memberService.isMemberExistsById(user.getId());
     HealthSession healthSession = dto.toHealthSession();
+
     Optional<HealthSession> bookedSessionExist = healthSessionRepository.findByProfessionalAndDateAndTime(healthSession.getProfessional(), healthSession.getDate(), healthSession.getTime());
     if (bookedSessionExist.isPresent()) {
       HealthSession bookedSession = bookedSessionExist.get();
       Member professional = bookedSession.getProfessional();
-      if (bookedSession.getPatient().getId().equals(user.getId())
-        && (bookedSession.getStatus() == HealthSessionStatus.APPROVED ||
-            bookedSession.getStatus() == HealthSessionStatus.RESCHEDULED)) {
+      if (bookedSession.getPatient().getId().equals(user.getId()) &&
+          (bookedSession.getStatus() == HealthSessionStatus.APPROVED ||
+           bookedSession.getStatus() == HealthSessionStatus.RESCHEDULED)) {
         throw new PatientProfessionalAlreadyBookSessionException(getFullName(professional.getFirstName(), professional.getLastName()), healthSession.getDate(), healthSession.getTime());
       }
 
