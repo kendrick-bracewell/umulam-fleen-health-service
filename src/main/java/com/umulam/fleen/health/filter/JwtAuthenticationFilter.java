@@ -2,6 +2,7 @@ package com.umulam.fleen.health.filter;
 
 import com.umulam.fleen.health.model.dto.authentication.JwtTokenDetails;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.service.MemberService;
 import com.umulam.fleen.health.service.impl.CacheService;
 import com.umulam.fleen.health.util.JwtProvider;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -36,13 +37,16 @@ import static com.umulam.fleen.health.util.FleenAuthorities.isAuthorityWhitelist
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtProvider jwtProvider;
   private final CacheService cacheService;
+  private final MemberService memberService;
   private final HandlerExceptionResolver resolver;
 
   public JwtAuthenticationFilter(JwtProvider jwtProvider,
                                  CacheService cacheService,
+                                 MemberService memberService,
                                  @Lazy @Qualifier("handlerExceptionResolver") HandlerExceptionResolver handlerExceptionResolver) {
     this.jwtProvider = jwtProvider;
     this.cacheService = cacheService;
+    this.memberService = memberService;
     this.resolver = handlerExceptionResolver;
   }
 
@@ -89,6 +93,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
           authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
           if (cacheService.exists(key) && Objects.nonNull(savedToken)) {
+            if (memberService.isMemberExists(userDetails.getUsername())) {
+              filterChain.doFilter(request, response);
+              return;
+            }
             SecurityContextHolder.getContext().setAuthentication(authentication);
           } else if (isAuthorityWhitelisted(userDetails.getAuthorities())) {
             SecurityContextHolder.getContext().setAuthentication(authentication);

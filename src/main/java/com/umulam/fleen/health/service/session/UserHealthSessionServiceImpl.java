@@ -2,34 +2,35 @@ package com.umulam.fleen.health.service.session;
 
 import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.model.domain.HealthSession;
-import com.umulam.fleen.health.model.mapper.HealthSessionMapper;
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.model.view.healthsession.HealthSessionView;
 import com.umulam.fleen.health.model.view.healthsession.HealthSessionViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
-import com.umulam.fleen.health.service.MemberService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionView;
+import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionViewBasic;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
 
+@Slf4j
+@Service
 public class UserHealthSessionServiceImpl implements UserHealthSessionService {
 
   private final HealthSessionJpaRepository healthSessionJpaRepository;
-  private final MemberService memberService;
 
-  public UserHealthSessionServiceImpl(HealthSessionJpaRepository healthSessionJpaRepository,
-                                      MemberService memberService) {
+  public UserHealthSessionServiceImpl(HealthSessionJpaRepository healthSessionJpaRepository) {
     this.healthSessionJpaRepository = healthSessionJpaRepository;
-    this.memberService = memberService;
   }
 
   @Override
   public SearchResultView viewSessions(FleenUser user, SearchRequest req) {
-    memberService.isMemberExistsById(user.getId());
     Page<HealthSession> page;
 
     if (areNotEmpty(req.getStartDate(), req.getEndDate())) {
@@ -38,7 +39,13 @@ public class UserHealthSessionServiceImpl implements UserHealthSessionService {
       page = healthSessionJpaRepository.findSessionsByUser(user.getId(), ProfileType.USER, req.getPage());
     }
 
-    List<HealthSessionViewBasic> views = HealthSessionMapper.toHealthSessionViewBasic(page.getContent());
+    List<HealthSessionViewBasic> views = toHealthSessionViewBasic(page.getContent());
     return toSearchResult(views, page);
+  }
+
+  @Override
+  public HealthSessionView viewSessionDetail(FleenUser user, Integer healthSessionId) {
+    HealthSession healthSession = healthSessionJpaRepository.findSessionByUser(user.getId(), healthSessionId);
+    return toHealthSessionView(healthSession);
   }
 }
