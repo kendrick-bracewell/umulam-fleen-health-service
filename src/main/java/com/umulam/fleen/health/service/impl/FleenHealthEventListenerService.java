@@ -42,7 +42,7 @@ public class FleenHealthEventListenerService {
       healthSession.setOtherEventReference(event.getICalUID());
       healthSession.setMeetingUrl(event.getHangoutLink());
       healthSession.setEventLink(event.getHtmlLink());
-      healthSession.setStatus(HealthSessionStatus.APPROVED);
+      healthSession.setStatus(HealthSessionStatus.SCHEDULED);
       healthSessionRepository.save(healthSession);
     }
   }

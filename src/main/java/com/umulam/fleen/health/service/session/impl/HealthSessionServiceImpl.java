@@ -172,7 +172,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       HealthSession bookedSession = bookedSessionExist.get();
       Member professional = bookedSession.getProfessional();
       if (bookedSession.getPatient().getId().equals(user.getId()) &&
-          (bookedSession.getStatus() == HealthSessionStatus.APPROVED ||
+          (bookedSession.getStatus() == HealthSessionStatus.SCHEDULED ||
            bookedSession.getStatus() == HealthSessionStatus.RESCHEDULED)) {
         throw new PatientProfessionalAlreadyBookSessionException(getFullName(professional.getFirstName(), professional.getLastName()), healthSession.getDate(), healthSession.getTime());
       }
@@ -279,7 +279,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
             if (healthSessionExist.isPresent()) {
               HealthSession healthSession = healthSessionExist.get();
 
-              if (healthSession.getStatus() != HealthSessionStatus.APPROVED && healthSession.getStatus() != HealthSessionStatus.RESCHEDULED) {
+              if (healthSession.getStatus() != HealthSessionStatus.SCHEDULED && healthSession.getStatus() != HealthSessionStatus.RESCHEDULED) {
                 LocalDate meetingDate = healthSession.getDate();
                 LocalTime meetingTime = healthSession.getTime();
 
