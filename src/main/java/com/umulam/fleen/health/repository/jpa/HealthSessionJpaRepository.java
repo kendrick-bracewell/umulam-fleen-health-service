@@ -35,14 +35,17 @@ public interface HealthSessionJpaRepository extends JpaRepository<HealthSession,
                                                  @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.patient.id = :memberId AND hs.patient.userType = :userType")
-  Page<HealthSession> findSessionsByProfessional(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType,  Pageable pageable);
+  Page<HealthSession> findSessionsByProfessional(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType, Pageable pageable);
 
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.patient.id = :memberId AND hs.patient.userType = :userType AND hs.createdOn BETWEEN :startDate AND :endDate")
   Page<HealthSession> findSessionsByProfessionalAndDateBetween(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType,
                                                                @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 
+  @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.patient.id = :memberId AND hs.patient.userType = :userType AND hs.id =: healthSessionId")
+  Optional<HealthSession> findSessionByUser(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType, @Param("healthSessionId") Integer healthSessionId);
+
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.patient.id = :memberId AND hs.id =: healthSessionId")
-  Optional<HealthSession> findSessionByUser(@Param("memberId") Integer memberId, @Param("healthSessionId") Integer healthSessionId);
+  Optional<HealthSession> findSessionByProfessional(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType, @Param("healthSessionId") Integer healthSessionId);
 
 
   @Query(value = "SELECT hs.professional.id FROM HealthSession hs WHERE hs.patient.id = :memberId")

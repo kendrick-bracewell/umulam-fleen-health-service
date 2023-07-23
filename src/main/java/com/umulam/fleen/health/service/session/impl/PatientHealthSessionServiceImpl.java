@@ -66,7 +66,7 @@ public class PatientHealthSessionServiceImpl implements PatientHealthSessionServ
   @Override
   @Transactional(readOnly = true)
   public HealthSessionView viewSessionDetail(FleenUser user, Integer healthSessionId) {
-    Optional<HealthSession> healthSessionExist = healthSessionJpaRepository.findSessionByUser(user.getId(), healthSessionId);
+    Optional<HealthSession> healthSessionExist = healthSessionJpaRepository.findSessionByUser(user.getId(), ProfileType.USER, healthSessionId);
     if (healthSessionExist.isPresent()) {
       return toHealthSessionView(healthSessionExist.get());
     }
