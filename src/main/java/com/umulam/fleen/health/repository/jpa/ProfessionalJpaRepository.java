@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface ProfessionalJpaRepository extends JpaRepository<Professional, Integer> {
@@ -63,4 +64,7 @@ public interface ProfessionalJpaRepository extends JpaRepository<Professional, I
   Page<Professional> findByVerificationStatusAndFirstOrLastName(ProfileVerificationStatus verificationStatus, String firstName, String lastName, Pageable pageable);
 
   Optional<Professional> findByMember(Member member);
+
+  @Query(value = "SELECT DISTINCT p FROM Professional p WHERE p.member.id IN (:ids)")
+  List<Professional> findProfessionalsByIds(@Param("ids") List<Long> ids);
 }

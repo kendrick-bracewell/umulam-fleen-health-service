@@ -62,4 +62,6 @@ public interface ProfessionalService {
   void updateAvailabilityOrSchedule(UpdateProfessionalAvailabilityDto dto, FleenUser user);
 
   Optional<Professional> findProfessionalByMember(Member member);
+
+  List<Professional> findProfessionalsById(List<Long> ids);
 }

@@ -17,4 +17,5 @@ public interface ProfessionalAvailabilityJpaRepository extends JpaRepository<Pro
   List<ProfessionalAvailability> findByMemberAndDayOfWeek(Member member, AvailabilityDayOfTheWeek dayOfTheWeek);
 
   long countByMember(Member member);
+
 }

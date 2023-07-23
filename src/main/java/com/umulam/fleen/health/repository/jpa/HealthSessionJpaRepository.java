@@ -46,4 +46,8 @@ public interface HealthSessionJpaRepository extends JpaRepository<HealthSession,
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.patient.id = :memberId AND hs.id =: healthSessionId")
   Optional<HealthSession> findSessionByUser(@Param("memberId") Integer memberId, @Param("healthSessionId") Integer healthSessionId);
 
+
+  @Query(value = "SELECT hs.professional.id FROM HealthSession hs WHERE hs.patient.id = :memberId")
+  List<Long> findAllProfessionalsIdsOfUser(@Param("memberId") Integer memberId);
+
 }

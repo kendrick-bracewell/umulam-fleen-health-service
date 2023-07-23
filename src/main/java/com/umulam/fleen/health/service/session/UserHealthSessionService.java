@@ -3,10 +3,10 @@ package com.umulam.fleen.health.service.session;
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.healthsession.HealthSessionView;
-import com.umulam.fleen.health.model.view.professional.ProfessionalViewBasic;
+import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 public interface UserHealthSessionService {
 
@@ -14,5 +14,5 @@ public interface UserHealthSessionService {
 
   HealthSessionView viewSessionDetail(FleenUser user, Integer healthSessionId);
 
-  Object viewTherapists(FleenUser user);
+  List<ProfessionalView> viewProfessionalsOfPatient(FleenUser user, SearchRequest searchRequest);
 }

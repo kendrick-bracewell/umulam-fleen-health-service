@@ -257,6 +257,13 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   }
 
   @Override
+  public List<Professional> findProfessionalsById(List<Long> ids) {
+
+
+    return null;
+  }
+
+  @Override
   public S3Service getS3Service() {
     return s3Service;
   }
