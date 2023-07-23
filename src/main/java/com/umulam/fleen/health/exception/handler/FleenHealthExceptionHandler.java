@@ -16,6 +16,7 @@ import com.umulam.fleen.health.exception.professional.*;
 import com.umulam.fleen.health.exception.profileverificationmessage.ProfileVerificationMessageNotFoundException;
 import com.umulam.fleen.health.exception.role.RoleDuplicateException;
 import com.umulam.fleen.health.exception.role.RoleNotFoundException;
+import com.umulam.fleen.health.exception.transaction.SessionTransactionNotFound;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -61,7 +62,8 @@ public class FleenHealthExceptionHandler {
           ProfessionalNotFoundException.class,
           MemberNotFoundException.class,
           ProfileVerificationMessageNotFoundException.class,
-          HealthSessionNotFoundException.class
+          HealthSessionNotFoundException.class,
+          SessionTransactionNotFound.class
   })
   public Object handleNotFound(Exception ex) {
     log.error(ex.getMessage(), ex);

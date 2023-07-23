@@ -5,6 +5,7 @@ import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.healthsession.HealthSessionView;
 import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
+import com.umulam.fleen.health.model.view.transaction.SessionTransactionView;
 import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.session.PatientHealthSessionService;
 import com.umulam.fleen.health.service.transaction.SessionTransactionService;
@@ -54,6 +55,11 @@ public class PatientSessionController {
   @GetMapping(value = "/transactions/entries")
   public SearchResultView viewTransactions(@AuthenticationPrincipal FleenUser user, @SearchParam SearchRequest searchRequest) {
     return sessionTransactionService.viewUserTransactions(user, searchRequest);
+  }
+
+  @GetMapping(value = "/transaction/detail/{id}")
+  public SessionTransactionView viewTransactionDetail(@AuthenticationPrincipal FleenUser user) {
+
   }
 
   public void viewSessionReviews() {
