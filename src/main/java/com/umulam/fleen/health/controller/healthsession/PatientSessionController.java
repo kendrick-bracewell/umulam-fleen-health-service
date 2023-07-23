@@ -7,6 +7,7 @@ import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.session.PatientHealthSessionService;
+import com.umulam.fleen.health.service.transaction.SessionTransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,21 +19,24 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "user/sessions")
+@RequestMapping(value = "user/health")
 public class PatientSessionController {
 
   private final PatientHealthSessionService patientHealthSessionService;
+  private final SessionTransactionService sessionTransactionService;
 
-  public PatientSessionController(PatientHealthSessionService patientHealthSessionService) {
+  public PatientSessionController(PatientHealthSessionService patientHealthSessionService,
+                                  SessionTransactionService sessionTransactionService) {
     this.patientHealthSessionService = patientHealthSessionService;
+    this.sessionTransactionService = sessionTransactionService;
   }
 
-  @GetMapping(value = "/entries")
+  @GetMapping(value = "/sessions/entries")
   public SearchResultView viewSessions(@AuthenticationPrincipal FleenUser user, @SearchParam SearchRequest searchRequest) {
     return patientHealthSessionService.viewSessions(user, searchRequest);
   }
 
-  @GetMapping(value = "/detail/{id}")
+  @GetMapping(value = "/session/detail/{id}")
   public HealthSessionView viewSessionDetail(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer healthSessionId) {
     return patientHealthSessionService.viewSessionDetail(user, healthSessionId);
   }
@@ -46,9 +50,10 @@ public class PatientSessionController {
   public Object viewProfessionalDetail(@PathVariable(name = "id") Integer professionalId) {
     return patientHealthSessionService.viewProfessionalDetail(professionalId);
   }
-  
-  public void viewTransactions() {
 
+  @GetMapping(value = "/transactions/entries")
+  public SearchResultView viewTransactions(@AuthenticationPrincipal FleenUser user, @SearchParam SearchRequest searchRequest) {
+    return sessionTransactionService.viewUserTransactions(user, searchRequest);
   }
 
   public void viewSessionReviews() {
