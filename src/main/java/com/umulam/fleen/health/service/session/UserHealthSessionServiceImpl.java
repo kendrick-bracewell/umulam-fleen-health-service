@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.service.session;
 
 import com.umulam.fleen.health.constant.base.ProfileType;
+import com.umulam.fleen.health.exception.healthsession.HealthSessionNotFoundException;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
@@ -11,8 +12,10 @@ import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionView;
 import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionViewBasic;
@@ -30,6 +33,7 @@ public class UserHealthSessionServiceImpl implements UserHealthSessionService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public SearchResultView viewSessions(FleenUser user, SearchRequest req) {
     Page<HealthSession> page;
 
@@ -44,8 +48,17 @@ public class UserHealthSessionServiceImpl implements UserHealthSessionService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public HealthSessionView viewSessionDetail(FleenUser user, Integer healthSessionId) {
-    HealthSession healthSession = healthSessionJpaRepository.findSessionByUser(user.getId(), healthSessionId);
-    return toHealthSessionView(healthSession);
+    Optional<HealthSession> healthSessionExist = healthSessionJpaRepository.findSessionByUser(user.getId(), healthSessionId);
+    if (healthSessionExist.isPresent()) {
+      return toHealthSessionView(healthSessionExist.get());
+    }
+    throw new HealthSessionNotFoundException(healthSessionId);
+  }
+
+  @Override
+  public Object viewTherapists(FleenUser user) {
+    return null;
   }
 }

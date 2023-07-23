@@ -44,6 +44,6 @@ public interface HealthSessionJpaRepository extends JpaRepository<HealthSession,
                                                                @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.patient.id = :memberId AND hs.id =: healthSessionId")
-  HealthSession findSessionByUser(@Param("memberId") Integer memberId, @Param("healthSessionId") Integer healthSessionId);
+  Optional<HealthSession> findSessionByUser(@Param("memberId") Integer memberId, @Param("healthSessionId") Integer healthSessionId);
 
 }

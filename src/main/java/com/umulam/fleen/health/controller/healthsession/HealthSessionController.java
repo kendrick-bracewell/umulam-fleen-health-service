@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.controller;
+package com.umulam.fleen.health.controller.healthsession;
 
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.dto.healthsession.ReScheduleHealthSessionDto;

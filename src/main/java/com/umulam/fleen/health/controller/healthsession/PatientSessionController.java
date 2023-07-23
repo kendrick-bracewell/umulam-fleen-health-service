@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.controller;
+package com.umulam.fleen.health.controller.healthsession;
 
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping(value = "sessions")
-public class MySessionController {
+public class PatientSessionController {
 
   private final UserHealthSessionService userHealthSessionService;
 
-  public MySessionController(UserHealthSessionService userHealthSessionService) {
+  public PatientSessionController(UserHealthSessionService userHealthSessionService) {
     this.userHealthSessionService = userHealthSessionService;
   }
 
