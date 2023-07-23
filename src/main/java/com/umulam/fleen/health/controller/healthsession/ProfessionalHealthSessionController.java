@@ -2,6 +2,7 @@ package com.umulam.fleen.health.controller.healthsession;
 
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.model.view.healthsession.HealthSessionReviewView;
 import com.umulam.fleen.health.model.view.healthsession.HealthSessionView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.resolver.SearchParam;
@@ -14,18 +15,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping(value = "professional/health")
 public class ProfessionalHealthSessionController {
 
   private final ProfessionalHealthSessionService professionalHealthSessionService;
-  private final SessionTransactionService sessionTransactionService;
 
-  public ProfessionalHealthSessionController(ProfessionalHealthSessionService professionalHealthSessionService,
-                                             SessionTransactionService sessionTransactionService) {
+  public ProfessionalHealthSessionController(ProfessionalHealthSessionService professionalHealthSessionService) {
     this.professionalHealthSessionService = professionalHealthSessionService;
-    this.sessionTransactionService = sessionTransactionService;
   }
 
   @GetMapping(value = "/sessions/entries")
@@ -36,5 +36,10 @@ public class ProfessionalHealthSessionController {
   @GetMapping(value = "/session/detail/{id}")
   public HealthSessionView viewSessionDetail(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer healthSessionId) {
     return professionalHealthSessionService.viewSessionDetail(user, healthSessionId);
+  }
+
+  @GetMapping(value = "/sessions/reviews")
+  public List<HealthSessionReviewView> viewSessionReviews(@AuthenticationPrincipal FleenUser user) {
+    return professionalHealthSessionService.viewReviews(user);
   }
 }

@@ -21,6 +21,19 @@ public class HealthSessionReviewMapper {
         .ratingName(entry.getRating().name())
         .ratingValue(entry.getRating().ordinal())
         .professionalName(getFullName(entry.getProfessional().getFirstName(), entry.getProfessional().getLastName()))
+        .createdOn(entry.getCreatedOn())
+        .build();
+    }
+    return null;
+  }
+
+  public static HealthSessionReviewView toHealthSessionReviewViewProfessional(HealthSessionReview entry) {
+    if (Objects.nonNull(entry)) {
+      return HealthSessionReviewView.builder()
+        .review(entry.getReview())
+        .ratingName(entry.getRating().name())
+        .ratingValue(entry.getRating().ordinal())
+        .createdOn(entry.getCreatedOn())
         .build();
     }
     return null;
@@ -33,6 +46,17 @@ public class HealthSessionReviewMapper {
               .filter(Objects::nonNull)
               .map(HealthSessionReviewMapper::toHealthSessionReviewView)
               .collect(Collectors.toList());
+    }
+    return Collections.emptyList();
+  }
+
+  public static List<HealthSessionReviewView> toHealthSessionReviewProfessionalViews(List<HealthSessionReview> entries) {
+    if (Objects.nonNull(entries) && !entries.isEmpty()) {
+      return entries
+        .stream()
+        .filter(Objects::nonNull)
+        .map(HealthSessionReviewMapper::toHealthSessionReviewViewProfessional)
+        .collect(Collectors.toList());
     }
     return Collections.emptyList();
   }

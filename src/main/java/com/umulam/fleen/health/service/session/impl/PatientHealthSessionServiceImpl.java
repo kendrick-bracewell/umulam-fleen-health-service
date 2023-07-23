@@ -14,7 +14,7 @@ import com.umulam.fleen.health.model.view.healthsession.HealthSessionViewBasic;
 import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
-import com.umulam.fleen.health.repository.jpa.HealthSessionReviewRepository;
+import com.umulam.fleen.health.repository.jpa.HealthSessionReviewJpaRepository;
 import com.umulam.fleen.health.service.ProfessionalService;
 import com.umulam.fleen.health.service.session.PatientHealthSessionService;
 import lombok.extern.slf4j.Slf4j;
@@ -38,14 +38,14 @@ public class PatientHealthSessionServiceImpl implements PatientHealthSessionServ
 
   private final HealthSessionJpaRepository healthSessionJpaRepository;
   private final ProfessionalService professionalService;
-  private final HealthSessionReviewRepository healthSessionReviewRepository;
+  private final HealthSessionReviewJpaRepository healthSessionReviewJpaRepository;
 
   public PatientHealthSessionServiceImpl(HealthSessionJpaRepository healthSessionJpaRepository,
                                          ProfessionalService professionalService,
-                                         HealthSessionReviewRepository healthSessionReviewRepository) {
+                                         HealthSessionReviewJpaRepository healthSessionReviewJpaRepository) {
     this.healthSessionJpaRepository = healthSessionJpaRepository;
     this.professionalService = professionalService;
-    this.healthSessionReviewRepository = healthSessionReviewRepository;
+    this.healthSessionReviewJpaRepository = healthSessionReviewJpaRepository;
   }
 
   @Override
@@ -88,7 +88,7 @@ public class PatientHealthSessionServiceImpl implements PatientHealthSessionServ
 
   @Override
   public List<HealthSessionReviewView> viewReviews(FleenUser user) {
-    List<HealthSessionReview> sessionReviews = healthSessionReviewRepository.findPatientReviews(user.getId());
+    List<HealthSessionReview> sessionReviews = healthSessionReviewJpaRepository.findPatientReviews(user.getId());
     return HealthSessionReviewMapper.toHealthSessionReviewViews(sessionReviews);
   }
 }
