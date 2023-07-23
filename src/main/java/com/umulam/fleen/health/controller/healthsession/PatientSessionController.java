@@ -33,14 +33,19 @@ public class PatientSessionController {
   }
 
   @GetMapping(value = "/detail/{id}")
-  public HealthSessionView healthSessionView(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer healthSessionId) {
+  public HealthSessionView viewSessionDetail(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer healthSessionId) {
     return userHealthSessionService.viewSessionDetail(user, healthSessionId);
   }
 
   @GetMapping(value = "/professionals")
   public List<ProfessionalView> viewProfessionals(@AuthenticationPrincipal FleenUser user) {
     return userHealthSessionService.viewProfessionalsOfPatient(user);
-  } 
+  }
+
+  @GetMapping(value = "/professional/detail/{id}")
+  public Object viewProfessionalDetail(@PathVariable(name = "id") Integer professionalId) {
+    return userHealthSessionService.viewProfessionalDetail(professionalId);
+  }
   
   public void viewTransactions() {
 

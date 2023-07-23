@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionView;
 import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionViewBasic;
+import static com.umulam.fleen.health.model.mapper.ProfessionalMapper.toProfessionalView;
 import static com.umulam.fleen.health.model.mapper.ProfessionalMapper.toProfessionalViews;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
@@ -71,5 +72,9 @@ public class UserHealthSessionServiceImpl implements UserHealthSessionService {
     return toProfessionalViews(professionals);
   }
 
-
+  @Override
+  public ProfessionalView viewProfessionalDetail(Integer id) {
+    Professional professional = professionalService.getProfessional(id);
+    return toProfessionalView(professional);
+  }
 }
