@@ -31,11 +31,11 @@ public class HealthSession {
   @Column(name = "reference", nullable = false)
   private String reference;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "patient", nullable = false)
   private Member patient;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "professional", nullable = false)
   private Member professional;
 

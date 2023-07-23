@@ -3,14 +3,18 @@ package com.umulam.fleen.health.service.session.impl;
 import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.exception.healthsession.HealthSessionNotFoundException;
 import com.umulam.fleen.health.model.domain.HealthSession;
+import com.umulam.fleen.health.model.domain.HealthSessionReview;
 import com.umulam.fleen.health.model.domain.Professional;
+import com.umulam.fleen.health.model.mapper.HealthSessionReviewMapper;
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.model.view.healthsession.HealthSessionReviewView;
 import com.umulam.fleen.health.model.view.healthsession.HealthSessionView;
 import com.umulam.fleen.health.model.view.healthsession.HealthSessionViewBasic;
 import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
+import com.umulam.fleen.health.repository.jpa.HealthSessionReviewRepository;
 import com.umulam.fleen.health.service.ProfessionalService;
 import com.umulam.fleen.health.service.session.PatientHealthSessionService;
 import lombok.extern.slf4j.Slf4j;
@@ -34,11 +38,14 @@ public class PatientHealthSessionServiceImpl implements PatientHealthSessionServ
 
   private final HealthSessionJpaRepository healthSessionJpaRepository;
   private final ProfessionalService professionalService;
+  private final HealthSessionReviewRepository healthSessionReviewRepository;
 
   public PatientHealthSessionServiceImpl(HealthSessionJpaRepository healthSessionJpaRepository,
-                                         ProfessionalService professionalService) {
+                                         ProfessionalService professionalService,
+                                         HealthSessionReviewRepository healthSessionReviewRepository) {
     this.healthSessionJpaRepository = healthSessionJpaRepository;
     this.professionalService = professionalService;
+    this.healthSessionReviewRepository = healthSessionReviewRepository;
   }
 
   @Override
@@ -77,5 +84,11 @@ public class PatientHealthSessionServiceImpl implements PatientHealthSessionServ
   public ProfessionalView viewProfessionalDetail(Integer id) {
     Professional professional = professionalService.getProfessional(id);
     return toProfessionalView(professional);
+  }
+
+  @Override
+  public List<HealthSessionReviewView> viewReviews(FleenUser user) {
+    List<HealthSessionReview> sessionReviews = healthSessionReviewRepository.findPatientReviews(user.getId());
+    return HealthSessionReviewMapper.toHealthSessionReviewViews(sessionReviews);
   }
 }

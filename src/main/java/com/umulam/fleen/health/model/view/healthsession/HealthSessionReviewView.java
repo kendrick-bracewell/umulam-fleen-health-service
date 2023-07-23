@@ -12,5 +12,6 @@ public class HealthSessionReviewView extends FleenHealthView {
 
   private String review;
   private String professionalName;
-  private String rating;
+  private String ratingName;
+  private int ratingValue;
 }

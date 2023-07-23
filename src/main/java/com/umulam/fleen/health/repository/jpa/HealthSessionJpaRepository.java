@@ -1,10 +1,8 @@
 package com.umulam.fleen.health.repository.jpa;
 
 import com.umulam.fleen.health.constant.base.ProfileType;
-import com.umulam.fleen.health.model.domain.Country;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
-import com.umulam.fleen.health.model.domain.Professional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

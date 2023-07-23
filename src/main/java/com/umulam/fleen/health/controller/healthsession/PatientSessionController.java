@@ -2,6 +2,7 @@ package com.umulam.fleen.health.controller.healthsession;
 
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.model.view.healthsession.HealthSessionReviewView;
 import com.umulam.fleen.health.model.view.healthsession.HealthSessionView;
 import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
@@ -62,8 +63,9 @@ public class PatientSessionController {
     return sessionTransactionService.viewUserTransactionDetail(user, transactonId);
   }
 
-  public void viewSessionReviews() {
-
+  @GetMapping(value = "/sessions/reviews")
+  public List<HealthSessionReviewView> viewSessionReviews(@AuthenticationPrincipal FleenUser user) {
+    return patientHealthSessionService.viewReviews(user);
   }
 
   public void viewPaymentDetails() {

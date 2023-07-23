@@ -1,0 +1,39 @@
+package com.umulam.fleen.health.model.mapper;
+
+import com.umulam.fleen.health.model.domain.HealthSessionReview;
+import com.umulam.fleen.health.model.view.healthsession.HealthSessionReviewView;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static com.umulam.fleen.health.util.StringUtil.getFullName;
+
+public class HealthSessionReviewMapper {
+
+  private HealthSessionReviewMapper() { }
+
+  public static HealthSessionReviewView toHealthSessionReviewView(HealthSessionReview entry) {
+    if (Objects.nonNull(entry)) {
+      return HealthSessionReviewView.builder()
+        .review(entry.getReview())
+        .ratingName(entry.getRating().name())
+        .ratingValue(entry.getRating().ordinal())
+        .professionalName(getFullName(entry.getProfessional().getFirstName(), entry.getProfessional().getLastName()))
+        .build();
+    }
+    return null;
+  }
+
+  public static List<HealthSessionReviewView> toHealthSessionReviewViews(List<HealthSessionReview> entries) {
+    if (Objects.nonNull(entries) && !entries.isEmpty()) {
+      return entries
+              .stream()
+              .filter(Objects::nonNull)
+              .map(HealthSessionReviewMapper::toHealthSessionReviewView)
+              .collect(Collectors.toList());
+    }
+    return Collections.emptyList();
+  }
+}
