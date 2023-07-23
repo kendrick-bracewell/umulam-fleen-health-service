@@ -1,20 +1,16 @@
 package com.umulam.fleen.health.service.session;
 
 import com.umulam.fleen.health.constant.base.ProfileType;
-import com.umulam.fleen.health.model.domain.Country;
 import com.umulam.fleen.health.model.domain.HealthSession;
-import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.mapper.HealthSessionMapper;
-import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.healthsession.HealthSessionViewBasic;
-import com.umulam.fleen.health.model.view.professional.ProfessionalViewBasic;
+import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.service.MemberService;
 import org.springframework.data.domain.Page;
 
-import java.util.Collections;
 import java.util.List;
 
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
@@ -32,7 +28,7 @@ public class UserHealthSessionServiceImpl implements UserHealthSessionService {
   }
 
   @Override
-  public Object viewSessions(FleenUser user, SearchRequest req) {
+  public SearchResultView viewSessions(FleenUser user, SearchRequest req) {
     memberService.isMemberExistsById(user.getId());
     Page<HealthSession> page;
 
