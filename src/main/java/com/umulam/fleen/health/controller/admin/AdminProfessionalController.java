@@ -4,7 +4,7 @@ import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalDetailsD
 import com.umulam.fleen.health.model.dto.verification.UpdateProfileVerificationStatusDto;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
-import com.umulam.fleen.health.model.view.ProfessionalView;
+import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.admin.AdminProfessionalService;

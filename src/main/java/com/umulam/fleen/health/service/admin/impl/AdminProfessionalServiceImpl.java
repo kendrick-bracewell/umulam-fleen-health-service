@@ -10,7 +10,7 @@ import com.umulam.fleen.health.model.dto.verification.UpdateProfileVerificationS
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.SaveProfileVerificationMessageRequest;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
-import com.umulam.fleen.health.model.view.ProfessionalView;
+import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.ProfessionalAvailabilityJpaRepository;
 import com.umulam.fleen.health.repository.jpa.ProfessionalJpaRepository;

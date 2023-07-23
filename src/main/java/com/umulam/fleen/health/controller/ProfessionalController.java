@@ -11,7 +11,7 @@ import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdate
 import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateVerificationDetailResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
-import com.umulam.fleen.health.model.view.ProfessionalView;
+import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.model.view.UserVerificationStatusView;
 import com.umulam.fleen.health.service.ProfessionalService;
 import lombok.extern.slf4j.Slf4j;

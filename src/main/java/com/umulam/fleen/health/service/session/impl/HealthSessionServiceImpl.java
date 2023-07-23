@@ -34,7 +34,7 @@ import com.umulam.fleen.health.model.response.healthsession.ProfessionalCheckAva
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
 import com.umulam.fleen.health.model.view.ProfessionalScheduleHealthSessionView;
-import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
+import com.umulam.fleen.health.model.view.professional.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.HealthSessionProfessionalJpaRepository;

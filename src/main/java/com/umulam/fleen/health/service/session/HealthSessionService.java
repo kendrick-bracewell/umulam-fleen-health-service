@@ -7,7 +7,7 @@ import com.umulam.fleen.health.model.response.healthsession.GetProfessionalBookS
 import com.umulam.fleen.health.model.response.healthsession.PendingHealthSessionBookingResponse;
 import com.umulam.fleen.health.model.response.healthsession.ProfessionalCheckAvailabilityResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
-import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
+import com.umulam.fleen.health.model.view.professional.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import org.springframework.transaction.annotation.Transactional;
 

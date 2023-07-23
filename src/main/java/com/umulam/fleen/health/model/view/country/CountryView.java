@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.model.view;
+package com.umulam.fleen.health.model.view.country;
 
 import com.umulam.fleen.health.model.view.base.FleenHealthView;
 import lombok.*;

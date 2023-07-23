@@ -1,8 +1,8 @@
 package com.umulam.fleen.health.model.mapper;
 
 import com.umulam.fleen.health.model.domain.Professional;
-import com.umulam.fleen.health.model.view.ProfessionalView;
-import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
+import com.umulam.fleen.health.model.view.professional.ProfessionalView;
+import com.umulam.fleen.health.model.view.professional.ProfessionalViewBasic;
 
 import java.util.Collections;
 import java.util.List;

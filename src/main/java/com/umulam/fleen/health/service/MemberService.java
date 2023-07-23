@@ -12,7 +12,7 @@ import com.umulam.fleen.health.model.response.member.UpdateEmailAddressOrPhoneNu
 import com.umulam.fleen.health.model.response.member.UpdateMemberDetailsResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
-import com.umulam.fleen.health.model.view.MemberView;
+import com.umulam.fleen.health.model.view.member.MemberView;
 import com.umulam.fleen.health.model.view.RoleView;
 import org.springframework.transaction.annotation.Transactional;
 

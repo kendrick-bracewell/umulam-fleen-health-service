@@ -1,7 +1,10 @@
-package com.umulam.fleen.health.model.view;
+package com.umulam.fleen.health.model.view.professional;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.umulam.fleen.health.model.view.country.CountryView;
+import com.umulam.fleen.health.model.view.VerificationDocumentView;
 import com.umulam.fleen.health.model.view.base.FleenHealthView;
+import com.umulam.fleen.health.model.view.member.MemberView;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

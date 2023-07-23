@@ -1,7 +1,6 @@
-package com.umulam.fleen.health.model.view.search;
+package com.umulam.fleen.health.model.view.professional;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.umulam.fleen.health.model.view.ProfessionalView;
 import lombok.experimental.SuperBuilder;
 
 @SuperBuilder

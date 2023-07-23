@@ -1,10 +1,9 @@
 package com.umulam.fleen.health.model.mapper;
 
 import com.umulam.fleen.health.model.domain.Country;
-import com.umulam.fleen.health.model.view.CountryView;
-import com.umulam.fleen.health.model.view.CountryViewBasic;
+import com.umulam.fleen.health.model.view.country.CountryView;
+import com.umulam.fleen.health.model.view.country.CountryViewBasic;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;

@@ -8,7 +8,7 @@ import com.umulam.fleen.health.model.dto.country.UpdateCountryDto;
 import com.umulam.fleen.health.model.mapper.CountryMapper;
 import com.umulam.fleen.health.model.request.search.CountrySearchRequest;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
-import com.umulam.fleen.health.model.view.CountryView;
+import com.umulam.fleen.health.model.view.country.CountryView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.CountryJpaRepository;
 import com.umulam.fleen.health.service.CountryService;
