@@ -14,5 +14,5 @@ public interface UserHealthSessionService {
 
   HealthSessionView viewSessionDetail(FleenUser user, Integer healthSessionId);
 
-  List<ProfessionalView> viewProfessionalsOfPatient(FleenUser user, SearchRequest searchRequest);
+  List<ProfessionalView> viewProfessionalsOfPatient(FleenUser user);
 }

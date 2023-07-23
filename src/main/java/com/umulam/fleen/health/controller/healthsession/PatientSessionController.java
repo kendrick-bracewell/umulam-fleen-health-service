@@ -3,6 +3,7 @@ package com.umulam.fleen.health.controller.healthsession;
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.healthsession.HealthSessionView;
+import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.session.UserHealthSessionService;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Slf4j
 @RestController
-@RequestMapping(value = "sessions")
+@RequestMapping(value = "user/sessions")
 public class PatientSessionController {
 
   private final UserHealthSessionService userHealthSessionService;
@@ -34,8 +37,9 @@ public class PatientSessionController {
     return userHealthSessionService.viewSessionDetail(user, healthSessionId);
   }
 
-  public void viewTherapists() {
-    
+  @GetMapping(value = "/professionals")
+  public List<ProfessionalView> viewProfessionals(@AuthenticationPrincipal FleenUser user) {
+    return userHealthSessionService.viewProfessionalsOfPatient(user);
   } 
   
   public void viewTransactions() {

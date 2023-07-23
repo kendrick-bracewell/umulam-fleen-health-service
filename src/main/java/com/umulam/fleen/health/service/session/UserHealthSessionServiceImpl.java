@@ -65,9 +65,11 @@ public class UserHealthSessionServiceImpl implements UserHealthSessionService {
   }
 
   @Override
-  public List<ProfessionalView> viewProfessionalsOfPatient(FleenUser user, SearchRequest req) {
+  public List<ProfessionalView> viewProfessionalsOfPatient(FleenUser user) {
     List<Long> professionalsIds = healthSessionJpaRepository.findAllProfessionalsIdsOfUser(user.getId());
     List<Professional> professionals = professionalService.findProfessionalsById(professionalsIds);
     return toProfessionalViews(professionals);
   }
+
+
 }
