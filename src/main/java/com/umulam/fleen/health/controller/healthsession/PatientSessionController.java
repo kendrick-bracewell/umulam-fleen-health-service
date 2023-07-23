@@ -58,8 +58,8 @@ public class PatientSessionController {
   }
 
   @GetMapping(value = "/transaction/detail/{id}")
-  public SessionTransactionView viewTransactionDetail(@AuthenticationPrincipal FleenUser user) {
-
+  public SessionTransactionView viewTransactionDetail(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer transactonId) {
+    return sessionTransactionService.viewUserTransactionDetail(user, transactonId);
   }
 
   public void viewSessionReviews() {

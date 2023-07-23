@@ -49,7 +49,7 @@ public class SessionTransactionServiceImpl implements SessionTransactionService 
   @Override
   @Transactional(readOnly = true)
   public SessionTransactionView viewUserTransactionDetail(FleenUser user, Integer transactionId) {
-    Optional<SessionTransaction> sessionTransactionExist = sessionTransactionJpaRepository.findById(transactionId);
+    Optional<SessionTransaction> sessionTransactionExist = sessionTransactionJpaRepository.findByUserAndId(transactionId, user.getId());
     if (sessionTransactionExist.isPresent()) {
       return SessionTransactionMapper.toSessionTransactionView(sessionTransactionExist.get());
     }

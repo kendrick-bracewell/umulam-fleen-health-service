@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -15,6 +16,9 @@ public interface SessionTransactionJpaRepository extends JpaRepository<SessionTr
 
   @Query(value = "SELECT st FROM SessionTransaction st WHERE st.reference = :reference")
   Optional<SessionTransaction> findByReference(@Param("reference") String reference);
+
+  @Query(value = "SELECT st FROM SessionTransaction st WHERE st.id = :transactionId AND st.payer.id = :memberId")
+  Optional<SessionTransaction> findByUserAndId(@PathVariable("transactionId") Integer transactionId, @Param("memberId") Integer memberId);
 
   @Query(value = "SELECT st FROM SessionTransaction st WHERE st.payer.id = :memberId")
   Page<SessionTransaction> findAllByPayer(@Param("memberId") Integer memberId, Pageable pageable);
