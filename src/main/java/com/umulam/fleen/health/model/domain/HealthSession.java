@@ -32,11 +32,11 @@ public class HealthSession {
   private String reference;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "patient", nullable = false)
+  @JoinColumn(name = "patient_id", nullable = false)
   private Member patient;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "professional", nullable = false)
+  @JoinColumn(name = "professional_id", nullable = false)
   private Member professional;
 
   @Column(name = "comment", length = 1000)

@@ -3,6 +3,7 @@ package com.umulam.fleen.health.repository.jpa;
 import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
+import com.umulam.fleen.health.model.response.healthsession.GetUpdateHealthSessionNote;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -50,5 +51,8 @@ public interface HealthSessionJpaRepository extends JpaRepository<HealthSession,
 
   @Query(value = "SELECT hs.professional.id FROM HealthSession hs WHERE hs.patient.id = :memberId")
   List<Long> findAllProfessionalsIdsOfUser(@Param("memberId") Integer memberId);
+
+  @Query(value ="SELECT note AS note, professional_id AS professionalId FROM health_session WHERE id = :id", nativeQuery = true)
+  Optional<GetUpdateHealthSessionNote> getUpdateHealthSessionNote(@Param("id") Integer healthSessionId);
 
 }

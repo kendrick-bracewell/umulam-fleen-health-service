@@ -49,8 +49,8 @@ public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
   boolean existsByPhoneNumber(String phoneNumber);
 
   @Query(value =
-          "SELECT first_name as firstName, last_name as lastName, email_address as emailAddress," +
-          "phone_number as phoneNumber, gender, date_of_birth as dateOfBirth from member where id = :id", nativeQuery = true)
+          "SELECT first_name AS firstName, last_name AS lastName, email_address AS emailAddress," +
+          "phone_number AS phoneNumber, gender AS gender, date_of_birth AS dateOfBirth FROM member WHERE id = :id", nativeQuery = true)
   GetMemberUpdateDetailsResponse findMemberDetailsById(@Param("id") Integer memberId);
 
   @Modifying
