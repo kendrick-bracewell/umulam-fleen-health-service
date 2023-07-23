@@ -22,13 +22,13 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(value = "user/health")
-public class PatientSessionController {
+public class PatientHealthSessionController {
 
   private final PatientHealthSessionService patientHealthSessionService;
   private final SessionTransactionService sessionTransactionService;
 
-  public PatientSessionController(PatientHealthSessionService patientHealthSessionService,
-                                  SessionTransactionService sessionTransactionService) {
+  public PatientHealthSessionController(PatientHealthSessionService patientHealthSessionService,
+                                        SessionTransactionService sessionTransactionService) {
     this.patientHealthSessionService = patientHealthSessionService;
     this.sessionTransactionService = sessionTransactionService;
   }
