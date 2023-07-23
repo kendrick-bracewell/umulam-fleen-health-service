@@ -4,15 +4,21 @@ import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.model.domain.Country;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
+import com.umulam.fleen.health.model.mapper.HealthSessionMapper;
+import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.model.view.healthsession.HealthSessionViewBasic;
+import com.umulam.fleen.health.model.view.professional.ProfessionalViewBasic;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.service.MemberService;
 import org.springframework.data.domain.Page;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
+import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
 
 public class UserHealthSessionServiceImpl implements UserHealthSessionService {
 
@@ -27,7 +33,7 @@ public class UserHealthSessionServiceImpl implements UserHealthSessionService {
 
   @Override
   public Object viewSessions(FleenUser user, SearchRequest req) {
-    Member member = memberService.getMemberById(user.getId());
+    memberService.isMemberExistsById(user.getId());
     Page<HealthSession> page;
 
     if (areNotEmpty(req.getStartDate(), req.getEndDate())) {
@@ -36,7 +42,7 @@ public class UserHealthSessionServiceImpl implements UserHealthSessionService {
       page = healthSessionJpaRepository.findSessionsByUser(user.getId(), ProfileType.USER, req.getPage());
     }
 
-
-    return null;
+    List<HealthSessionViewBasic> views = HealthSessionMapper.toHealthSessionViewBasic(page.getContent());
+    return toSearchResult(views, page);
   }
 }

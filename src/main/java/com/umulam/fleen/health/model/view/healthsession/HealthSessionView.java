@@ -5,13 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.model.view.base.FleenHealthView;
 import com.umulam.fleen.health.model.view.member.MemberViewBasic;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 import static com.umulam.fleen.health.util.DateFormatUtil.*;
 
-@Builder
+@SuperBuilder
 @Getter
 @Setter
 @NoArgsConstructor
