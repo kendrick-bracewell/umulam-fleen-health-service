@@ -16,6 +16,11 @@ import java.time.LocalDateTime;
 @Table(name = "health_session_review")
 public class HealthSessionReview {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
+  private Integer id;
+
   @Column(name = "review", nullable = false, length = 1000)
   private String review;
 
