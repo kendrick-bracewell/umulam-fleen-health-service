@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.model.view;
+package com.umulam.fleen.health.model.view.base;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;

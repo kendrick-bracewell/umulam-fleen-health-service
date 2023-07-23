@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.service;
+package com.umulam.fleen.health.service.session;
 
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.dto.healthsession.ReScheduleHealthSessionDto;
@@ -13,12 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface HealthSessionService {
 
+  @Transactional(readOnly = true)
   SearchResultView viewProfessionals(ProfessionalSearchRequest searchRequest);
 
+  @Transactional(readOnly = true)
   ProfessionalViewBasic viewProfessionalDetail(Integer professionalId);
 
+  @Transactional
   PendingHealthSessionBookingResponse bookSession(BookHealthSessionDto dto, FleenUser user);
 
+  @Transactional
   void validateAndCompleteTransaction(String body);
 
   @Transactional
@@ -27,6 +31,7 @@ public interface HealthSessionService {
   @Transactional(readOnly = true)
   ProfessionalCheckAvailabilityResponse viewProfessionalAvailability(FleenUser user, Integer professionalId);
 
+  @Transactional(readOnly = true)
   GetProfessionalBookSessionResponse getProfessionalBookSession(FleenUser user, Integer professionalId);
 
   @Transactional

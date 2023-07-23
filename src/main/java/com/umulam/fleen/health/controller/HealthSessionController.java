@@ -11,7 +11,7 @@ import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.search.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.resolver.SearchParam;
-import com.umulam.fleen.health.service.HealthSessionService;
+import com.umulam.fleen.health.service.session.HealthSessionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -68,6 +68,11 @@ public class HealthSessionController {
   public FleenHealthResponse cancelSession(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer healthSessionId) {
     healthSessionService.cancelSession(user, healthSessionId);
     return new FleenHealthResponse(HEALTH_SESSION_CANCELED);
+  }
+
+  @PutMapping(value = "/session/add-note/{id}")
+  public void addSessionNote(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer healthSessionId) {
+
   }
 
   public void makePayment() {

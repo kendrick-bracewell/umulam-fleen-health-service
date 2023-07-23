@@ -3,9 +3,12 @@ package com.umulam.fleen.health.model.domain;
 import com.umulam.fleen.health.constant.session.HealthSessionStatus;
 import com.umulam.fleen.health.constant.session.SessionLocation;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.TimeZone;
 
@@ -39,6 +42,9 @@ public class HealthSession {
   @Column(name = "comment", length = 1000)
   private String comment;
 
+  @Column(name = "notes", length = 1000)
+  private String note;
+
   @Column(name = "date", nullable = false)
   private LocalDate date;
 
@@ -70,4 +76,12 @@ public class HealthSession {
 
   @Column(name = "event_link")
   private String eventLink;
+
+  @CreationTimestamp
+  @Column(name = "created_on", updatable = false)
+  private LocalDateTime createdOn;
+
+  @UpdateTimestamp
+  @Column(name = "updated_on")
+  private LocalDateTime updatedOn;
 }

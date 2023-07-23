@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.service.impl;
+package com.umulam.fleen.health.service.session.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -41,7 +41,8 @@ import com.umulam.fleen.health.repository.jpa.HealthSessionProfessionalJpaReposi
 import com.umulam.fleen.health.repository.jpa.ProfessionalAvailabilityJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.SessionTransactionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.TransactionJpaRepository;
-import com.umulam.fleen.health.service.HealthSessionService;
+import com.umulam.fleen.health.service.impl.FleenHealthEventService;
+import com.umulam.fleen.health.service.session.HealthSessionService;
 import com.umulam.fleen.health.service.MemberService;
 import com.umulam.fleen.health.service.ProfessionalService;
 import com.umulam.fleen.health.util.UniqueReferenceGenerator;

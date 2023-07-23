@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.model.view;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.umulam.fleen.health.model.view.base.FleenHealthView;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
