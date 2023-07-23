@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.service.session;
+package com.umulam.fleen.health.service.session.impl;
 
 import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.exception.healthsession.HealthSessionNotFoundException;
@@ -12,6 +12,7 @@ import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.service.ProfessionalService;
+import com.umulam.fleen.health.service.session.PatientHealthSessionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -29,13 +30,13 @@ import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
 
 @Slf4j
 @Service
-public class UserHealthSessionServiceImpl implements UserHealthSessionService {
+public class PatientHealthSessionServiceImpl implements PatientHealthSessionService {
 
   private final HealthSessionJpaRepository healthSessionJpaRepository;
   private final ProfessionalService professionalService;
 
-  public UserHealthSessionServiceImpl(HealthSessionJpaRepository healthSessionJpaRepository,
-                                      ProfessionalService professionalService) {
+  public PatientHealthSessionServiceImpl(HealthSessionJpaRepository healthSessionJpaRepository,
+                                         ProfessionalService professionalService) {
     this.healthSessionJpaRepository = healthSessionJpaRepository;
     this.professionalService = professionalService;
   }

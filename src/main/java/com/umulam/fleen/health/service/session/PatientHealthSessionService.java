@@ -8,7 +8,7 @@ import com.umulam.fleen.health.model.view.search.SearchResultView;
 
 import java.util.List;
 
-public interface UserHealthSessionService {
+public interface PatientHealthSessionService {
 
   SearchResultView viewSessions(FleenUser user, SearchRequest searchRequest);
 
