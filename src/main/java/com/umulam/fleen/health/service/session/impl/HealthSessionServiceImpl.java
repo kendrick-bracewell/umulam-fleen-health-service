@@ -138,7 +138,10 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   @Override
   @Transactional(readOnly = true)
   public ProfessionalCheckAvailabilityResponse viewProfessionalAvailability(FleenUser user, Integer professionalId) {
+    System.out.println("I got here " + user);
+    System.out.println("I got here 2 " + user.getId());
     memberService.isMemberExistsById(user.getId());
+    System.out.println("I got here " + user);
     Professional professional = professionalService.getProfessional(professionalId);
     if (professional.getAvailabilityStatus() == ProfessionalAvailabilityStatus.AVAILABLE) {
       return new ProfessionalCheckAvailabilityResponse(true);

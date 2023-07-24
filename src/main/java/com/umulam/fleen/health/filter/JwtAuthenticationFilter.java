@@ -93,7 +93,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
           authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
           if (cacheService.exists(key) && Objects.nonNull(savedToken)) {
-            if (memberService.isMemberExists(userDetails.getUsername())) {
+            if (!memberService.isMemberExists(userDetails.getUsername())) {
               filterChain.doFilter(request, response);
               return;
             }
