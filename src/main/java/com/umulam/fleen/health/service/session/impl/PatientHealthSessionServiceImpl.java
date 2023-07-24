@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionView;
@@ -67,9 +66,9 @@ public class PatientHealthSessionServiceImpl implements PatientHealthSessionServ
   @Override
   @Transactional(readOnly = true)
   public HealthSessionView viewSessionDetail(FleenUser user, Integer healthSessionId) {
-    HealthSession healthSession = healthSessionJpaRepository.findSessionByUser(user.getId(), ProfileType.USER, healthSessionId);
-    if (Objects.nonNull(healthSession)) {
-      return toHealthSessionView(healthSession);
+    Optional<HealthSession> healthSessionExist = healthSessionJpaRepository.findSessionByUser(user.getId(), ProfileType.USER, healthSessionId);
+    if (healthSessionExist.isPresent()) {
+      return toHealthSessionView(healthSessionExist.get());
     }
     throw new HealthSessionNotFoundException(healthSessionId);
   }
