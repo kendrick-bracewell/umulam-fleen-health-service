@@ -12,6 +12,6 @@ public class ProfessionalNotAvailableForSessionDateException extends FleenHealth
   private static final String message = "Professional %s not available for session at proposed date %s";
 
   public ProfessionalNotAvailableForSessionDateException(String professionalName, LocalDateTime dateTime) {
-    super(String.format(message, Objects.toString(professionalName, "Unknown"), asDateTimeWithNoSeconds(dateTime)).trim());
+    super(String.format(message, Objects.toString(professionalName, "Unknown").trim(), asDateTimeWithNoSeconds(dateTime)));
   }
 }

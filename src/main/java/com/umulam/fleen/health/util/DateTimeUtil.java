@@ -138,11 +138,11 @@ public class DateTimeUtil {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_NO_PT_SECONDS);
 
     if (nonNull(dateTime)) {
-      return dateTime.format(formatter) + getTimePeriod(dateTime);
+      return dateTime.format(formatter) + " " + getTimePeriod(dateTime);
     }
 
     LocalDateTime now = LocalDateTime.now();
-    return now.format(formatter) + getTimePeriod(now);
+    return now.format(formatter) + " " + getTimePeriod(now);
   }
 
   private static String getTimePeriod(LocalDateTime dateTime) {
