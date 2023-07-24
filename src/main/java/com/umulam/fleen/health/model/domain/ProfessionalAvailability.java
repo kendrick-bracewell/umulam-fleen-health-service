@@ -35,6 +35,6 @@ public class ProfessionalAvailability {
   private LocalTime endTime;
 
   public boolean isTimeInRange(LocalTime time) {
-    return (time.equals(startTime) || time.isAfter(endTime)) && time.isBefore(endTime);
+    return (time.equals(startTime) || time.isAfter(startTime)) && time.isBefore(endTime);
   }
 }

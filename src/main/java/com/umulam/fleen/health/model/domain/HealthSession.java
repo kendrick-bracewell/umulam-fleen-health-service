@@ -19,7 +19,9 @@ import java.util.TimeZone;
 @NoArgsConstructor
 @Entity
 @Table(name = "health_session", indexes = {
-  @Index(columnList = "reference", name = "hs_ref_index", unique = true)
+  @Index(columnList = "reference", name = "hs_ref_index", unique = true),
+  @Index(columnList = "patient_id", name = "hs_patient_index"),
+  @Index(columnList = "professional_id", name = "hs_professional_index")
 })
 public class HealthSession {
 
@@ -32,11 +34,11 @@ public class HealthSession {
   private String reference;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "patient_id")
+  @JoinColumn(name = "patient_id", nullable = false)
   private Member patient;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "professional_id")
+  @JoinColumn(name = "professional_id", nullable = false)
   private Member professional;
 
   @Column(name = "comment", length = 1000)

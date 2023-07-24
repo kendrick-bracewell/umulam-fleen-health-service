@@ -204,8 +204,14 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       } else {
         boolean timeAvailableForSession = false;
         LocalTime proposedTimeForSession = healthSession.getTime();
+        System.out.println("Choosing time is " + proposedTimeForSession);
+        for (ProfessionalAvailability availability : availabilities) {
+          System.out.println("Start time is " + availability.getStartTime() + " and end time is " + availability.getEndTime());
+        }
+
         for (ProfessionalAvailability availability : availabilities) {
           if (availability.isTimeInRange(proposedTimeForSession)) {
+            System.out.println("Anybody here?");
             timeAvailableForSession = true;
             break;
           }
