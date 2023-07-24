@@ -31,6 +31,7 @@ import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
 import com.umulam.fleen.health.model.response.healthsession.GetProfessionalBookSessionResponse;
 import com.umulam.fleen.health.model.response.healthsession.PendingHealthSessionBookingResponse;
 import com.umulam.fleen.health.model.response.healthsession.ProfessionalCheckAvailabilityResponse;
+import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
 import com.umulam.fleen.health.model.view.ProfessionalScheduleHealthSessionView;
@@ -204,14 +205,9 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       } else {
         boolean timeAvailableForSession = false;
         LocalTime proposedTimeForSession = healthSession.getTime();
-        System.out.println("Choosing time is " + proposedTimeForSession);
-        for (ProfessionalAvailability availability : availabilities) {
-          System.out.println("Start time is " + availability.getStartTime() + " and end time is " + availability.getEndTime());
-        }
 
         for (ProfessionalAvailability availability : availabilities) {
           if (availability.isTimeInRange(proposedTimeForSession)) {
-            System.out.println("Anybody here?");
             timeAvailableForSession = true;
             break;
           }
@@ -229,6 +225,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         .build();
     healthSession.setPatient(member);
     HealthSession savedHealthSession = healthSessionRepository.save(healthSession);
+    GetMemberUpdateDetailsResponse memberDetail = memberService.getMemberGetUpdateDetailsResponse(user);
 
     SessionTransaction transaction = SessionTransaction.builder()
         .reference(generateTransactionReference())
@@ -248,10 +245,11 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     return PendingHealthSessionBookingResponse.builder()
       .startDate(startDate)
       .endDate(endDate)
-      .patientFirstName(savedHealthSession.getPatient().getFirstName())
-      .patientLastName(savedHealthSession.getPatient().getLastName())
-      .patientEmailAddress(savedHealthSession.getPatient().getEmailAddress())
+      .patientFirstName(memberDetail.getFirstName())
+      .patientLastName(memberDetail.getLastName())
+      .patientEmailAddress(memberDetail.getEmailAddress())
       .timezone(savedHealthSession.getTimeZone())
+      .sessionReference(savedHealthSession.getReference())
       .build();
   }
 
@@ -292,7 +290,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
                 LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
                 LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMaxMeetingSessionHourDuration());
 
-                String patientEmail = "ibrahimyahaya08@gmail.com"; /*healthSession.getPatient().getEmailAddress();*/
+                String patientEmail = healthSession.getPatient().getEmailAddress();
                 String professionalEmail = healthSession.getProfessional().getEmailAddress();
                 String patientName = getFullName(healthSession.getPatient().getFirstName(), healthSession.getPatient().getLastName());
                 String professionalName = getFullName(healthSession.getProfessional().getFirstName(), healthSession.getProfessional().getLastName());
