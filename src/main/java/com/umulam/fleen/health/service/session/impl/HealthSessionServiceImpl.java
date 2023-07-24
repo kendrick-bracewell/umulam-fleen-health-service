@@ -123,8 +123,9 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       page = sessionProfessionalJpaRepository.findByAvailabilityStatus(availability, verificationStatus, req.getPage());
     }
 
-    Collections.shuffle(page.getContent());
-    List<ProfessionalViewBasic> views = ProfessionalMapper.toProfessionalViewsBasic(page.getContent());
+    List<Professional> professionals = new ArrayList<>(page.getContent());
+    Collections.shuffle(professionals);
+    List<ProfessionalViewBasic> views = ProfessionalMapper.toProfessionalViewsBasic(professionals);
     return toSearchResult(views, page);
   }
 
@@ -286,7 +287,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
                 LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
                 LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMaxMeetingSessionHourDuration());
 
-                String patientEmail = healthSession.getPatient().getEmailAddress();
+                String patientEmail = "ibrahimyahaya08@gmail.com"; /*healthSession.getPatient().getEmailAddress();*/
                 String professionalEmail = healthSession.getProfessional().getEmailAddress();
                 String patientName = getFullName(healthSession.getPatient().getFirstName(), healthSession.getPatient().getLastName());
                 String professionalName = getFullName(healthSession.getProfessional().getFirstName(), healthSession.getProfessional().getLastName());
