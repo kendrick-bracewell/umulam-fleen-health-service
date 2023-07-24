@@ -9,11 +9,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
+
 public class ProfessionalMapper {
   private ProfessionalMapper() {}
 
   public static ProfessionalView toProfessionalView(Professional entry) {
-    if (Objects.nonNull(entry)) {
+    if (nonNull(entry)) {
       return ProfessionalView.builder()
               .id(entry.getId())
               .title(entry.getTitle())
@@ -33,7 +35,7 @@ public class ProfessionalMapper {
   }
 
   public static ProfessionalViewBasic toProfessionalViewBasic(Professional entry) {
-    if (Objects.nonNull(entry)) {
+    if (nonNull(entry)) {
       return ProfessionalViewBasic.builder()
               .id(entry.getId())
               .title(entry.getTitle())
@@ -50,7 +52,7 @@ public class ProfessionalMapper {
   }
 
   public static List<ProfessionalView> toProfessionalViews(List<Professional> entries) {
-    if (Objects.nonNull(entries) && !entries.isEmpty()) {
+    if (nonNull(entries) && !entries.isEmpty()) {
       return entries
               .stream()
               .filter(Objects::nonNull)
@@ -61,7 +63,7 @@ public class ProfessionalMapper {
   }
 
   public static List<ProfessionalViewBasic> toProfessionalViewsBasic(List<Professional> entries) {
-    if (Objects.nonNull(entries) && !entries.isEmpty()) {
+    if (nonNull(entries) && !entries.isEmpty()) {
       return entries
               .stream()
               .filter(Objects::nonNull)
