@@ -11,6 +11,6 @@ public class HealthSessionDateAlreadyBookedException extends FleenHealthExceptio
   private static final String message = "A session has already been book with the professional : %s at this date %s:%s";
 
   public HealthSessionDateAlreadyBookedException(String professionalName, LocalDate date, LocalTime time) {
-    super(String.format(message, Objects.toString(professionalName, "Unknown"), date.toString(), time.toString()));
+    super(String.format(message, Objects.toString(professionalName, "Unknown").trim(), date.toString(), time.toString()));
   }
 }

@@ -13,6 +13,7 @@ import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import com.umulam.fleen.health.event.RescheduleSessionMeetingEvent;
 import com.umulam.fleen.health.exception.healthsession.*;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionDateException;
+import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionDayException;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionException;
 import com.umulam.fleen.health.exception.professional.ProfessionalProfileNotApproved;
 import com.umulam.fleen.health.model.domain.HealthSession;
@@ -177,10 +178,9 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         throw new PatientProfessionalAlreadyBookSessionException(getFullName(professional.getFirstName(), professional.getLastName()), healthSession.getDate(), healthSession.getTime());
       }
 
-      if (!(bookedSessionExist.get().getPatient().getId().equals(user.getId()))) {
+      if (!(bookedSession.getPatient().getId().equals(user.getId()))) {
         throw new HealthSessionDateAlreadyBookedException(getFullName(professional.getFirstName(), professional.getLastName()), healthSession.getDate(), healthSession.getTime());
       }
-
     }
 
     Optional<Professional> professionalExist = professionalService.findProfessionalByMember(healthSession.getProfessional());
@@ -200,7 +200,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       AvailabilityDayOfTheWeek availabilityDayOfTheWeek = AvailabilityDayOfTheWeek.valueOf(dayOfWeek.toString());
       List<ProfessionalAvailability> availabilities = professionalAvailabilityJpaRepository.findByMemberAndDayOfWeek(professional, availabilityDayOfTheWeek);
       if (availabilities.isEmpty()) {
-        throw new ProfessionalNotAvailableForSessionException(getFullName(professional.getFirstName(), professional.getLastName()));
+        throw new ProfessionalNotAvailableForSessionDayException(getFullName(professional.getFirstName(), professional.getLastName()), dayOfWeek.toString());
       } else {
         boolean timeAvailableForSession = false;
         LocalTime proposedTimeForSession = healthSession.getTime();

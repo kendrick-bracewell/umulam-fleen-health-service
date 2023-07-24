@@ -106,7 +106,8 @@ public class FleenHealthExceptionHandler {
           PatientProfessionalAlreadyBookSessionException.class,
           ProfessionalNotAvailableForSessionDateException.class,
           ProfessionalProfileNotApproved.class,
-          ProfessionalShouldHaveAtLeastOneAvailabilityPeriod.class
+          ProfessionalShouldHaveAtLeastOneAvailabilityPeriod.class,
+          ProfessionalNotAvailableForSessionDayException.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);
