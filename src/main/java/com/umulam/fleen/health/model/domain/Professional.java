@@ -54,7 +54,7 @@ public class Professional {
   private Country country;
 
   @OneToOne(optional = false, fetch = FetchType.LAZY)
-  @JoinColumn(name = "member_id", referencedColumnName = "id")
+  @JoinColumn(name = "member_id", referencedColumnName = "id", unique = true)
   private Member member;
 
   @CreationTimestamp

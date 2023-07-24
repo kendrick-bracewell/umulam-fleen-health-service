@@ -25,11 +25,11 @@ public class HealthSessionReview {
   private String review;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @Column(name = "patient")
+  @JoinColumn(name = "patient_id", nullable = false)
   private Member patient;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @Column(name = "professional")
+  @JoinColumn(name = "professional_id", nullable = false)
   private Member professional;
 
   @Column(name = "rating", nullable = false)

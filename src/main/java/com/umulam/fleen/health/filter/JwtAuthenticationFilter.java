@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   public JwtAuthenticationFilter(JwtProvider jwtProvider,
                                  CacheService cacheService,
-                                 MemberService memberService,
+                                 @Lazy MemberService memberService,
                                  @Lazy @Qualifier("handlerExceptionResolver") HandlerExceptionResolver handlerExceptionResolver) {
     this.jwtProvider = jwtProvider;
     this.cacheService = cacheService;
