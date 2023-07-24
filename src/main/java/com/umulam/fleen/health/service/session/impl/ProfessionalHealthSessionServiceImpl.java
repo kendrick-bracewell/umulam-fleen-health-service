@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionView;
@@ -62,9 +63,9 @@ public class ProfessionalHealthSessionServiceImpl implements ProfessionalHealthS
   @Override
   @Transactional(readOnly = true)
   public HealthSessionView viewSessionDetail(FleenUser user, Integer healthSessionId) {
-    Optional<HealthSession> healthSessionExist = healthSessionJpaRepository.findSessionByProfessional(user.getId(), ProfileType.PROFESSIONAL, healthSessionId);
-    if (healthSessionExist.isPresent()) {
-      return toHealthSessionView(healthSessionExist.get());
+    HealthSession healthSession = healthSessionJpaRepository.findSessionByProfessional(user.getId(), ProfileType.PROFESSIONAL, healthSessionId);
+    if (Objects.nonNull(healthSession)) {
+      return toHealthSessionView(healthSession);
     }
     throw new HealthSessionNotFoundException(healthSessionId);
   }
@@ -72,24 +73,23 @@ public class ProfessionalHealthSessionServiceImpl implements ProfessionalHealthS
   @Override
   @Transactional(readOnly = true)
   public GetUpdateHealthSessionNote getUpdateSessionNote(FleenUser user, Integer healthSessionId) {
-    Optional<GetUpdateHealthSessionNote> sessionNoteExist = healthSessionJpaRepository.getUpdateHealthSessionNote(healthSessionId);
-    if (sessionNoteExist.isEmpty()) {
+    GetUpdateHealthSessionNote sessionNote = healthSessionJpaRepository.getUpdateHealthSessionNote(healthSessionId);
+    if (Objects.isNull(sessionNote)) {
       throw new HealthSessionNotFoundException(healthSessionId);
     }
 
-    if (!sessionNoteExist.get().getProfessionalId().equals(user.getId())) {
+    if (!sessionNote.getProfessionalId().equals(user.getId())) {
       throw new HealthSessionInvalidTransactionException();
     }
 
-    return sessionNoteExist.get();
+    return sessionNote;
   }
 
   @Override
   @Transactional
   public HealthSessionView addSessionNote(AddNoteHealthSessionDto dto, FleenUser user, Integer healthSessionId) {
-    Optional<HealthSession> healthSessionExist = healthSessionJpaRepository.findSessionByProfessional(user.getId(), ProfileType.PROFESSIONAL, healthSessionId);
-    if (healthSessionExist.isPresent()) {
-      HealthSession healthSession = healthSessionExist.get();
+    HealthSession healthSession = healthSessionJpaRepository.findSessionByProfessional(user.getId(), ProfileType.PROFESSIONAL, healthSessionId);
+    if (Objects.nonNull(healthSession)) {
       if (StringUtils.isNotBlank(healthSession.getNote())) {
         return null;
       }
