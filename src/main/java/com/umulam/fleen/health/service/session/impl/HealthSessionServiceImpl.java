@@ -165,7 +165,6 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   @Override
   @Transactional
   public PendingHealthSessionBookingResponse bookSession(BookHealthSessionDto dto, FleenUser user) {
-    memberService.isMemberExistsById(user.getId());
     HealthSession healthSession = dto.toHealthSession();
 
     Optional<HealthSession> bookedSessionExist = healthSessionRepository.findByProfessionalAndDateAndTime(healthSession.getProfessional(), healthSession.getDate(), healthSession.getTime());
