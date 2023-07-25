@@ -158,7 +158,9 @@ public class CalendarService {
       if (Objects.nonNull(event)) {
         setStartDate(newStartDate, event);
         setEndDate(newEndDate, event);
-        return calendar.events().update(CALENDAR_ID, eventId, event).execute();
+        return calendar.events().update(CALENDAR_ID, eventId, event)
+          .setSendUpdates("all")
+          .execute();
       }
     } catch (IOException ex) {
       log.error(ex.getMessage(), ex);

@@ -35,5 +35,5 @@ public interface HealthSessionService {
   GetProfessionalBookSessionResponse getProfessionalBookSession(FleenUser user, Integer professionalId);
 
   @Transactional
-  Object rescheduleSession(ReScheduleHealthSessionDto dto, FleenUser user, Integer healthSessionId);
+  void rescheduleSession(ReScheduleHealthSessionDto dto, FleenUser user, Integer healthSessionId);
 }

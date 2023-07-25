@@ -349,17 +349,18 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   @Override
   @Transactional
-  public Object rescheduleSession(ReScheduleHealthSessionDto dto, FleenUser user, Integer healthSessionId) {
+  public void rescheduleSession(ReScheduleHealthSessionDto dto, FleenUser user, Integer healthSessionId) {
     boolean healthSessionExist = healthSessionRepository.existsById(healthSessionId);
     if (!healthSessionExist) {
       throw new HealthSessionNotFoundException(healthSessionId);
     }
 
-    Member patient = memberService.getMemberById(user.getId());
     HealthSession newHealthSession = dto.toHealthSession();
-    Member professional = memberService.getMemberById(newHealthSession.getProfessional().getId());
     Optional<HealthSession> existingHealthSession = healthSessionRepository.findById(healthSessionId);
     if (existingHealthSession.isPresent()) {
+      Member patient = memberService.getMemberById(user.getId());
+      Member professional = memberService.getMemberById(newHealthSession.getProfessional().getId());
+
       HealthSession healthSession = existingHealthSession.get();
       if (healthSession.getStatus() == HealthSessionStatus.CANCELED) {
         throw new HealthSessionCanceledAlreadyException();
@@ -379,7 +380,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       }
 
       if (healthSession.getDate().equals(newHealthSession.getDate()) && healthSession.getTime().equals(newHealthSession.getTime())) {
-        return null;
+        return;
       }
 
       healthSession.setDate(newHealthSession.getDate());
@@ -401,6 +402,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
       eventService.publishRescheduleSession(meetingEvent);
       healthSessionRepository.save(healthSession);
+      return;
     }
     throw new NoAssociatedHealthSessionException(healthSessionId);
   }
