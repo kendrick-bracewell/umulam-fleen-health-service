@@ -55,7 +55,7 @@ public class BookHealthSessionDto {
   @AllArgsConstructor
   public static class TransactionData {
 
-    @NotNull(message = "{session.transaction.amount.noNutll}")
+    @NotNull(message = "{session.transaction.amount.notNull}")
     private Double amount;
   }
 

@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class PatientProfessionalAlreadyBookSessionException extends FleenHealthException {
 
-  private static final String message = "Patient already has a scheduled session with the Professional %s on date %s at time %s";
+  private static final String message = "You already scheduled a session with the Professional %s on date %s at time %s";
 
   public PatientProfessionalAlreadyBookSessionException(String professionalName, LocalDate date, LocalTime time) {
     super(String.format(message, Objects.toString(professionalName, "Unknown").trim(), date.toString(), time.toString()));

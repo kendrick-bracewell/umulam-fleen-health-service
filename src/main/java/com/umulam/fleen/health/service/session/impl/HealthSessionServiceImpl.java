@@ -167,14 +167,14 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   @Transactional
   public PendingHealthSessionBookingResponse bookSession(BookHealthSessionDto dto, FleenUser user) {
     HealthSession healthSession = dto.toHealthSession();
-
     Optional<HealthSession> bookedSessionExist = healthSessionRepository.findByProfessionalAndDateAndTime(healthSession.getProfessional(), healthSession.getDate(), healthSession.getTime());
     if (bookedSessionExist.isPresent()) {
       HealthSession bookedSession = bookedSessionExist.get();
       Member professional = bookedSession.getProfessional();
       if (bookedSession.getPatient().getId().equals(user.getId()) &&
           (bookedSession.getStatus() == HealthSessionStatus.SCHEDULED ||
-           bookedSession.getStatus() == HealthSessionStatus.RESCHEDULED)) {
+           bookedSession.getStatus() == HealthSessionStatus.RESCHEDULED ||
+           bookedSession.getStatus() == HealthSessionStatus.PENDING)) {
         throw new PatientProfessionalAlreadyBookSessionException(getFullName(professional.getFirstName(), professional.getLastName()), healthSession.getDate(), healthSession.getTime());
       }
 
