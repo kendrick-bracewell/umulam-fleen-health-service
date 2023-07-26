@@ -25,8 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionView;
-import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionViewBasic;
+import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.*;
 import static com.umulam.fleen.health.model.mapper.ProfessionalMapper.toProfessionalView;
 import static com.umulam.fleen.health.model.mapper.ProfessionalMapper.toProfessionalViews;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
@@ -59,7 +58,7 @@ public class PatientHealthSessionServiceImpl implements PatientHealthSessionServ
       page = healthSessionJpaRepository.findSessionsByUser(user.getId(), ProfileType.USER, req.getPage());
     }
 
-    List<HealthSessionViewBasic> views = toHealthSessionViewBasic(page.getContent());
+    List<HealthSessionViewBasic> views = toHealthSessionViewBasicPatient(page.getContent());
     return toSearchResult(views, page);
   }
 
@@ -75,8 +74,8 @@ public class PatientHealthSessionServiceImpl implements PatientHealthSessionServ
 
   @Override
   public List<ProfessionalView> viewProfessionalsOfPatient(FleenUser user) {
-    List<Long> professionalsIds = healthSessionJpaRepository.findAllProfessionalsIdsOfUser(user.getId());
-    List<Professional> professionals = professionalService.findProfessionalsById(professionalsIds);
+    List<Long> professionalIds = healthSessionJpaRepository.findAllProfessionalIdsOfUser(user.getId());
+    List<Professional> professionals = professionalService.findProfessionalsById(professionalIds);
     return toProfessionalViews(professionals);
   }
 

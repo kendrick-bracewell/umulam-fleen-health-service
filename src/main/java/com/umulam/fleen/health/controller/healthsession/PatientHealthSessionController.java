@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "user/health")
+@RequestMapping(value = "health/patient")
 public class PatientHealthSessionController {
 
   private final PatientHealthSessionService patientHealthSessionService;
@@ -33,7 +33,7 @@ public class PatientHealthSessionController {
     this.sessionTransactionService = sessionTransactionService;
   }
 
-  @GetMapping(value = "/sessions/entries")
+  @GetMapping(value = "/session/entries")
   public SearchResultView viewSessions(@AuthenticationPrincipal FleenUser user, @SearchParam SearchRequest searchRequest) {
     return patientHealthSessionService.viewSessions(user, searchRequest);
   }

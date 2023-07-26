@@ -33,7 +33,7 @@ public interface HealthSessionJpaRepository extends JpaRepository<HealthSession,
 
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.patient.id = :memberId AND hs.patient.userType = :userType AND hs.createdOn BETWEEN :startDate AND :endDate")
   Page<HealthSession> findSessionsByUserAndDateBetween(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType,
-                                                 @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
+                                                       @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.professional.id = :memberId AND hs.professional.userType = :userType")
   Page<HealthSession> findSessionsByProfessional(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType, Pageable pageable);
@@ -50,7 +50,7 @@ public interface HealthSessionJpaRepository extends JpaRepository<HealthSession,
 
 
   @Query(value = "SELECT hs.professional.id FROM HealthSession hs WHERE hs.patient.id = :memberId")
-  List<Long> findAllProfessionalsIdsOfUser(@Param("memberId") Integer memberId);
+  List<Long> findAllProfessionalIdsOfUser(@Param("memberId") Integer memberId);
 
   @Query(value ="SELECT note AS note, professional_id AS professionalId FROM health_session WHERE id = :healthSessionId", nativeQuery = true)
   Optional<GetUpdateHealthSessionNote> getUpdateHealthSessionNote(@Param("healthSessionId") Integer healthSessionId);

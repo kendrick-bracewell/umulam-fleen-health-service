@@ -78,6 +78,21 @@ public class HealthSessionMapper {
     return null;
   }
 
+  public static HealthSessionViewBasic toHealthSessionViewBasicPatient(HealthSession entry) {
+    if (Objects.nonNull(entry)) {
+      return HealthSessionViewBasic.builder()
+        .id(entry.getId())
+        .status(entry.getStatus().name())
+        .date(entry.getDate())
+        .time(entry.getTime())
+        .timezone(entry.getTimeZone())
+        .reference(entry.getReference())
+        .location(entry.getLocation().name())
+        .build();
+    }
+    return null;
+  }
+
   public static List<HealthSessionView> toHealthSessionViews(List<HealthSession> entries) {
     if (Objects.nonNull(entries) && !entries.isEmpty()) {
       return entries
@@ -96,6 +111,17 @@ public class HealthSessionMapper {
               .filter(Objects::nonNull)
               .map(HealthSessionMapper::toHealthSessionViewBasic)
               .collect(Collectors.toList());
+    }
+    return Collections.emptyList();
+  }
+
+  public static List<HealthSessionViewBasic> toHealthSessionViewBasicPatient(List<HealthSession> entries) {
+    if (Objects.nonNull(entries) && !entries.isEmpty()) {
+      return entries
+        .stream()
+        .filter(Objects::nonNull)
+        .map(HealthSessionMapper::toHealthSessionViewBasicPatient)
+        .collect(Collectors.toList());
     }
     return Collections.emptyList();
   }
