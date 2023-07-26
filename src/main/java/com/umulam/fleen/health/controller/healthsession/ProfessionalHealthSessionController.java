@@ -30,7 +30,7 @@ public class ProfessionalHealthSessionController {
     this.professionalHealthSessionService = professionalHealthSessionService;
   }
 
-  @GetMapping(value = "/sessions/entries")
+  @GetMapping(value = "/session/entries")
   public SearchResultView viewSessions(@AuthenticationPrincipal FleenUser user, @SearchParam SearchRequest searchRequest) {
     return professionalHealthSessionService.viewSessions(user, searchRequest);
   }
