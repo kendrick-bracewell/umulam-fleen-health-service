@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.*;
 import static com.umulam.fleen.health.model.mapper.ProfessionalMapper.toProfessionalView;
@@ -75,7 +76,11 @@ public class PatientHealthSessionServiceImpl implements PatientHealthSessionServ
   @Override
   public List<ProfessionalView> viewProfessionalsOfPatient(FleenUser user) {
     List<Long> professionalIds = healthSessionJpaRepository.findAllProfessionalIdsOfUser(user.getId());
-    List<Professional> professionals = professionalService.findProfessionalsById(professionalIds);
+    List<Integer> ids = professionalIds
+      .stream()
+      .map(Long::intValue)
+      .collect(Collectors.toList());
+    List<Professional> professionals = professionalService.findProfessionalsById(ids);
     return toProfessionalViews(professionals);
   }
 

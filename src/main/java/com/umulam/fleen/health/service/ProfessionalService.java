@@ -63,5 +63,5 @@ public interface ProfessionalService {
 
   Optional<Professional> findProfessionalByMember(Member member);
 
-  List<Professional> findProfessionalsById(List<Long> ids);
+  List<Professional> findProfessionalsById(List<Integer> ids);
 }

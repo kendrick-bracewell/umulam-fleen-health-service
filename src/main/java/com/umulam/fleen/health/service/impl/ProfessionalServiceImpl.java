@@ -257,7 +257,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   }
 
   @Override
-  public List<Professional> findProfessionalsById(List<Long> ids) {
+  public List<Professional> findProfessionalsById(List<Integer> ids) {
     return repository.findProfessionalsByIds(ids);
   }
 
