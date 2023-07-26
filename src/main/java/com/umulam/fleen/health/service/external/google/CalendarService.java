@@ -152,20 +152,19 @@ public class CalendarService {
     }
   }
 
-  public Event rescheduleEvent(String eventId, LocalDateTime newStartDate, LocalDateTime newEndDate) {
+  public void rescheduleEvent(String eventId, LocalDateTime newStartDate, LocalDateTime newEndDate) {
     try {
       Event event = calendar.events().get(CALENDAR_ID, eventId).execute();
       if (Objects.nonNull(event)) {
         setStartDate(newStartDate, event);
         setEndDate(newEndDate, event);
-        return calendar.events().update(CALENDAR_ID, eventId, event)
+        calendar.events().update(CALENDAR_ID, eventId, event)
           .setSendUpdates("all")
           .execute();
       }
     } catch (IOException ex) {
       log.error(ex.getMessage(), ex);
     }
-    return null;
   }
 
   private void setStartDate(LocalDateTime startDate, Event event) {
