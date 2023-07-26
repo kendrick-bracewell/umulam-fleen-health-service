@@ -343,6 +343,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         .sessionReference(healthSession.getReference())
         .build();
       eventService.publishCancelSession(event);
+      return;
     }
     throw new NoAssociatedHealthSessionException(healthSessionId);
   }

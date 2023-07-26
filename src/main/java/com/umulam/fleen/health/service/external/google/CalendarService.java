@@ -145,7 +145,9 @@ public class CalendarService {
       Event event = calendar.events().get(CALENDAR_ID, eventId).execute();
       if (Objects.nonNull(event)) {
         event.setStatus("cancelled");
-        calendar.events().update(CALENDAR_ID, eventId, event).execute();
+        calendar.events().update(CALENDAR_ID, eventId, event)
+          .setSendUpdates("all")
+          .execute();
       }
     } catch (IOException ex) {
       log.error(ex.getMessage(), ex);
