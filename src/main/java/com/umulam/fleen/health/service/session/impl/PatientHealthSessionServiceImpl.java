@@ -74,6 +74,7 @@ public class PatientHealthSessionServiceImpl implements PatientHealthSessionServ
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<ProfessionalView> viewProfessionalsOfPatient(FleenUser user) {
     List<Long> professionalIds = healthSessionJpaRepository.findAllProfessionalIdsOfUser(user.getId());
     List<Integer> ids = professionalIds
