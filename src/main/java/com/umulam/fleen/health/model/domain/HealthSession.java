@@ -44,7 +44,7 @@ public class HealthSession {
   @Column(name = "comment", length = 1000)
   private String comment;
 
-  @Column(name = "notes", length = 1000)
+  @Column(name = "note", length = 1000)
   private String note;
 
   @Column(name = "date", nullable = false)
