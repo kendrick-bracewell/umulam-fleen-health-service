@@ -44,7 +44,7 @@ public class PatientHealthSessionController {
   }
 
   @GetMapping(value = "/professionals")
-  public List<ProfessionalView> viewProfessionals(@AuthenticationPrincipal FleenUser user) {
+  public SearchResultView viewProfessionals(@AuthenticationPrincipal FleenUser user) {
     return patientHealthSessionService.viewProfessionalsOfPatient(user);
   }
 

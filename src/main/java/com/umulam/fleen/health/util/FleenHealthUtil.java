@@ -87,15 +87,20 @@ public class FleenHealthUtil {
   }
 
   public static SearchResultView toSearchResult(List<?> values, Page<?> page) {
+    if (page != null) {
+      return SearchResultView.builder()
+        .isFirst(page.isFirst())
+        .isLast(page.isLast())
+        .totalPages(page.getTotalPages())
+        .totalEntries(page.getTotalElements())
+        .pageNo(page.getNumber())
+        .pageSize(page.getNumber())
+        .values(values)
+        .build();
+    }
     return SearchResultView.builder()
-            .isFirst(page.isFirst())
-            .isLast(page.isLast())
-            .totalPages(page.getTotalPages())
-            .totalEntries(page.getTotalElements())
-            .pageNo(page.getNumber())
-            .pageSize(page.getNumber())
-            .values(values)
-            .build();
+      .values(values)
+      .build();
   }
 
 }

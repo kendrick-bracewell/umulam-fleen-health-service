@@ -19,6 +19,7 @@ import com.umulam.fleen.health.service.ProfessionalService;
 import com.umulam.fleen.health.service.session.PatientHealthSessionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,14 +76,15 @@ public class PatientHealthSessionServiceImpl implements PatientHealthSessionServ
 
   @Override
   @Transactional(readOnly = true)
-  public List<ProfessionalView> viewProfessionalsOfPatient(FleenUser user) {
+  public SearchResultView viewProfessionalsOfPatient(FleenUser user) {
     List<Long> professionalIds = healthSessionJpaRepository.findAllProfessionalIdsOfUser(user.getId());
     List<Integer> ids = professionalIds
       .stream()
       .map(Long::intValue)
       .collect(Collectors.toList());
     List<Professional> professionals = professionalService.findProfessionalsById(ids);
-    return toProfessionalViews(professionals);
+    List<ProfessionalView> views = toProfessionalViews(professionals);
+    return toSearchResult(views, null);
   }
 
   @Override
