@@ -90,9 +90,6 @@ public class ProfessionalHealthSessionServiceImpl implements ProfessionalHealthS
     Optional<HealthSession> healthSessionExist = healthSessionJpaRepository.findSessionByProfessional(user.getId(), ProfileType.PROFESSIONAL, healthSessionId);
     if (healthSessionExist.isPresent()) {
       HealthSession healthSession = healthSessionExist.get();
-      if (StringUtils.isNotBlank(healthSession.getNote())) {
-        return;
-      }
       healthSession.setNote(dto.getNote());
       healthSessionJpaRepository.save(healthSession);
       return;
