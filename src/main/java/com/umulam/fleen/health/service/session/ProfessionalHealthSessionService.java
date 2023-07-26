@@ -21,7 +21,7 @@ public interface ProfessionalHealthSessionService {
   GetUpdateHealthSessionNote getUpdateSessionNote(FleenUser user, Integer healthSessionId);
 
   @Transactional
-  HealthSessionView addSessionNote(AddNoteHealthSessionDto dto, FleenUser user, Integer healthSessionId);
+  void addSessionNote(AddNoteHealthSessionDto dto, FleenUser user, Integer healthSessionId);
 
   List<HealthSessionReviewView> viewReviews(FleenUser user);
 }

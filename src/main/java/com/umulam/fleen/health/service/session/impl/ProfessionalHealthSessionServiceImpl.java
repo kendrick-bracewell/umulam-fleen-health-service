@@ -86,15 +86,16 @@ public class ProfessionalHealthSessionServiceImpl implements ProfessionalHealthS
 
   @Override
   @Transactional
-  public HealthSessionView addSessionNote(AddNoteHealthSessionDto dto, FleenUser user, Integer healthSessionId) {
+  public void addSessionNote(AddNoteHealthSessionDto dto, FleenUser user, Integer healthSessionId) {
     Optional<HealthSession> healthSessionExist = healthSessionJpaRepository.findSessionByProfessional(user.getId(), ProfileType.PROFESSIONAL, healthSessionId);
     if (healthSessionExist.isPresent()) {
       HealthSession healthSession = healthSessionExist.get();
       if (StringUtils.isNotBlank(healthSession.getNote())) {
-        return null;
+        return;
       }
       healthSession.setNote(dto.getNote());
       healthSessionJpaRepository.save(healthSession);
+      return;
     }
     throw new HealthSessionNotFoundException(healthSessionId);
   }
