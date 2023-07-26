@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionView;
 import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionViewBasicPatient;
-import static com.umulam.fleen.health.model.mapper.ProfessionalMapper.toProfessionalView;
+import static com.umulam.fleen.health.model.mapper.ProfessionalMapper.toProfessionalViewBasic;
 import static com.umulam.fleen.health.model.mapper.ProfessionalMapper.toProfessionalViews;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
@@ -88,9 +88,10 @@ public class PatientHealthSessionServiceImpl implements PatientHealthSessionServ
   }
 
   @Override
+  @Transactional(readOnly = true)
   public ProfessionalView viewProfessionalDetail(Integer id) {
     Professional professional = professionalService.getProfessional(id);
-    return toProfessionalView(professional);
+    return toProfessionalViewBasic(professional);
   }
 
   @Override
