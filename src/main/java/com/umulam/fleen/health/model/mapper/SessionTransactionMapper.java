@@ -9,12 +9,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
+
 public class SessionTransactionMapper {
 
   private SessionTransactionMapper() { }
 
   public static SessionTransactionView toSessionTransactionView(SessionTransaction entry) {
-    if (Objects.nonNull(entry)) {
+    if (nonNull(entry)) {
       SessionTransactionView.builder()
         .id(entry.getId())
         .reference(entry.getReference())
@@ -32,8 +34,8 @@ public class SessionTransactionMapper {
   }
 
   public static SessionTransactionViewBasic toSessionTransactionViewBasic(SessionTransaction entry) {
-    if (Objects.nonNull(entry)) {
-      SessionTransactionViewBasic.builder()
+    if (nonNull(entry)) {
+      return SessionTransactionViewBasic.builder()
         .id(entry.getId())
         .reference(entry.getReference())
         .status(entry.getStatus().name())
@@ -47,7 +49,7 @@ public class SessionTransactionMapper {
   }
 
   public static List<SessionTransactionView> toSessionTransactionViews(List<SessionTransaction> entries) {
-    if (Objects.nonNull(entries) && !entries.isEmpty()) {
+    if (nonNull(entries) && !entries.isEmpty()) {
       return entries
               .stream()
               .filter(Objects::nonNull)
@@ -58,7 +60,7 @@ public class SessionTransactionMapper {
   }
 
   public static List<SessionTransactionViewBasic> toSessionTransactionViewBasic(List<SessionTransaction> entries) {
-    if (Objects.nonNull(entries) && !entries.isEmpty()) {
+    if (nonNull(entries) && !entries.isEmpty()) {
       return entries
         .stream()
         .filter(Objects::nonNull)

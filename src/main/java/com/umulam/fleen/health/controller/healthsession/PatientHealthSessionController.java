@@ -53,7 +53,7 @@ public class PatientHealthSessionController {
     return patientHealthSessionService.viewProfessionalDetail(professionalId);
   }
 
-  @GetMapping(value = "/transactions/entries")
+  @GetMapping(value = "/transaction/entries")
   public SearchResultView viewTransactions(@AuthenticationPrincipal FleenUser user, @SearchParam SearchRequest searchRequest) {
     return sessionTransactionService.viewUserTransactions(user, searchRequest);
   }
