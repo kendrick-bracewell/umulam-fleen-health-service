@@ -49,7 +49,7 @@ public interface HealthSessionJpaRepository extends JpaRepository<HealthSession,
   Optional<HealthSession> findSessionByProfessional(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType, @Param("healthSessionId") Integer healthSessionId);
 
 
-  @Query(value = "SELECT hs.professional.id FROM HealthSession hs WHERE hs.patient.id = :memberId")
+  @Query(value = "SELECT DISTINCT hs.professional.id FROM HealthSession hs WHERE hs.patient.id = :memberId")
   List<Long> findAllProfessionalIdsOfUser(@Param("memberId") Integer memberId);
 
   @Query(value ="SELECT note AS note, professional_id AS professionalId FROM health_session WHERE id = :healthSessionId", nativeQuery = true)
