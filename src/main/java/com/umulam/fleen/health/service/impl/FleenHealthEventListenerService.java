@@ -17,6 +17,7 @@ import java.util.Optional;
 
 import static com.umulam.fleen.health.service.external.google.CalendarService.EVENT_SUMMARY_KEY;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
+import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
 @Service
 public class FleenHealthEventListenerService {
@@ -30,7 +31,7 @@ public class FleenHealthEventListenerService {
     this.healthSessionRepository = healthSessionRepository;
   }
 
-  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+  @TransactionalEventListener(phase = AFTER_COMMIT)
   @Transactional(propagation = REQUIRES_NEW)
   public void createMeetingSession(CreateSessionMeetingEvent meetingEvent) {
     meetingEvent.getMetadata().put(EVENT_SUMMARY_KEY, getMeetingEventSummary(meetingEvent.getPatientName(), meetingEvent.getProfessionalName()));
@@ -47,19 +48,13 @@ public class FleenHealthEventListenerService {
     }
   }
 
-  @TransactionalEventListener
+  @TransactionalEventListener(phase = AFTER_COMMIT)
   @Transactional(propagation = REQUIRES_NEW)
   public void cancelMeetingSession(CancelSessionMeetingEvent meetingEvent) {
     calendarService.cancelEvent(meetingEvent.getEventIdOrReference());
-    Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(meetingEvent.getSessionReference());
-    if (healthSessionExist.isPresent()) {
-      HealthSession healthSession = healthSessionExist.get();
-      healthSession.setStatus(HealthSessionStatus.CANCELED);
-      healthSessionRepository.save(healthSession);
-    }
   }
 
-  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+  @TransactionalEventListener(phase = AFTER_COMMIT)
   @Transactional(propagation = REQUIRES_NEW)
   public void reScheduleMeetingEvent(RescheduleSessionMeetingEvent meetingEvent) {
     calendarService.rescheduleEvent(meetingEvent.getMeetingEventId(), meetingEvent.getStartDate(), meetingEvent.getEndDate());
