@@ -9,13 +9,14 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.umulam.fleen.health.util.StringUtil.getFullName;
+import static java.util.Objects.nonNull;
 
 public class HealthSessionReviewMapper {
 
   private HealthSessionReviewMapper() { }
 
   public static HealthSessionReviewView toHealthSessionReviewView(HealthSessionReview entry) {
-    if (Objects.nonNull(entry)) {
+    if (nonNull(entry)) {
       return HealthSessionReviewView.builder()
         .review(entry.getReview())
         .ratingName(entry.getRating().name())
@@ -28,7 +29,7 @@ public class HealthSessionReviewMapper {
   }
 
   public static HealthSessionReviewView toHealthSessionReviewViewProfessional(HealthSessionReview entry) {
-    if (Objects.nonNull(entry)) {
+    if (nonNull(entry)) {
       return HealthSessionReviewView.builder()
         .review(entry.getReview())
         .ratingName(entry.getRating().name())
@@ -40,7 +41,7 @@ public class HealthSessionReviewMapper {
   }
 
   public static List<HealthSessionReviewView> toHealthSessionReviewViews(List<HealthSessionReview> entries) {
-    if (Objects.nonNull(entries) && !entries.isEmpty()) {
+    if (nonNull(entries) && !entries.isEmpty()) {
       return entries
               .stream()
               .filter(Objects::nonNull)
@@ -51,7 +52,7 @@ public class HealthSessionReviewMapper {
   }
 
   public static List<HealthSessionReviewView> toHealthSessionReviewProfessionalViews(List<HealthSessionReview> entries) {
-    if (Objects.nonNull(entries) && !entries.isEmpty()) {
+    if (nonNull(entries) && !entries.isEmpty()) {
       return entries
         .stream()
         .filter(Objects::nonNull)
