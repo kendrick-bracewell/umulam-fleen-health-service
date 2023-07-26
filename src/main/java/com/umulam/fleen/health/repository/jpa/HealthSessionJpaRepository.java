@@ -35,7 +35,7 @@ public interface HealthSessionJpaRepository extends JpaRepository<HealthSession,
   Page<HealthSession> findSessionsByUserAndDateBetween(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType,
                                                  @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 
-  @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.patient.id = :memberId AND hs.patient.userType = :userType")
+  @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.professional.id = :memberId AND hs.professional.userType = :userType")
   Page<HealthSession> findSessionsByProfessional(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType, Pageable pageable);
 
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.patient.id = :memberId AND hs.patient.userType = :userType AND hs.createdOn BETWEEN :startDate AND :endDate")

@@ -72,6 +72,7 @@ public class HealthSessionMapper {
         .timezone(entry.getTimeZone())
         .reference(entry.getReference())
         .location(entry.getLocation().name())
+        .patient(MemberMapper.toMemberViewBasic(entry.getPatient()))
         .build();
     }
     return null;
