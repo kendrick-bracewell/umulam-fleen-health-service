@@ -28,6 +28,8 @@ public class SessionTransactionMapper {
         .currency(entry.getCurrency())
         .sessionReference(entry.getSessionReference())
         .externalReference(entry.getExternalSystemReference())
+        .createdOn(entry.getCreatedOn())
+        .updatedOn(entry.getUpdatedOn())
         .build();
     }
     return null;
