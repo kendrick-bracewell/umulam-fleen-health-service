@@ -46,12 +46,12 @@ public class HealthSessionController {
     return healthSessionService.viewProfessionalAvailability(user, professionalId);
   }
 
-  @GetMapping(value = "/professional/book-session/{id}")
+  @GetMapping(value = "/book-session/{id}")
   public GetProfessionalBookSessionResponse getProfessionalBookSession(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer professionalId) {
     return healthSessionService.getProfessionalBookSession(user, professionalId);
   }
 
-  @PostMapping(value = "/professional/book-session")
+  @PostMapping(value = "/book-session")
   public PendingHealthSessionBookingResponse bookSession(@Valid @RequestBody BookHealthSessionDto dto, @AuthenticationPrincipal FleenUser user) {
     return healthSessionService.bookSession(dto, user);
   }
@@ -70,20 +70,4 @@ public class HealthSessionController {
     return new FleenHealthResponse(HEALTH_SESSION_CANCELED);
   }
 
-  @PutMapping(value = "/session/add-note/{id}")
-  public void addSessionNote(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer healthSessionId) {
-
-  }
-
-  public void makePayment() {
-
-  }
-
-  public void confirmPayment() {
-
-  }
-
-  public void verifyPayment() {
-
-  }
 }

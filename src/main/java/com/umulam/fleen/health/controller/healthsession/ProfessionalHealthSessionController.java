@@ -21,7 +21,7 @@ import static com.umulam.fleen.health.constant.base.FleenHealthConstant.HEALTH_S
 
 @Slf4j
 @RestController
-@RequestMapping(value = "professional/health")
+@RequestMapping(value = "health/professional")
 public class ProfessionalHealthSessionController {
 
   private final ProfessionalHealthSessionService professionalHealthSessionService;
