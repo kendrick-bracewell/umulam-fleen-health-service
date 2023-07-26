@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.*;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.HEALTH_SESSION_CANCELED;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.HEALTH_SESSION_RESCHEDULED;
 
 @Slf4j
 @RestController
