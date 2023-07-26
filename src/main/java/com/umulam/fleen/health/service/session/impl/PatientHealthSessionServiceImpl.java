@@ -19,7 +19,6 @@ import com.umulam.fleen.health.service.ProfessionalService;
 import com.umulam.fleen.health.service.session.PatientHealthSessionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +26,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.*;
+import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionView;
+import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionViewBasicPatient;
 import static com.umulam.fleen.health.model.mapper.ProfessionalMapper.toProfessionalView;
 import static com.umulam.fleen.health.model.mapper.ProfessionalMapper.toProfessionalViews;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
