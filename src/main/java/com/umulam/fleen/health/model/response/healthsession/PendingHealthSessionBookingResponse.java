@@ -18,6 +18,9 @@ public class PendingHealthSessionBookingResponse {
   @JsonProperty("session_reference")
   private String sessionReference;
 
+  @JsonProperty("transaction_reference")
+  private String transactionReference;
+
   @JsonProperty("member_first_name")
   private String patientFirstName;
 

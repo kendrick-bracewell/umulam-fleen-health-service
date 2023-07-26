@@ -249,6 +249,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       .patientEmailAddress(memberDetail.getEmailAddress())
       .timezone(savedHealthSession.getTimeZone())
       .sessionReference(savedHealthSession.getReference())
+      .transactionReference(transaction.getReference())
       .build();
   }
 
