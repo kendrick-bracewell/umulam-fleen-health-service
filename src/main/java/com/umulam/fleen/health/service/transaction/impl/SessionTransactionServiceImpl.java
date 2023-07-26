@@ -2,7 +2,6 @@ package com.umulam.fleen.health.service.transaction.impl;
 
 import com.umulam.fleen.health.exception.transaction.SessionTransactionNotFound;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
-import com.umulam.fleen.health.model.mapper.SessionTransactionMapper;
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
@@ -18,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.umulam.fleen.health.model.mapper.SessionTransactionMapper.toSessionTransactionView;
+import static com.umulam.fleen.health.model.mapper.SessionTransactionMapper.toSessionTransactionViewBasic;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
 
@@ -42,7 +43,7 @@ public class SessionTransactionServiceImpl implements SessionTransactionService 
       page = sessionTransactionJpaRepository.findAllByPayer(user.getId(), req.getPage());
     }
 
-    List<SessionTransactionViewBasic> views = SessionTransactionMapper.toSessionTransactionViewBasic(page.getContent());
+    List<SessionTransactionViewBasic> views = toSessionTransactionViewBasic(page.getContent());
     return toSearchResult(views, page);
   }
 
@@ -51,7 +52,7 @@ public class SessionTransactionServiceImpl implements SessionTransactionService 
   public SessionTransactionView viewUserTransactionDetail(FleenUser user, Integer transactionId) {
     Optional<SessionTransaction> sessionTransactionExist = sessionTransactionJpaRepository.findByUserAndId(transactionId, user.getId());
     if (sessionTransactionExist.isPresent()) {
-      return SessionTransactionMapper.toSessionTransactionView(sessionTransactionExist.get());
+      return toSessionTransactionView(sessionTransactionExist.get());
     }
     throw new SessionTransactionNotFound(transactionId);
   }

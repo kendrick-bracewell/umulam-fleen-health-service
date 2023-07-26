@@ -17,7 +17,7 @@ public class SessionTransactionMapper {
 
   public static SessionTransactionView toSessionTransactionView(SessionTransaction entry) {
     if (nonNull(entry)) {
-      SessionTransactionView.builder()
+      return SessionTransactionView.builder()
         .id(entry.getId())
         .reference(entry.getReference())
         .status(entry.getStatus().name())
