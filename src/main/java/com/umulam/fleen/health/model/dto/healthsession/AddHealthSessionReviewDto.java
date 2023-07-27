@@ -7,6 +7,7 @@ import com.umulam.fleen.health.model.domain.HealthSessionReview;
 import com.umulam.fleen.health.validator.EnumOrdinalValid;
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -19,6 +20,7 @@ import static com.umulam.fleen.health.util.EnumUtil.getEnumConstant;
 @AllArgsConstructor
 public class AddHealthSessionReviewDto {
 
+  @NotBlank(message = "{session.review.review.notNull}")
   @Size(min = 10, max = 1000, message = "{session.review.review.size}")
   private String review;
 
