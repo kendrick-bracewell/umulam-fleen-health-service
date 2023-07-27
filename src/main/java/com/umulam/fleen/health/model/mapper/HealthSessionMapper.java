@@ -22,7 +22,7 @@ public class HealthSessionMapper {
       return ProfessionalScheduleHealthSessionView.builder()
         .date(entry.getDate())
         .time(entry.getTime())
-        .timezone(entry.getTimeZone())
+        .timezone(entry.getTimezone())
         .build();
     }
     return null;
@@ -40,14 +40,14 @@ public class HealthSessionMapper {
   }
 
   public static HealthSessionView toHealthSessionView(HealthSession entry) {
-    if (Objects.nonNull(entry)) {
+    if (nonNull(entry)) {
       return HealthSessionView.builder()
         .id(entry.getId())
         .status(entry.getStatus().name())
         .date(entry.getDate())
         .time(entry.getTime())
-        .timezone(entry.getTimeZone())
-        .reference(entry.getTimeZone())
+        .timezone(entry.getTimezone())
+        .reference(entry.getReference())
         .meetingLink(entry.getMeetingUrl())
         .eventLink(entry.getEventLink())
         .createdOn(entry.getCreatedOn())
@@ -69,7 +69,7 @@ public class HealthSessionMapper {
         .status(entry.getStatus().name())
         .date(entry.getDate())
         .time(entry.getTime())
-        .timezone(entry.getTimeZone())
+        .timezone(entry.getTimezone())
         .reference(entry.getReference())
         .location(entry.getLocation().name())
         .patient(MemberMapper.toMemberViewBasic(entry.getPatient()))
@@ -85,7 +85,7 @@ public class HealthSessionMapper {
         .status(entry.getStatus().name())
         .date(entry.getDate())
         .time(entry.getTime())
-        .timezone(entry.getTimeZone())
+        .timezone(entry.getTimezone())
         .reference(entry.getReference())
         .location(entry.getLocation().name())
         .build();

@@ -65,7 +65,7 @@ public class BookHealthSessionDto {
         .id(Integer.parseInt(professional)).build())
       .location(SessionLocation.REMOTE)
       .status(HealthSessionStatus.PENDING)
-      .timeZone("WAT")
+      .timezone("WAT")
       .time(toTime(time))
       .date(toDate(date))
       .comment(comment)
