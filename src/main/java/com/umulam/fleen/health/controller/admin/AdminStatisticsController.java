@@ -1,6 +1,8 @@
 package com.umulam.fleen.health.controller.admin;
 
+import com.umulam.fleen.health.model.statistic.GeneralStatistic;
 import com.umulam.fleen.health.model.statistic.HealthSessionStatistic;
+import com.umulam.fleen.health.model.statistic.MemberStatistic;
 import com.umulam.fleen.health.model.statistic.SessionTransactionStatistic;
 import com.umulam.fleen.health.service.admin.AdminStatisticService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,11 +31,13 @@ public class AdminStatisticsController {
     return adminStatisticService.getSessionTransactionStatistics();
   }
 
-  public void viewMembers() {
-
+  @GetMapping(value = "/members")
+  public MemberStatistic viewMembers() {
+    return adminStatisticService.getMemberStatistics();
   }
 
-  public void viewGeneral() {
-
+  @GetMapping(value = "/general")
+  public GeneralStatistic viewGeneral() {
+    return adminStatisticService.getGeneralStatistics();
   }
 }
