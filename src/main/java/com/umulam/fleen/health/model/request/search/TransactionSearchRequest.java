@@ -25,7 +25,4 @@ public class TransactionSearchRequest extends SearchRequest {
 
   @JsonProperty("transaction_sub_type")
   private TransactionSubType transactionSubType;
-
-  @JsonProperty("qualification")
-  private ProfessionalQualificationType qualificationType;
 }

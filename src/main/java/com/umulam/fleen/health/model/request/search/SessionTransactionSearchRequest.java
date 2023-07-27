@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SessionTransactionSearchRequest {
+public class SessionTransactionSearchRequest extends TransactionSearchRequest {
 
   @JsonProperty("session_reference")
   private String sessionReference;

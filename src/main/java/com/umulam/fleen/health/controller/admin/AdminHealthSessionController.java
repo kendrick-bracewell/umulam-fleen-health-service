@@ -2,10 +2,14 @@ package com.umulam.fleen.health.controller.admin;
 
 import com.umulam.fleen.health.model.request.search.HealthSessionSearchRequest;
 import com.umulam.fleen.health.model.request.search.SessionTransactionSearchRequest;
+import com.umulam.fleen.health.model.request.search.base.SearchRequest;
+import com.umulam.fleen.health.model.view.healthsession.HealthSessionView;
+import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.admin.AdminHealthSessionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,18 +25,18 @@ public class AdminHealthSessionController {
   }
 
   @GetMapping(value = "/entries")
-  public void viewSessions(@SearchParam HealthSessionSearchRequest searchRequest) {
-
+  public SearchResultView viewSessions(@SearchParam HealthSessionSearchRequest searchRequest) {
+    return healthSessionService.viewSessions(searchRequest);
   }
 
   @GetMapping(value = "/detail/{id}")
-  public void viewSession() {
-
+  public HealthSessionView viewSession(@PathVariable(name = "id") Integer healthSessionId) {
+    return healthSessionService.viewSession(healthSessionId);
   }
 
   @GetMapping(value = "/reviews")
-  public void viewSessionReviews() {
-
+  public SearchResultView viewSessionReviews(@SearchParam SearchRequest searchRequest) {
+    return healthSessionService.viewSessionReviews(searchRequest);
   }
 
   @GetMapping(value = "/transaction")

@@ -3,7 +3,6 @@ package com.umulam.fleen.health.service.admin.impl;
 import com.umulam.fleen.health.exception.healthsession.HealthSessionNotFoundException;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.HealthSessionReview;
-import com.umulam.fleen.health.model.mapper.HealthSessionReviewMapper;
 import com.umulam.fleen.health.model.request.search.HealthSessionSearchRequest;
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
 import com.umulam.fleen.health.model.view.healthsession.HealthSessionReviewView;
