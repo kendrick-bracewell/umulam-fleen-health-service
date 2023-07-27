@@ -1,6 +1,6 @@
 package com.umulam.fleen.health.controller;
 
-import com.umulam.fleen.health.adapter.paystack.PaystackConfig;
+import com.umulam.fleen.health.adapter.paystack.config.PaystackConfig;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.service.session.HealthSessionService;
 import lombok.extern.slf4j.Slf4j;

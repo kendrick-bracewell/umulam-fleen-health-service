@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.adapter.paystack;
+package com.umulam.fleen.health.adapter.paystack.config;
 
 import lombok.Getter;
 import lombok.Setter;
