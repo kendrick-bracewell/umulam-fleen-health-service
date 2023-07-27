@@ -12,15 +12,5 @@ public interface AdminHealthSessionStatisticJpaRepository extends JpaRepository<
   long countTotalNumberOfSessions();
 
   @Query("SELECT COUNT(hs) FROM HealthSession hs WHERE hs.status = :status")
-  long countTotalNumberOfPendingSessions(@Param("status") HealthSessionStatus status);
-
-  @Query("SELECT COUNT(hs) FROM HealthSession hs WHERE hs.status = :status")
-  long countTotalNumberOfCompletedSessions(@Param("status") HealthSessionStatus status);
-
-  @Query("SELECT COUNT(hs) FROM HealthSession hs WHERE hs.status = :status")
-  long countTotalNumberOfScheduleSessions(@Param("status") HealthSessionStatus status);
-
-  @Query("SELECT COUNT(hs) FROM HealthSession hs WHERE hs.status = :status")
-  long countTotalNumberOfRescheduledSessions(@Param("status") HealthSessionStatus status);
-
+  long countTotalNumberOfSessions(@Param("status") HealthSessionStatus status);
 }

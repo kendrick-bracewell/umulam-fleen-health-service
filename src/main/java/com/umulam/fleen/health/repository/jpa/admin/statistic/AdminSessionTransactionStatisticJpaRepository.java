@@ -12,17 +12,5 @@ public interface AdminSessionTransactionStatisticJpaRepository extends JpaReposi
   long countTotalNumberOfSessionTransactions();
 
   @Query("SELECT COUNT(st) FROM SessionTransaction st WHERE st.status = :status")
-  long countTotalNumberOfPendingSessionTransactions(@Param("status") TransactionStatus status);
-
-  @Query("SELECT COUNT(st) FROM SessionTransaction st WHERE st.status = :status")
-  long countTotalNumberOfSuccessfulSessionTransactions(@Param("status") TransactionStatus status);
-
-  @Query("SELECT COUNT(st) FROM SessionTransaction st WHERE st.status = :status")
-  long countTotalNumberOfFailedSessionTransactions(@Param("status") TransactionStatus status);
-
-  @Query("SELECT COUNT(st) FROM SessionTransaction st WHERE st.status = :status")
-  long countTotalNumberOfCanceledSessionTransactions(@Param("status") TransactionStatus status);
-
-  @Query("SELECT COUNT(st) FROM SessionTransaction st WHERE st.status = :status")
-  long countTotalNumberOfRefundedSessionTransactions(@Param("status") TransactionStatus status);
+  long countTotalNumberOfSessionTransactions(@Param("status") TransactionStatus status);
 }

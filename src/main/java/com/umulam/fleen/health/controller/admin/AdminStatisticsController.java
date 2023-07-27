@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.controller.admin;
 
 import com.umulam.fleen.health.model.statistic.HealthSessionStatistic;
+import com.umulam.fleen.health.model.statistic.SessionTransactionStatistic;
 import com.umulam.fleen.health.service.admin.AdminStatisticService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +24,9 @@ public class AdminStatisticsController {
     return adminStatisticService.getHealthSessionStatistics();
   }
 
-  public void viewSessionTransactions() {
-
+  @GetMapping(value = "/session/transactions")
+  public SessionTransactionStatistic viewSessionTransactions() {
+    return adminStatisticService.getSessionTransactionStatistics();
   }
 
   public void viewMembers() {
