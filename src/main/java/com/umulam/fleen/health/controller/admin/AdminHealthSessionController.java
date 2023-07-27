@@ -5,8 +5,10 @@ import com.umulam.fleen.health.model.request.search.SessionTransactionSearchRequ
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
 import com.umulam.fleen.health.model.view.healthsession.HealthSessionView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
+import com.umulam.fleen.health.model.view.transaction.SessionTransactionView;
 import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.admin.AdminHealthSessionService;
+import com.umulam.fleen.health.service.admin.AdminTransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,9 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminHealthSessionController {
 
   private final AdminHealthSessionService healthSessionService;
+  private final AdminTransactionService transactionService;
 
-  public AdminHealthSessionController(AdminHealthSessionService healthSessionService) {
+  public AdminHealthSessionController(AdminHealthSessionService healthSessionService,
+                                      AdminTransactionService transactionService) {
     this.healthSessionService = healthSessionService;
+    this.transactionService = transactionService;
   }
 
   @GetMapping(value = "/entries")
@@ -40,12 +45,12 @@ public class AdminHealthSessionController {
   }
 
   @GetMapping(value = "/transaction")
-  public void viewTransactions(@SearchParam SessionTransactionSearchRequest searchRequest) {
-
+  public SearchResultView viewSessionTransactions(@SearchParam SessionTransactionSearchRequest searchRequest) {
+    return transactionService.viewSessionTransactions(searchRequest);
   }
 
   @GetMapping(value = "/transaction/{id}")
-  public void viewTransaction() {
-
+  public SessionTransactionView viewSessionTransaction(@PathVariable(name = "id") Integer sessionTransactionId) {
+    return transactionService.viewSessionTransaction(sessionTransactionId);
   }
 }
