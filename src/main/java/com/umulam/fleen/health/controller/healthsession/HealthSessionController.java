@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.controller.healthsession;
 
+import com.umulam.fleen.health.model.dto.healthsession.AddHealthSessionReviewDto;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.dto.healthsession.ReScheduleHealthSessionDto;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
@@ -18,8 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.HEALTH_SESSION_CANCELED;
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.HEALTH_SESSION_RESCHEDULED;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.*;
 
 @Slf4j
 @RestController
@@ -69,6 +69,14 @@ public class HealthSessionController {
   public FleenHealthResponse cancelSession(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer healthSessionId) {
     healthSessionService.cancelSession(user, healthSessionId);
     return new FleenHealthResponse(HEALTH_SESSION_CANCELED);
+  }
+
+  @PutMapping(value = "/session/add-review/{id}")
+  public FleenHealthResponse addSessionReview(@Valid @RequestBody AddHealthSessionReviewDto dto,
+                               @AuthenticationPrincipal FleenUser user,
+                               @PathVariable(name = "id") Integer sessionId) {
+    healthSessionService.addSessionReview(dto, user, sessionId);
+    return new FleenHealthResponse(HEALTH_SESSION_REVIEW_ADDED);
   }
 
 }

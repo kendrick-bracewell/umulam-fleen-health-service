@@ -16,11 +16,9 @@ import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableFo
 import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionDayException;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionException;
 import com.umulam.fleen.health.exception.professional.ProfessionalProfileNotApproved;
-import com.umulam.fleen.health.model.domain.HealthSession;
-import com.umulam.fleen.health.model.domain.Member;
-import com.umulam.fleen.health.model.domain.Professional;
-import com.umulam.fleen.health.model.domain.ProfessionalAvailability;
+import com.umulam.fleen.health.model.domain.*;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
+import com.umulam.fleen.health.model.dto.healthsession.AddHealthSessionReviewDto;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.dto.healthsession.ReScheduleHealthSessionDto;
 import com.umulam.fleen.health.model.event.paystack.ChargeEvent;
@@ -40,13 +38,14 @@ import com.umulam.fleen.health.model.view.professional.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.HealthSessionProfessionalJpaRepository;
+import com.umulam.fleen.health.repository.jpa.HealthSessionReviewJpaRepository;
 import com.umulam.fleen.health.repository.jpa.ProfessionalAvailabilityJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.SessionTransactionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.TransactionJpaRepository;
-import com.umulam.fleen.health.service.impl.FleenHealthEventService;
-import com.umulam.fleen.health.service.session.HealthSessionService;
 import com.umulam.fleen.health.service.MemberService;
 import com.umulam.fleen.health.service.ProfessionalService;
+import com.umulam.fleen.health.service.impl.FleenHealthEventService;
+import com.umulam.fleen.health.service.session.HealthSessionService;
 import com.umulam.fleen.health.util.UniqueReferenceGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -79,6 +78,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   private final TransactionJpaRepository transactionJpaRepository;
   private final SessionTransactionJpaRepository sessionTransactionJpaRepository;
   private final ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository;
+  private final HealthSessionReviewJpaRepository healthSessionReviewJpaRepository;
   private final FleenHealthEventService eventService;
   private final MemberService memberService;
   private final ObjectMapper mapper;
@@ -91,6 +91,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
           TransactionJpaRepository transactionJpaRepository,
           SessionTransactionJpaRepository sessionTransactionJpaRepository,
           ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository,
+          HealthSessionReviewJpaRepository healthSessionReviewJpaRepository,
           FleenHealthEventService eventService,
           MemberService memberService,
           ObjectMapper mapper) {
@@ -101,6 +102,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     this.transactionJpaRepository = transactionJpaRepository;
     this.sessionTransactionJpaRepository = sessionTransactionJpaRepository;
     this.professionalAvailabilityJpaRepository = professionalAvailabilityJpaRepository;
+    this.healthSessionReviewJpaRepository = healthSessionReviewJpaRepository;
     this.eventService = eventService;
     this.memberService = memberService;
     this.mapper = mapper;
@@ -404,6 +406,26 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
       eventService.publishRescheduleSession(meetingEvent);
       healthSessionRepository.save(healthSession);
+      return;
+    }
+    throw new NoAssociatedHealthSessionException(healthSessionId);
+  }
+
+  @Override
+  @Transactional
+  public void addSessionReview(AddHealthSessionReviewDto dto, FleenUser user, Integer healthSessionId) {
+    Optional<HealthSession> existingHealthSession = healthSessionRepository.findById(healthSessionId);
+    if (existingHealthSession.isPresent()) {
+      HealthSession healthSession = existingHealthSession.get();
+      if (!(healthSession.getPatient().getId().equals(user.getId()))) {
+        throw new HealthSessionInvalidTransactionException();
+      }
+
+      HealthSessionReview review = dto.toHealthSessionReview();
+      review.setPatient(healthSession.getPatient());
+      review.setProfessional(healthSession.getProfessional());
+      review.setHealthSession(healthSession);
+      healthSessionReviewJpaRepository.save(review);
       return;
     }
     throw new NoAssociatedHealthSessionException(healthSessionId);

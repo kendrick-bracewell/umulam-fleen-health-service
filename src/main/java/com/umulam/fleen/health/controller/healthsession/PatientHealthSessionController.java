@@ -67,8 +67,6 @@ public class PatientHealthSessionController {
     return patientHealthSessionService.viewReviews(user);
   }
 
-
-
   public void viewPaymentDetails() {
 
   }

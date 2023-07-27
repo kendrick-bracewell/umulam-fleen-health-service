@@ -5,11 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
+import static com.umulam.fleen.health.util.EnumUtil.getValues;
 import static java.util.Objects.isNull;
 
 @Slf4j
@@ -35,20 +33,4 @@ public class EnumOrdinalValidValidator implements ConstraintValidator<EnumOrdina
     return false;
   }
 
-  public List<Integer> getValues(Class<?> enumClass) {
-    List<Integer> values = new ArrayList<>();
-    try {
-      Method valuesMethod = enumClass.getMethod("values");
-      Object[] allEnums = (Object[]) valuesMethod.invoke(null);
-
-      for (Object enumValue : allEnums) {
-        Method ordinalMethod = enumClass.getMethod("ordinal");
-        int ordinalValue = (int) ordinalMethod.invoke(enumValue);
-        values.add(ordinalValue);
-      }
-    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-      log.error(ex.getMessage(), ex);
-    }
-    return values;
-  }
 }

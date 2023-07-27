@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.service.session;
 
+import com.umulam.fleen.health.model.dto.healthsession.AddHealthSessionReviewDto;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.dto.healthsession.ReScheduleHealthSessionDto;
 import com.umulam.fleen.health.model.request.search.ProfessionalSearchRequest;
@@ -36,4 +37,7 @@ public interface HealthSessionService {
 
   @Transactional
   void rescheduleSession(ReScheduleHealthSessionDto dto, FleenUser user, Integer healthSessionId);
+
+  @Transactional
+  void addSessionReview(AddHealthSessionReviewDto dto, FleenUser user, Integer healthSessionId);
 }
