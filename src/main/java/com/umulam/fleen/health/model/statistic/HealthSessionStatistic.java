@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class HealthSessionStatistics {
+public class HealthSessionStatistic {
 
   @JsonProperty("total_number_of_sessions")
   private long totalNumberOfSessions;

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface AdminHealthSessionStatisticRepository extends JpaRepository<HealthSession, Integer> {
+public interface AdminHealthSessionStatisticJpaRepository extends JpaRepository<HealthSession, Integer> {
 
   @Query("SELECT COUNT(hs) FROM HealthSession hs")
   long countTotalNumberOfSessions();
