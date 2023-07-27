@@ -249,7 +249,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       .patientFirstName(memberDetail.getFirstName())
       .patientLastName(memberDetail.getLastName())
       .patientEmailAddress(memberDetail.getEmailAddress())
-      .timezone(savedHealthSession.getTimeZone())
+      .timezone(savedHealthSession.getTimezone())
       .sessionReference(savedHealthSession.getReference())
       .transactionReference(transaction.getReference())
       .build();
@@ -301,7 +301,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
                   .startDate(meetingStartDateTime)
                   .endDate(meetingEndDateTime)
                   .attendees(List.of(patientEmail, professionalEmail))
-                  .timezone(healthSession.getTimeZone())
+                  .timezone(healthSession.getTimezone())
                   .sessionReference(healthSession.getReference())
                   .patientName(patientName)
                   .professionalName(professionalName)
@@ -389,7 +389,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
       healthSession.setDate(newHealthSession.getDate());
       healthSession.setTime(newHealthSession.getTime());
-      healthSession.setTimeZone(newHealthSession.getTimeZone());
+      healthSession.setTimezone(newHealthSession.getTimezone());
 
       LocalDate meetingDate = healthSession.getDate();
       LocalTime meetingTime = healthSession.getTime();
@@ -400,7 +400,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       RescheduleSessionMeetingEvent meetingEvent = RescheduleSessionMeetingEvent.builder()
           .startDate(meetingStartDateTime)
           .endDate(meetingEndDateTime)
-          .timezone(newHealthSession.getTimeZone())
+          .timezone(newHealthSession.getTimezone())
           .meetingEventId(healthSession.getEventReferenceOrId())
           .build();
 

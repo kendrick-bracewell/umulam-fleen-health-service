@@ -54,7 +54,7 @@ public class HealthSession {
   private LocalTime time;
 
   @Column(name = "timezone")
-  private String timeZone;
+  private String timezone;
 
   @Column(name = "status", nullable = false)
   @Enumerated(EnumType.STRING)
