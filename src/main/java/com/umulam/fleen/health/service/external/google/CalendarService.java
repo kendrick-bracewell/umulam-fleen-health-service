@@ -187,8 +187,10 @@ public class CalendarService {
 
   private List<EventReminder> getEventReminders() {
     List<EventReminder> eventReminders = new ArrayList<>();
-    eventReminders.add(new EventReminder().setMethod("email").setMinutes(24 * 60));
+    int hours24 = 24 * 60;
+    eventReminders.add(new EventReminder().setMethod("email").setMinutes(hours24));
     eventReminders.add(new EventReminder().setMethod("popup").setMinutes(10));
+    eventReminders.add(new EventReminder().setMethod("popup").setMinutes(hours24));
     return eventReminders;
   }
 
