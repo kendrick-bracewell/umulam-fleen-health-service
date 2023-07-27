@@ -20,7 +20,7 @@ public class HealthSessionReviewMapper {
       return HealthSessionReviewView.builder()
         .review(entry.getReview())
         .ratingName(entry.getRating().name())
-        .ratingValue(entry.getRating().ordinal())
+        .ratingValue(addOneToRating(entry.getRating().ordinal()))
         .professionalName(getFullName(entry.getProfessional().getFirstName(), entry.getProfessional().getLastName()))
         .createdOn(entry.getCreatedOn())
         .build();
@@ -33,7 +33,7 @@ public class HealthSessionReviewMapper {
       return HealthSessionReviewView.builder()
         .review(entry.getReview())
         .ratingName(entry.getRating().name())
-        .ratingValue(entry.getRating().ordinal())
+        .ratingValue(addOneToRating(entry.getRating().ordinal()))
         .createdOn(entry.getCreatedOn())
         .build();
     }
@@ -60,5 +60,9 @@ public class HealthSessionReviewMapper {
         .collect(Collectors.toList());
     }
     return Collections.emptyList();
+  }
+
+  public static int addOneToRating(int rating) {
+    return rating + 1;
   }
 }
