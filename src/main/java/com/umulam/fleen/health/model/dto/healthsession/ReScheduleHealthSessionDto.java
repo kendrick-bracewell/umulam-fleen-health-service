@@ -37,7 +37,7 @@ public class ReScheduleHealthSessionDto {
     return HealthSession.builder()
       .professional(Member.builder()
         .id(Integer.parseInt(professional)).build())
-      .timeZone("WAT")
+      .timezone("WAT")
       .time(toTime(time))
       .date(toDate(date))
       .build();

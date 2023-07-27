@@ -63,7 +63,7 @@ public class HealthSessionMapper {
   }
 
   public static HealthSessionViewBasic toHealthSessionViewBasic(HealthSession entry) {
-    if (Objects.nonNull(entry)) {
+    if (nonNull(entry)) {
       return HealthSessionViewBasic.builder()
         .id(entry.getId())
         .status(entry.getStatus().name())
@@ -79,7 +79,7 @@ public class HealthSessionMapper {
   }
 
   public static HealthSessionViewBasic toHealthSessionViewBasicPatient(HealthSession entry) {
-    if (Objects.nonNull(entry)) {
+    if (nonNull(entry)) {
       return HealthSessionViewBasic.builder()
         .id(entry.getId())
         .status(entry.getStatus().name())
@@ -94,7 +94,7 @@ public class HealthSessionMapper {
   }
 
   public static List<HealthSessionView> toHealthSessionViews(List<HealthSession> entries) {
-    if (Objects.nonNull(entries) && !entries.isEmpty()) {
+    if (nonNull(entries) && !entries.isEmpty()) {
       return entries
               .stream()
               .filter(Objects::nonNull)
@@ -105,7 +105,7 @@ public class HealthSessionMapper {
   }
 
   public static List<HealthSessionViewBasic> toHealthSessionViewBasic(List<HealthSession> entries) {
-    if (Objects.nonNull(entries) && !entries.isEmpty()) {
+    if (nonNull(entries) && !entries.isEmpty()) {
       return entries
               .stream()
               .filter(Objects::nonNull)
@@ -116,7 +116,7 @@ public class HealthSessionMapper {
   }
 
   public static List<HealthSessionViewBasic> toHealthSessionViewBasicPatient(List<HealthSession> entries) {
-    if (Objects.nonNull(entries) && !entries.isEmpty()) {
+    if (nonNull(entries) && !entries.isEmpty()) {
       return entries
         .stream()
         .filter(Objects::nonNull)
