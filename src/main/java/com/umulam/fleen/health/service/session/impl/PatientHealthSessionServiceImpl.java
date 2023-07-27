@@ -95,6 +95,7 @@ public class PatientHealthSessionServiceImpl implements PatientHealthSessionServ
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<HealthSessionReviewView> viewReviews(FleenUser user) {
     List<HealthSessionReview> sessionReviews = healthSessionReviewJpaRepository.findPatientReviews(user.getId());
     return HealthSessionReviewMapper.toHealthSessionReviewViews(sessionReviews);
