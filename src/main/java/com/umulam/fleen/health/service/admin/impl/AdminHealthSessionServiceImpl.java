@@ -83,14 +83,4 @@ public class AdminHealthSessionServiceImpl implements AdminHealthSessionService 
     List<HealthSessionReviewView> views = toHealthSessionReviewViews(page.getContent());
     return toSearchResult(views, page);
   }
-
-  @Override
-  public void viewTransaction(Integer transactionId) {
-
-  }
-
-  @Override
-  public void viewTransactions() {
-
-  }
 }

@@ -12,8 +12,4 @@ public interface AdminHealthSessionService {
   HealthSessionView viewSession(Integer healthSessionId);
 
   SearchResultView viewSessionReviews(SearchRequest searchRequest);
-
-  void viewTransactions();
-
-  void viewTransaction(Integer transactionId);
 }
