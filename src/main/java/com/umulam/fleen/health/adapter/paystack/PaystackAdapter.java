@@ -1,9 +1,11 @@
 package com.umulam.fleen.health.adapter.paystack;
 
+import com.umulam.fleen.health.adapter.ApiParameter;
 import com.umulam.fleen.health.adapter.base.BaseAdapter;
 import com.umulam.fleen.health.adapter.paystack.config.PaystackConfig;
 import com.umulam.fleen.health.adapter.paystack.model.enums.PaystackParameter;
 import com.umulam.fleen.health.adapter.paystack.model.request.ResolveBankAccountRequest;
+import com.umulam.fleen.health.adapter.paystack.response.GetBanksResponse;
 import com.umulam.fleen.health.adapter.paystack.response.ResolveBankAccountResponse;
 import com.umulam.fleen.health.constant.authentication.PaystackType;
 import com.umulam.fleen.health.exception.base.FleenHealthException;
@@ -33,18 +35,36 @@ public class PaystackAdapter extends BaseAdapter {
   }
 
   public ResolveBankAccountResponse resolveBankAccount(ResolveBankAccountRequest request) {
-    HashMap<String, String> requestBody = new HashMap<>();
-    requestBody.put(PaystackParameter.ACCOUNT_NUMBER.getValue(), request.getAccountNumber());
-    requestBody.put(PaystackParameter.BANK_CODE.getValue(), request.getBankCode());
+    HashMap<ApiParameter, String> parameters = new HashMap<>();
+    parameters.put(PaystackParameter.ACCOUNT_NUMBER, request.getAccountNumber());
+    parameters.put(PaystackParameter.BANK_CODE, request.getBankCode());
 
-    URI uri = buildUri(RESOLVE, BANK);
+    URI uri = buildUri(parameters, RESOLVE, BANK);
     ResponseEntity<ResolveBankAccountResponse> response = doCall(uri, HttpMethod.GET,
-      getAuthHeaderWithBearerToken(config.getSecretKey()), requestBody, ResolveBankAccountResponse.class);
+      getAuthHeaderWithBearerToken(config.getSecretKey()), null, ResolveBankAccountResponse.class);
 
     if (response.getStatusCode().is2xxSuccessful()) {
       return response.getBody();
     } else {
       String message = String.format("An error occurred while calling resolveBankAccount method of PaystackAdapter: %s", response.getBody());
+      log.error(message);
+      if (response.getStatusCode().is4xxClientError()) {
+        throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
+      } else {
+        throw new FleenHealthException(PaystackType.PAYSTACK.getValue());
+      }
+    }
+  }
+
+  public GetBanksResponse getBanks() {
+    URI uri = buildUri(BANK);
+    ResponseEntity<GetBanksResponse> response = doCall(uri, HttpMethod.GET,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), null, GetBanksResponse.class);
+
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response.getBody();
+    } else {
+      String message = String.format("An error occurred while calling getBanks method of PaystackAdapter: %s", response.getBody());
       log.error(message);
       if (response.getStatusCode().is4xxClientError()) {
         throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
