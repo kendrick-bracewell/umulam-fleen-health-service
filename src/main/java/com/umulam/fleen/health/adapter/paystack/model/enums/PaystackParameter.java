@@ -5,7 +5,9 @@ import com.umulam.fleen.health.adapter.ApiParameter;
 public enum PaystackParameter implements ApiParameter {
 
   ACCOUNT_NUMBER("account_number"),
-  BANK_CODE("bank_code");
+  BANK_CODE("bank_code"),
+  PER_PAGE("perPage"),
+  CURRENCY("currency");
 
   private final String value;
 

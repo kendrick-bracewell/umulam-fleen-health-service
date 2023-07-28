@@ -8,7 +8,6 @@ import com.umulam.fleen.health.adapter.paystack.model.request.ResolveBankAccount
 import com.umulam.fleen.health.adapter.paystack.response.GetBanksResponse;
 import com.umulam.fleen.health.adapter.paystack.response.ResolveBankAccountResponse;
 import com.umulam.fleen.health.constant.authentication.PaystackType;
-import com.umulam.fleen.health.exception.base.FleenHealthException;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,8 +56,15 @@ public class PaystackAdapter extends BaseAdapter {
     }
   }
 
-  public GetBanksResponse getBanks() {
-    URI uri = buildUri(BANK);
+  public GetBanksResponse getBanks(String currency) {
+    if (isMandatoryFieldAvailable(currency)) {
+      throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
+    }
+
+    HashMap<ApiParameter, String> parameters = new HashMap<>();
+    parameters.put(PaystackParameter.CURRENCY, currency.toUpperCase());
+
+    URI uri = buildUri(parameters, BANK);
     ResponseEntity<GetBanksResponse> response = doCall(uri, HttpMethod.GET,
       getAuthHeaderWithBearerToken(config.getSecretKey()), null, GetBanksResponse.class);
 
