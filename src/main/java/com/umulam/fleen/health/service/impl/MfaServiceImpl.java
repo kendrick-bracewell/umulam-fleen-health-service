@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Random;
 
-import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.MFA_SECRET_ISSUER;
-import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.MFA_SECRET_LABEL;
+import static com.umulam.fleen.health.constant.base.GeneralConstant.MFA_SECRET_ISSUER;
+import static com.umulam.fleen.health.constant.base.GeneralConstant.MFA_SECRET_LABEL;
 
 @Slf4j
 @Component

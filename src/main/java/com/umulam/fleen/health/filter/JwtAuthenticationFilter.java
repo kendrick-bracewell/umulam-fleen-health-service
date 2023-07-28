@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
 
-import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.AUTH_HEADER_PREFIX;
+import static com.umulam.fleen.health.constant.base.GeneralConstant.AUTH_HEADER_PREFIX;
 import static com.umulam.fleen.health.service.impl.AuthenticationServiceImpl.getAuthCacheKey;
 import static com.umulam.fleen.health.util.FleenAuthorities.isAuthorityWhitelisted;
 

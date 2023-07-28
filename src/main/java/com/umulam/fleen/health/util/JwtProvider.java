@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.*;
+import static com.umulam.fleen.health.constant.base.GeneralConstant.*;
 import static com.umulam.fleen.health.util.FleenAuthorities.getRefreshTokenAuthorities;
 import static com.umulam.fleen.health.util.FleenAuthorities.getResetPasswordAuthorities;
 

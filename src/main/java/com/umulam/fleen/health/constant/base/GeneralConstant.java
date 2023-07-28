@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.constant.authentication;
+package com.umulam.fleen.health.constant.base;
 
 import lombok.Getter;
 import org.springframework.context.annotation.PropertySource;
@@ -9,7 +9,7 @@ import static com.umulam.fleen.health.util.DateTimeUtil.getTimeInMillis;
 @Getter
 @Component
 @PropertySource("classpath:application.properties")
-public final class AuthenticationConstant {
+public final class GeneralConstant {
 
   public static final String MFA_SECRET_LABEL = "start@fleenhealth.com";
   public static final String MFA_SECRET_ISSUER = "Fleen Health";
@@ -33,4 +33,5 @@ public final class AuthenticationConstant {
   public static final String PROFILE_VERIFICATION_MESSAGE_TEMPLATE_CACHE_PREFIX = "PROFILE_VERIFICATION_MESSAGE_TEMPLATE:::";
   public static final String COUNTRY_CACHE_PREFIX = "COUNTRY:::";
   public static final String X_FORWARDED_HEADER = "X-Forwarded-For";
+  public static final String PAYSTACK_GET_BANKS_CACHE_PREFIX = "PAYSTACK_GET_BANKS";
 }

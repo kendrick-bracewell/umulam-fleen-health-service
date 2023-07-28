@@ -59,7 +59,7 @@ public class HealthSessionReviewMapper {
         .filter(Objects::nonNull)
         .map(HealthSessionReviewMapper::toHealthSessionReviewViewProfessional)
         .filter(Objects::nonNull)
-        .sorted(Comparator.comparingInt(HealthSessionReviewView::getRatingValue))
+        .sorted(Comparator.comparingInt(HealthSessionReviewView::getRatingValue).reversed())
         .collect(Collectors.toList());
     }
     return Collections.emptyList();

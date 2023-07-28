@@ -1,6 +1,19 @@
 package com.umulam.fleen.health.constant.session;
 
-public enum CurrencyType {
+import com.umulam.fleen.health.adapter.ApiParameter;
 
-  NGN;
+public enum CurrencyType implements ApiParameter {
+
+  NGN("NGN");
+
+  private final String value;
+
+  CurrencyType(String value) {
+    this.value = value;
+  }
+
+  @Override
+  public String getValue() {
+    return value;
+  }
 }

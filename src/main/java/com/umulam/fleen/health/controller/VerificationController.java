@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.AUTH_HEADER_KEY;
-import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.AUTH_HEADER_PREFIX;
+import static com.umulam.fleen.health.constant.base.GeneralConstant.AUTH_HEADER_KEY;
+import static com.umulam.fleen.health.constant.base.GeneralConstant.AUTH_HEADER_PREFIX;
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.PASSWORD_CHANGED_UPDATED;
 
 @Slf4j

@@ -51,8 +51,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.UPDATE_EMAIL_CACHE_PREFIX;
-import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.UPDATE_PHONE_NUMBER_CACHE_PREFIX;
+import static com.umulam.fleen.health.constant.base.GeneralConstant.UPDATE_EMAIL_CACHE_PREFIX;
+import static com.umulam.fleen.health.constant.base.GeneralConstant.UPDATE_PHONE_NUMBER_CACHE_PREFIX;
 import static com.umulam.fleen.health.util.DateTimeUtil.toLocalDateTime;
 import static org.springframework.util.StringUtils.capitalize;
 

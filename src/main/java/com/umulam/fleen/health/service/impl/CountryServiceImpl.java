@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.COUNTRY_CACHE_PREFIX;
+import static com.umulam.fleen.health.constant.base.GeneralConstant.COUNTRY_CACHE_PREFIX;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
 

@@ -45,7 +45,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.umulam.fleen.health.constant.authentication.AuthenticationConstant.*;
+import static com.umulam.fleen.health.constant.base.GeneralConstant.*;
 import static com.umulam.fleen.health.constant.authentication.AuthenticationStatus.COMPLETED;
 import static com.umulam.fleen.health.constant.authentication.AuthenticationStatus.IN_PROGRESS;
 import static com.umulam.fleen.health.constant.authentication.MfaType.*;
