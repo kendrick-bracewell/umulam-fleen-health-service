@@ -32,17 +32,17 @@ import static java.util.Objects.isNull;
 
 @Slf4j
 @Service
-public class PaystackService {
+public class BankingService {
 
   private final PaystackAdapter paystackAdapter;
   private final CacheService cacheService;
   private final BankAccountJpaRepository bankAccountJpaRepository;
   private final MemberService memberService;
 
-  public PaystackService(PaystackAdapter paystackAdapter,
-                         CacheService cacheService,
-                         BankAccountJpaRepository bankAccountJpaRepository,
-                         MemberService memberService) {
+  public BankingService(PaystackAdapter paystackAdapter,
+                        CacheService cacheService,
+                        BankAccountJpaRepository bankAccountJpaRepository,
+                        MemberService memberService) {
     this.paystackAdapter = paystackAdapter;
     this.cacheService = cacheService;
     this.bankAccountJpaRepository = bankAccountJpaRepository;
