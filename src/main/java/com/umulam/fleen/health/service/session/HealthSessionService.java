@@ -30,7 +30,7 @@ public interface HealthSessionService {
   ProfessionalCheckAvailabilityResponse viewProfessionalAvailability(FleenUser user, Integer professionalId);
 
   @Transactional(readOnly = true)
-  GetProfessionalBookSessionResponse getProfessionalBookSession(FleenUser user, Integer professionalId);
+  GetProfessionalBookSessionResponse getProfessionalBookSession(Integer professionalId);
 
   @Transactional
   void rescheduleSession(ReScheduleHealthSessionDto dto, FleenUser user, Integer healthSessionId);

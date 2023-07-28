@@ -31,12 +31,6 @@ public interface MemberService {
 
   MemberView toMemberView(Member member);
 
-  boolean isMemberExists(String emailAddress);
-
-  boolean isMemberExists(Integer id);
-
-  boolean isMemberExistsById(Integer id);
-
   boolean isEmailAddressExists(String emailAddress);
 
   boolean isPhoneNumberExists(String phoneNumber);

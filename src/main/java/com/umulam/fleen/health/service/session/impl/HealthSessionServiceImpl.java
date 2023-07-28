@@ -139,8 +139,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   @Override
   @Transactional(readOnly = true)
-  public GetProfessionalBookSessionResponse getProfessionalBookSession(FleenUser user, Integer professionalId) {
-    memberService.isMemberExistsById(user.getId());
+  public GetProfessionalBookSessionResponse getProfessionalBookSession(Integer professionalId) {
     Professional professional = professionalService.getProfessional(professionalId);
     List<ProfessionalAvailability> availabilities = professionalAvailabilityJpaRepository.findAllByMember(professional.getMember());
     List<ProfessionalAvailabilityView> availabilityPeriod = ProfessionalAvailabilityMapper.toProfessionalAvailabilityViews(availabilities);

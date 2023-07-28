@@ -48,8 +48,8 @@ public class HealthSessionController {
   }
 
   @GetMapping(value = "/book-session/{id}")
-  public GetProfessionalBookSessionResponse getProfessionalBookSession(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer professionalId) {
-    return healthSessionService.getProfessionalBookSession(user, professionalId);
+  public GetProfessionalBookSessionResponse getProfessionalBookSession(@PathVariable(name = "id") Integer professionalId) {
+    return healthSessionService.getProfessionalBookSession(professionalId);
   }
 
   @PostMapping(value = "/book-session")

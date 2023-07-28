@@ -31,13 +31,12 @@ import com.umulam.fleen.health.model.response.member.UpdateEmailAddressOrPhoneNu
 import com.umulam.fleen.health.model.response.member.UpdateMemberDetailsResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
-import com.umulam.fleen.health.model.view.member.MemberView;
 import com.umulam.fleen.health.model.view.RoleView;
+import com.umulam.fleen.health.model.view.member.MemberView;
 import com.umulam.fleen.health.repository.jpa.MemberJpaRepository;
 import com.umulam.fleen.health.service.*;
 import com.umulam.fleen.health.service.external.aws.EmailServiceImpl;
 import com.umulam.fleen.health.service.external.aws.MobileTextService;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
@@ -122,26 +121,6 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   @Override
   public MemberView toMemberView(Member member) {
     return MemberMapper.toMemberView(member);
-  }
-
-
-  @Override
-  public boolean isMemberExists(@NonNull String emailAddress) {
-    return repository.findByEmailAddress(emailAddress).isPresent();
-  }
-
-  @Override
-  public boolean isMemberExists(Integer id) {
-    return repository.existsById(id);
-  }
-
-  @Override
-  public boolean isMemberExistsById(Integer id) {
-    boolean exists = repository.existsById(id);
-    if (exists) {
-      return true;
-    }
-    throw new UserNotFoundException(id);
   }
 
   @Override
