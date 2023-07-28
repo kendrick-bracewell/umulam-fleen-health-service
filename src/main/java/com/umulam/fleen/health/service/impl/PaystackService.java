@@ -28,6 +28,6 @@ public class PaystackService {
 
     GetBanksResponse banksResponse = paystackAdapter.getBanks(currency);
     cacheService.set(cacheKey, banksResponse.getData());
-    return null;
+    return banksResponse.getData();
   }
 }
