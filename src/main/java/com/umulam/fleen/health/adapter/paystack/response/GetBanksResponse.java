@@ -17,8 +17,10 @@ public class GetBanksResponse {
 
   @Getter
   @Setter
+  @NoArgsConstructor
   public static class BanksData {
     private String name;
     private String code;
+    private String currency;
   }
 }
