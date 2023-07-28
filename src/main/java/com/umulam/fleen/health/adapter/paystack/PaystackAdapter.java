@@ -71,12 +71,4 @@ public class PaystackAdapter extends BaseAdapter {
       return null;
     }
   }
-
-  private void handleResponseError(ResponseEntity<?> response) {
-    if (response.getStatusCode().is4xxClientError()) {
-      throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
-    } else {
-      throw new FleenHealthException(PaystackType.PAYSTACK.getValue());
-    }
-  }
 }
