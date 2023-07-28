@@ -39,5 +39,4 @@ public class MemberBankAccount {
   @Enumerated(EnumType.STRING)
   private BankAccountType bankAccountType;
 
-
 }
