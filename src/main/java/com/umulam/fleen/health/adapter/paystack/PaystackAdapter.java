@@ -35,6 +35,10 @@ public class PaystackAdapter extends BaseAdapter {
   }
 
   public ResolveBankAccountResponse resolveBankAccount(ResolveBankAccountRequest request) {
+    if (isMandatoryFieldAvailable(request.getAccountNumber(), request.getBankCode())) {
+      throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
+    }
+
     HashMap<ApiParameter, String> parameters = new HashMap<>();
     parameters.put(PaystackParameter.ACCOUNT_NUMBER, request.getAccountNumber());
     parameters.put(PaystackParameter.BANK_CODE, request.getBankCode());
@@ -48,11 +52,8 @@ public class PaystackAdapter extends BaseAdapter {
     } else {
       String message = String.format("An error occurred while calling resolveBankAccount method of PaystackAdapter: %s", response.getBody());
       log.error(message);
-      if (response.getStatusCode().is4xxClientError()) {
-        throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
-      } else {
-        throw new FleenHealthException(PaystackType.PAYSTACK.getValue());
-      }
+      handleResponseError(response);
+      return null;
     }
   }
 
@@ -66,11 +67,16 @@ public class PaystackAdapter extends BaseAdapter {
     } else {
       String message = String.format("An error occurred while calling getBanks method of PaystackAdapter: %s", response.getBody());
       log.error(message);
-      if (response.getStatusCode().is4xxClientError()) {
-        throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
-      } else {
-        throw new FleenHealthException(PaystackType.PAYSTACK.getValue());
-      }
+      handleResponseError(response);
+      return null;
+    }
+  }
+
+  private void handleResponseError(ResponseEntity<?> response) {
+    if (response.getStatusCode().is4xxClientError()) {
+      throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
+    } else {
+      throw new FleenHealthException(PaystackType.PAYSTACK.getValue());
     }
   }
 }
