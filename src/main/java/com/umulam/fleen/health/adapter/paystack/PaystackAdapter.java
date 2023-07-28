@@ -5,9 +5,11 @@ import com.umulam.fleen.health.adapter.base.BaseAdapter;
 import com.umulam.fleen.health.adapter.paystack.config.PaystackConfig;
 import com.umulam.fleen.health.adapter.paystack.model.enums.PaystackParameter;
 import com.umulam.fleen.health.adapter.paystack.model.request.CreateTransferRecipientRequest;
+import com.umulam.fleen.health.adapter.paystack.model.request.InitiateTransferRequest;
 import com.umulam.fleen.health.adapter.paystack.model.request.ResolveBankAccountRequest;
 import com.umulam.fleen.health.adapter.paystack.response.CreateTransferRecipientResponse;
 import com.umulam.fleen.health.adapter.paystack.response.GetBanksResponse;
+import com.umulam.fleen.health.adapter.paystack.response.InitiateTransferResponse;
 import com.umulam.fleen.health.adapter.paystack.response.ResolveBankAccountResponse;
 import com.umulam.fleen.health.constant.authentication.PaystackType;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
@@ -92,6 +94,25 @@ public class PaystackAdapter extends BaseAdapter {
       return response.getBody();
     } else {
       String message = String.format("An error occurred while calling createTransferRecipient method of PaystackAdapter: %s", response.getBody());
+      log.error(message);
+      handleResponseError(response);
+      return null;
+    }
+  }
+
+  public InitiateTransferResponse initiateTransfer(InitiateTransferRequest request) {
+    if (isMandatoryFieldAvailable(request.getRecipient(), request.getAmount(), request.getReference(), request.getSource())) {
+      throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
+    }
+
+    URI uri = buildUri(TRANSFER);
+    ResponseEntity<InitiateTransferResponse> response = doCall(uri, HttpMethod.POST,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), request, InitiateTransferResponse.class);
+
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response.getBody();
+    } else {
+      String message = String.format("An error occurred while calling initiateTransfer method of PaystackAdapter: %s", response.getBody());
       log.error(message);
       handleResponseError(response);
       return null;

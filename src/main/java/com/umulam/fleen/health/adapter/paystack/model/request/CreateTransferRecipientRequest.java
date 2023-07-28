@@ -1,15 +1,13 @@
 package com.umulam.fleen.health.adapter.paystack.model.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CreateTransferRecipientRequest {
 
   private String type;
@@ -22,8 +20,13 @@ public class CreateTransferRecipientRequest {
   @JsonProperty("bank_code")
   private String bankCode;
 
+  private CreateTransferRecipientMetadata metadata;
+
+  @Builder
   @Getter
   @Setter
+  @NoArgsConstructor
+  @AllArgsConstructor
   public static class CreateTransferRecipientMetadata {
 
     @JsonProperty("first_name")
