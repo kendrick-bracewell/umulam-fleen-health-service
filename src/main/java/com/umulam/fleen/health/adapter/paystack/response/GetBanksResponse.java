@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.adapter.paystack.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,8 @@ public class GetBanksResponse {
   public static class BanksData {
     private String name;
     private String code;
+
+    @JsonIgnore
     private String currency;
   }
 }
