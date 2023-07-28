@@ -18,6 +18,7 @@ public class CreateTransferRecipientResponse {
 
   private boolean status;
   private String message;
+  private CreateTransferRecipientData data;
 
   @Getter
   @Setter

@@ -83,7 +83,7 @@ public class PaystackAdapter extends BaseAdapter {
   }
 
   public CreateTransferRecipientResponse createTransferRecipient(CreateTransferRecipientRequest request) {
-    if (!isMandatoryFieldAvailable(request.getAccountNumber(), request.getBankCode(), request.getType(), request.getName())) {
+    if (!isMandatoryFieldAvailable(request.getAccountNumber(), request.getBankCode(), request.getType(), request.getAccountName())) {
       throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
     }
 

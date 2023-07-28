@@ -28,5 +28,6 @@ public class FleenHealthConstant {
   public static final String HEALTH_SESSION_CANCELED = "Health Session Canceled";
   public static final String HEALTH_SESSION_NOTE_UPDATED = "Health Session Note Updated";
   public static final String HEALTH_SESSION_REVIEW_ADDED = "Health Session Review Added";
+  public static final String BANK_ACCOUNT_DETAILS_SAVED = "Bank account details saved";
   public static final String TRANSACTION_REFERENCE_PREFIX = "FLEENHEALTH-TX-";
 }

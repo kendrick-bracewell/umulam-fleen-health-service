@@ -1,6 +1,8 @@
 package com.umulam.fleen.health.exception.handler;
 
 import com.umulam.fleen.health.exception.authentication.*;
+import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
+import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
 import com.umulam.fleen.health.exception.business.BusinessNotFoundException;
 import com.umulam.fleen.health.exception.country.CountryCodeDuplicateException;
 import com.umulam.fleen.health.exception.country.CountryDuplicateException;
@@ -110,11 +112,21 @@ public class FleenHealthExceptionHandler {
           ProfessionalShouldHaveAtLeastOneAvailabilityPeriod.class,
           ProfessionalNotAvailableForSessionDayException.class,
           AddReviewAfterSessionCompleteException.class,
-          ExternalSystemException.class
+          ExternalSystemException.class,
+          InvalidBankCodeException.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);
     return buildErrorMap(ex.getMessage(), BAD_REQUEST);
+  }
+
+  @ResponseStatus(value = ACCEPTED)
+  @ExceptionHandler(value = {
+    BankAccountAlreadyExists.class
+  })
+  public Object handleAccepted(Exception ex) {
+    log.error(ex.getMessage(), ex);
+    return buildErrorMap(ex.getMessage(), ACCEPTED);
   }
 
   @ResponseStatus(value = UNAUTHORIZED)

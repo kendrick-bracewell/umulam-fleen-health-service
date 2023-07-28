@@ -11,7 +11,9 @@ import lombok.*;
 public class CreateTransferRecipientRequest {
 
   private String type;
-  private String name;
+
+  @JsonProperty("name")
+  private String accountName;
   private String currency;
 
   @JsonProperty("account_number")
