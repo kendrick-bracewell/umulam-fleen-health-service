@@ -4,7 +4,9 @@ import com.umulam.fleen.health.adapter.ApiParameter;
 import com.umulam.fleen.health.adapter.base.BaseAdapter;
 import com.umulam.fleen.health.adapter.paystack.config.PaystackConfig;
 import com.umulam.fleen.health.adapter.paystack.model.enums.PaystackParameter;
+import com.umulam.fleen.health.adapter.paystack.model.request.CreateTransferRecipientRequest;
 import com.umulam.fleen.health.adapter.paystack.model.request.ResolveBankAccountRequest;
+import com.umulam.fleen.health.adapter.paystack.response.CreateTransferRecipientResponse;
 import com.umulam.fleen.health.adapter.paystack.response.GetBanksResponse;
 import com.umulam.fleen.health.adapter.paystack.response.ResolveBankAccountResponse;
 import com.umulam.fleen.health.constant.authentication.PaystackType;
@@ -18,8 +20,7 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 import java.util.HashMap;
 
-import static com.umulam.fleen.health.adapter.paystack.model.enums.PaystackEndpointBlock.BANK;
-import static com.umulam.fleen.health.adapter.paystack.model.enums.PaystackEndpointBlock.RESOLVE;
+import static com.umulam.fleen.health.adapter.paystack.model.enums.PaystackEndpointBlock.*;
 
 @Slf4j
 @Component
@@ -72,6 +73,25 @@ public class PaystackAdapter extends BaseAdapter {
       return response.getBody();
     } else {
       String message = String.format("An error occurred while calling getBanks method of PaystackAdapter: %s", response.getBody());
+      log.error(message);
+      handleResponseError(response);
+      return null;
+    }
+  }
+
+  public CreateTransferRecipientResponse createTransferRecipient(CreateTransferRecipientRequest request) {
+    if (isMandatoryFieldAvailable(request.getAccountNumber(), request.getBankCode(), request.getType(), request.getName())) {
+      throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
+    }
+
+    URI uri = buildUri(TRANSFER_RECIPIENT);
+    ResponseEntity<CreateTransferRecipientResponse> response = doCall(uri, HttpMethod.POST,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), request, CreateTransferRecipientResponse.class);
+
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response.getBody();
+    } else {
+      String message = String.format("An error occurred while calling createTransferRecipient method of PaystackAdapter: %s", response.getBody());
       log.error(message);
       handleResponseError(response);
       return null;

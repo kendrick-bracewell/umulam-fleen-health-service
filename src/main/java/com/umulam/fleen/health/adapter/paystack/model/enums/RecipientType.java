@@ -2,17 +2,15 @@ package com.umulam.fleen.health.adapter.paystack.model.enums;
 
 import com.umulam.fleen.health.adapter.ApiParameter;
 
-public enum PaystackParameter implements ApiParameter {
+public enum RecipientType implements ApiParameter {
 
-  ACCOUNT_NUMBER("account_number"),
-  BANK_CODE("bank_code"),
-  PER_PAGE("perPage"),
-  CURRENCY("currency");
-
+  NUBAN("nuban"),
+  MOBILE_MONEY("mobile_money"),
+  BASA("basa");
 
   private final String value;
 
-  PaystackParameter(String value) {
+  RecipientType(String value) {
     this.value = value;
   }
 
