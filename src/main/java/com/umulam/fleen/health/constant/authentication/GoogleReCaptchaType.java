@@ -31,9 +31,4 @@ public enum GoogleReCaptchaType implements ExternalSystemType {
   public String getValue() {
     return value;
   }
-
-  @Override
-  public String getLevel() {
-    return null;
-  }
 }

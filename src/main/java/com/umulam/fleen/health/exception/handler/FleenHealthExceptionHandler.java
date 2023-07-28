@@ -5,6 +5,7 @@ import com.umulam.fleen.health.exception.business.BusinessNotFoundException;
 import com.umulam.fleen.health.exception.country.CountryCodeDuplicateException;
 import com.umulam.fleen.health.exception.country.CountryDuplicateException;
 import com.umulam.fleen.health.exception.country.CountryNotFoundException;
+import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
 import com.umulam.fleen.health.exception.healthsession.*;
 import com.umulam.fleen.health.exception.member.MemberAlreadyOnboarded;
 import com.umulam.fleen.health.exception.member.MemberNotFoundException;
@@ -108,7 +109,8 @@ public class FleenHealthExceptionHandler {
           ProfessionalProfileNotApproved.class,
           ProfessionalShouldHaveAtLeastOneAvailabilityPeriod.class,
           ProfessionalNotAvailableForSessionDayException.class,
-          AddReviewAfterSessionCompleteException.class
+          AddReviewAfterSessionCompleteException.class,
+          ExternalSystemException.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);

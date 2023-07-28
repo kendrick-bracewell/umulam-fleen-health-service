@@ -9,6 +9,7 @@ public enum PaystackEndpointBlock implements EndpointBlock {
   TRANSFER_RECIPIENT("/transferrecipient"),
   BANK("bank");
 
+
   private final String value;
 
   PaystackEndpointBlock(String value) {

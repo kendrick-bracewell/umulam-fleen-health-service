@@ -15,5 +15,4 @@ public interface ExternalSystemType {
 
   String getValue();
 
-  String getLevel();
 }
