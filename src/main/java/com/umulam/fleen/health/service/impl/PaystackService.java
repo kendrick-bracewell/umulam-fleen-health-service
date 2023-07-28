@@ -23,11 +23,11 @@ public class PaystackService {
   public Object getBanks(String currency) {
     String cacheKey = PAYSTACK_GET_BANKS_CACHE_PREFIX;
     if (cacheService.exists(cacheKey)) {
-      return cacheService.get(cacheKey, GetBanksResponse.class);
+      return cacheService.get(cacheKey, GetBanksResponse.class).getData();
     }
 
     GetBanksResponse banksResponse = paystackAdapter.getBanks(currency);
-    cacheService.set(cacheKey, banksResponse.getData());
+    cacheService.set(cacheKey, banksResponse);
     return banksResponse.getData();
   }
 }

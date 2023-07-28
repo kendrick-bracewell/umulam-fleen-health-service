@@ -39,7 +39,7 @@ public class PaystackAdapter extends BaseAdapter {
   }
 
   public ResolveBankAccountResponse resolveBankAccount(ResolveBankAccountRequest request) {
-    if (isMandatoryFieldAvailable(request.getAccountNumber(), request.getBankCode())) {
+    if (!isMandatoryFieldAvailable(request.getAccountNumber(), request.getBankCode())) {
       throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
     }
 
@@ -62,7 +62,7 @@ public class PaystackAdapter extends BaseAdapter {
   }
 
   public GetBanksResponse getBanks(String currency) {
-    if (isMandatoryFieldAvailable(currency)) {
+    if (!isMandatoryFieldAvailable(currency)) {
       throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
     }
 
@@ -72,7 +72,6 @@ public class PaystackAdapter extends BaseAdapter {
     URI uri = buildUri(parameters, BANK);
     ResponseEntity<GetBanksResponse> response = doCall(uri, HttpMethod.GET,
       getAuthHeaderWithBearerToken(config.getSecretKey()), null, GetBanksResponse.class);
-
     if (response.getStatusCode().is2xxSuccessful()) {
       return response.getBody();
     } else {
@@ -84,7 +83,7 @@ public class PaystackAdapter extends BaseAdapter {
   }
 
   public CreateTransferRecipientResponse createTransferRecipient(CreateTransferRecipientRequest request) {
-    if (isMandatoryFieldAvailable(request.getAccountNumber(), request.getBankCode(), request.getType(), request.getName())) {
+    if (!isMandatoryFieldAvailable(request.getAccountNumber(), request.getBankCode(), request.getType(), request.getName())) {
       throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
     }
 
@@ -103,7 +102,7 @@ public class PaystackAdapter extends BaseAdapter {
   }
 
   public InitiateTransferResponse initiateTransfer(InitiateTransferRequest request) {
-    if (isMandatoryFieldAvailable(request.getRecipient(), request.getAmount(), request.getReference(), request.getSource())) {
+    if (!isMandatoryFieldAvailable(request.getRecipient(), request.getAmount(), request.getReference(), request.getSource())) {
       throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
     }
 
