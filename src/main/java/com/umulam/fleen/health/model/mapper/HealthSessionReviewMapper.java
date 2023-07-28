@@ -4,6 +4,7 @@ import com.umulam.fleen.health.model.domain.HealthSessionReview;
 import com.umulam.fleen.health.model.view.healthsession.HealthSessionReviewView;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -57,6 +58,8 @@ public class HealthSessionReviewMapper {
         .stream()
         .filter(Objects::nonNull)
         .map(HealthSessionReviewMapper::toHealthSessionReviewViewProfessional)
+        .filter(Objects::nonNull)
+        .sorted(Comparator.comparingInt(HealthSessionReviewView::getRatingValue))
         .collect(Collectors.toList());
     }
     return Collections.emptyList();

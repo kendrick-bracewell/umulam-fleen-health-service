@@ -24,9 +24,6 @@ public interface HealthSessionService {
   PendingHealthSessionBookingResponse bookSession(BookHealthSessionDto dto, FleenUser user);
 
   @Transactional
-  void validateAndCompleteTransaction(String body);
-
-  @Transactional
   void cancelSession(FleenUser user, Integer sessionId);
 
   @Transactional(readOnly = true)

@@ -1,15 +1,10 @@
 package com.umulam.fleen.health.service.session.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umulam.fleen.health.constant.paystack.PaystackWebhookEventType;
 import com.umulam.fleen.health.constant.professional.AvailabilityDayOfTheWeek;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import com.umulam.fleen.health.constant.session.*;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.event.CancelSessionMeetingEvent;
-import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import com.umulam.fleen.health.event.RescheduleSessionMeetingEvent;
 import com.umulam.fleen.health.exception.healthsession.*;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionDateException;
@@ -21,8 +16,6 @@ import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.dto.healthsession.AddHealthSessionReviewDto;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.dto.healthsession.ReScheduleHealthSessionDto;
-import com.umulam.fleen.health.model.event.paystack.ChargeEvent;
-import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
 import com.umulam.fleen.health.model.mapper.HealthSessionMapper;
 import com.umulam.fleen.health.model.mapper.ProfessionalAvailabilityMapper;
 import com.umulam.fleen.health.model.mapper.ProfessionalMapper;
@@ -40,7 +33,6 @@ import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.HealthSessionProfessionalJpaRepository;
 import com.umulam.fleen.health.repository.jpa.HealthSessionReviewJpaRepository;
 import com.umulam.fleen.health.repository.jpa.ProfessionalAvailabilityJpaRepository;
-import com.umulam.fleen.health.repository.jpa.transaction.SessionTransactionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.TransactionJpaRepository;
 import com.umulam.fleen.health.service.MemberService;
 import com.umulam.fleen.health.service.ProfessionalService;
@@ -56,12 +48,13 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.REFERENCE_PREFIX;
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.TRANSACTION_REFERENCE_PREFIX;
-import static com.umulam.fleen.health.constant.session.TransactionStatus.SUCCESS;
-import static com.umulam.fleen.health.event.CreateSessionMeetingEvent.CreateSessionMeetingEventMetadata;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
 import static com.umulam.fleen.health.util.StringUtil.getFullName;
@@ -76,12 +69,10 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   private final ProfessionalService professionalService;
   private final UniqueReferenceGenerator referenceGenerator;
   private final TransactionJpaRepository transactionJpaRepository;
-  private final SessionTransactionJpaRepository sessionTransactionJpaRepository;
   private final ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository;
   private final HealthSessionReviewJpaRepository healthSessionReviewJpaRepository;
   private final FleenHealthEventService eventService;
   private final MemberService memberService;
-  private final ObjectMapper mapper;
 
   public HealthSessionServiceImpl(
           HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository,
@@ -89,23 +80,19 @@ public class HealthSessionServiceImpl implements HealthSessionService {
           ProfessionalService professionalService,
           UniqueReferenceGenerator referenceGenerator,
           TransactionJpaRepository transactionJpaRepository,
-          SessionTransactionJpaRepository sessionTransactionJpaRepository,
           ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository,
           HealthSessionReviewJpaRepository healthSessionReviewJpaRepository,
           FleenHealthEventService eventService,
-          MemberService memberService,
-          ObjectMapper mapper) {
+          MemberService memberService) {
     this.sessionProfessionalJpaRepository = sessionProfessionalJpaRepository;
     this.healthSessionRepository = healthSessionRepository;
     this.professionalService = professionalService;
     this.referenceGenerator = referenceGenerator;
     this.transactionJpaRepository = transactionJpaRepository;
-    this.sessionTransactionJpaRepository = sessionTransactionJpaRepository;
     this.professionalAvailabilityJpaRepository = professionalAvailabilityJpaRepository;
     this.healthSessionReviewJpaRepository = healthSessionReviewJpaRepository;
     this.eventService = eventService;
     this.memberService = memberService;
-    this.mapper = mapper;
   }
 
   @Override
@@ -257,82 +244,6 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   @Override
   @Transactional
-  public void validateAndCompleteTransaction(String body) {
-    try {
-      PaystackWebhookEvent event = mapper.readValue(body, PaystackWebhookEvent.class);
-      if (Objects.equals(event.getEvent(), PaystackWebhookEventType.CHARGE_SUCCESS.getValue())) {
-        validateAndCompleteSessionTransaction(body);
-      }
-    } catch (JsonProcessingException ex) {
-      log.error(ex.getMessage(), ex);
-    }
-  }
-
-  private void validateAndCompleteSessionTransaction(String body) {
-    try {
-      ChargeEvent event = mapper.readValue(body, ChargeEvent.class);
-      Optional<SessionTransaction> transactionExist = sessionTransactionJpaRepository.findByReference(event.getData().getMetadata().getTransactionReference());
-      if (SUCCESS.getValue().equalsIgnoreCase(event.getData().getStatus())) {
-        if (transactionExist.isPresent()) {
-          SessionTransaction transaction = transactionExist.get();
-
-          if (transaction.getStatus() != SUCCESS) {
-            transaction.setStatus(SUCCESS);
-            transaction.setExternalSystemReference(event.getData().getReference());
-            transaction.setCurrency(event.getData().getCurrency().toUpperCase());
-
-            Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(transaction.getSessionReference());
-            if (healthSessionExist.isPresent()) {
-              HealthSession healthSession = healthSessionExist.get();
-
-              if (healthSession.getStatus() != HealthSessionStatus.SCHEDULED && healthSession.getStatus() != HealthSessionStatus.RESCHEDULED) {
-                LocalDate meetingDate = healthSession.getDate();
-                LocalTime meetingTime = healthSession.getTime();
-
-                LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
-                LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMaxMeetingSessionHourDuration());
-
-                String patientEmail = healthSession.getPatient().getEmailAddress();
-                String professionalEmail = healthSession.getProfessional().getEmailAddress();
-                String patientName = getFullName(healthSession.getPatient().getFirstName(), healthSession.getPatient().getLastName());
-                String professionalName = getFullName(healthSession.getProfessional().getFirstName(), healthSession.getProfessional().getLastName());
-
-                CreateSessionMeetingEvent meetingEvent = CreateSessionMeetingEvent.builder()
-                  .startDate(meetingStartDateTime)
-                  .endDate(meetingEndDateTime)
-                  .attendees(List.of(patientEmail, professionalEmail))
-                  .timezone(healthSession.getTimezone())
-                  .sessionReference(healthSession.getReference())
-                  .patientName(patientName)
-                  .professionalName(professionalName)
-                  .build();
-
-                CreateSessionMeetingEventMetadata eventMetadata = CreateSessionMeetingEventMetadata.builder()
-                  .sessionReference(healthSession.getReference())
-                  .build();
-                meetingEvent.setMetadata(getCreateSessionMeetingEventMetadata(eventMetadata));
-                eventService.publishCreateSession(meetingEvent);
-              }
-              sessionTransactionJpaRepository.save(transaction);
-            }
-          }
-        }
-      } else {
-        if (transactionExist.isPresent()) {
-          SessionTransaction transaction = transactionExist.get();
-          transaction.setStatus(TransactionStatus.FAILED);
-          transaction.setExternalSystemReference(event.getData().getReference());
-          transaction.setCurrency(event.getData().getCurrency().toUpperCase());
-          sessionTransactionJpaRepository.save(transaction);
-        }
-      }
-    } catch (JsonProcessingException ex) {
-      log.error(ex.getMessage(), ex);
-    }
-  }
-
-  @Override
-  @Transactional
   public void cancelSession(FleenUser user, Integer healthSessionId) {
     Member member = memberService.getMemberById(user.getId());
     Optional<HealthSession> healthSessionExist = healthSessionRepository.findByPatientAndId(member, healthSessionId);
@@ -439,11 +350,8 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     return TRANSACTION_REFERENCE_PREFIX.concat(referenceGenerator.generateUniqueReference());
   }
 
-  private int getMaxMeetingSessionHourDuration() {
+  public static int getMaxMeetingSessionHourDuration() {
     return 1;
   }
 
-  private Map<String, String> getCreateSessionMeetingEventMetadata(CreateSessionMeetingEventMetadata metadata) {
-    return mapper.convertValue(metadata, new TypeReference<>() {});
-  }
 }

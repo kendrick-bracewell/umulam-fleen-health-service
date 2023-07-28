@@ -8,6 +8,7 @@ import com.umulam.fleen.health.constant.authentication.PaystackType;
 import com.umulam.fleen.health.exception.base.FleenHealthException;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
 import com.umulam.fleen.health.util.AuthUtil;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
@@ -24,12 +25,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
+@Setter
 public class BaseAdapter {
 
 
   @NotBlank
-  protected final String baseUrl;
-  protected final RestTemplate restTemplate;
+  protected String baseUrl;
+  protected RestTemplate restTemplate;
 
   protected BaseAdapter(String baseUrl) {
     this.baseUrl = baseUrl;

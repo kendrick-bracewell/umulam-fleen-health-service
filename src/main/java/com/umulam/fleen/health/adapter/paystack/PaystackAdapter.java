@@ -13,6 +13,7 @@ import com.umulam.fleen.health.adapter.paystack.response.InitiateTransferRespons
 import com.umulam.fleen.health.adapter.paystack.response.ResolveBankAccountResponse;
 import com.umulam.fleen.health.constant.authentication.PaystackType;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
@@ -26,11 +27,12 @@ import static com.umulam.fleen.health.adapter.paystack.model.enums.PaystackEndpo
 
 @Slf4j
 @Component
+@Setter
 public class PaystackAdapter extends BaseAdapter {
 
   private final PaystackConfig config;
 
-  protected PaystackAdapter(@Value("${paystack.base-url}") String baseUrl,
+  public PaystackAdapter(@Value("${paystack.base-url}") String baseUrl,
                             PaystackConfig config) {
     super(baseUrl);
     this.config = config;
