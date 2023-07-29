@@ -7,10 +7,7 @@ import com.umulam.fleen.health.adapter.paystack.model.enums.PaystackParameter;
 import com.umulam.fleen.health.adapter.paystack.model.request.CreateTransferRecipientRequest;
 import com.umulam.fleen.health.adapter.paystack.model.request.InitiateTransferRequest;
 import com.umulam.fleen.health.adapter.paystack.model.request.ResolveBankAccountRequest;
-import com.umulam.fleen.health.adapter.paystack.response.CreateTransferRecipientResponse;
-import com.umulam.fleen.health.adapter.paystack.response.GetBanksResponse;
-import com.umulam.fleen.health.adapter.paystack.response.InitiateTransferResponse;
-import com.umulam.fleen.health.adapter.paystack.response.ResolveBankAccountResponse;
+import com.umulam.fleen.health.adapter.paystack.response.*;
 import com.umulam.fleen.health.constant.authentication.PaystackType;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
 import lombok.Setter;
@@ -114,6 +111,25 @@ public class PaystackAdapter extends BaseAdapter {
       return response.getBody();
     } else {
       String message = String.format("An error occurred while calling initiateTransfer method of PaystackAdapter: %s", response.getBody());
+      log.error(message);
+      handleResponseError(response);
+      return null;
+    }
+  }
+
+  public DeleteTransferRecipientResponse deleteTransferRecipient(String recipientCode) {
+    if (!isMandatoryFieldAvailable(recipientCode)) {
+      throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
+    }
+
+    URI uri = buildUri(TRANSFER_RECIPIENT);
+    ResponseEntity<DeleteTransferRecipientResponse> response = doCall(uri, HttpMethod.DELETE,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), null, DeleteTransferRecipientResponse.class);
+
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response.getBody();
+    } else {
+      String message = String.format("An error occurred while calling deleteTransferRecipient method of PaystackAdapter: %s", response.getBody());
       log.error(message);
       handleResponseError(response);
       return null;

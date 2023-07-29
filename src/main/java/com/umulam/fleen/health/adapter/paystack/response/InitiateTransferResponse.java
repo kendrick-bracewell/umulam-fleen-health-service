@@ -10,10 +10,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InitiateTransferResponse {
+public class InitiateTransferResponse extends PaystackResponse {
 
-  private boolean status;
-  private String message;
+  private InitiateTransferData data;
 
   @Getter
   @Setter

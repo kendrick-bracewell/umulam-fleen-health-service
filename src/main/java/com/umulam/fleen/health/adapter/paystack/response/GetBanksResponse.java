@@ -9,10 +9,8 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class GetBanksResponse {
+public class GetBanksResponse extends PaystackResponse {
 
-  private boolean status;
-  private String message;
   private List<BankData> data;
 
   @Getter

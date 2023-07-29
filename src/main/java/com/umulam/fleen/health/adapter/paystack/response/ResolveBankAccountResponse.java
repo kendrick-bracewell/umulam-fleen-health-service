@@ -10,10 +10,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResolveBankAccountResponse {
+public class ResolveBankAccountResponse extends PaystackResponse {
 
-  private boolean status;
-  private String message;
   private BankAccountData data;
 
   @Getter

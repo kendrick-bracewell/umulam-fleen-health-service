@@ -2,7 +2,6 @@ package com.umulam.fleen.health.adapter.paystack.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.umulam.fleen.health.adapter.paystack.model.enums.RecipientType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,10 +13,8 @@ import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_WITH_TIMEZON
 @Getter
 @Setter
 @NoArgsConstructor
-public class CreateTransferRecipientResponse {
+public class CreateTransferRecipientResponse extends PaystackResponse {
 
-  private boolean status;
-  private String message;
   private CreateTransferRecipientData data;
 
   @Getter

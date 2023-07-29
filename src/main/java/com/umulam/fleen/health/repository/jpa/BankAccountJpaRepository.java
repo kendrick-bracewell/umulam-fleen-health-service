@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface BankAccountJpaRepository extends JpaRepository<MemberBankAccount, Integer> {
 
   boolean existsByAccountNumber(String accountNumber);
+
+  Optional<MemberBankAccount> findByAccountNumber(String accountNumber);
 }

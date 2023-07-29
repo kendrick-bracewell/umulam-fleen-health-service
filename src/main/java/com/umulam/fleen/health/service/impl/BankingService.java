@@ -10,6 +10,7 @@ import com.umulam.fleen.health.adapter.paystack.response.GetBanksResponse;
 import com.umulam.fleen.health.adapter.paystack.response.ResolveBankAccountResponse;
 import com.umulam.fleen.health.constant.session.CurrencyType;
 import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
+import com.umulam.fleen.health.exception.banking.BankAccountNotFoundException;
 import com.umulam.fleen.health.exception.banking.InvalidAccountTypeCombinationException;
 import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
 import com.umulam.fleen.health.model.domain.Member;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.umulam.fleen.health.adapter.paystack.response.GetBanksResponse.BankData;
 import static com.umulam.fleen.health.constant.base.GeneralConstant.PAYSTACK_GET_BANKS_CACHE_PREFIX;
@@ -111,6 +113,16 @@ public class BankingService {
     bankAccount.setExternalSystemRecipientCode(createRecipientResponse.getData().getRecipientCode());
     bankAccount.setMember(Member.builder().id(user.getId()).build());
     bankAccountJpaRepository.save(bankAccount);
+  }
+
+  @Transactional
+  public void deleteBankAccount(String accountNumber, FleenUser user) {
+    Optional<MemberBankAccount> bankAccountExist = bankAccountJpaRepository.findByAccountNumber(accountNumber);
+    if (bankAccountExist.isEmpty()) {
+      throw new BankAccountNotFoundException(accountNumber);
+    }
+
+
   }
 
   @EventListener(ApplicationReadyEvent.class)

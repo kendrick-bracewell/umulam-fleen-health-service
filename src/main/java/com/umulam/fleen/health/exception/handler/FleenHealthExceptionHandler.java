@@ -2,6 +2,7 @@ package com.umulam.fleen.health.exception.handler;
 
 import com.umulam.fleen.health.exception.authentication.*;
 import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
+import com.umulam.fleen.health.exception.banking.BankAccountNotFoundException;
 import com.umulam.fleen.health.exception.banking.InvalidAccountTypeCombinationException;
 import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
 import com.umulam.fleen.health.exception.business.BusinessNotFoundException;
@@ -67,7 +68,8 @@ public class FleenHealthExceptionHandler {
           MemberNotFoundException.class,
           ProfileVerificationMessageNotFoundException.class,
           HealthSessionNotFoundException.class,
-          SessionTransactionNotFound.class
+          SessionTransactionNotFound.class,
+          BankAccountNotFoundException.class
   })
   public Object handleNotFound(Exception ex) {
     log.error(ex.getMessage(), ex);

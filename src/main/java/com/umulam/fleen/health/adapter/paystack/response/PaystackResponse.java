@@ -7,6 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DeleteTransferRecipientResponse extends PaystackResponse {
+public class PaystackResponse {
 
+  private boolean status;
+  private String message;
 }
