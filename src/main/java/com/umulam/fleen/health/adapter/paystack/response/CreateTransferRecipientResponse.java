@@ -40,7 +40,7 @@ public class CreateTransferRecipientResponse {
     private String id;
     private String currency;
     private String name;
-    private RecipientType type;
+    private String type;
     private CreateTransferRecipientDetails details;
 
     @Getter

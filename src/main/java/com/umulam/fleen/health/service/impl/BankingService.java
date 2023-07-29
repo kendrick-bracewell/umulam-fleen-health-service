@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.adapter.paystack.PaystackAdapter;
+import com.umulam.fleen.health.adapter.paystack.model.enums.RecipientType;
 import com.umulam.fleen.health.adapter.paystack.model.request.CreateTransferRecipientRequest;
 import com.umulam.fleen.health.adapter.paystack.model.request.CreateTransferRecipientRequest.CreateTransferRecipientMetadata;
 import com.umulam.fleen.health.adapter.paystack.model.request.ResolveBankAccountRequest;
@@ -9,6 +10,7 @@ import com.umulam.fleen.health.adapter.paystack.response.GetBanksResponse;
 import com.umulam.fleen.health.adapter.paystack.response.ResolveBankAccountResponse;
 import com.umulam.fleen.health.constant.session.CurrencyType;
 import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
+import com.umulam.fleen.health.exception.banking.InvalidAccountTypeCombinationException;
 import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.MemberBankAccount;
@@ -68,8 +70,15 @@ public class BankingService {
       .bankCode(dto.getBankCode())
       .build();
 
-    if (!isBankCodeExists(dto.getBankCode(), dto.getCurrency())) {
+    String recipientType = dto.getRecipientType().toUpperCase();
+    String currency = dto.getCurrency().toUpperCase();
+
+    if (!isBankCodeExists(dto.getBankCode(), currency)) {
       throw new InvalidBankCodeException(dto.getBankCode());
+    }
+
+    if (!isAccountTypeCombinationTrue(recipientType, currency)) {
+      throw new InvalidAccountTypeCombinationException(recipientType, currency);
     }
 
     boolean accountNumberExist = bankAccountJpaRepository.existsByAccountNumber(dto.getAccountNumber());
@@ -80,11 +89,11 @@ public class BankingService {
     ResolveBankAccountResponse bankAccountResponse = paystackAdapter.resolveBankAccount(request);
     GetMemberUpdateDetailsResponse member = memberService.getMemberGetUpdateDetailsResponse(user);
     CreateTransferRecipientRequest transferRecipientRequest = CreateTransferRecipientRequest.builder()
-        .type(dto.getRecipientType().toUpperCase())
+        .type(recipientType)
         .accountNumber(dto.getAccountNumber())
         .accountName(bankAccountResponse.getData().getAccountName())
         .bankCode(dto.getBankCode())
-        .currency(dto.getCurrency())
+        .currency(currency)
         .build();
 
     CreateTransferRecipientMetadata metadata = CreateTransferRecipientMetadata.builder()
@@ -133,6 +142,22 @@ public class BankingService {
       .stream()
       .anyMatch(bank -> bank.getCode().equalsIgnoreCase(bankCode)
                      && bank.getCurrency().equalsIgnoreCase(currency));
+  }
+
+  public static boolean isAccountTypeCombinationTrue(String recipientType, String currencyType) {
+    RecipientType recipient = RecipientType.valueOf(recipientType.toUpperCase());
+    CurrencyType currency = CurrencyType.valueOf(currencyType.toUpperCase());
+
+    switch (recipient) {
+      case NUBAN:
+        return currency == CurrencyType.NGN;
+      case MOBILE_MONEY:
+        return currency == CurrencyType.GHS;
+      case BASA:
+        return currency == CurrencyType.ZAR;
+      default:
+        return false;
+    }
   }
 
 }
