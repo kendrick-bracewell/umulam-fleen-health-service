@@ -6,7 +6,7 @@ import com.umulam.fleen.health.adapter.paystack.model.request.CreateTransferReci
 import com.umulam.fleen.health.adapter.paystack.model.request.CreateTransferRecipientRequest.CreateTransferRecipientMetadata;
 import com.umulam.fleen.health.adapter.paystack.model.request.ResolveBankAccountRequest;
 import com.umulam.fleen.health.adapter.paystack.response.CreateTransferRecipientResponse;
-import com.umulam.fleen.health.adapter.paystack.response.GetBanksResponse;
+import com.umulam.fleen.health.adapter.paystack.response.PsGetBanksResponse;
 import com.umulam.fleen.health.adapter.paystack.response.ResolveBankAccountResponse;
 import com.umulam.fleen.health.constant.session.CurrencyType;
 import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.umulam.fleen.health.adapter.paystack.response.GetBanksResponse.BankData;
+import static com.umulam.fleen.health.adapter.paystack.response.PsGetBanksResponse.PsBankData;
 import static com.umulam.fleen.health.constant.base.GeneralConstant.PAYSTACK_GET_BANKS_CACHE_PREFIX;
 import static java.util.Objects.isNull;
 
@@ -54,13 +54,13 @@ public class BankingService {
     this.memberService = memberService;
   }
 
-  public List<BankData> getBanks(String currency) {
+  public List<PsBankData> getBanks(String currency) {
     String cacheKey = getBanksCacheKey().concat(currency.toUpperCase());
     if (cacheService.exists(cacheKey)) {
-      return cacheService.get(cacheKey, GetBanksResponse.class).getData();
+      return cacheService.get(cacheKey, PsGetBanksResponse.class).getData();
     }
 
-    GetBanksResponse banksResponse = paystackAdapter.getBanks(currency);
+    PsGetBanksResponse banksResponse = paystackAdapter.getBanks(currency);
     cacheService.set(cacheKey, banksResponse);
     return banksResponse.getData();
   }
@@ -130,7 +130,7 @@ public class BankingService {
 
   @EventListener(ApplicationReadyEvent.class)
   public void saveBanksToCacheOnStartup() {
-    GetBanksResponse banksResponse = paystackAdapter.getBanks(CurrencyType.NGN.getValue());
+    PsGetBanksResponse banksResponse = paystackAdapter.getBanks(CurrencyType.NGN.getValue());
     saveBanksToCache(banksResponse, null);
   }
 
@@ -139,7 +139,7 @@ public class BankingService {
     saveBanksToCache(null, CurrencyType.NGN.getValue());
   }
 
-  private void saveBanksToCache(GetBanksResponse response, String currency) {
+  private void saveBanksToCache(PsGetBanksResponse response, String currency) {
     if (isNull(response) || isNull(response.getData()) || response.getData().isEmpty()) {
       saveBanksToCacheOnStartup();
     }
@@ -152,7 +152,7 @@ public class BankingService {
   }
 
   private boolean isBankCodeExists(String bankCode, String currency) {
-    List<BankData> banks = getBanks(currency);
+    List<PsBankData> banks = getBanks(currency);
     return banks
       .stream()
       .anyMatch(bank -> bank.getCode().equalsIgnoreCase(bankCode)

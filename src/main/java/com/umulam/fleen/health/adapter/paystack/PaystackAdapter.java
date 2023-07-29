@@ -11,7 +11,6 @@ import com.umulam.fleen.health.adapter.paystack.response.*;
 import com.umulam.fleen.health.aspect.RetryOnTimeout;
 import com.umulam.fleen.health.constant.authentication.PaystackType;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
@@ -26,7 +25,6 @@ import static com.umulam.fleen.health.adapter.paystack.model.enums.PaystackEndpo
 
 @Slf4j
 @Component
-@Setter
 public class PaystackAdapter extends BaseAdapter {
 
   private final PaystackConfig config;
@@ -53,14 +51,14 @@ public class PaystackAdapter extends BaseAdapter {
     if (response.getStatusCode().is2xxSuccessful()) {
       return response.getBody();
     } else {
-      String message = String.format("An error occurred while calling resolveBankAccount method of PaystackAdapter: %s", response.getBody());
+      String message = String.format("An error occurred while calling resolveBankAccount method of %s: %s", getClass().getSimpleName(), response.getBody());
       log.error(message);
       handleResponseError(response);
       return null;
     }
   }
 
-  public GetBanksResponse getBanks(String currency) {
+  public PsGetBanksResponse getBanks(String currency) {
     if (!isMandatoryFieldAvailable(currency)) {
       throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
     }
@@ -69,12 +67,12 @@ public class PaystackAdapter extends BaseAdapter {
     parameters.put(PaystackParameter.CURRENCY, currency.toUpperCase());
 
     URI uri = buildUri(parameters, BANK);
-    ResponseEntity<GetBanksResponse> response = doCall(uri, HttpMethod.GET,
-      getAuthHeaderWithBearerToken(config.getSecretKey()), null, GetBanksResponse.class);
+    ResponseEntity<PsGetBanksResponse> response = doCall(uri, HttpMethod.GET,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), null, PsGetBanksResponse.class);
     if (response.getStatusCode().is2xxSuccessful()) {
       return response.getBody();
     } else {
-      String message = String.format("An error occurred while calling getBanks method of PaystackAdapter: %s", response.getBody());
+      String message = String.format("An error occurred while calling getBanks method of %s: %s", getClass().getSimpleName(), response.getBody());
       log.error(message);
       handleResponseError(response);
       return null;
@@ -93,7 +91,7 @@ public class PaystackAdapter extends BaseAdapter {
     if (response.getStatusCode().is2xxSuccessful()) {
       return response.getBody();
     } else {
-      String message = String.format("An error occurred while calling createTransferRecipient method of PaystackAdapter: %s", response.getBody());
+      String message = String.format("An error occurred while calling createTransferRecipient method of %s: %s", getClass().getSimpleName(), response.getBody());
       log.error(message);
       handleResponseError(response);
       return null;
@@ -112,7 +110,7 @@ public class PaystackAdapter extends BaseAdapter {
     if (response.getStatusCode().is2xxSuccessful()) {
       return response.getBody();
     } else {
-      String message = String.format("An error occurred while calling initiateTransfer method of PaystackAdapter: %s", response.getBody());
+      String message = String.format("An error occurred while calling initiateTransfer method of %s: %s", getClass().getSimpleName(), response.getBody());
       log.error(message);
       handleResponseError(response);
       return null;
@@ -134,7 +132,7 @@ public class PaystackAdapter extends BaseAdapter {
     } else if (response.getStatusCode().is4xxClientError() && response.getStatusCodeValue() == HttpStatus.NOT_FOUND.value()) {
       return;
     }
-    String message = String.format("An error occurred while calling deleteTransferRecipient method of PaystackAdapter: %s", response.getBody());
+    String message = String.format("An error occurred while calling deleteTransferRecipient method of %s: %s", getClass().getSimpleName(), response.getBody());
     log.error(message);
     handleResponseError(response);
   }

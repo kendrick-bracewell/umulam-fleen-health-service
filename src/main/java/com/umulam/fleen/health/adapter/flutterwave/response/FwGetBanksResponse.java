@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.adapter.paystack.response;
+package com.umulam.fleen.health.adapter.flutterwave.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,16 +9,16 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class GetBanksResponse extends PaystackResponse {
+public class FwGetBanksResponse extends FlutterwaveResponse {
 
-  private List<BankData> data;
+  private List<FwBankData> data;
 
   @Getter
   @Setter
   @NoArgsConstructor
-  public static class BankData {
+  public static class FwBankData {
+    private String id;
     private String name;
     private String code;
-    private String currency;
   }
 }
