@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.controller;
 
 import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
+import com.umulam.fleen.health.model.dto.banking.CreateWithdrawalDto;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.service.impl.BankingService;
@@ -39,5 +40,10 @@ public class BankingController {
   public Object deleteBankAccount(@PathVariable(name = "accountNumber") String accountNumber, @AuthenticationPrincipal FleenUser user) {
     bankingService.deleteBankAccount(accountNumber, user);
     return new FleenHealthResponse(BANK_ACCOUNT_DETAILS_DELETED);
+  }
+
+  @PutMapping(value = "/withdraw")
+  public void withdraw(@Valid @RequestBody CreateWithdrawalDto dto, @AuthenticationPrincipal FleenUser user) {
+
   }
 }

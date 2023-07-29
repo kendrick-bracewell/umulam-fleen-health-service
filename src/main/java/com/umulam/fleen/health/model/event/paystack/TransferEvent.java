@@ -29,6 +29,7 @@ class TransferEvent {
     private String failures;
     private String source;
     private String status;
+    private TransferRecipientData recipient;
 
     @JsonProperty("transfer_code")
     private String transferCode;
@@ -52,7 +53,7 @@ class TransferEvent {
       private boolean active;
       private String id;
       private String email;
-      private RecipientType type;
+      private String type;
       private String currency;
       private String name;
 

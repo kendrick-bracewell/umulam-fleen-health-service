@@ -22,11 +22,11 @@ public class Earnings {
   @Column(name = "id")
   private Integer id;
 
-  @Column
+  @Column(name = "total_earnings", nullable = false)
   private BigDecimal totalEarnings;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @Column(name = "member_id")
+  @Column(name = "member_id", nullable = false)
   private Member member;
 
   @CreationTimestamp
