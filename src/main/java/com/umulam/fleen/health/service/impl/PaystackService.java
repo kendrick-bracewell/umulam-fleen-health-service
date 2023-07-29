@@ -1,7 +1,7 @@
 package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.adapter.paystack.PaystackAdapter;
-import com.umulam.fleen.health.adapter.paystack.model.enums.RecipientType;
+import com.umulam.fleen.health.adapter.paystack.model.enums.PsRecipientType;
 import com.umulam.fleen.health.adapter.paystack.model.request.CreateTransferRecipientRequest;
 import com.umulam.fleen.health.adapter.paystack.model.request.CreateTransferRecipientRequest.CreateTransferRecipientMetadata;
 import com.umulam.fleen.health.adapter.paystack.model.request.ResolveBankAccountRequest;
@@ -160,7 +160,7 @@ public class PaystackService {
   }
 
   public static boolean isAccountTypePsCombinationValid(String recipientType, String currencyType) {
-    RecipientType recipient = RecipientType.valueOf(recipientType.toUpperCase());
+    PsRecipientType recipient = PsRecipientType.valueOf(recipientType.toUpperCase());
     CurrencyType currency = CurrencyType.valueOf(currencyType.toUpperCase());
 
     switch (recipient) {

@@ -4,6 +4,7 @@ import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
 import com.umulam.fleen.health.model.dto.banking.CreateWithdrawalDto;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.service.impl.FlutterwaveService;
 import com.umulam.fleen.health.service.impl.PaystackService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,14 +21,22 @@ import static com.umulam.fleen.health.constant.base.FleenHealthConstant.BANK_ACC
 public class BankingController {
 
   private final PaystackService paystackService;
+  private final FlutterwaveService flutterwaveService;
 
-  public BankingController(PaystackService paystackService) {
+  public BankingController(PaystackService paystackService,
+                           FlutterwaveService flutterwaveService) {
     this.paystackService = paystackService;
+    this.flutterwaveService = flutterwaveService;
   }
 
   @GetMapping(value = "/get-banks-ps")
-  public Object getBanks(@RequestParam(name = "currency", defaultValue = "NGN") String currency) {
+  public Object getBanksPs(@RequestParam(name = "currency", defaultValue = "NGN") String currency) {
     return paystackService.getBanks(currency);
+  }
+
+  @GetMapping(value = "/get-banks-fw")
+  public Object getBanksFw(@RequestParam(name = "country", defaultValue = "NG") String country) {
+    return flutterwaveService.getBanks(country);
   }
 
   @PostMapping(value = "/add-account")

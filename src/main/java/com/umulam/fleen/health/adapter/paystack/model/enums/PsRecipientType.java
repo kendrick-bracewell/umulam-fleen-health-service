@@ -2,7 +2,7 @@ package com.umulam.fleen.health.adapter.paystack.model.enums;
 
 import com.umulam.fleen.health.adapter.ApiParameter;
 
-public enum RecipientType implements ApiParameter {
+public enum PsRecipientType implements ApiParameter {
 
   NUBAN("nuban"),
   MOBILE_MONEY("mobile_money"),
@@ -10,7 +10,7 @@ public enum RecipientType implements ApiParameter {
 
   private final String value;
 
-  RecipientType(String value) {
+  PsRecipientType(String value) {
     this.value = value;
   }
 

@@ -2,7 +2,7 @@ package com.umulam.fleen.health.adapter.flutterwave.model.enums;
 
 import com.umulam.fleen.health.adapter.ApiParameter;
 
-public enum FlutterwaveCountryBank implements ApiParameter {
+public enum FwBankCountryType implements ApiParameter {
 
   NG("NG"),
   GH("GH"),
@@ -10,7 +10,7 @@ public enum FlutterwaveCountryBank implements ApiParameter {
 
   private final String value;
 
-  FlutterwaveCountryBank(String value) {
+  FwBankCountryType(String value) {
     this.value = value;
   }
 

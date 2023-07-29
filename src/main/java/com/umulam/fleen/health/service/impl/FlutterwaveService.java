@@ -1,7 +1,7 @@
 package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.adapter.flutterwave.FlutterwaveAdapter;
-import com.umulam.fleen.health.adapter.flutterwave.model.enums.FlutterwaveCountryBank;
+import com.umulam.fleen.health.adapter.flutterwave.model.enums.FwBankCountryType;
 import com.umulam.fleen.health.adapter.flutterwave.response.FwGetBanksResponse;
 import com.umulam.fleen.health.repository.jpa.BankAccountJpaRepository;
 import com.umulam.fleen.health.service.MemberService;
@@ -49,20 +49,20 @@ public class FlutterwaveService {
 
   @EventListener(ApplicationReadyEvent.class)
   public void saveBanksToCacheOnStartup() {
-    FwGetBanksResponse banksResponse = flutterwaveAdapter.getBanks(FlutterwaveCountryBank.NG.getValue());
+    FwGetBanksResponse banksResponse = flutterwaveAdapter.getBanks(FwBankCountryType.NG.getValue());
     saveBanksFwToCache(banksResponse, null);
   }
 
   @Scheduled(cron = "0 0 */12 * * *")
   private void saveBanksToCache() {
-    saveBanksFwToCache(null, FlutterwaveCountryBank.NG.getValue());
+    saveBanksFwToCache(null, FwBankCountryType.NG.getValue());
   }
 
   private void saveBanksFwToCache(FwGetBanksResponse response, String country) {
     if (isNull(response) || isNull(response.getData()) || response.getData().isEmpty()) {
       saveBanksToCacheOnStartup();
     }
-    String key = getBanksCacheKey().concat(Objects.toString(country, FlutterwaveCountryBank.NG.getValue()));
+    String key = getBanksCacheKey().concat(Objects.toString(country, FwBankCountryType.NG.getValue()));
     cacheService.set(key, response);
   }
 
