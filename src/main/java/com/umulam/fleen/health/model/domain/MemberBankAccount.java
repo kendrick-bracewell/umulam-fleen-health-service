@@ -23,7 +23,7 @@ public class MemberBankAccount {
   @Column(name = "id")
   private Integer id;
 
-  @Column(name = "account_number", nullable = false, length = 200)
+  @Column(name = "account_name", nullable = false, length = 200)
   private String accountName;
 
   @Column(name = "account_number", nullable = false, length = 20)

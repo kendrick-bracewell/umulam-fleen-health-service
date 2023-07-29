@@ -65,17 +65,17 @@ public class BankingService {
       .accountNumber(dto.getAccountNumber())
       .bankCode(dto.getBankCode())
       .build();
-    ResolveBankAccountResponse bankAccountResponse = paystackAdapter.resolveBankAccount(request);
+
+    if (!isBankCodeExists(dto.getBankCode(), dto.getCurrency())) {
+      throw new InvalidBankCodeException(dto.getBankCode());
+    }
 
     boolean accountNumberExist = bankAccountJpaRepository.existsByAccountNumber(dto.getAccountNumber());
     if (accountNumberExist) {
       throw new BankAccountAlreadyExists(dto.getAccountNumber());
     }
 
-    if (!isBankCodeExists(dto.getBankCode(), dto.getCurrency())) {
-      throw new InvalidBankCodeException(dto.getBankCode());
-    }
-
+    ResolveBankAccountResponse bankAccountResponse = paystackAdapter.resolveBankAccount(request);
     GetMemberUpdateDetailsResponse member = memberService.getMemberGetUpdateDetailsResponse(user);
     CreateTransferRecipientRequest transferRecipientRequest = CreateTransferRecipientRequest.builder()
         .type(NUBAN.getValue())

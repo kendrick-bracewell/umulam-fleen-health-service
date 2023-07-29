@@ -34,6 +34,7 @@ public class AddBankAccountDto {
   private String accountType;
 
   @NotBlank(message = "{banking.currency.notNull}")
+  @Size(min = 2, max = 5, message = "{banking.currency.size}")
   @JsonProperty("currency")
   private String currency;
 
