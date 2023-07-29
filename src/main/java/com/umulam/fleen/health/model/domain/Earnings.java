@@ -1,12 +1,39 @@
 package com.umulam.fleen.health.model.domain;
 
-import javax.persistence.Column;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "earnings")
 public class Earnings {
 
-  @Column
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
   private Integer id;
 
   @Column
-  private double amount;
+  private BigDecimal totalEarnings;
+
+  @OneToOne(fetch = FetchType.LAZY)
+  @Column(name = "member_id")
+  private Member member;
+
+  @CreationTimestamp
+  @Column(name = "created_on", updatable = false)
+  private LocalDateTime createdOn;
+
+  @UpdateTimestamp
+  @Column(name = "updated_on")
+  private LocalDateTime updatedOn;
 }

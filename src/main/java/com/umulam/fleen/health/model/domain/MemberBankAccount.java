@@ -3,8 +3,10 @@ package com.umulam.fleen.health.model.domain;
 
 import com.umulam.fleen.health.constant.session.BankAccountType;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -45,4 +47,8 @@ public class MemberBankAccount {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id")
   private Member member;
+
+  @CreationTimestamp
+  @Column(name = "created_on", updatable = false)
+  private LocalDateTime createdOn;
 }
