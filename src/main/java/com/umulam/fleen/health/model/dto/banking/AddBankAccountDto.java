@@ -24,7 +24,7 @@ public class AddBankAccountDto {
   private String accountNumber;
 
   @NotBlank(message = "{banking.bankCode.notNull}")
-  @Size(min = 2, max = 15, message = "{banking.bankAccount.size}")
+  @Size(min = 2, max = 15, message = "{banking.bankCode.size}")
   @JsonProperty("bank_code")
   private String bankCode;
 
