@@ -17,12 +17,12 @@ import javax.persistence.*;
 @PrimaryKeyJoinColumn(name = "id", referencedColumnName = "id")
 public class WithdrawalTransaction extends Transaction {
 
-  @Column(name = "withdrawal_status")
+  @Column(name = "withdrawal_status", nullable = false)
   @Enumerated(EnumType.STRING)
   private WithdrawalStatus withdrawalStatus;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "recipient")
+  @JoinColumn(name = "recipient_id", nullable = false)
   private Member recipient;
 
   @Column(name = "recipient_name")
@@ -33,4 +33,7 @@ public class WithdrawalTransaction extends Transaction {
 
   @Column(name = "bank_name")
   private String bankName;
+
+  @Column(name = "bank_code")
+  private String bankCode;
 }

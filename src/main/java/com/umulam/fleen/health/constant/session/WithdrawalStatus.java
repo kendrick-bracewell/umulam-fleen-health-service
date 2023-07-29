@@ -5,6 +5,6 @@ public enum WithdrawalStatus {
 
   PENDING,
   REFUNDED,
-  CANCELED,
+  FAILED,
   SUCCESSFUL;
 }

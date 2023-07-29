@@ -14,7 +14,7 @@ import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_WITH_TIMEZON
 @Getter
 @Setter
 @NoArgsConstructor
-class TransferEvent {
+public class TransferEvent {
   private String event;
 
   @Getter
@@ -59,6 +59,24 @@ class TransferEvent {
 
       @JsonProperty("recipient_code")
       private String recipientCode;
+
+      @Getter
+      @Setter
+      @NoArgsConstructor
+      public static class TransferRecipientDetails {
+
+        @JsonProperty("account_number")
+        private String accountNumber;
+
+        @JsonProperty("account_name")
+        private String accountName;
+
+        @JsonProperty("bank_name")
+        private String bankName;
+
+        @JsonProperty("bank_code")
+        private String bankCode;
+      }
     }
   }
 }

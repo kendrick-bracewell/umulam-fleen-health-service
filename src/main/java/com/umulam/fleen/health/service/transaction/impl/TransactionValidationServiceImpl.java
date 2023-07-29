@@ -10,6 +10,7 @@ import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.event.paystack.ChargeEvent;
+import com.umulam.fleen.health.model.event.paystack.TransferEvent;
 import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.HealthSessionProfessionalJpaRepository;
@@ -59,6 +60,10 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
       PaystackWebhookEvent event = mapper.readValue(body, PaystackWebhookEvent.class);
       if (Objects.equals(event.getEvent(), PaystackWebhookEventType.CHARGE_SUCCESS.getValue())) {
         validateAndCompleteSessionTransaction(body);
+      } else if (Objects.equals(event.getEvent(), PaystackWebhookEventType.TRANSFER_SUCCESS.getValue()) ||
+          Objects.equals(event.getEvent(), PaystackWebhookEventType.TRANSFER_FAILED.getValue()) ||
+          Objects.equals(event.getEvent(), PaystackWebhookEventType.TRANSFER_REVERSED.getValue())) {
+
       }
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);
@@ -123,6 +128,15 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
           sessionTransactionJpaRepository.save(transaction);
         }
       }
+    } catch (JsonProcessingException ex) {
+      log.error(ex.getMessage(), ex);
+    }
+  }
+
+  private void validateAndCompleteWithdrawalTransaction(String body) {
+    try {
+      TransferEvent event = mapper.readValue(body, TransferEvent.class);
+
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);
     }

@@ -25,7 +25,7 @@ public class BankingController {
     this.bankingService = bankingService;
   }
 
-  @GetMapping(value = "/get-banks")
+  @GetMapping(value = "/get-banks-ps")
   public Object getBanks(@RequestParam(name = "currency", defaultValue = "NGN") String currency) {
     return bankingService.getBanks(currency);
   }
