@@ -117,7 +117,7 @@ public class PaystackAdapter extends BaseAdapter {
     }
   }
 
-  public DeleteTransferRecipientResponse deleteTransferRecipient(String recipientCode) {
+  public void deleteTransferRecipient(String recipientCode) {
     if (!isMandatoryFieldAvailable(recipientCode)) {
       throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
     }
@@ -126,13 +126,11 @@ public class PaystackAdapter extends BaseAdapter {
     ResponseEntity<DeleteTransferRecipientResponse> response = doCall(uri, HttpMethod.DELETE,
       getAuthHeaderWithBearerToken(config.getSecretKey()), null, DeleteTransferRecipientResponse.class);
 
-    if (response.getStatusCode().is2xxSuccessful()) {
-      return response.getBody();
-    } else {
+    if (!response.getStatusCode().is2xxSuccessful()) {
       String message = String.format("An error occurred while calling deleteTransferRecipient method of PaystackAdapter: %s", response.getBody());
       log.error(message);
       handleResponseError(response);
-      return null;
     }
+    return;
   }
 }

@@ -117,12 +117,15 @@ public class BankingService {
 
   @Transactional
   public void deleteBankAccount(String accountNumber, FleenUser user) {
-    Optional<MemberBankAccount> bankAccountExist = bankAccountJpaRepository.findByAccountNumber(accountNumber);
+    Optional<MemberBankAccount> bankAccountExist = bankAccountJpaRepository.findByAccountNumberAndMember(accountNumber, Member.builder().id(user.getId()).build());
     if (bankAccountExist.isEmpty()) {
       throw new BankAccountNotFoundException(accountNumber);
     }
 
-
+    MemberBankAccount bankAccount = bankAccountExist.get();
+    String recipientCode = bankAccount.getExternalSystemRecipientCode();
+    paystackAdapter.deleteTransferRecipient(recipientCode);
+    bankAccountJpaRepository.delete(bankAccount);
   }
 
   @EventListener(ApplicationReadyEvent.class)

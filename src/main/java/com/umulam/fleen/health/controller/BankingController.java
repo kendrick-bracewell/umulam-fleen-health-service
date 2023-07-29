@@ -37,6 +37,7 @@ public class BankingController {
 
   @DeleteMapping(value = "/delete-account/{accountNumber}")
   public Object deleteBankAccount(@PathVariable(name = "accountNumber") String accountNumber, @AuthenticationPrincipal FleenUser user) {
+    bankingService.deleteBankAccount(accountNumber, user);
     return new FleenHealthResponse(BANK_ACCOUNT_DETAILS_DELETED);
   }
 }
