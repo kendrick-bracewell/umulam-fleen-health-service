@@ -5,6 +5,7 @@ import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.service.impl.BankingService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,7 +29,7 @@ public class BankingController {
   }
 
   @PostMapping(value = "/add-account")
-  public Object addBankAccount(@Valid @RequestBody AddBankAccountDto dto, FleenUser user) {
+  public Object addBankAccount(@Valid @RequestBody AddBankAccountDto dto, @AuthenticationPrincipal FleenUser user) {
     bankingService.addBankAccount(dto, user);
     return new FleenHealthResponse(BANK_ACCOUNT_DETAILS_SAVED);
   }

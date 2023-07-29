@@ -21,6 +21,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -60,6 +61,7 @@ public class BankingService {
     return banksResponse.getData();
   }
 
+  @Transactional
   public void addBankAccount(AddBankAccountDto dto, FleenUser user) {
     ResolveBankAccountRequest request = ResolveBankAccountRequest.builder()
       .accountNumber(dto.getAccountNumber())

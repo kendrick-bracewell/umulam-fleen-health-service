@@ -47,7 +47,7 @@ public class PaystackAdapter extends BaseAdapter {
     parameters.put(PaystackParameter.ACCOUNT_NUMBER, request.getAccountNumber());
     parameters.put(PaystackParameter.BANK_CODE, request.getBankCode());
 
-    URI uri = buildUri(parameters, RESOLVE, BANK);
+    URI uri = buildUri(parameters, BANK, RESOLVE);
     ResponseEntity<ResolveBankAccountResponse> response = doCall(uri, HttpMethod.GET,
       getAuthHeaderWithBearerToken(config.getSecretKey()), null, ResolveBankAccountResponse.class);
 
