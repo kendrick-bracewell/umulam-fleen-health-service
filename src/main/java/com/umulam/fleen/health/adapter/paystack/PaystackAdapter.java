@@ -8,12 +8,14 @@ import com.umulam.fleen.health.adapter.paystack.model.request.CreateTransferReci
 import com.umulam.fleen.health.adapter.paystack.model.request.InitiateTransferRequest;
 import com.umulam.fleen.health.adapter.paystack.model.request.ResolveBankAccountRequest;
 import com.umulam.fleen.health.adapter.paystack.response.*;
+import com.umulam.fleen.health.aspect.RetryOnTimeout;
 import com.umulam.fleen.health.constant.authentication.PaystackType;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -117,20 +119,23 @@ public class PaystackAdapter extends BaseAdapter {
     }
   }
 
+  @RetryOnTimeout
   public void deleteTransferRecipient(String recipientCode) {
     if (!isMandatoryFieldAvailable(recipientCode)) {
       throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
     }
 
-    URI uri = buildUri(TRANSFER_RECIPIENT);
+    URI uri = buildUri(TRANSFER_RECIPIENT, buildPathVar(recipientCode));
     ResponseEntity<DeleteTransferRecipientResponse> response = doCall(uri, HttpMethod.DELETE,
       getAuthHeaderWithBearerToken(config.getSecretKey()), null, DeleteTransferRecipientResponse.class);
 
-    if (!response.getStatusCode().is2xxSuccessful()) {
-      String message = String.format("An error occurred while calling deleteTransferRecipient method of PaystackAdapter: %s", response.getBody());
-      log.error(message);
-      handleResponseError(response);
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return;
+    } else if (response.getStatusCode().is4xxClientError() && response.getStatusCodeValue() == HttpStatus.NOT_FOUND.value()) {
+      return;
     }
-    return;
+    String message = String.format("An error occurred while calling deleteTransferRecipient method of PaystackAdapter: %s", response.getBody());
+    log.error(message);
+    handleResponseError(response);
   }
 }
