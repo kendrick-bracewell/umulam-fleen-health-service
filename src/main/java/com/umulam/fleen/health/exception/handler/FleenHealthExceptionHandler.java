@@ -2,6 +2,7 @@ package com.umulam.fleen.health.exception.handler;
 
 import com.umulam.fleen.health.exception.authentication.*;
 import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
+import com.umulam.fleen.health.exception.banking.InvalidAccountTypeCombinationException;
 import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
 import com.umulam.fleen.health.exception.business.BusinessNotFoundException;
 import com.umulam.fleen.health.exception.country.CountryCodeDuplicateException;
@@ -113,7 +114,8 @@ public class FleenHealthExceptionHandler {
           ProfessionalNotAvailableForSessionDayException.class,
           AddReviewAfterSessionCompleteException.class,
           ExternalSystemException.class,
-          InvalidBankCodeException.class
+          InvalidBankCodeException.class,
+          InvalidAccountTypeCombinationException.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);

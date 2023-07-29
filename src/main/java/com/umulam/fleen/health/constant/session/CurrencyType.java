@@ -4,7 +4,9 @@ import com.umulam.fleen.health.adapter.ApiParameter;
 
 public enum CurrencyType implements ApiParameter {
 
-  NGN("NGN");
+  NGN("NGN"),
+  GHS("GHS"),
+  ZAR("ZAR");
 
   private final String value;
 

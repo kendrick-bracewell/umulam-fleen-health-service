@@ -41,4 +41,8 @@ public class MemberBankAccount {
 
   @Column(name = "currency", nullable = false, length = 5)
   private String currency;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "member_id")
+  private Member member;
 }

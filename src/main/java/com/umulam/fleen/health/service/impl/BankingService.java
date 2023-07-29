@@ -10,6 +10,7 @@ import com.umulam.fleen.health.adapter.paystack.response.ResolveBankAccountRespo
 import com.umulam.fleen.health.constant.session.CurrencyType;
 import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
 import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
+import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.MemberBankAccount;
 import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
 import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsResponse;
@@ -26,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
-import static com.umulam.fleen.health.adapter.paystack.model.enums.RecipientType.NUBAN;
 import static com.umulam.fleen.health.adapter.paystack.response.GetBanksResponse.BankData;
 import static com.umulam.fleen.health.constant.base.GeneralConstant.PAYSTACK_GET_BANKS_CACHE_PREFIX;
 import static java.util.Objects.isNull;
@@ -80,7 +80,7 @@ public class BankingService {
     ResolveBankAccountResponse bankAccountResponse = paystackAdapter.resolveBankAccount(request);
     GetMemberUpdateDetailsResponse member = memberService.getMemberGetUpdateDetailsResponse(user);
     CreateTransferRecipientRequest transferRecipientRequest = CreateTransferRecipientRequest.builder()
-        .type(NUBAN.getValue())
+        .type(dto.getRecipientType().toUpperCase())
         .accountNumber(dto.getAccountNumber())
         .accountName(bankAccountResponse.getData().getAccountName())
         .bankCode(dto.getBankCode())
@@ -100,6 +100,7 @@ public class BankingService {
     bankAccount.setAccountName(bankAccountResponse.getData().getAccountName());
     bankAccount.setBankName(createRecipientResponse.getData().getDetails().getBankName());
     bankAccount.setExternalSystemRecipientCode(createRecipientResponse.getData().getRecipientCode());
+    bankAccount.setMember(Member.builder().id(user.getId()).build());
     bankAccountJpaRepository.save(bankAccount);
   }
 
