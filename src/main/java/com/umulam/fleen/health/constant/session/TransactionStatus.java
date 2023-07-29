@@ -9,7 +9,8 @@ public enum TransactionStatus {
   FAILED("Failed"),
   SUCCESS("Success"),
   REFUNDED("Refunded"),
-  CANCELLED("Cancelled");
+  CANCELLED("Cancelled"),
+  REVERSED("Reversed");
 
   private final String value;
 

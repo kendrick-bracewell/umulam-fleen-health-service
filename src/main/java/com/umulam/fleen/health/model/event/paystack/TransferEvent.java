@@ -2,7 +2,6 @@ package com.umulam.fleen.health.model.event.paystack;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.umulam.fleen.health.adapter.paystack.model.enums.RecipientType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +15,7 @@ import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_WITH_TIMEZON
 @NoArgsConstructor
 public class TransferEvent {
   private String event;
+  private TransferEventData data;
 
   @Getter
   @Setter
@@ -59,6 +59,7 @@ public class TransferEvent {
 
       @JsonProperty("recipient_code")
       private String recipientCode;
+      private TransferRecipientDetails details;
 
       @Getter
       @Setter

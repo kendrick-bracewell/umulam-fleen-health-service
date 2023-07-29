@@ -25,8 +25,8 @@ public class WithdrawalTransaction extends Transaction {
   @JoinColumn(name = "recipient_id", nullable = false)
   private Member recipient;
 
-  @Column(name = "recipient_name")
-  private String recipientName;
+  @Column(name = "account_name")
+  private String accountName;
 
   @Column(name = "account_number")
   private String accountNumber;
@@ -36,4 +36,10 @@ public class WithdrawalTransaction extends Transaction {
 
   @Column(name = "bank_code")
   private String bankCode;
+
+  @Column(name = "external_system_reference")
+  private String externalSystemReference;
+
+  @Column(name = "currency")
+  private String currency;
 }

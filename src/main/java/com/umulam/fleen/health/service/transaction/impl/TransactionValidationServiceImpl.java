@@ -6,15 +6,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.constant.paystack.PaystackWebhookEventType;
 import com.umulam.fleen.health.constant.session.HealthSessionStatus;
 import com.umulam.fleen.health.constant.session.TransactionStatus;
+import com.umulam.fleen.health.constant.session.WithdrawalStatus;
 import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
+import com.umulam.fleen.health.model.domain.transaction.WithdrawalTransaction;
 import com.umulam.fleen.health.model.event.paystack.ChargeEvent;
 import com.umulam.fleen.health.model.event.paystack.TransferEvent;
 import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
-import com.umulam.fleen.health.repository.jpa.HealthSessionProfessionalJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.SessionTransactionJpaRepository;
+import com.umulam.fleen.health.repository.jpa.transaction.WithdrawalTransactionJpaRepository;
 import com.umulam.fleen.health.service.impl.FleenHealthEventService;
 import com.umulam.fleen.health.service.transaction.TransactionValidationService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.umulam.fleen.health.constant.session.TransactionStatus.FAILED;
 import static com.umulam.fleen.health.constant.session.TransactionStatus.SUCCESS;
 import static com.umulam.fleen.health.service.session.impl.HealthSessionServiceImpl.getMaxMeetingSessionHourDuration;
 import static com.umulam.fleen.health.util.StringUtil.getFullName;
@@ -39,16 +42,19 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
 
   private final HealthSessionJpaRepository healthSessionRepository;
   private final SessionTransactionJpaRepository sessionTransactionJpaRepository;
+  private final WithdrawalTransactionJpaRepository withdrawalTransactionJpaRepository;
   private final FleenHealthEventService eventService;
   private final ObjectMapper mapper;
 
   public TransactionValidationServiceImpl(
     HealthSessionJpaRepository healthSessionRepository,
     SessionTransactionJpaRepository sessionTransactionJpaRepository,
+    WithdrawalTransactionJpaRepository withdrawalTransactionJpaRepository,
     FleenHealthEventService eventService,
     ObjectMapper mapper) {
     this.healthSessionRepository = healthSessionRepository;
     this.sessionTransactionJpaRepository = sessionTransactionJpaRepository;
+    this.withdrawalTransactionJpaRepository = withdrawalTransactionJpaRepository;
     this.eventService = eventService;
     this.mapper = mapper;
   }
@@ -63,7 +69,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
       } else if (Objects.equals(event.getEvent(), PaystackWebhookEventType.TRANSFER_SUCCESS.getValue()) ||
           Objects.equals(event.getEvent(), PaystackWebhookEventType.TRANSFER_FAILED.getValue()) ||
           Objects.equals(event.getEvent(), PaystackWebhookEventType.TRANSFER_REVERSED.getValue())) {
-
+        validateAndCompleteWithdrawalTransaction(body);
       }
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);
@@ -136,7 +142,33 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
   private void validateAndCompleteWithdrawalTransaction(String body) {
     try {
       TransferEvent event = mapper.readValue(body, TransferEvent.class);
+      Optional<WithdrawalTransaction> transactionExist = withdrawalTransactionJpaRepository.findByReference(event.getData().getReference());
+      if (transactionExist.isPresent()) {
+        WithdrawalTransaction transaction = transactionExist.get();
+        transaction.setExternalSystemReference(event.getData().getTransferCode());
+        transaction.setCurrency(event.getData().getCurrency().toUpperCase());
+        transaction.setBankName(event.getData().getRecipient().getDetails().getBankName());
+        transaction.setAccountNumber(event.getData().getRecipient().getDetails().getAccountNumber());
+        transaction.setAccountName(event.getData().getRecipient().getDetails().getAccountName());
+        transaction.setBankCode(event.getData().getRecipient().getDetails().getBankCode());
+        transaction.setCurrency(event.getData().getCurrency());
 
+        if (SUCCESS.getValue().equalsIgnoreCase(event.getData().getStatus())) {
+          if (transaction.getStatus() != SUCCESS) {
+            transaction.setStatus(SUCCESS);
+            transaction.setWithdrawalStatus(WithdrawalStatus.SUCCESSFUL);
+          }
+        } else {
+          if (FAILED.getValue().equalsIgnoreCase(event.getData().getStatus())) {
+            transaction.setStatus(TransactionStatus.FAILED);
+            transaction.setWithdrawalStatus(WithdrawalStatus.FAILED);
+          } else {
+            transaction.setStatus(TransactionStatus.REVERSED);
+            transaction.setWithdrawalStatus(WithdrawalStatus.REVERSED);
+          }
+        }
+        withdrawalTransactionJpaRepository.save(transaction);
+      }
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);
     }
