@@ -4,7 +4,7 @@ import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
 import com.umulam.fleen.health.model.dto.banking.CreateWithdrawalDto;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
-import com.umulam.fleen.health.service.impl.BankingService;
+import com.umulam.fleen.health.service.impl.PaystackService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -19,26 +19,26 @@ import static com.umulam.fleen.health.constant.base.FleenHealthConstant.BANK_ACC
 @RequestMapping(value = "banking")
 public class BankingController {
 
-  private final BankingService bankingService;
+  private final PaystackService paystackService;
 
-  public BankingController(BankingService bankingService) {
-    this.bankingService = bankingService;
+  public BankingController(PaystackService paystackService) {
+    this.paystackService = paystackService;
   }
 
   @GetMapping(value = "/get-banks-ps")
   public Object getBanks(@RequestParam(name = "currency", defaultValue = "NGN") String currency) {
-    return bankingService.getBanks(currency);
+    return paystackService.getBanks(currency);
   }
 
   @PostMapping(value = "/add-account")
   public Object addBankAccount(@Valid @RequestBody AddBankAccountDto dto, @AuthenticationPrincipal FleenUser user) {
-    bankingService.addBankAccount(dto, user);
+    paystackService.addBankAccount(dto, user);
     return new FleenHealthResponse(BANK_ACCOUNT_DETAILS_SAVED);
   }
 
   @DeleteMapping(value = "/delete-account/{accountNumber}")
   public Object deleteBankAccount(@PathVariable(name = "accountNumber") String accountNumber, @AuthenticationPrincipal FleenUser user) {
-    bankingService.deleteBankAccount(accountNumber, user);
+    paystackService.deleteBankAccount(accountNumber, user);
     return new FleenHealthResponse(BANK_ACCOUNT_DETAILS_DELETED);
   }
 

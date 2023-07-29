@@ -37,17 +37,17 @@ import static java.util.Objects.isNull;
 
 @Slf4j
 @Service
-public class BankingService {
+public class PaystackService {
 
   private final PaystackAdapter paystackAdapter;
   private final CacheService cacheService;
   private final BankAccountJpaRepository bankAccountJpaRepository;
   private final MemberService memberService;
 
-  public BankingService(PaystackAdapter paystackAdapter,
-                        CacheService cacheService,
-                        BankAccountJpaRepository bankAccountJpaRepository,
-                        MemberService memberService) {
+  public PaystackService(PaystackAdapter paystackAdapter,
+                         CacheService cacheService,
+                         BankAccountJpaRepository bankAccountJpaRepository,
+                         MemberService memberService) {
     this.paystackAdapter = paystackAdapter;
     this.cacheService = cacheService;
     this.bankAccountJpaRepository = bankAccountJpaRepository;
@@ -79,7 +79,7 @@ public class BankingService {
       throw new InvalidBankCodeException(dto.getBankCode());
     }
 
-    if (!isAccountTypeCombinationTrue(recipientType, currency)) {
+    if (!isAccountTypePsCombinationValid(recipientType, currency)) {
       throw new InvalidAccountTypeCombinationException(recipientType, currency);
     }
 
@@ -131,15 +131,15 @@ public class BankingService {
   @EventListener(ApplicationReadyEvent.class)
   public void saveBanksToCacheOnStartup() {
     PsGetBanksResponse banksResponse = paystackAdapter.getBanks(CurrencyType.NGN.getValue());
-    saveBanksToCache(banksResponse, null);
+    saveBanksPsToCache(banksResponse, null);
   }
 
   @Scheduled(cron = "0 0 */12 * * *")
   private void saveBanksToCache() {
-    saveBanksToCache(null, CurrencyType.NGN.getValue());
+    saveBanksPsToCache(null, CurrencyType.NGN.getValue());
   }
 
-  private void saveBanksToCache(PsGetBanksResponse response, String currency) {
+  private void saveBanksPsToCache(PsGetBanksResponse response, String currency) {
     if (isNull(response) || isNull(response.getData()) || response.getData().isEmpty()) {
       saveBanksToCacheOnStartup();
     }
@@ -159,7 +159,7 @@ public class BankingService {
                      && bank.getCurrency().equalsIgnoreCase(currency));
   }
 
-  public static boolean isAccountTypeCombinationTrue(String recipientType, String currencyType) {
+  public static boolean isAccountTypePsCombinationValid(String recipientType, String currencyType) {
     RecipientType recipient = RecipientType.valueOf(recipientType.toUpperCase());
     CurrencyType currency = CurrencyType.valueOf(currencyType.toUpperCase());
 

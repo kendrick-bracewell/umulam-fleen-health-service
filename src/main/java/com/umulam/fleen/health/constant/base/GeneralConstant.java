@@ -34,4 +34,5 @@ public final class GeneralConstant {
   public static final String COUNTRY_CACHE_PREFIX = "COUNTRY:::";
   public static final String X_FORWARDED_HEADER = "X-Forwarded-For";
   public static final String PAYSTACK_GET_BANKS_CACHE_PREFIX = "PAYSTACK_GET_BANKS:::";
+  public static final String FLUTTERWAVE_GET_BANKS_CACHE_PREFIX = "PAYSTACK_GET_BANKS:::";
 }
