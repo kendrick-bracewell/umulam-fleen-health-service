@@ -4,6 +4,7 @@ import com.umulam.fleen.health.adapter.ApiParameter;
 import com.umulam.fleen.health.adapter.base.BaseAdapter;
 import com.umulam.fleen.health.adapter.flutterwave.config.FlutterwaveConfig;
 import com.umulam.fleen.health.adapter.flutterwave.model.enums.FlutterwaveParameter;
+import com.umulam.fleen.health.adapter.flutterwave.model.request.FwCreateRefundRequest;
 import com.umulam.fleen.health.adapter.flutterwave.model.request.FwResolveBankAccountRequest;
 import com.umulam.fleen.health.adapter.flutterwave.response.FwGetBanksResponse;
 import com.umulam.fleen.health.adapter.flutterwave.response.FwResolveBankAccountResponse;
@@ -105,6 +106,25 @@ public class FlutterwaveAdapter extends BaseAdapter {
       return response.getBody();
     } else {
       String message = String.format("An error occurred while calling verifyTransactionByReference method of %s: %s", getClass().getSimpleName(), response.getBody());
+      log.error(message);
+      handleResponseError(response);
+      return null;
+    }
+  }
+
+  public FwResolveBankAccountResponse resolveBankAccount(FwCreateRefundRequest request) {
+    if (!isMandatoryFieldAvailable(request.getTransactionId())) {
+      throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
+    }
+
+    URI uri = buildUri(TRANSACTIONS, buildPathVar(request.getTransactionId()), REFUND);
+    ResponseEntity<FwResolveBankAccountResponse> response = doCall(uri, HttpMethod.POST,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), request, FwResolveBankAccountResponse.class);
+
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response.getBody();
+    } else {
+      String message = String.format("An error occurred while calling resolveBankAccount method of %s: %s", getClass().getSimpleName(), response.getBody());
       log.error(message);
       handleResponseError(response);
       return null;
