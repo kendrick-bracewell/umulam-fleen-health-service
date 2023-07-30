@@ -3,10 +3,10 @@ package com.umulam.fleen.health.adapter.flutterwave;
 import com.umulam.fleen.health.adapter.ApiParameter;
 import com.umulam.fleen.health.adapter.base.BaseAdapter;
 import com.umulam.fleen.health.adapter.flutterwave.config.FlutterwaveConfig;
-import com.umulam.fleen.health.adapter.flutterwave.model.enums.FlutterwaveParameter;
 import com.umulam.fleen.health.adapter.flutterwave.model.request.FwCreateRefundRequest;
+import com.umulam.fleen.health.adapter.flutterwave.model.request.FwCreateTransferRequest;
+import com.umulam.fleen.health.adapter.flutterwave.model.request.FwGetExchangeRateRequest;
 import com.umulam.fleen.health.adapter.flutterwave.model.request.FwResolveBankAccountRequest;
-import com.umulam.fleen.health.adapter.flutterwave.model.request.GetExchangeRateRequest;
 import com.umulam.fleen.health.adapter.flutterwave.response.*;
 import com.umulam.fleen.health.aspect.RetryOnTimeout;
 import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
@@ -97,7 +97,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
     }
 
     HashMap<ApiParameter, String> parameters = new HashMap<>();
-    parameters.put(FlutterwaveParameter.TRANSACTION_REFERENCE, transactionReference);
+    parameters.put(TRANSACTION_REFERENCE, transactionReference);
 
     URI uri = buildUri(parameters, TRANSACTIONS, VERIFY_BY_REFERENCE);
     ResponseEntity<FwVerifyTransactionResponse> response = doCall(uri, HttpMethod.GET,
@@ -113,14 +113,14 @@ public class FlutterwaveAdapter extends BaseAdapter {
     }
   }
 
-  public CreateRefundResponse createRefund(FwCreateRefundRequest request) {
+  public FwCreateRefundResponse createRefund(FwCreateRefundRequest request) {
     if (!isMandatoryFieldAvailable(request.getTransactionId())) {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
     }
 
     URI uri = buildUri(TRANSACTIONS, buildPathVar(request.getTransactionId()), REFUND);
-    ResponseEntity<CreateRefundResponse> response = doCall(uri, HttpMethod.POST,
-      getAuthHeaderWithBearerToken(config.getSecretKey()), request, CreateRefundResponse.class);
+    ResponseEntity<FwCreateRefundResponse> response = doCall(uri, HttpMethod.POST,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), request, FwCreateRefundResponse.class);
 
     if (response.getStatusCode().is2xxSuccessful()) {
       return response.getBody();
@@ -133,7 +133,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
   }
 
   @RetryOnTimeout
-  public GetExchangeRateResponse getExchangeRate(GetExchangeRateRequest request) {
+  public FwGetExchangeRateResponse getExchangeRate(FwGetExchangeRateRequest request) {
     if (!isMandatoryFieldAvailable(request.getAmount(), request.getSourceCurrency(), request.getDestinationCurrency())) {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
     }
@@ -144,13 +144,53 @@ public class FlutterwaveAdapter extends BaseAdapter {
     parameters.put(DESTINATION_CURRENCY, request.getDestinationCurrency());
 
     URI uri = buildUri(parameters, TRANSFERS, RATES);
-    ResponseEntity<GetExchangeRateResponse> response = doCall(uri, HttpMethod.GET,
-      getAuthHeaderWithBearerToken(config.getSecretKey()), request, GetExchangeRateResponse.class);
+    ResponseEntity<FwGetExchangeRateResponse> response = doCall(uri, HttpMethod.GET,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), null, FwGetExchangeRateResponse.class);
 
     if (response.getStatusCode().is2xxSuccessful()) {
       return response.getBody();
     } else {
       String message = String.format("An error occurred while calling getExchangeRate method of %s: %s", getClass().getSimpleName(), response.getBody());
+      log.error(message);
+      handleResponseError(response);
+      return null;
+    }
+  }
+
+  @RetryOnTimeout
+  public FwGetExchangeRateResponse createTransfer(FwCreateTransferRequest request) {
+    if (!isMandatoryFieldAvailable(request.getDestinationAmount(), request.getSourceCurrency(), request.getDestinationCurrency())) {
+      throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
+    }
+
+    URI uri = buildUri(TRANSFERS);
+    ResponseEntity<FwGetExchangeRateResponse> response = doCall(uri, HttpMethod.POST,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), request, FwGetExchangeRateResponse.class);
+
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response.getBody();
+    } else {
+      String message = String.format("An error occurred while calling createTransfer method of %s: %s", getClass().getSimpleName(), response.getBody());
+      log.error(message);
+      handleResponseError(response);
+      return null;
+    }
+  }
+
+  @RetryOnTimeout
+  public FwRetryTransferResponse retryTransfer(String transferId) {
+    if (!isMandatoryFieldAvailable(transferId)) {
+      throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
+    }
+
+    URI uri = buildUri(TRANSFERS, buildPathVar(transferId), RETRIES);
+    ResponseEntity<FwRetryTransferResponse> response = doCall(uri, HttpMethod.POST,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), null, FwRetryTransferResponse.class);
+
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response.getBody();
+    } else {
+      String message = String.format("An error occurred while calling retryTransfer method of %s: %s", getClass().getSimpleName(), response.getBody());
       log.error(message);
       handleResponseError(response);
       return null;

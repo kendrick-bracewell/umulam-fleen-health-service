@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetExchangeRateResponse extends FlutterwaveResponse {
+public class FwGetExchangeRateResponse extends FlutterwaveResponse {
 
   private ExchangeRateData data;
 

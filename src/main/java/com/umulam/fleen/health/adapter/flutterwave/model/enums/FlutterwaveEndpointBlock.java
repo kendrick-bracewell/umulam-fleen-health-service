@@ -12,7 +12,8 @@ public enum FlutterwaveEndpointBlock implements EndpointBlock {
   VERIFY_BY_REFERENCE("/verify_by_reference"),
   REFUND("/refund"),
   TRANSFERS("/transfers"),
-  RATES("/rates");
+  RATES("/rates"),
+  RETRIES("/retries");
 
   private final String value;
 

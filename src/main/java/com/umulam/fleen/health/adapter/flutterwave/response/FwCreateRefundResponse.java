@@ -15,7 +15,7 @@ import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_WITH_TIMEZON
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateRefundResponse {
+public class FwCreateRefundResponse {
 
   private String status;
   private String message;
