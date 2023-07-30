@@ -10,8 +10,10 @@ import lombok.*;
 import org.hibernate.validator.constraints.URL;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 import static com.umulam.fleen.health.util.DateTimeUtil.toDate;
 import static com.umulam.fleen.health.util.DateTimeUtil.toTime;
@@ -48,6 +50,29 @@ public class BookHealthSessionDto {
   @NotNull(message = "{session.transaction.notNull}")
   @JsonProperty("transaction_data")
   private TransactionData transactionData;
+
+  @Valid
+  @NotEmpty(message = "{session.periods.notEmpty}")
+  @Size(min = 1, max = 6, message = "{session.periods.size}")
+  @NoMoreThanOneSessionADay
+  private List<SessionPeriod> periods;
+
+  @Getter
+  @Setter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class SessionPeriod {
+
+    @NotNull(message = "{session.date.notNull}")
+    @DateValid(message = "{session.date.valid}")
+    @Future
+    private String date;
+
+    @NotNull(message = "{session.time.notNull}")
+    @TimeValid(message = "{session.time.valid}")
+    @WorkingHour(message = "{session.time.workingHour}")
+    private String time;
+  }
 
   @Getter
   @Setter
