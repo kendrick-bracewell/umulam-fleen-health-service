@@ -58,6 +58,9 @@ public class FwChargeEvent {
     @JsonProperty("account_id")
     private String accountId;
 
+    @JsonProperty("amount_settled")
+    private String amountSettled;
+
     private Customer customer;
     private Card card;
 

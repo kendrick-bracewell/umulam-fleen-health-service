@@ -4,7 +4,7 @@ import com.umulam.fleen.health.adapter.ApiParameter;
 
 public enum FlutterwaveParameter implements ApiParameter {
 
-  NONE("None");
+  TRANSACTION_REFERENCE("tx_ref");
 
   private final String value;
 

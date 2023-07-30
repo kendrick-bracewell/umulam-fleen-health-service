@@ -1,10 +1,13 @@
 package com.umulam.fleen.health.adapter.flutterwave;
 
+import com.umulam.fleen.health.adapter.ApiParameter;
 import com.umulam.fleen.health.adapter.base.BaseAdapter;
 import com.umulam.fleen.health.adapter.flutterwave.config.FlutterwaveConfig;
+import com.umulam.fleen.health.adapter.flutterwave.model.enums.FlutterwaveParameter;
 import com.umulam.fleen.health.adapter.flutterwave.model.request.FwResolveBankAccountRequest;
 import com.umulam.fleen.health.adapter.flutterwave.response.FwGetBanksResponse;
 import com.umulam.fleen.health.adapter.flutterwave.response.FwResolveBankAccountResponse;
+import com.umulam.fleen.health.adapter.flutterwave.response.FwVerifyTransactionResponse;
 import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.HashMap;
 
 import static com.umulam.fleen.health.adapter.flutterwave.model.enums.FlutterwaveEndpointBlock.*;
 
@@ -60,6 +64,47 @@ public class FlutterwaveAdapter extends BaseAdapter {
       return response.getBody();
     } else {
       String message = String.format("An error occurred while calling getBanks method of %s: %s", getClass().getSimpleName(), response.getBody());
+      log.error(message);
+      handleResponseError(response);
+      return null;
+    }
+  }
+
+  public FwVerifyTransactionResponse verifyTransactionById(String transactionId) {
+    if (!isMandatoryFieldAvailable(transactionId)) {
+      throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
+    }
+
+    URI uri = buildUri(TRANSACTIONS, buildPathVar(transactionId), VERIFY);
+    ResponseEntity<FwVerifyTransactionResponse> response = doCall(uri, HttpMethod.GET,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), null, FwVerifyTransactionResponse.class);
+
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response.getBody();
+    } else {
+      String message = String.format("An error occurred while calling verifyTransactionById method of %s: %s", getClass().getSimpleName(), response.getBody());
+      log.error(message);
+      handleResponseError(response);
+      return null;
+    }
+  }
+
+  public FwVerifyTransactionResponse verifyTransactionByReference(String transactionReference) {
+    if (!isMandatoryFieldAvailable(transactionReference)) {
+      throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
+    }
+
+    HashMap<ApiParameter, String> parameters = new HashMap<>();
+    parameters.put(FlutterwaveParameter.TRANSACTION_REFERENCE, transactionReference);
+
+    URI uri = buildUri(parameters, TRANSACTIONS, VERIFY_BY_REFERENCE);
+    ResponseEntity<FwVerifyTransactionResponse> response = doCall(uri, HttpMethod.GET,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), null, FwVerifyTransactionResponse.class);
+
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response.getBody();
+    } else {
+      String message = String.format("An error occurred while calling verifyTransactionByReference method of %s: %s", getClass().getSimpleName(), response.getBody());
       log.error(message);
       handleResponseError(response);
       return null;
