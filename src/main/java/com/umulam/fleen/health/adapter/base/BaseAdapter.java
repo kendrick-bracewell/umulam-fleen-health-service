@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.adapter.ApiParameter;
 import com.umulam.fleen.health.adapter.EndpointBlock;
-import com.umulam.fleen.health.constant.authentication.PaystackType;
+import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
 import com.umulam.fleen.health.exception.base.FleenHealthException;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
 import com.umulam.fleen.health.util.AuthUtil;
@@ -163,9 +163,9 @@ public class BaseAdapter {
 
   protected void handleResponseError(ResponseEntity<?> response) {
     if (response.getStatusCode().is4xxClientError()) {
-      throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
+      throw new ExternalSystemException(PaymentGatewayType.PAYSTACK.getValue());
     } else {
-      throw new FleenHealthException(PaystackType.PAYSTACK.getValue());
+      throw new FleenHealthException(PaymentGatewayType.PAYSTACK.getValue());
     }
   }
 }

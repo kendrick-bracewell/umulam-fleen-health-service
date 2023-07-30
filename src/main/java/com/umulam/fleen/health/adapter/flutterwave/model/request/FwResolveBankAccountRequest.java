@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.adapter.flutterwave.model.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Builder
@@ -9,6 +10,9 @@ import lombok.*;
 @AllArgsConstructor
 public class FwResolveBankAccountRequest {
 
+  @JsonProperty("account_number")
   private String accountNumber;
+
+  @JsonProperty("account_bank")
   private String bankCode;
 }

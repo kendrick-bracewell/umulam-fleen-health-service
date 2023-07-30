@@ -4,8 +4,7 @@ import com.umulam.fleen.health.adapter.ApiParameter;
 
 public enum FlutterwaveParameter implements ApiParameter {
 
-  ACCOUNT_NUMBER("account_number"),
-  BANK_CODE("account_bank");
+  NONE("None");
 
   private final String value;
 

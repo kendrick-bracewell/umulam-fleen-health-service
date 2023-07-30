@@ -9,7 +9,7 @@ import com.umulam.fleen.health.adapter.paystack.model.request.InitiateTransferRe
 import com.umulam.fleen.health.adapter.paystack.model.request.ResolveBankAccountRequest;
 import com.umulam.fleen.health.adapter.paystack.response.*;
 import com.umulam.fleen.health.aspect.RetryOnTimeout;
-import com.umulam.fleen.health.constant.authentication.PaystackType;
+import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +37,7 @@ public class PaystackAdapter extends BaseAdapter {
 
   public ResolveBankAccountResponse resolveBankAccount(ResolveBankAccountRequest request) {
     if (!isMandatoryFieldAvailable(request.getAccountNumber(), request.getBankCode())) {
-      throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
+      throw new ExternalSystemException(PaymentGatewayType.PAYSTACK.getValue());
     }
 
     HashMap<ApiParameter, String> parameters = new HashMap<>();
@@ -60,7 +60,7 @@ public class PaystackAdapter extends BaseAdapter {
 
   public PsGetBanksResponse getBanks(String currency) {
     if (!isMandatoryFieldAvailable(currency)) {
-      throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
+      throw new ExternalSystemException(PaymentGatewayType.PAYSTACK.getValue());
     }
 
     HashMap<ApiParameter, String> parameters = new HashMap<>();
@@ -81,7 +81,7 @@ public class PaystackAdapter extends BaseAdapter {
 
   public CreateTransferRecipientResponse createTransferRecipient(CreateTransferRecipientRequest request) {
     if (!isMandatoryFieldAvailable(request.getAccountNumber(), request.getBankCode(), request.getType(), request.getAccountName())) {
-      throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
+      throw new ExternalSystemException(PaymentGatewayType.PAYSTACK.getValue());
     }
 
     URI uri = buildUri(TRANSFER_RECIPIENT);
@@ -100,7 +100,7 @@ public class PaystackAdapter extends BaseAdapter {
 
   public InitiateTransferResponse initiateTransfer(InitiateTransferRequest request) {
     if (!isMandatoryFieldAvailable(request.getRecipient(), request.getAmount(), request.getReference(), request.getSource())) {
-      throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
+      throw new ExternalSystemException(PaymentGatewayType.PAYSTACK.getValue());
     }
 
     URI uri = buildUri(TRANSFER);
@@ -120,7 +120,7 @@ public class PaystackAdapter extends BaseAdapter {
   @RetryOnTimeout
   public void deleteTransferRecipient(String recipientCode) {
     if (!isMandatoryFieldAvailable(recipientCode)) {
-      throw new ExternalSystemException(PaystackType.PAYSTACK.getValue());
+      throw new ExternalSystemException(PaymentGatewayType.PAYSTACK.getValue());
     }
 
     URI uri = buildUri(TRANSFER_RECIPIENT, buildPathVar(recipientCode));

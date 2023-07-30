@@ -4,13 +4,14 @@ import com.umulam.fleen.health.adapter.ExternalSystemType;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public enum PaystackType implements ExternalSystemType {
+public enum PaymentGatewayType implements ExternalSystemType {
 
-  PAYSTACK("Paystack");
+  PAYSTACK("Paystack"),
+  FLUTTERWAVE("Flutterwave");
 
   private final String value;
 
-  PaystackType(String value) {
+  PaymentGatewayType(String value) {
     this.value = value;
   }
 

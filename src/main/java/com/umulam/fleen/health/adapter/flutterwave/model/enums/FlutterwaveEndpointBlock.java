@@ -4,7 +4,9 @@ import com.umulam.fleen.health.adapter.EndpointBlock;
 
 public enum FlutterwaveEndpointBlock implements EndpointBlock {
 
-  BANKS("/banks");
+  BANKS("/banks"),
+  ACCOUNTS("/accounts"),
+  RESOLVE("/resolve");
 
   private final String value;
 
