@@ -34,8 +34,10 @@ import com.umulam.fleen.health.repository.jpa.HealthSessionProfessionalJpaReposi
 import com.umulam.fleen.health.repository.jpa.HealthSessionReviewJpaRepository;
 import com.umulam.fleen.health.repository.jpa.ProfessionalAvailabilityJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.TransactionJpaRepository;
+import com.umulam.fleen.health.service.ExchangeRateService;
 import com.umulam.fleen.health.service.MemberService;
 import com.umulam.fleen.health.service.ProfessionalService;
+import com.umulam.fleen.health.service.impl.ConfigService;
 import com.umulam.fleen.health.service.impl.FleenHealthEventService;
 import com.umulam.fleen.health.service.session.HealthSessionService;
 import com.umulam.fleen.health.util.UniqueReferenceGenerator;
@@ -73,6 +75,8 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   private final HealthSessionReviewJpaRepository healthSessionReviewJpaRepository;
   private final FleenHealthEventService eventService;
   private final MemberService memberService;
+  private final ExchangeRateService exchangeRateService;
+  private final ConfigService configService;
 
   public HealthSessionServiceImpl(
           HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository,
@@ -83,7 +87,9 @@ public class HealthSessionServiceImpl implements HealthSessionService {
           ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository,
           HealthSessionReviewJpaRepository healthSessionReviewJpaRepository,
           FleenHealthEventService eventService,
-          MemberService memberService) {
+          MemberService memberService,
+          ExchangeRateService exchangeRateService,
+          ConfigService configService) {
     this.sessionProfessionalJpaRepository = sessionProfessionalJpaRepository;
     this.healthSessionRepository = healthSessionRepository;
     this.professionalService = professionalService;
@@ -93,6 +99,8 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     this.healthSessionReviewJpaRepository = healthSessionReviewJpaRepository;
     this.eventService = eventService;
     this.memberService = memberService;
+    this.exchangeRateService = exchangeRateService;
+    this.configService = configService;
   }
 
   @Override
@@ -229,6 +237,9 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
     LocalDateTime startDate = LocalDateTime.of(savedHealthSession.getDate(), savedHealthSession.getTime());
     LocalDateTime endDate = startDate.plusHours(getMaxMeetingSessionHourDuration());
+
+    Double professionalPrice = professionalService.getProfessionalPrice(healthSession.getProfessional().getId());
+    Double actualPriceToPayIn = exchangeRateService.getConvertedHealthSessionPrice(professionalPrice);
     return PendingHealthSessionBookingResponse.builder()
       .startDate(startDate)
       .endDate(endDate)
@@ -238,6 +249,10 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       .timezone(savedHealthSession.getTimezone())
       .sessionReference(savedHealthSession.getReference())
       .transactionReference(transaction.getReference())
+      .professionalPrice(professionalPrice)
+      .actualPriceToPay(actualPriceToPayIn)
+      .professionalPriceCurrency(configService.getPricingCurrency())
+      .actualPriceCurrency(configService.getPaymentCurrency())
       .build();
   }
 

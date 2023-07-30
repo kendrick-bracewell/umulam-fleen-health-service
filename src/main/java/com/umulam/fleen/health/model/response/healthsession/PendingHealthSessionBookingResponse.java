@@ -39,4 +39,16 @@ public class PendingHealthSessionBookingResponse {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
   @JsonProperty("end_date")
   private LocalDateTime endDate;
+
+  @JsonProperty("professional_price")
+  private Double professionalPrice;
+
+  @JsonProperty("professional_price_currency")
+  private String professionalPriceCurrency;
+
+  @JsonProperty("actual_price_to_pay")
+  private Double actualPriceToPay;
+
+  @JsonProperty("actual_price_currency")
+  private String actualPriceCurrency;
 }

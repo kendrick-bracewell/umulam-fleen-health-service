@@ -2,7 +2,9 @@ package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.adapter.flutterwave.FlutterwaveAdapter;
 import com.umulam.fleen.health.adapter.flutterwave.model.enums.FwBankCountryType;
+import com.umulam.fleen.health.adapter.flutterwave.model.request.FwGetExchangeRateRequest;
 import com.umulam.fleen.health.adapter.flutterwave.response.FwGetBanksResponse;
+import com.umulam.fleen.health.adapter.flutterwave.response.FwGetExchangeRateResponse;
 import com.umulam.fleen.health.repository.jpa.BankAccountJpaRepository;
 import com.umulam.fleen.health.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +70,16 @@ public class FlutterwaveService {
 
   private String getBanksCacheKey() {
     return FLUTTERWAVE_GET_BANKS_CACHE_PREFIX;
+  }
+
+  public FwGetExchangeRateResponse getExchangeRate(Double amount, String sourceCurrency, String destinationCurrency) {
+    FwGetExchangeRateRequest request = FwGetExchangeRateRequest.builder()
+      .amount(amount.toString())
+      .sourceCurrency(sourceCurrency)
+      .destinationCurrency(destinationCurrency)
+      .build();
+
+    return flutterwaveAdapter.getExchangeRate(request);
   }
 
 }

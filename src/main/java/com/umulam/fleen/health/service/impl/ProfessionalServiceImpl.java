@@ -21,9 +21,9 @@ import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdate
 import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateVerificationDetailResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
+import com.umulam.fleen.health.model.view.VerificationDocumentView;
 import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.model.view.professional.ProfessionalViewBasic;
-import com.umulam.fleen.health.model.view.VerificationDocumentView;
 import com.umulam.fleen.health.repository.jpa.ProfessionalAvailabilityJpaRepository;
 import com.umulam.fleen.health.repository.jpa.ProfessionalJpaRepository;
 import com.umulam.fleen.health.service.*;
@@ -276,4 +276,8 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
     return verificationDocumentService;
   }
 
+  @Override
+  public Double getProfessionalPrice(Integer professionalId) {
+    return repository.findProfessionalPrice(professionalId);
+  }
 }
