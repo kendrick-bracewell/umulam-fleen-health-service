@@ -1,31 +1,42 @@
-package com.umulam.fleen.health.adapter.flutterwave.response;
+package com.umulam.fleen.health.model.event.flutterwave;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_WITH_TIMEZONE;
 
-@Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FwCreateTransferResponse extends FlutterwaveResponse {
+public class FwTransferEvent {
 
-  private CreateTransferData data;
+  private String event;
+
+  @JsonProperty("event.type")
+  private String eventType;
+
+  private TransferData data;
 
   @Getter
   @Setter
-  public static class CreateTransferData {
+  @NoArgsConstructor
+  public static class TransferData {
 
     @JsonProperty("id")
     private String transferId;
 
     @JsonProperty("account_number")
     private String accountNumber;
+
+    @JsonProperty("bank_name")
+    private String bankName;
 
     @JsonProperty("bank_code")
     private String bankCode;
@@ -37,6 +48,7 @@ public class FwCreateTransferResponse extends FlutterwaveResponse {
     @JsonProperty("created_at")
     private LocalDateTime createdAt;
 
+    @JsonProperty("currency")
     private String currency;
 
     @JsonProperty("debit_currency")
@@ -45,7 +57,12 @@ public class FwCreateTransferResponse extends FlutterwaveResponse {
     private String amount;
     private String fee;
     private String status;
-    private String reference;
+
+    @JsonProperty("reference")
+    private String transferReference;
+
+    @JsonProperty("narration")
+    private String transferNarration;
 
     @JsonProperty("complete_message")
     private String transferMessage;
@@ -55,8 +72,5 @@ public class FwCreateTransferResponse extends FlutterwaveResponse {
 
     @JsonProperty("is_approved")
     private String isApproved;
-
-    @JsonProperty("bank_name")
-    private String bankName;
   }
 }

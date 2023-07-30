@@ -51,4 +51,7 @@ public class MemberBankAccount {
   @CreationTimestamp
   @Column(name = "created_on", updatable = false)
   private LocalDateTime createdOn;
+
+  @Column(name = "active")
+  private boolean active;
 }
