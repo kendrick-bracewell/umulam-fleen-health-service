@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME;
 
@@ -51,4 +52,23 @@ public class PendingHealthSessionBookingResponse {
 
   @JsonProperty("actual_price_currency")
   private String actualPriceCurrency;
+
+  @JsonProperty("booked_periods")
+  private List<BookedSessionPeriod> bookedPeriods;
+
+  @Builder
+  @Getter
+  @Setter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class BookedSessionPeriod {
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
+    @JsonProperty("start_date")
+    private LocalDateTime startDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
+    @JsonProperty("end_date")
+    private LocalDateTime endDate;
+  }
 }

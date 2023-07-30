@@ -32,4 +32,11 @@ public class UniqueReferenceGenerator {
 
     return uuidPart + randomPart;
   }
+
+  public String generateUniqueReferenceLong() {
+    String uuidPart = UUID.randomUUID().toString().replace("-", "").substring(0, 15);
+    String randomPart = generateUniqueReference(20);
+
+    return uuidPart + randomPart;
+  }
 }

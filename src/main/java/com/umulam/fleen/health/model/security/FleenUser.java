@@ -132,4 +132,8 @@ public class FleenUser implements UserDetails {
   public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
     this.authorities = authorities;
   }
+
+  public Member toMember() {
+    return Member.builder().id(this.id).build();
+  }
 }

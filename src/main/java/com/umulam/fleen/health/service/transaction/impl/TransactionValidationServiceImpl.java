@@ -79,7 +79,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
   private void validateAndCompleteSessionTransaction(String body) {
     try {
       PsChargeEvent event = mapper.readValue(body, PsChargeEvent.class);
-      Optional<SessionTransaction> transactionExist = sessionTransactionJpaRepository.findByReference(event.getData().getMetadata().getTransactionReference());
+      Optional<SessionTransaction> transactionExist = sessionTransactionJpaRepository.findByGroupReference(event.getData().getMetadata().getTransactionReference());
       if (SUCCESS.getValue().equalsIgnoreCase(event.getData().getStatus())) {
         if (transactionExist.isPresent()) {
           SessionTransaction transaction = transactionExist.get();

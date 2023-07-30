@@ -57,10 +57,15 @@ import java.util.Optional;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.REFERENCE_PREFIX;
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.TRANSACTION_REFERENCE_PREFIX;
+import static com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto.SessionPeriod;
+import static com.umulam.fleen.health.model.response.healthsession.PendingHealthSessionBookingResponse.BookedSessionPeriod;
+import static com.umulam.fleen.health.util.DateTimeUtil.toDate;
+import static com.umulam.fleen.health.util.DateTimeUtil.toTime;
 import static com.umulam.fleen.health.util.FleenHealthUtil.areNotEmpty;
 import static com.umulam.fleen.health.util.FleenHealthUtil.toSearchResult;
 import static com.umulam.fleen.health.util.StringUtil.getFullName;
 import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
 
 @Slf4j
 @Service
@@ -163,94 +168,136 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   @Transactional
   public PendingHealthSessionBookingResponse bookSession(BookHealthSessionDto dto, FleenUser user) {
     HealthSession healthSession = dto.toHealthSession();
-    Optional<HealthSession> bookedSessionExist = healthSessionRepository.findByProfessionalAndDateAndTime(healthSession.getProfessional(), healthSession.getDate(), healthSession.getTime());
-    if (bookedSessionExist.isPresent()) {
-      HealthSession bookedSession = bookedSessionExist.get();
-      Member professional = bookedSession.getProfessional();
-      if (bookedSession.getPatient().getId().equals(user.getId()) &&
+    for (SessionPeriod period : dto.getPeriods()) {
+      Optional<HealthSession> bookedSessionExist = healthSessionRepository.findByProfessionalAndDateAndTime(healthSession.getProfessional(), toDate(period.getDate()), toTime(period.getTime()));
+      if (bookedSessionExist.isPresent()) {
+        HealthSession bookedSession = bookedSessionExist.get();
+        Member professional = bookedSession.getProfessional();
+        if (bookedSession.getPatient().getId().equals(user.getId()) &&
           (bookedSession.getStatus() == HealthSessionStatus.SCHEDULED ||
-           bookedSession.getStatus() == HealthSessionStatus.RESCHEDULED ||
-           bookedSession.getStatus() == HealthSessionStatus.PENDING)) {
-        throw new PatientProfessionalAlreadyBookSessionException(getFullName(professional.getFirstName(), professional.getLastName()), healthSession.getDate(), healthSession.getTime());
-      }
+            bookedSession.getStatus() == HealthSessionStatus.RESCHEDULED ||
+            bookedSession.getStatus() == HealthSessionStatus.PENDING)) {
+          throw new PatientProfessionalAlreadyBookSessionException(getFullName(professional.getFirstName(), professional.getLastName()), healthSession.getDate(), healthSession.getTime());
+        }
 
-      if (!(bookedSession.getPatient().getId().equals(user.getId()))) {
-        throw new HealthSessionDateAlreadyBookedException(getFullName(professional.getFirstName(), professional.getLastName()), healthSession.getDate(), healthSession.getTime());
+        if (!(bookedSession.getPatient().getId().equals(user.getId()))) {
+          throw new HealthSessionDateAlreadyBookedException(getFullName(professional.getFirstName(), professional.getLastName()), healthSession.getDate(), healthSession.getTime());
+        }
       }
     }
 
+
     Optional<Professional> professionalExist = professionalService.findProfessionalByMember(healthSession.getProfessional());
-    if (professionalExist.isPresent() && professionalExist.get().getAvailabilityStatus() == ProfessionalAvailabilityStatus.UNAVAILABLE) {
-      Member professional = professionalExist.get().getMember();
-      throw new ProfessionalNotAvailableForSessionException(getFullName(professional.getFirstName(), professional.getLastName()));
+    if (professionalExist.isPresent()) {
+      Member member = professionalExist.get().getMember();
+      Professional professional = professionalExist.get();
+
+      if (professional.getAvailabilityStatus() == ProfessionalAvailabilityStatus.UNAVAILABLE) {
+        throw new ProfessionalNotAvailableForSessionException(getFullName(member.getFirstName(), member.getLastName()));
+      }
+
+      if (member.getVerificationStatus() != ProfileVerificationStatus.APPROVED) {
+        throw new ProfessionalProfileNotApproved();
+      }
     }
 
     if (professionalExist.isPresent()) {
-      Member professional = professionalExist.get().getMember();
+      for (SessionPeriod sessionPeriod: dto.getPeriods()) {
+        Member member = professionalExist.get().getMember();
 
-      if (professional.getVerificationStatus() != ProfileVerificationStatus.APPROVED) {
-        throw new ProfessionalProfileNotApproved();
-      }
+        DayOfWeek dayOfWeek = requireNonNull(toDate(sessionPeriod.getDate())).getDayOfWeek();
+        AvailabilityDayOfTheWeek availabilityDayOfTheWeek = AvailabilityDayOfTheWeek.valueOf(dayOfWeek.toString());
 
-      DayOfWeek dayOfWeek = healthSession.getDate().getDayOfWeek();
-      AvailabilityDayOfTheWeek availabilityDayOfTheWeek = AvailabilityDayOfTheWeek.valueOf(dayOfWeek.toString());
-      List<ProfessionalAvailability> availabilities = professionalAvailabilityJpaRepository.findByMemberAndDayOfWeek(professional, availabilityDayOfTheWeek);
-      if (availabilities.isEmpty()) {
-        throw new ProfessionalNotAvailableForSessionDayException(getFullName(professional.getFirstName(), professional.getLastName()), dayOfWeek.toString());
-      } else {
-        boolean timeAvailableForSession = false;
-        LocalTime proposedTimeForSession = healthSession.getTime();
+        List<ProfessionalAvailability> availabilities = professionalAvailabilityJpaRepository.findByMemberAndDayOfWeek(member, availabilityDayOfTheWeek);
+        if (availabilities.isEmpty()) {
+          throw new ProfessionalNotAvailableForSessionDayException(getFullName(member.getFirstName(), member.getLastName()), dayOfWeek.toString());
+        } else {
+          boolean timeAvailableForSession = false;
+          LocalTime proposedTimeForSession = requireNonNull(toTime(sessionPeriod.getTime()));
 
-        for (ProfessionalAvailability availability : availabilities) {
-          if (availability.isTimeInRange(proposedTimeForSession)) {
-            timeAvailableForSession = true;
-            break;
+          for (ProfessionalAvailability availability : availabilities) {
+            if (availability.isTimeInRange(proposedTimeForSession)) {
+              timeAvailableForSession = true;
+              break;
+            }
           }
-        }
-        if (!timeAvailableForSession) {
-          LocalDateTime proposedSessionDateTime = LocalDateTime.of(healthSession.getDate(), healthSession.getTime());
-          throw new ProfessionalNotAvailableForSessionDateException(getFullName(professional.getFirstName(), professional.getLastName()), proposedSessionDateTime);
+
+          if (!timeAvailableForSession) {
+            LocalDateTime proposedSessionDateTime = LocalDateTime.of(healthSession.getDate(), healthSession.getTime());
+            throw new ProfessionalNotAvailableForSessionDateException(getFullName(member.getFirstName(), member.getLastName()), proposedSessionDateTime);
+          }
         }
       }
     }
 
-    healthSession.setReference(generateSessionReference());
-    Member member = Member.builder()
-        .id(user.getId())
+    Member patient = user.toMember();
+    healthSession.setPatient(patient);
+    List<HealthSession> healthSessions = new ArrayList<>();
+    for (SessionPeriod period : dto.getPeriods()) {
+      HealthSession newHealthSession = HealthSession.builder()
+        .documentLink(dto.getDocument())
+        .professional(healthSession.getProfessional())
+        .patient(patient)
+        .location(healthSession.getLocation())
+        .timezone(healthSession.getTimezone())
+        .comment(healthSession.getComment())
+        .date(toDate(period.getDate()))
+        .time(toTime(period.getTime()))
+        .reference(generateSessionReference())
         .build();
-    healthSession.setPatient(member);
-    HealthSession savedHealthSession = healthSessionRepository.save(healthSession);
+
+      healthSessions.add(newHealthSession);
+    }
+
+    List<HealthSession> savedHealthSessions = healthSessionRepository.saveAll(healthSessions);
     GetMemberUpdateDetailsResponse memberDetail = memberService.getMemberGetUpdateDetailsResponse(user);
 
-    SessionTransaction transaction = SessionTransaction.builder()
+    Double professionalPrice = professionalService.getProfessionalPrice(healthSession.getProfessional().getId());
+    int totalNumberOfSessions = dto.getPeriods().size();
+    double totalAmountToCharge = professionalPrice * totalNumberOfSessions;
+    String groupTransactionReference = generateGroupTransactionReference();
+
+    List<SessionTransaction> transactions = new ArrayList<>();
+    for (HealthSession session : savedHealthSessions) {
+      SessionTransaction transaction = SessionTransaction.builder()
         .reference(generateTransactionReference())
-        .payer(member)
+        .payer(patient)
         .status(TransactionStatus.PENDING)
         .gateway(PaymentGateway.PAYSTACK)
-        .amount(dto.getTransactionData().getAmount())
+        .amount(totalAmountToCharge)
         .type(TransactionType.SESSION)
         .subType(TransactionSubType.DEBIT)
-        .sessionReference(savedHealthSession.getReference())
+        .sessionReference(session.getReference())
+        .totalSessions(totalNumberOfSessions)
+        .groupTransactionReference(groupTransactionReference)
         .build();
+      transactions.add(transaction);
+    }
+    transactionJpaRepository.saveAll(transactions);
 
-    transactionJpaRepository.save(transaction);
+    List<BookedSessionPeriod> bookedPeriods = new ArrayList<>();
 
-    LocalDateTime startDate = LocalDateTime.of(savedHealthSession.getDate(), savedHealthSession.getTime());
-    LocalDateTime endDate = startDate.plusHours(getMaxMeetingSessionHourDuration());
+    for (HealthSession savedHealthSession : savedHealthSessions) {
+      LocalDateTime startDate = LocalDateTime.of(savedHealthSession.getDate(), savedHealthSession.getTime());
+      LocalDateTime endDate = startDate.plusHours(getMaxMeetingSessionHourDuration());
 
-    Double professionalPrice = professionalService.getProfessionalPrice(healthSession.getProfessional().getId());
-    Double actualPriceToPayIn = exchangeRateService.getConvertedHealthSessionPrice(professionalPrice);
+      BookedSessionPeriod sessionPeriod = BookedSessionPeriod.builder()
+        .startDate(startDate)
+        .endDate(endDate)
+        .build();
+      bookedPeriods.add(sessionPeriod);
+    }
+
+    Double actualPriceToPayForSession = exchangeRateService.getConvertedHealthSessionPrice(totalAmountToCharge);
     return PendingHealthSessionBookingResponse.builder()
-      .startDate(startDate)
-      .endDate(endDate)
+      .timezone(healthSession.getTimezone())
+      .bookedPeriods(bookedPeriods)
       .patientFirstName(memberDetail.getFirstName())
       .patientLastName(memberDetail.getLastName())
       .patientEmailAddress(memberDetail.getEmailAddress())
-      .timezone(savedHealthSession.getTimezone())
-      .sessionReference(savedHealthSession.getReference())
-      .transactionReference(transaction.getReference())
+      .transactionReference(groupTransactionReference)
       .professionalPrice(professionalPrice)
-      .actualPriceToPay(actualPriceToPayIn)
+      .actualPriceToPay(actualPriceToPayForSession)
       .professionalPriceCurrency(configService.getPricingCurrency())
       .actualPriceCurrency(configService.getPaymentCurrency())
       .build();
@@ -362,6 +409,10 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   private String generateTransactionReference() {
     return TRANSACTION_REFERENCE_PREFIX.concat(referenceGenerator.generateUniqueReference());
+  }
+
+  private String generateGroupTransactionReference() {
+    return TRANSACTION_REFERENCE_PREFIX.concat(referenceGenerator.generateUniqueReferenceLong());
   }
 
   public static int getMaxMeetingSessionHourDuration() {

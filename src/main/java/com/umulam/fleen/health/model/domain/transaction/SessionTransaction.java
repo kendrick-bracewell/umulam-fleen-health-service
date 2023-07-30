@@ -25,4 +25,10 @@ public class SessionTransaction extends Transaction {
 
   @Column(name = "session_reference", nullable = false)
   private String sessionReference;
+
+  @Column(name = "total_sessions", nullable = false)
+  private Integer totalSessions;
+
+  @Column(name = "group_transaction_reference", nullable = false)
+  private String groupTransactionReference;
 }
