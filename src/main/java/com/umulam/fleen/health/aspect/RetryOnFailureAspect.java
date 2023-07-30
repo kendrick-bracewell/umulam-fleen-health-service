@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-public class RetryOnTimeoutAspect {
+public class RetryOnFailureAspect {
 
-  @Around("@annotation(retryOnTimeout)")
-  public Object retryOnTimeout(ProceedingJoinPoint joinPoint, RetryOnTimeout retryOnTimeout) throws Throwable {
-    int maxAttempts = retryOnTimeout.maxAttempts();
-    long timeoutMillis = retryOnTimeout.timeoutMillis();
+  @Around("@annotation(retryOnFailure)")
+  public Object retryOnTimeout(ProceedingJoinPoint joinPoint, RetryOnFailure retryOnFailure) throws Throwable {
+    int maxAttempts = retryOnFailure.maxAttempts();
+    long timeoutMillis = retryOnFailure.timeoutMillis();
     int attempts = 0;
 
     do {

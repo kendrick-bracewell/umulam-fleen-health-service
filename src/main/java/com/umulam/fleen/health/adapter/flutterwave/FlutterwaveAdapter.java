@@ -8,7 +8,7 @@ import com.umulam.fleen.health.adapter.flutterwave.model.request.FwCreateTransfe
 import com.umulam.fleen.health.adapter.flutterwave.model.request.FwGetExchangeRateRequest;
 import com.umulam.fleen.health.adapter.flutterwave.model.request.FwResolveBankAccountRequest;
 import com.umulam.fleen.health.adapter.flutterwave.response.*;
-import com.umulam.fleen.health.aspect.RetryOnTimeout;
+import com.umulam.fleen.health.aspect.RetryOnFailure;
 import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
 import lombok.extern.slf4j.Slf4j;
@@ -132,7 +132,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
     }
   }
 
-  @RetryOnTimeout
+  @RetryOnFailure
   public FwGetExchangeRateResponse getExchangeRate(FwGetExchangeRateRequest request) {
     if (!isMandatoryFieldAvailable(request.getAmount(), request.getSourceCurrency(), request.getDestinationCurrency())) {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
@@ -157,7 +157,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
     }
   }
 
-  @RetryOnTimeout
+  @RetryOnFailure
   public FwGetExchangeRateResponse createTransfer(FwCreateTransferRequest request) {
     if (!isMandatoryFieldAvailable(request.getDestinationAmount(), request.getSourceCurrency(), request.getDestinationCurrency())) {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
@@ -177,7 +177,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
     }
   }
 
-  @RetryOnTimeout
+  @RetryOnFailure
   public FwRetryTransferResponse retryTransfer(String transferId) {
     if (!isMandatoryFieldAvailable(transferId)) {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());

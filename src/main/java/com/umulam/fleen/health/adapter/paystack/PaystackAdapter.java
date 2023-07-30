@@ -8,7 +8,7 @@ import com.umulam.fleen.health.adapter.paystack.model.request.CreateTransferReci
 import com.umulam.fleen.health.adapter.paystack.model.request.InitiateTransferRequest;
 import com.umulam.fleen.health.adapter.paystack.model.request.ResolveBankAccountRequest;
 import com.umulam.fleen.health.adapter.paystack.response.*;
-import com.umulam.fleen.health.aspect.RetryOnTimeout;
+import com.umulam.fleen.health.aspect.RetryOnFailure;
 import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +58,7 @@ public class PaystackAdapter extends BaseAdapter {
     }
   }
 
+  @RetryOnFailure
   public PsGetBanksResponse getBanks(String currency) {
     if (!isMandatoryFieldAvailable(currency)) {
       throw new ExternalSystemException(PaymentGatewayType.PAYSTACK.getValue());
@@ -117,7 +118,7 @@ public class PaystackAdapter extends BaseAdapter {
     }
   }
 
-  @RetryOnTimeout
+  @RetryOnFailure
   public void deleteTransferRecipient(String recipientCode) {
     if (!isMandatoryFieldAvailable(recipientCode)) {
       throw new ExternalSystemException(PaymentGatewayType.PAYSTACK.getValue());

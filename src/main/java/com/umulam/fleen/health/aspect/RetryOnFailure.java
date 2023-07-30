@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RetryOnTimeout {
+public @interface RetryOnFailure {
   int maxAttempts() default 3;
   long timeoutMillis() default 5000;
 }
