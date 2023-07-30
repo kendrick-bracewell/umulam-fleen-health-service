@@ -6,10 +6,9 @@ import com.umulam.fleen.health.adapter.flutterwave.config.FlutterwaveConfig;
 import com.umulam.fleen.health.adapter.flutterwave.model.enums.FlutterwaveParameter;
 import com.umulam.fleen.health.adapter.flutterwave.model.request.FwCreateRefundRequest;
 import com.umulam.fleen.health.adapter.flutterwave.model.request.FwResolveBankAccountRequest;
-import com.umulam.fleen.health.adapter.flutterwave.response.CreateRefundResponse;
-import com.umulam.fleen.health.adapter.flutterwave.response.FwGetBanksResponse;
-import com.umulam.fleen.health.adapter.flutterwave.response.FwResolveBankAccountResponse;
-import com.umulam.fleen.health.adapter.flutterwave.response.FwVerifyTransactionResponse;
+import com.umulam.fleen.health.adapter.flutterwave.model.request.GetExchangeRateRequest;
+import com.umulam.fleen.health.adapter.flutterwave.response.*;
+import com.umulam.fleen.health.aspect.RetryOnTimeout;
 import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +21,7 @@ import java.net.URI;
 import java.util.HashMap;
 
 import static com.umulam.fleen.health.adapter.flutterwave.model.enums.FlutterwaveEndpointBlock.*;
+import static com.umulam.fleen.health.adapter.flutterwave.model.enums.FlutterwaveParameter.*;
 
 @Slf4j
 @Component
@@ -126,6 +126,31 @@ public class FlutterwaveAdapter extends BaseAdapter {
       return response.getBody();
     } else {
       String message = String.format("An error occurred while calling createRefund method of %s: %s", getClass().getSimpleName(), response.getBody());
+      log.error(message);
+      handleResponseError(response);
+      return null;
+    }
+  }
+
+  @RetryOnTimeout
+  public GetExchangeRateResponse getExchangeRate(GetExchangeRateRequest request) {
+    if (!isMandatoryFieldAvailable(request.getAmount(), request.getSourceCurrency(), request.getDestinationCurrency())) {
+      throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
+    }
+
+    HashMap<ApiParameter, String> parameters = new HashMap<>();
+    parameters.put(AMOUNT, request.getAmount());
+    parameters.put(SOURCE_CURRENCY, request.getSourceCurrency());
+    parameters.put(DESTINATION_CURRENCY, request.getDestinationCurrency());
+
+    URI uri = buildUri(parameters, TRANSFERS, RATES);
+    ResponseEntity<GetExchangeRateResponse> response = doCall(uri, HttpMethod.GET,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), request, GetExchangeRateResponse.class);
+
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response.getBody();
+    } else {
+      String message = String.format("An error occurred while calling getExchangeRate method of %s: %s", getClass().getSimpleName(), response.getBody());
       log.error(message);
       handleResponseError(response);
       return null;
