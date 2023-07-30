@@ -13,7 +13,8 @@ public enum FlutterwaveEndpointBlock implements EndpointBlock {
   REFUND("/refund"),
   TRANSFERS("/transfers"),
   RATES("/rates"),
-  RETRIES("/retries");
+  RETRIES("/retries"),
+  BRANCHES("/branches");
 
   private final String value;
 

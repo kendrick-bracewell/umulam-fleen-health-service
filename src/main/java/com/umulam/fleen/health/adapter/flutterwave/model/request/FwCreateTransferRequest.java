@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.adapter.flutterwave.model.request;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -8,6 +9,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class FwCreateTransferRequest {
 
   @JsonProperty("account_bank")
@@ -23,7 +25,7 @@ public class FwCreateTransferRequest {
   private String destinationCurrency;
 
   @JsonProperty("amount")
-  private String destinationAmount;
+  private Double destinationAmount;
 
   @JsonProperty("reference")
   private String transactionReference;
@@ -34,9 +36,13 @@ public class FwCreateTransferRequest {
   @JsonProperty("beneficiary_name")
   private String beneficiaryName;
 
+  @JsonProperty("destination_branch_code")
+  private String destinationBranchCode;
+
   @Getter
   @Setter
   @NoArgsConstructor
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   public static class CreateTransferMetadata {
 
     @JsonProperty("mobile_number")
@@ -45,6 +51,28 @@ public class FwCreateTransferRequest {
     @JsonProperty("email")
     private String emailAddress;
 
+    @JsonProperty("first_name")
+    private String firstName;
 
+    @JsonProperty("last_name")
+    private String lastName;
+
+    @JsonProperty("beneficiary_country")
+    private String countryCode;
+
+    @JsonProperty("sender_country")
+    private String senderCountryCode;
+
+    @JsonProperty("sender")
+    private String issuer;
+
+    @JsonProperty("merchant_name")
+    private String merchantName;
+
+    @JsonProperty("sender_city")
+    private String city;
+
+    @JsonProperty("recipient_address")
+    private String recipientAddress;
   }
 }

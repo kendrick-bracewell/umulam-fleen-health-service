@@ -26,7 +26,7 @@ public class Earnings {
   private BigDecimal totalEarnings;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @Column(name = "member_id", nullable = false)
+  @JoinColumn(name = "member_id", nullable = false)
   private Member member;
 
   @CreationTimestamp

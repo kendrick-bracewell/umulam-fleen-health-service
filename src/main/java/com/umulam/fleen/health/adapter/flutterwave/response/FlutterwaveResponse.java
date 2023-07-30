@@ -9,6 +9,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class FlutterwaveResponse {
 
-  private boolean status;
+  private String status;
   private String message;
 }

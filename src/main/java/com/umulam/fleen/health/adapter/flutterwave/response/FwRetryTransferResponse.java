@@ -1,12 +1,10 @@
 package com.umulam.fleen.health.adapter.flutterwave.response;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
-@Builder
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class FwRetryTransferResponse extends FwCreateTransferResponse {
 
 }

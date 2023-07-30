@@ -57,6 +57,9 @@ public class Professional {
   @JoinColumn(name = "member_id", referencedColumnName = "id", unique = true)
   private Member member;
 
+  @Column(name = "price")
+  private Double price;
+
   @CreationTimestamp
   @Column(name = "created_on", updatable = false)
   private LocalDateTime createdOn;

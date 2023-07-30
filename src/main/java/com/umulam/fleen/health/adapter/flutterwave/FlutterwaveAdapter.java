@@ -196,4 +196,22 @@ public class FlutterwaveAdapter extends BaseAdapter {
       return null;
     }
   }
+
+  public FwGetBankBranchesResponse getBankBranches(String bankId) {
+    if (!isMandatoryFieldAvailable(bankId)) {
+      throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
+    }
+
+    URI uri = buildUri(BANKS, buildPathVar(bankId), BRANCHES);
+    ResponseEntity<FwGetBankBranchesResponse> response = doCall(uri, HttpMethod.GET,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), null, FwGetBankBranchesResponse.class);
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response.getBody();
+    } else {
+      String message = String.format("An error occurred while calling getBankBranches method of %s: %s", getClass().getSimpleName(), response.getBody());
+      log.error(message);
+      handleResponseError(response);
+      return null;
+    }
+  }
 }
