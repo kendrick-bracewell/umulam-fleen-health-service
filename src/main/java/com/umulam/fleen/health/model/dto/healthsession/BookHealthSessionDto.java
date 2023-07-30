@@ -47,14 +47,10 @@ public class BookHealthSessionDto {
   private String document;
 
   @Valid
-  @NotNull(message = "{session.transaction.notNull}")
-  @JsonProperty("transaction_data")
-  private TransactionData transactionData;
-
-  @Valid
   @NotEmpty(message = "{session.periods.notEmpty}")
   @Size(min = 1, max = 6, message = "{session.periods.size}")
   @NoMoreThanOneSessionADay
+  @JsonProperty("session_periods")
   private List<SessionPeriod> periods;
 
   @Getter
@@ -72,16 +68,6 @@ public class BookHealthSessionDto {
     @TimeValid(message = "{session.time.valid}")
     @WorkingHour(message = "{session.time.workingHour}")
     private String time;
-  }
-
-  @Getter
-  @Setter
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class TransactionData {
-
-    @NotNull(message = "{session.transaction.amount.notNull}")
-    private Double amount;
   }
 
   public HealthSession toHealthSession() {
