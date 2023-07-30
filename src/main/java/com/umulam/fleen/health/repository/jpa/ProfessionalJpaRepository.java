@@ -68,6 +68,6 @@ public interface ProfessionalJpaRepository extends JpaRepository<Professional, I
   @Query(value = "SELECT DISTINCT p FROM Professional p WHERE p.member.id IN (:ids)")
   List<Professional> findProfessionalsByIds(@Param("ids") List<Integer> ids);
 
-  @Query(value ="SELECT price from professional where id = :id", nativeQuery = true)
-  Double findProfessionalPrice(@Param("id") Integer professionalId);
+  @Query(value ="SELECT price from professional where member_id = :id", nativeQuery = true)
+  Double findProfessionalPrice(@Param("id") Integer memberId);
 }

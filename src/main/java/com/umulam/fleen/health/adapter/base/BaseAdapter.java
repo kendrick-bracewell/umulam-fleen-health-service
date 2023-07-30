@@ -42,7 +42,7 @@ public class BaseAdapter {
   public <T> ResponseEntity<T> doCall(@NonNull URI uri, @NonNull HttpMethod method,
                                       @Nullable Map<String, String> headers,
                                       @Nullable Object body, @NonNull Class<T> responseModel) {
-    log.debug(String.format("HTTP call to url=%s with method=%s and body=%s", uri, method.name(),
+    log.info(String.format("HTTP call to url=%s with method=%s and body=%s", uri, method.name(),
             getPayloadBodyAsString(body)));
     HttpHeaders requestHeaders = getHeaders();
     if (headers != null) {

@@ -20,7 +20,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
   @Override
   public Double getConvertedHealthSessionPrice(Double amount) {
-    FwGetExchangeRateResponse exchangeRate = flutterwaveService.getExchangeRate(amount, configService.getPricingCurrency(), configService.getPaymentCurrency());
+    FwGetExchangeRateResponse exchangeRate = flutterwaveService.getExchangeRate(amount, configService.getPaymentCurrency(), configService.getPricingCurrency());
     return exchangeRate.getData().getSource().getAmount();
   }
 }

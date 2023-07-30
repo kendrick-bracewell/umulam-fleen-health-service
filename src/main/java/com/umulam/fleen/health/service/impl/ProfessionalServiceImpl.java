@@ -277,7 +277,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   }
 
   @Override
-  public Double getProfessionalPrice(Integer professionalId) {
-    return repository.findProfessionalPrice(professionalId);
+  public Double getProfessionalPrice(Integer memberId) {
+    return repository.findProfessionalPrice(memberId);
   }
 }

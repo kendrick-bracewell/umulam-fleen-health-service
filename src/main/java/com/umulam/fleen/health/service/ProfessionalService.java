@@ -65,5 +65,5 @@ public interface ProfessionalService {
 
   List<Professional> findProfessionalsById(List<Integer> ids);
 
-  Double getProfessionalPrice(Integer professionalId);
+  Double getProfessionalPrice(Integer memberId);
 }
