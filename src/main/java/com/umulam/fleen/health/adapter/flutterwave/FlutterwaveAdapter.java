@@ -6,6 +6,7 @@ import com.umulam.fleen.health.adapter.flutterwave.config.FlutterwaveConfig;
 import com.umulam.fleen.health.adapter.flutterwave.model.enums.FlutterwaveParameter;
 import com.umulam.fleen.health.adapter.flutterwave.model.request.FwCreateRefundRequest;
 import com.umulam.fleen.health.adapter.flutterwave.model.request.FwResolveBankAccountRequest;
+import com.umulam.fleen.health.adapter.flutterwave.response.CreateRefundResponse;
 import com.umulam.fleen.health.adapter.flutterwave.response.FwGetBanksResponse;
 import com.umulam.fleen.health.adapter.flutterwave.response.FwResolveBankAccountResponse;
 import com.umulam.fleen.health.adapter.flutterwave.response.FwVerifyTransactionResponse;
@@ -112,19 +113,19 @@ public class FlutterwaveAdapter extends BaseAdapter {
     }
   }
 
-  public FwResolveBankAccountResponse resolveBankAccount(FwCreateRefundRequest request) {
+  public CreateRefundResponse createRefund(FwCreateRefundRequest request) {
     if (!isMandatoryFieldAvailable(request.getTransactionId())) {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
     }
 
     URI uri = buildUri(TRANSACTIONS, buildPathVar(request.getTransactionId()), REFUND);
-    ResponseEntity<FwResolveBankAccountResponse> response = doCall(uri, HttpMethod.POST,
-      getAuthHeaderWithBearerToken(config.getSecretKey()), request, FwResolveBankAccountResponse.class);
+    ResponseEntity<CreateRefundResponse> response = doCall(uri, HttpMethod.POST,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), request, CreateRefundResponse.class);
 
     if (response.getStatusCode().is2xxSuccessful()) {
       return response.getBody();
     } else {
-      String message = String.format("An error occurred while calling resolveBankAccount method of %s: %s", getClass().getSimpleName(), response.getBody());
+      String message = String.format("An error occurred while calling createRefund method of %s: %s", getClass().getSimpleName(), response.getBody());
       log.error(message);
       handleResponseError(response);
       return null;
