@@ -35,10 +35,10 @@ public class JwtProvider {
 
   private final ObjectMapper mapper;
 
-  @Value("${umulam.fleen.health.jwt.issuer}")
+  @Value("${fleen.health.jwt.issuer}")
   public String JWT_ISSUER;
 
-  @Value("${umulam.fleen.health.jwt.secret}")
+  @Value("${fleen.health.jwt.secret}")
   public String JWT_SECRET;
 
   public JwtProvider(ObjectMapper objectMapper) {
