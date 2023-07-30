@@ -13,7 +13,7 @@ import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_WITH_TIMEZON
 @Getter
 @Setter
 @NoArgsConstructor
-public class TransferEvent {
+public class PsTransferEvent {
   private String event;
   private TransferEventData data;
 

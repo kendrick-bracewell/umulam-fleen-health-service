@@ -16,11 +16,10 @@ import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME_WITH_TIMEZON
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChargeEvent {
+public class PsChargeEvent {
 
   private String event;
   private ChargeData data;
-
 
   @Getter
   @Setter

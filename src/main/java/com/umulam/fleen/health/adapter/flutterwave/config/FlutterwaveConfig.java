@@ -18,4 +18,10 @@ public class FlutterwaveConfig {
 
   @NotBlank
   private String publicKey;
+
+  @NotBlank
+  private String verificationHeader;
+
+  @NotBlank
+  private String secretHash;
 }

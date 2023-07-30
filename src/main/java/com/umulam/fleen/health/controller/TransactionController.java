@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.controller;
 
+import com.umulam.fleen.health.adapter.flutterwave.config.FlutterwaveConfig;
 import com.umulam.fleen.health.adapter.paystack.config.PaystackConfig;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.service.transaction.TransactionValidationService;
@@ -21,20 +22,32 @@ import static com.umulam.fleen.health.constant.base.GeneralConstant.X_FORWARDED_
 @RequestMapping(value = "transaction")
 public class TransactionController {
 
-  private final PaystackConfig config;
+  private final PaystackConfig psConfig;
+  private final FlutterwaveConfig fwConfig;
   private final TransactionValidationService transactionValidationService;
 
-  public TransactionController(PaystackConfig config,
+  public TransactionController(PaystackConfig psConfig,
+                               FlutterwaveConfig fwConfig,
                                TransactionValidationService transactionValidationService) {
-    this.config = config;
+    this.psConfig = psConfig;
+    this.fwConfig = fwConfig;
     this.transactionValidationService = transactionValidationService;
   }
 
   @Async
-  @PostMapping(value = "/payment/verification")
-  public CompletableFuture<FleenHealthResponse> validateAndCompletePaymentTransaction(@RequestBody String body, HttpServletRequest request) {
-    if (config.getIpWhitelist().contains(request.getHeader(X_FORWARDED_HEADER))) {
+  @PostMapping(value = "/payment/verification/ps")
+  public CompletableFuture<FleenHealthResponse> validateAndCompletePaymentTransactionPs(@RequestBody String body, HttpServletRequest request) {
+    if (psConfig.getIpWhitelist().contains(request.getHeader(X_FORWARDED_HEADER))) {
       transactionValidationService.validateAndCompleteTransaction(body);
+    }
+    return CompletableFuture.completedFuture(new FleenHealthResponse(SUCCESS_MESSAGE));
+  }
+
+  @Async
+  @PostMapping(value = "/payment/verification/fw")
+  public CompletableFuture<FleenHealthResponse> validateAndCompletePaymentTransactionFw(@RequestBody String body, HttpServletRequest request) {
+    if (fwConfig.getSecretHash().equalsIgnoreCase(request.getHeader(fwConfig.getVerificationHeader()))) {
+      System.out.println("Hello World");
     }
     return CompletableFuture.completedFuture(new FleenHealthResponse(SUCCESS_MESSAGE));
   }

@@ -11,8 +11,8 @@ import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.domain.transaction.WithdrawalTransaction;
-import com.umulam.fleen.health.model.event.paystack.ChargeEvent;
-import com.umulam.fleen.health.model.event.paystack.TransferEvent;
+import com.umulam.fleen.health.model.event.paystack.PsChargeEvent;
+import com.umulam.fleen.health.model.event.paystack.PsTransferEvent;
 import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.SessionTransactionJpaRepository;
@@ -78,7 +78,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
 
   private void validateAndCompleteSessionTransaction(String body) {
     try {
-      ChargeEvent event = mapper.readValue(body, ChargeEvent.class);
+      PsChargeEvent event = mapper.readValue(body, PsChargeEvent.class);
       Optional<SessionTransaction> transactionExist = sessionTransactionJpaRepository.findByReference(event.getData().getMetadata().getTransactionReference());
       if (SUCCESS.getValue().equalsIgnoreCase(event.getData().getStatus())) {
         if (transactionExist.isPresent()) {
@@ -141,7 +141,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
 
   private void validateAndCompleteWithdrawalTransaction(String body) {
     try {
-      TransferEvent event = mapper.readValue(body, TransferEvent.class);
+      PsTransferEvent event = mapper.readValue(body, PsTransferEvent.class);
       Optional<WithdrawalTransaction> transactionExist = withdrawalTransactionJpaRepository.findByReference(event.getData().getReference());
       if (transactionExist.isPresent()) {
         WithdrawalTransaction transaction = transactionExist.get();
