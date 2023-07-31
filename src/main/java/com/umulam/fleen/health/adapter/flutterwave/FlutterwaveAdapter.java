@@ -3,11 +3,8 @@ package com.umulam.fleen.health.adapter.flutterwave;
 import com.umulam.fleen.health.adapter.ApiParameter;
 import com.umulam.fleen.health.adapter.base.BaseAdapter;
 import com.umulam.fleen.health.adapter.flutterwave.config.FlutterwaveConfig;
-import com.umulam.fleen.health.adapter.flutterwave.model.request.FwCreateRefundRequest;
-import com.umulam.fleen.health.adapter.flutterwave.model.request.FwCreateTransferRequest;
-import com.umulam.fleen.health.adapter.flutterwave.model.request.FwGetExchangeRateRequest;
-import com.umulam.fleen.health.adapter.flutterwave.model.request.FwResolveBankAccountRequest;
-import com.umulam.fleen.health.adapter.flutterwave.response.*;
+import com.umulam.fleen.health.adapter.flutterwave.model.request.*;
+import com.umulam.fleen.health.adapter.flutterwave.model.response.*;
 import com.umulam.fleen.health.aspect.RetryOnFailure;
 import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
@@ -209,6 +206,30 @@ public class FlutterwaveAdapter extends BaseAdapter {
       return response.getBody();
     } else {
       String message = String.format("An error occurred while calling getBankBranches method of %s: %s", getClass().getSimpleName(), response.getBody());
+      log.error(message);
+      handleResponseError(response);
+      return null;
+    }
+  }
+
+  @RetryOnFailure
+  public FxGetTransferFeeResponse getTransferFee(FxGetTransferFeeRequest request) {
+    if (!isMandatoryFieldAvailable(request.getAmount(), request.getCurrency())) {
+      throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
+    }
+
+    HashMap<ApiParameter, String> parameters = new HashMap<>();
+    parameters.put(AMOUNT, request.getAmount());
+    parameters.put(CURRENCY, request.getCurrency());
+
+    URI uri = buildUri(parameters, TRANSFERS, FEE);
+    ResponseEntity<FxGetTransferFeeResponse> response = doCall(uri, HttpMethod.GET,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), null, FxGetTransferFeeResponse.class);
+
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response.getBody();
+    } else {
+      String message = String.format("An error occurred while calling getTransferFee method of %s: %s", getClass().getSimpleName(), response.getBody());
       log.error(message);
       handleResponseError(response);
       return null;

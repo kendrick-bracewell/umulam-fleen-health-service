@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.adapter.flutterwave.response;
+package com.umulam.fleen.health.adapter.flutterwave.model.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

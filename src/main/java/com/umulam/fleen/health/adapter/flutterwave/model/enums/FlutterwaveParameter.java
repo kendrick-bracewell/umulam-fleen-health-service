@@ -7,7 +7,9 @@ public enum FlutterwaveParameter implements ApiParameter {
   TRANSACTION_REFERENCE("tx_ref"),
   SOURCE_CURRENCY("source_currency"),
   DESTINATION_CURRENCY("destination_currency"),
-  AMOUNT("amount");
+  AMOUNT("amount"),
+  CURRENCY("currency"),
+  TYPE("type");
 
 
   private final String value;

@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.adapter.flutterwave.response;
+package com.umulam.fleen.health.adapter.flutterwave.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
