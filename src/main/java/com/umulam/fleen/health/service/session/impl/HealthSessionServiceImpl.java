@@ -10,7 +10,6 @@ import com.umulam.fleen.health.exception.healthsession.*;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionDateException;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionDayException;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotAvailableForSessionException;
-import com.umulam.fleen.health.exception.professional.ProfessionalProfileNotApproved;
 import com.umulam.fleen.health.model.domain.*;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.dto.healthsession.AddHealthSessionReviewDto;
@@ -173,15 +172,16 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       if (bookedSessionExist.isPresent()) {
         HealthSession bookedSession = bookedSessionExist.get();
         Member professional = bookedSession.getProfessional();
-        if (bookedSession.getPatient().getId().equals(user.getId()) &&
-          (bookedSession.getStatus() == HealthSessionStatus.SCHEDULED ||
-            bookedSession.getStatus() == HealthSessionStatus.RESCHEDULED ||
-            bookedSession.getStatus() == HealthSessionStatus.PENDING)) {
-          throw new PatientProfessionalAlreadyBookSessionException(getFullName(professional.getFirstName(), professional.getLastName()), healthSession.getDate(), healthSession.getTime());
-        }
+        String professionalName = getFullName(professional.getFirstName(), professional.getLastName());
 
-        if (!(bookedSession.getPatient().getId().equals(user.getId()))) {
-          throw new HealthSessionDateAlreadyBookedException(getFullName(professional.getFirstName(), professional.getLastName()), healthSession.getDate(), healthSession.getTime());
+        if (bookedSession.getStatus() == HealthSessionStatus.SCHEDULED ||
+            bookedSession.getStatus() == HealthSessionStatus.RESCHEDULED ||
+            bookedSession.getStatus() == HealthSessionStatus.PENDING) {
+          if (bookedSession.getPatient().getId().equals(user.getId())) {
+            throw new PatientProfessionalAlreadyBookSessionException(professionalName, healthSession.getDate(), healthSession.getTime());
+          } else  {
+            throw new HealthSessionDateAlreadyBookedException(professionalName, healthSession.getDate(), healthSession.getTime());
+          }
         }
       }
     }
@@ -189,32 +189,27 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
     Optional<Professional> professionalExist = professionalService.findProfessionalByMember(healthSession.getProfessional());
     if (professionalExist.isPresent()) {
-      Member member = professionalExist.get().getMember();
       Professional professional = professionalExist.get();
+      Member member = professional.getMember();
 
-      if (professional.getAvailabilityStatus() == ProfessionalAvailabilityStatus.UNAVAILABLE) {
+      if (professional.getAvailabilityStatus() == ProfessionalAvailabilityStatus.UNAVAILABLE
+          || member.getVerificationStatus() != ProfileVerificationStatus.APPROVED) {
         throw new ProfessionalNotAvailableForSessionException(getFullName(member.getFirstName(), member.getLastName()));
       }
 
-      if (member.getVerificationStatus() != ProfileVerificationStatus.APPROVED) {
-        throw new ProfessionalProfileNotApproved();
-      }
-    }
-
-    if (professionalExist.isPresent()) {
       for (SessionPeriod sessionPeriod: dto.getPeriods()) {
-        Member member = professionalExist.get().getMember();
+        LocalDate proposedDateForSession = requireNonNull(toDate(sessionPeriod.getDate()));
+        LocalTime proposedTimeForSession = requireNonNull(toTime(sessionPeriod.getTime()));
+        String professionalName = getFullName(member.getFirstName(), member.getLastName());
 
-        DayOfWeek dayOfWeek = requireNonNull(toDate(sessionPeriod.getDate())).getDayOfWeek();
+        DayOfWeek dayOfWeek = proposedDateForSession.getDayOfWeek();
         AvailabilityDayOfTheWeek availabilityDayOfTheWeek = AvailabilityDayOfTheWeek.valueOf(dayOfWeek.toString());
 
         List<ProfessionalAvailability> availabilities = professionalAvailabilityJpaRepository.findByMemberAndDayOfWeek(member, availabilityDayOfTheWeek);
         if (availabilities.isEmpty()) {
-          throw new ProfessionalNotAvailableForSessionDayException(getFullName(member.getFirstName(), member.getLastName()), dayOfWeek.toString());
+          throw new ProfessionalNotAvailableForSessionDayException(professionalName, dayOfWeek.toString());
         } else {
           boolean timeAvailableForSession = false;
-          LocalTime proposedTimeForSession = requireNonNull(toTime(sessionPeriod.getTime()));
-
           for (ProfessionalAvailability availability : availabilities) {
             if (availability.isTimeInRange(proposedTimeForSession)) {
               timeAvailableForSession = true;
@@ -223,8 +218,8 @@ public class HealthSessionServiceImpl implements HealthSessionService {
           }
 
           if (!timeAvailableForSession) {
-            LocalDateTime proposedSessionDateTime = LocalDateTime.of(healthSession.getDate(), healthSession.getTime());
-            throw new ProfessionalNotAvailableForSessionDateException(getFullName(member.getFirstName(), member.getLastName()), proposedSessionDateTime);
+            LocalDateTime proposedSessionDateTime = LocalDateTime.of(proposedDateForSession, proposedTimeForSession);
+            throw new ProfessionalNotAvailableForSessionDateException(professionalName, proposedSessionDateTime);
           }
         }
       }
@@ -261,24 +256,23 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     for (HealthSession session : savedHealthSessions) {
       SessionTransaction transaction = SessionTransaction.builder()
         .reference(generateTransactionReference())
+        .sessionReference(session.getReference())
+        .groupTransactionReference(groupTransactionReference)
         .payer(patient)
+        .amount(professionalPrice)
+        .totalSessions(totalNumberOfSessions)
         .status(TransactionStatus.PENDING)
         .gateway(PaymentGateway.PAYSTACK)
-        .amount(totalAmountToCharge)
         .type(TransactionType.SESSION)
         .subType(TransactionSubType.DEBIT)
-        .sessionReference(session.getReference())
-        .totalSessions(totalNumberOfSessions)
-        .groupTransactionReference(groupTransactionReference)
         .build();
       transactions.add(transaction);
     }
     transactionJpaRepository.saveAll(transactions);
 
     List<BookedSessionPeriod> bookedPeriods = new ArrayList<>();
-
-    for (HealthSession savedHealthSession : savedHealthSessions) {
-      LocalDateTime startDate = LocalDateTime.of(savedHealthSession.getDate(), savedHealthSession.getTime());
+    for (HealthSession session : savedHealthSessions) {
+      LocalDateTime startDate = LocalDateTime.of(session.getDate(), session.getTime());
       LocalDateTime endDate = startDate.plusHours(getMaxMeetingSessionHourDuration());
 
       BookedSessionPeriod sessionPeriod = BookedSessionPeriod.builder()

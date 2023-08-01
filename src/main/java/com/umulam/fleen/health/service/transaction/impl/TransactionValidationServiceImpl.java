@@ -9,6 +9,7 @@ import com.umulam.fleen.health.constant.session.TransactionStatus;
 import com.umulam.fleen.health.constant.session.WithdrawalStatus;
 import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import com.umulam.fleen.health.model.domain.HealthSession;
+import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.domain.transaction.WithdrawalTransaction;
 import com.umulam.fleen.health.model.event.paystack.PsChargeEvent;
@@ -26,10 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static com.umulam.fleen.health.constant.session.TransactionStatus.FAILED;
 import static com.umulam.fleen.health.constant.session.TransactionStatus.SUCCESS;
@@ -79,61 +77,68 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
   private void validateAndCompleteSessionTransaction(String body) {
     try {
       PsChargeEvent event = mapper.readValue(body, PsChargeEvent.class);
-      Optional<SessionTransaction> transactionExist = sessionTransactionJpaRepository.findByGroupReference(event.getData().getMetadata().getTransactionReference());
+      List<SessionTransaction> transactions = sessionTransactionJpaRepository.findByGroupReference(event.getData().getMetadata().getTransactionReference());
+      List<SessionTransaction> updatedTransactions = new ArrayList<>();
+
       if (SUCCESS.getValue().equalsIgnoreCase(event.getData().getStatus())) {
-        if (transactionExist.isPresent()) {
-          SessionTransaction transaction = transactionExist.get();
+        if (transactions != null && !transactions.isEmpty()) {
+          List<CreateSessionMeetingEvent> meetingEvents = new ArrayList<>();
 
-          if (transaction.getStatus() != SUCCESS) {
-            transaction.setStatus(SUCCESS);
-            transaction.setExternalSystemReference(event.getData().getReference());
-            transaction.setCurrency(event.getData().getCurrency().toUpperCase());
+          for (SessionTransaction transaction : transactions) {
+            if (transaction.getStatus() != SUCCESS) {
+              transaction.setStatus(SUCCESS);
+              transaction.setExternalSystemReference(event.getData().getReference());
+              transaction.setCurrency(event.getData().getCurrency().toUpperCase());
 
-            Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(transaction.getSessionReference());
-            if (healthSessionExist.isPresent()) {
-              HealthSession healthSession = healthSessionExist.get();
+              Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(transaction.getSessionReference());
+              if (healthSessionExist.isPresent()) {
+                HealthSession healthSession = healthSessionExist.get();
 
-              if (healthSession.getStatus() != HealthSessionStatus.SCHEDULED && healthSession.getStatus() != HealthSessionStatus.RESCHEDULED) {
-                LocalDate meetingDate = healthSession.getDate();
-                LocalTime meetingTime = healthSession.getTime();
+                if (healthSession.getStatus() != HealthSessionStatus.SCHEDULED && healthSession.getStatus() != HealthSessionStatus.RESCHEDULED) {
+                  LocalDate meetingDate = healthSession.getDate();
+                  LocalTime meetingTime = healthSession.getTime();
 
-                LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
-                LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMaxMeetingSessionHourDuration());
+                  LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
+                  LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMaxMeetingSessionHourDuration());
 
-                String patientEmail = healthSession.getPatient().getEmailAddress();
-                String professionalEmail = healthSession.getProfessional().getEmailAddress();
-                String patientName = getFullName(healthSession.getPatient().getFirstName(), healthSession.getPatient().getLastName());
-                String professionalName = getFullName(healthSession.getProfessional().getFirstName(), healthSession.getProfessional().getLastName());
+                  Member patient = healthSession.getPatient();
+                  Member professional = healthSession.getProfessional();
+                  String patientEmail = patient.getEmailAddress();
+                  String professionalEmail = professional.getEmailAddress();
+                  String patientName = getFullName(patient.getFirstName(), patient.getLastName());
+                  String professionalName = getFullName(professional.getFirstName(), professional.getLastName());
 
-                CreateSessionMeetingEvent meetingEvent = CreateSessionMeetingEvent.builder()
-                  .startDate(meetingStartDateTime)
-                  .endDate(meetingEndDateTime)
-                  .attendees(List.of(patientEmail, professionalEmail))
-                  .timezone(healthSession.getTimezone())
-                  .sessionReference(healthSession.getReference())
-                  .patientName(patientName)
-                  .professionalName(professionalName)
-                  .build();
+                  CreateSessionMeetingEvent meetingEvent = CreateSessionMeetingEvent.builder()
+                    .startDate(meetingStartDateTime)
+                    .endDate(meetingEndDateTime)
+                    .attendees(List.of(patientEmail, professionalEmail))
+                    .timezone(healthSession.getTimezone())
+                    .sessionReference(healthSession.getReference())
+                    .patientName(patientName)
+                    .professionalName(professionalName)
+                    .build();
 
-                CreateSessionMeetingEvent.CreateSessionMeetingEventMetadata eventMetadata = CreateSessionMeetingEvent.CreateSessionMeetingEventMetadata.builder()
-                  .sessionReference(healthSession.getReference())
-                  .build();
-                meetingEvent.setMetadata(getCreateSessionMeetingEventMetadata(eventMetadata));
-                eventService.publishCreateSession(meetingEvent);
+                  CreateSessionMeetingEvent.CreateSessionMeetingEventMetadata eventMetadata = CreateSessionMeetingEvent.CreateSessionMeetingEventMetadata.builder()
+                    .sessionReference(healthSession.getReference())
+                    .build();
+                  meetingEvent.setMetadata(getCreateSessionMeetingEventMetadata(eventMetadata));
+                  meetingEvents.add(meetingEvent);
+                 }
+                updatedTransactions.add(transaction);
               }
-              sessionTransactionJpaRepository.save(transaction);
+              eventService.publishCreateSession(meetingEvents);
             }
           }
         }
       } else {
-        if (transactionExist.isPresent()) {
-          SessionTransaction transaction = transactionExist.get();
-          transaction.setStatus(TransactionStatus.FAILED);
-          transaction.setExternalSystemReference(event.getData().getReference());
-          transaction.setCurrency(event.getData().getCurrency().toUpperCase());
-          sessionTransactionJpaRepository.save(transaction);
+        for (SessionTransaction transaction : transactions) {
+            transaction.setStatus(TransactionStatus.FAILED);
+            transaction.setExternalSystemReference(event.getData().getReference());
+            transaction.setCurrency(event.getData().getCurrency().toUpperCase());
+            updatedTransactions.add(transaction);
         }
       }
+      sessionTransactionJpaRepository.saveAll(updatedTransactions);
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);
     }

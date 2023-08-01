@@ -15,9 +15,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-import static com.umulam.fleen.health.util.DateTimeUtil.toDate;
-import static com.umulam.fleen.health.util.DateTimeUtil.toTime;
-
 @Builder
 @Getter
 @Setter
@@ -31,16 +28,6 @@ public class BookHealthSessionDto {
   @NotNull(message = "{session.professional.notNull}")
   @ProfessionalValid(message = "{session.professional.valid}")
   private String professional;
-
-  @NotNull(message = "{session.date.notNull}")
-  @DateValid(message = "{session.date.valid}")
-  @Future
-  private String date;
-
-  @NotNull(message = "{session.time.notNull}")
-  @TimeValid(message = "{session.time.valid}")
-  @WorkingHour(message = "{session.time.workingHour}")
-  private String time;
 
   @URL(message = "{session.document.isUrl}")
   @Size(max = 500, message = "{session.document.size}")
@@ -77,8 +64,6 @@ public class BookHealthSessionDto {
       .location(SessionLocation.REMOTE)
       .status(HealthSessionStatus.PENDING)
       .timezone("WAT")
-      .time(toTime(time))
-      .date(toDate(date))
       .comment(comment)
       .documentLink(document)
       .build();

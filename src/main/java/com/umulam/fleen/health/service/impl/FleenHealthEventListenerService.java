@@ -10,9 +10,9 @@ import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.service.external.google.CalendarService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.umulam.fleen.health.service.external.google.CalendarService.EVENT_SUMMARY_KEY;
@@ -33,18 +33,20 @@ public class FleenHealthEventListenerService {
 
   @TransactionalEventListener(phase = AFTER_COMMIT)
   @Transactional(propagation = REQUIRES_NEW)
-  public void createMeetingSession(CreateSessionMeetingEvent meetingEvent) {
-    meetingEvent.getMetadata().put(EVENT_SUMMARY_KEY, getMeetingEventSummary(meetingEvent.getPatientName(), meetingEvent.getProfessionalName()));
-    Event event = calendarService.createEvent(meetingEvent.getStartDate(), meetingEvent.getEndDate(), meetingEvent.getAttendees(), meetingEvent.getMetadata());
-    Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(meetingEvent.getSessionReference());
-    if (healthSessionExist.isPresent()) {
-      HealthSession healthSession = healthSessionExist.get();
-      healthSession.setEventReferenceOrId(event.getId());
-      healthSession.setOtherEventReference(event.getICalUID());
-      healthSession.setMeetingUrl(event.getHangoutLink());
-      healthSession.setEventLink(event.getHtmlLink());
-      healthSession.setStatus(HealthSessionStatus.SCHEDULED);
-      healthSessionRepository.save(healthSession);
+  public void createMeetingSession(List<CreateSessionMeetingEvent> events) {
+    for (CreateSessionMeetingEvent meetingEvent : events) {
+      meetingEvent.getMetadata().put(EVENT_SUMMARY_KEY, getMeetingEventSummary(meetingEvent.getPatientName(), meetingEvent.getProfessionalName()));
+      Event event = calendarService.createEvent(meetingEvent.getStartDate(), meetingEvent.getEndDate(), meetingEvent.getAttendees(), meetingEvent.getMetadata());
+      Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(meetingEvent.getSessionReference());
+      if (healthSessionExist.isPresent()) {
+        HealthSession healthSession = healthSessionExist.get();
+        healthSession.setEventReferenceOrId(event.getId());
+        healthSession.setOtherEventReference(event.getICalUID());
+        healthSession.setMeetingUrl(event.getHangoutLink());
+        healthSession.setEventLink(event.getHtmlLink());
+        healthSession.setStatus(HealthSessionStatus.SCHEDULED);
+        healthSessionRepository.save(healthSession);
+      }
     }
   }
 

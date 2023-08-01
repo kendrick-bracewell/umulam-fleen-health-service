@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface SessionTransactionJpaRepository extends JpaRepository<SessionTransaction, Integer> {
@@ -18,7 +19,7 @@ public interface SessionTransactionJpaRepository extends JpaRepository<SessionTr
   Optional<SessionTransaction> findByReference(@Param("reference") String reference);
 
   @Query(value = "SELECT st FROM SessionTransaction st WHERE st.groupTransactionReference = :reference")
-  Optional<SessionTransaction> findByGroupReference(@Param("reference") String reference);
+  List<SessionTransaction> findByGroupReference(@Param("reference") String reference);
 
   @Query(value = "SELECT st FROM SessionTransaction st WHERE st.id = :transactionId AND st.payer.id = :memberId")
   Optional<SessionTransaction> findByUserAndId(@PathVariable("transactionId") Integer transactionId, @Param("memberId") Integer memberId);

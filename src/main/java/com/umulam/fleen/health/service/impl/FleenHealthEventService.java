@@ -6,6 +6,8 @@ import com.umulam.fleen.health.event.RescheduleSessionMeetingEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class FleenHealthEventService {
 
@@ -15,8 +17,8 @@ public class FleenHealthEventService {
     this.eventPublisher = eventPublisher;
   }
 
-  public void publishCreateSession(CreateSessionMeetingEvent event) {
-    eventPublisher.publishEvent(event);
+  public void publishCreateSession(List<CreateSessionMeetingEvent> events) {
+    eventPublisher.publishEvent(events);
   }
 
   public void publishCancelSession(CancelSessionMeetingEvent event) {
