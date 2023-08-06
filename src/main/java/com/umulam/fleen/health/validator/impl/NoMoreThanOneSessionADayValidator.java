@@ -11,6 +11,7 @@ import java.util.Set;
 
 import static com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto.SessionPeriod;
 import static com.umulam.fleen.health.util.DateTimeUtil.toDate;
+import static java.util.Objects.isNull;
 
 public class NoMoreThanOneSessionADayValidator implements ConstraintValidator<NoMoreThanOneSessionADay, List<SessionPeriod>> {
 
@@ -19,7 +20,7 @@ public class NoMoreThanOneSessionADayValidator implements ConstraintValidator<No
 
   @Override
   public boolean isValid(List<SessionPeriod> sessionPeriods, ConstraintValidatorContext constraintValidatorContext) {
-    return hasNoDuplicatesOrSameDay(sessionPeriods);
+    return !isNull(sessionPeriods) && hasNoDuplicatesOrSameDay(sessionPeriods);
   }
 
   public static boolean hasNoDuplicatesOrSameDay(List<SessionPeriod> periods) {

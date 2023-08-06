@@ -8,6 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 
 import static com.umulam.fleen.health.model.dto.professional.UpdateProfessionalAvailabilityDto.AvailabilityPeriod;
+import static java.util.Objects.isNull;
 
 @Slf4j
 public class NoAvailabilityPeriodOverlapValidator implements ConstraintValidator<NoAvailabilityPeriodOverlap, List<AvailabilityPeriod>> {
@@ -17,7 +18,7 @@ public class NoAvailabilityPeriodOverlapValidator implements ConstraintValidator
 
   @Override
   public boolean isValid(List<AvailabilityPeriod> availabilityPeriods, ConstraintValidatorContext constraintValidatorContext) {
-    return !hasOverlappingPeriods(availabilityPeriods);
+    return !isNull(availabilityPeriods) && !hasOverlappingPeriods(availabilityPeriods);
   }
 
   private static boolean hasOverlappingPeriods(List<AvailabilityPeriod> periods) {
