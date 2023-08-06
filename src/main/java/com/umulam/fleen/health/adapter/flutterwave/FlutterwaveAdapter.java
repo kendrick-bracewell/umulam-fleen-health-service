@@ -88,6 +88,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
     }
   }
 
+  @RetryOnFailure
   public FwVerifyTransactionResponse verifyTransactionByReference(String transactionReference) {
     if (!isMandatoryFieldAvailable(transactionReference)) {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());

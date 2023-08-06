@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.service.impl;
+package com.umulam.fleen.health.service.external.banking;
 
 import com.umulam.fleen.health.adapter.paystack.PaystackAdapter;
 import com.umulam.fleen.health.adapter.paystack.model.enums.PsRecipientType;
@@ -20,6 +20,7 @@ import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsRespo
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.repository.jpa.BankAccountJpaRepository;
 import com.umulam.fleen.health.service.MemberService;
+import com.umulam.fleen.health.service.impl.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;

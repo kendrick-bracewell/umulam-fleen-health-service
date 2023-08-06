@@ -1,18 +1,26 @@
-package com.umulam.fleen.health.service.impl;
+package com.umulam.fleen.health.service.external.banking;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.adapter.flutterwave.FlutterwaveAdapter;
 import com.umulam.fleen.health.adapter.flutterwave.model.enums.FwBankCountryType;
 import com.umulam.fleen.health.adapter.flutterwave.model.request.FwGetExchangeRateRequest;
 import com.umulam.fleen.health.adapter.flutterwave.model.response.FwGetBanksResponse;
 import com.umulam.fleen.health.adapter.flutterwave.model.response.FwGetExchangeRateResponse;
+import com.umulam.fleen.health.model.event.InternalPaymentValidation;
+import com.umulam.fleen.health.model.event.flutterwave.FwChargeEvent;
 import com.umulam.fleen.health.repository.jpa.BankAccountJpaRepository;
+import com.umulam.fleen.health.service.BankingService;
 import com.umulam.fleen.health.service.MemberService;
+import com.umulam.fleen.health.service.impl.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,21 +29,25 @@ import static java.util.Objects.isNull;
 
 @Slf4j
 @Service
-public class FlutterwaveService {
+@Primary
+public class FlutterwaveService implements BankingService {
 
   private final FlutterwaveAdapter flutterwaveAdapter;
   private final CacheService cacheService;
   private final BankAccountJpaRepository bankAccountJpaRepository;
   private final MemberService memberService;
+  private final ObjectMapper mapper;
 
   public FlutterwaveService(FlutterwaveAdapter flutterwaveAdapter,
                          CacheService cacheService,
                          BankAccountJpaRepository bankAccountJpaRepository,
-                         MemberService memberService) {
+                         MemberService memberService,
+                         ObjectMapper mapper) {
     this.flutterwaveAdapter = flutterwaveAdapter;
     this.cacheService = cacheService;
     this.bankAccountJpaRepository = bankAccountJpaRepository;
     this.memberService = memberService;
+    this.mapper = mapper;
   }
 
   public List<FwGetBanksResponse.FwBankData> getBanks(String country) {
@@ -82,4 +94,24 @@ public class FlutterwaveService {
     return flutterwaveAdapter.getExchangeRate(request);
   }
 
+  @Override
+  public String getTransactionStatusByReference(String transactionReference) {
+    return flutterwaveAdapter.verifyTransactionByReference(transactionReference).getData().getStatus();
+  }
+
+  @Override
+  public InternalPaymentValidation getInternalPaymentValidationByChargeEvent(String body) {
+    try {
+      FwChargeEvent event = mapper.readValue(body, FwChargeEvent.class);
+      return InternalPaymentValidation.builder()
+        .status(event.getData().getStatus())
+        .transactionReference(event.getData().getTransactionReference())
+        .externalSystemTransactionReference(event.getData().getExternalSystemReference())
+        .currency(event.getData().getCurrency())
+        .build();
+    } catch (JsonProcessingException ex) {
+      log.error(ex.getMessage(), ex);
+    }
+    return null;
+  }
 }

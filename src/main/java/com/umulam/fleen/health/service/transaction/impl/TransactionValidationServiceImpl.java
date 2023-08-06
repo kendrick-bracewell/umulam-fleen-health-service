@@ -13,13 +13,14 @@ import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.domain.transaction.WithdrawalTransaction;
-import com.umulam.fleen.health.model.event.flutterwave.FwChargeEvent;
+import com.umulam.fleen.health.model.event.InternalPaymentValidation;
 import com.umulam.fleen.health.model.event.flutterwave.base.FlutterwaveWebhookEvent;
 import com.umulam.fleen.health.model.event.paystack.PsTransferEvent;
 import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.SessionTransactionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.WithdrawalTransactionJpaRepository;
+import com.umulam.fleen.health.service.BankingService;
 import com.umulam.fleen.health.service.impl.FleenHealthEventService;
 import com.umulam.fleen.health.service.transaction.TransactionValidationService;
 import lombok.extern.slf4j.Slf4j;
@@ -45,24 +46,28 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
   private final WithdrawalTransactionJpaRepository withdrawalTransactionJpaRepository;
   private final FleenHealthEventService eventService;
   private final ObjectMapper mapper;
+  private final BankingService bankingService;
 
   public TransactionValidationServiceImpl(
-    HealthSessionJpaRepository healthSessionRepository,
-    SessionTransactionJpaRepository sessionTransactionJpaRepository,
-    WithdrawalTransactionJpaRepository withdrawalTransactionJpaRepository,
-    FleenHealthEventService eventService,
-    ObjectMapper mapper) {
+                        HealthSessionJpaRepository healthSessionRepository,
+                        SessionTransactionJpaRepository sessionTransactionJpaRepository,
+                        WithdrawalTransactionJpaRepository withdrawalTransactionJpaRepository,
+                        FleenHealthEventService eventService,
+                        ObjectMapper mapper,
+                        BankingService bankingService) {
     this.healthSessionRepository = healthSessionRepository;
     this.sessionTransactionJpaRepository = sessionTransactionJpaRepository;
     this.withdrawalTransactionJpaRepository = withdrawalTransactionJpaRepository;
     this.eventService = eventService;
     this.mapper = mapper;
+    this.bankingService = bankingService;
   }
 
   @Override
   @Transactional
   public void validateAndCompleteTransaction(String body) {
     try {
+      log.info("Payment validation for {} on {} ", body, LocalDateTime.now());
       PaystackWebhookEvent paystackEvent = mapper.readValue(body, PaystackWebhookEvent.class);
       if (Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.CHARGE_SUCCESS.getValue())) {
         log.info("In progress and development");
@@ -74,80 +79,78 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
 
       FlutterwaveWebhookEvent flutterwaveEvent = mapper.readValue(body, FlutterwaveWebhookEvent.class);
       if (Objects.equals(flutterwaveEvent.getEvent(), FlutterwaveWebhookEventType.CHARGE_COMPLETED.getValue())) {
-        validateAndCompleteSessionTransaction(body);
+        validateAndCompleteSessionTransaction(bankingService.getInternalPaymentValidationByChargeEvent(body));
       }
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);
     }
   }
 
-  private void validateAndCompleteSessionTransaction(String body) {
-    try {
-      FwChargeEvent event = mapper.readValue(body, FwChargeEvent.class);
-      List<SessionTransaction> transactions = sessionTransactionJpaRepository.findByGroupReference(event.getData().getTransactionReference());
-      List<SessionTransaction> updatedTransactions = new ArrayList<>();
+  private void validateAndCompleteSessionTransaction(InternalPaymentValidation event) {
+    List<SessionTransaction> transactions = sessionTransactionJpaRepository.findByGroupReference(event.getTransactionReference());
+    List<SessionTransaction> updatedTransactions = new ArrayList<>();
 
-      if (SUCCESS.getValue().equalsIgnoreCase(event.getData().getStatus())) {
-        if (transactions != null && !transactions.isEmpty()) {
-          List<CreateSessionMeetingEvent> meetingEvents = new ArrayList<>();
+    if (SUCCESS.getValue().equalsIgnoreCase(event.getStatus())) {
+      if (transactions != null && !transactions.isEmpty()) {
+        List<CreateSessionMeetingEvent> meetingEvents = new ArrayList<>();
 
-          for (SessionTransaction transaction : transactions) {
-            if (transaction.getStatus() != SUCCESS) {
-              transaction.setStatus(SUCCESS);
-              transaction.setExternalSystemReference(event.getData().getExternalSystemReference());
-              transaction.setCurrency(event.getData().getCurrency().toUpperCase());
+        for (SessionTransaction transaction : transactions) {
+          if (transaction.getStatus() != SUCCESS) {
+            transaction.setStatus(SUCCESS);
+            transaction.setExternalSystemReference(event.getExternalSystemTransactionReference());
+            transaction.setCurrency(event.getCurrency().toUpperCase());
 
-              Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(transaction.getSessionReference());
-              if (healthSessionExist.isPresent()) {
-                HealthSession healthSession = healthSessionExist.get();
+            Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(transaction.getSessionReference());
+            if (healthSessionExist.isPresent()) {
+              HealthSession healthSession = healthSessionExist.get();
 
-                if (healthSession.getStatus() != HealthSessionStatus.SCHEDULED && healthSession.getStatus() != HealthSessionStatus.RESCHEDULED) {
-                  LocalDate meetingDate = healthSession.getDate();
-                  LocalTime meetingTime = healthSession.getTime();
+              if (healthSession.getStatus() != HealthSessionStatus.SCHEDULED && healthSession.getStatus() != HealthSessionStatus.RESCHEDULED) {
+                LocalDate meetingDate = healthSession.getDate();
+                LocalTime meetingTime = healthSession.getTime();
 
-                  LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
-                  LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMaxMeetingSessionHourDuration());
+                LocalDateTime meetingStartDateTime = LocalDateTime.of(meetingDate, meetingTime);
+                LocalDateTime meetingEndDateTime = meetingStartDateTime.plusHours(getMaxMeetingSessionHourDuration());
 
-                  Member patient = healthSession.getPatient();
-                  Member professional = healthSession.getProfessional();
-                  String patientEmail = patient.getEmailAddress();
-                  String professionalEmail = professional.getEmailAddress();
-                  String patientName = getFullName(patient.getFirstName(), patient.getLastName());
-                  String professionalName = getFullName(professional.getFirstName(), professional.getLastName());
+                Member patient = healthSession.getPatient();
+                Member professional = healthSession.getProfessional();
+                String patientEmail = patient.getEmailAddress();
+                String professionalEmail = professional.getEmailAddress();
+                String patientName = getFullName(patient.getFirstName(), patient.getLastName());
+                String professionalName = getFullName(professional.getFirstName(), professional.getLastName());
 
-                  CreateSessionMeetingEvent meetingEvent = CreateSessionMeetingEvent.builder()
-                    .startDate(meetingStartDateTime)
-                    .endDate(meetingEndDateTime)
-                    .attendees(List.of(patientEmail, professionalEmail))
-                    .timezone(healthSession.getTimezone())
-                    .sessionReference(healthSession.getReference())
-                    .patientName(patientName)
-                    .professionalName(professionalName)
-                    .build();
+                CreateSessionMeetingEvent meetingEvent = CreateSessionMeetingEvent.builder()
+                  .startDate(meetingStartDateTime)
+                  .endDate(meetingEndDateTime)
+                  .attendees(List.of(patientEmail, professionalEmail))
+                  .timezone(healthSession.getTimezone())
+                  .sessionReference(healthSession.getReference())
+                  .patientName(patientName)
+                  .professionalName(professionalName)
+                  .build();
 
-                  CreateSessionMeetingEvent.CreateSessionMeetingEventMetadata eventMetadata = CreateSessionMeetingEvent.CreateSessionMeetingEventMetadata.builder()
-                    .sessionReference(healthSession.getReference())
-                    .build();
-                  meetingEvent.setMetadata(getCreateSessionMeetingEventMetadata(eventMetadata));
-                  meetingEvents.add(meetingEvent);
-                 }
-                updatedTransactions.add(transaction);
-              }
-              eventService.publishCreateSession(meetingEvents);
+                CreateSessionMeetingEvent.CreateSessionMeetingEventMetadata eventMetadata = CreateSessionMeetingEvent.CreateSessionMeetingEventMetadata.builder()
+                  .sessionReference(healthSession.getReference())
+                  .build();
+                meetingEvent.setMetadata(getCreateSessionMeetingEventMetadata(eventMetadata));
+                meetingEvents.add(meetingEvent);
+               }
+              updatedTransactions.add(transaction);
             }
+            eventService.publishCreateSession(meetingEvents);
           }
         }
-      } else {
-        for (SessionTransaction transaction : transactions) {
-            transaction.setStatus(TransactionStatus.FAILED);
-            transaction.setExternalSystemReference(event.getData().getExternalSystemReference());
-            transaction.setCurrency(event.getData().getCurrency().toUpperCase());
-            updatedTransactions.add(transaction);
-        }
       }
+    } else {
+      for (SessionTransaction transaction : transactions) {
+          transaction.setStatus(TransactionStatus.FAILED);
+          transaction.setExternalSystemReference(event.getExternalSystemTransactionReference());
+          transaction.setCurrency(event.getCurrency().toUpperCase());
+          updatedTransactions.add(transaction);
+      }
+    }
+
+    if (Objects.nonNull(transactions) && !transactions.isEmpty()) {
       sessionTransactionJpaRepository.saveAll(updatedTransactions);
-    } catch (JsonProcessingException ex) {
-      log.error(ex.getMessage(), ex);
     }
   }
 

@@ -2,6 +2,7 @@ package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.adapter.flutterwave.model.response.FwGetExchangeRateResponse;
 import com.umulam.fleen.health.service.ExchangeRateService;
+import com.umulam.fleen.health.service.external.banking.FlutterwaveService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
