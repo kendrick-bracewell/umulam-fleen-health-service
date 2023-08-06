@@ -274,6 +274,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         .gateway(PaymentGateway.FLUTTERWAVE)
         .type(TransactionType.SESSION)
         .subType(TransactionSubType.DEBIT)
+        .currency(CurrencyType.NGN.getValue())
         .build();
       transactions.add(transaction);
     }

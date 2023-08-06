@@ -6,7 +6,8 @@ public enum CurrencyType implements ApiParameter {
 
   NGN("NGN"),
   GHS("GHS"),
-  ZAR("ZAR");
+  ZAR("ZAR"),
+  USD("USD");
 
   private final String value;
 
