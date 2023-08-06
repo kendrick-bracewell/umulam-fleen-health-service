@@ -12,7 +12,7 @@ import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.domain.transaction.WithdrawalTransaction;
-import com.umulam.fleen.health.model.event.paystack.PsChargeEvent;
+import com.umulam.fleen.health.model.event.flutterwave.FwChargeEvent;
 import com.umulam.fleen.health.model.event.paystack.PsTransferEvent;
 import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
@@ -76,8 +76,8 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
 
   private void validateAndCompleteSessionTransaction(String body) {
     try {
-      PsChargeEvent event = mapper.readValue(body, PsChargeEvent.class);
-      List<SessionTransaction> transactions = sessionTransactionJpaRepository.findByGroupReference(event.getData().getMetadata().getTransactionReference());
+      FwChargeEvent event = mapper.readValue(body, FwChargeEvent.class);
+      List<SessionTransaction> transactions = sessionTransactionJpaRepository.findByGroupReference(event.getData().getTransactionReference());
       List<SessionTransaction> updatedTransactions = new ArrayList<>();
 
       if (SUCCESS.getValue().equalsIgnoreCase(event.getData().getStatus())) {
@@ -87,7 +87,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
           for (SessionTransaction transaction : transactions) {
             if (transaction.getStatus() != SUCCESS) {
               transaction.setStatus(SUCCESS);
-              transaction.setExternalSystemReference(event.getData().getReference());
+              transaction.setExternalSystemReference(event.getData().getExternalSystemReference());
               transaction.setCurrency(event.getData().getCurrency().toUpperCase());
 
               Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(transaction.getSessionReference());
@@ -133,7 +133,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
       } else {
         for (SessionTransaction transaction : transactions) {
             transaction.setStatus(TransactionStatus.FAILED);
-            transaction.setExternalSystemReference(event.getData().getReference());
+            transaction.setExternalSystemReference(event.getData().getExternalSystemReference());
             transaction.setCurrency(event.getData().getCurrency().toUpperCase());
             updatedTransactions.add(transaction);
         }
