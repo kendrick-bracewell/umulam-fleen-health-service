@@ -3,7 +3,7 @@ package com.umulam.fleen.health.service.transaction.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umulam.fleen.health.constant.paystack.PaystackWebhookEventType;
+import com.umulam.fleen.health.constant.externalsystem.paystack.PaystackWebhookEventType;
 import com.umulam.fleen.health.constant.session.HealthSessionStatus;
 import com.umulam.fleen.health.constant.session.TransactionStatus;
 import com.umulam.fleen.health.constant.session.WithdrawalStatus;
@@ -13,6 +13,7 @@ import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.domain.transaction.WithdrawalTransaction;
 import com.umulam.fleen.health.model.event.flutterwave.FwChargeEvent;
+import com.umulam.fleen.health.model.event.flutterwave.base.FlutterwaveWebhookEvent;
 import com.umulam.fleen.health.model.event.paystack.PsTransferEvent;
 import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
@@ -61,13 +62,18 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
   @Transactional
   public void validateAndCompleteTransaction(String body) {
     try {
-      PaystackWebhookEvent event = mapper.readValue(body, PaystackWebhookEvent.class);
-      if (Objects.equals(event.getEvent(), PaystackWebhookEventType.CHARGE_SUCCESS.getValue())) {
-        validateAndCompleteSessionTransaction(body);
-      } else if (Objects.equals(event.getEvent(), PaystackWebhookEventType.TRANSFER_SUCCESS.getValue()) ||
-          Objects.equals(event.getEvent(), PaystackWebhookEventType.TRANSFER_FAILED.getValue()) ||
-          Objects.equals(event.getEvent(), PaystackWebhookEventType.TRANSFER_REVERSED.getValue())) {
-        validateAndCompleteWithdrawalTransaction(body);
+      PaystackWebhookEvent paystackEvent = mapper.readValue(body, PaystackWebhookEvent.class);
+      if (Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.CHARGE_SUCCESS.getValue())) {
+        log.info("In progress and development");
+      } else if (Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.TRANSFER_SUCCESS.getValue()) ||
+          Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.TRANSFER_FAILED.getValue()) ||
+          Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.TRANSFER_REVERSED.getValue())) {
+        log.info("In development");
+      }
+
+      FlutterwaveWebhookEvent flutterwaveEvent = mapper.readValue(body, FlutterwaveWebhookEvent.class);
+      if (Objects.equals(flutterwaveEvent.getEvent(), null)) {
+
       }
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);

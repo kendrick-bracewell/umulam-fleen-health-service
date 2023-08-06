@@ -1,9 +1,10 @@
-package com.umulam.fleen.health.constant.paystack;
+package com.umulam.fleen.health.constant.externalsystem.paystack;
 
+import com.umulam.fleen.health.adapter.ApiParameter;
 import lombok.Getter;
 
 @Getter
-public enum PaystackWebhookEventType {
+public enum PaystackWebhookEventType implements ApiParameter {
 
   CHARGE_SUCCESS("charge.success"),
   TRANSFER_FAILED("transfer.failed"),
