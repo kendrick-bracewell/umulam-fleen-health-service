@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.constant.externalsystem.flutterwave.FlutterwaveWebhookEventType;
 import com.umulam.fleen.health.constant.externalsystem.paystack.PaystackWebhookEventType;
+import com.umulam.fleen.health.constant.session.ExternalTransactionStatus;
 import com.umulam.fleen.health.constant.session.HealthSessionStatus;
 import com.umulam.fleen.health.constant.session.TransactionStatus;
 import com.umulam.fleen.health.constant.session.WithdrawalStatus;
@@ -90,7 +91,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
     List<SessionTransaction> transactions = sessionTransactionJpaRepository.findByGroupReference(event.getTransactionReference());
     List<SessionTransaction> updatedTransactions = new ArrayList<>();
 
-    if (SUCCESS.getValue().equalsIgnoreCase(event.getStatus())) {
+    if (verifyTransactionStatus(event.getStatus(), event.getTransactionReference())) {
       if (transactions != null && !transactions.isEmpty()) {
         List<CreateSessionMeetingEvent> meetingEvents = new ArrayList<>();
 
@@ -191,5 +192,17 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
 
   private Map<String, String> getCreateSessionMeetingEventMetadata(CreateSessionMeetingEvent.CreateSessionMeetingEventMetadata metadata) {
     return mapper.convertValue(metadata, new TypeReference<>() {});
+  }
+
+  private boolean verifyTransactionStatus(String status, String transactionReference) {
+    boolean successful = false;
+    if (ExternalTransactionStatus.SUCCESSFUL.getValue().equalsIgnoreCase(status) &&
+      ExternalTransactionStatus.SUCCESSFUL.getValue().equalsIgnoreCase(bankingService.getTransactionStatusByReference(transactionReference))) {
+      successful = true;
+    } else if (ExternalTransactionStatus.SUCCESS.getValue().equalsIgnoreCase(status) &&
+      ExternalTransactionStatus.SUCCESS.getValue().equalsIgnoreCase(bankingService.getTransactionStatusByReference(transactionReference))) {
+      successful = true;
+    }
+    return successful;
   }
 }

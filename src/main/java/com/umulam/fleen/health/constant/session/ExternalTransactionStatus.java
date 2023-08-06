@@ -2,18 +2,14 @@ package com.umulam.fleen.health.constant.session;
 
 import com.umulam.fleen.health.adapter.ApiParameter;
 
-public enum TransactionStatus implements ApiParameter {
+public enum ExternalTransactionStatus implements ApiParameter {
 
-  PENDING("Pending"),
-  FAILED("Failed"),
-  SUCCESS("Success"),
-  REFUNDED("Refunded"),
-  CANCELLED("Cancelled"),
-  REVERSED("Reversed");
+  SUCCESSFUL("Successful"),
+  SUCCESS("Success");
 
   private final String value;
 
-  TransactionStatus(String value) {
+  ExternalTransactionStatus(String value) {
     this.value = value;
   }
 
