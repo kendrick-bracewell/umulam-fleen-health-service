@@ -71,17 +71,17 @@ import static java.util.Objects.requireNonNull;
 @Service
 public class HealthSessionServiceImpl implements HealthSessionService {
 
-  private final HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository;
-  private final HealthSessionJpaRepository healthSessionRepository;
-  private final ProfessionalService professionalService;
-  private final UniqueReferenceGenerator referenceGenerator;
-  private final TransactionJpaRepository transactionJpaRepository;
-  private final ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository;
-  private final HealthSessionReviewJpaRepository healthSessionReviewJpaRepository;
-  private final FleenHealthEventService eventService;
-  private final MemberService memberService;
-  private final ExchangeRateService exchangeRateService;
-  private final ConfigService configService;
+  protected final HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository;
+  protected final HealthSessionJpaRepository healthSessionRepository;
+  protected final ProfessionalService professionalService;
+  protected final UniqueReferenceGenerator referenceGenerator;
+  protected final TransactionJpaRepository transactionJpaRepository;
+  protected final ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository;
+  protected final HealthSessionReviewJpaRepository healthSessionReviewJpaRepository;
+  protected final FleenHealthEventService eventService;
+  protected final MemberService memberService;
+  protected final ExchangeRateService exchangeRateService;
+  protected final ConfigService configService;
 
   public HealthSessionServiceImpl(
           HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository,
@@ -312,19 +312,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   public void cancelSession(FleenUser user, Integer healthSessionId) {
     Member member = memberService.getMemberById(user.getId());
     Optional<HealthSession> healthSessionExist = healthSessionRepository.findByPatientAndId(member, healthSessionId);
-    if (healthSessionExist.isPresent()) {
-      HealthSession healthSession = healthSessionExist.get();
-      healthSession.setStatus(HealthSessionStatus.CANCELED);
-      healthSessionRepository.save(healthSession);
-      CancelSessionMeetingEvent event = CancelSessionMeetingEvent.builder()
-        .eventIdOrReference(healthSession.getEventReferenceOrId())
-        .otherEventReference(healthSession.getOtherEventReference())
-        .sessionReference(healthSession.getReference())
-        .build();
-      eventService.publishCancelSession(event);
-      return;
-    }
-    throw new NoAssociatedHealthSessionException(healthSessionId);
+    cancelSession(healthSessionExist, healthSessionId);
   }
 
   @Override
@@ -402,6 +390,24 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       review.setProfessional(healthSession.getProfessional());
       review.setHealthSession(healthSession);
       healthSessionReviewJpaRepository.save(review);
+      return;
+    }
+    throw new NoAssociatedHealthSessionException(healthSessionId);
+  }
+
+  @Override
+  @Transactional
+  public void cancelSession(Optional<HealthSession> healthSessionExist, Integer healthSessionId) {
+    if (healthSessionExist.isPresent()) {
+      HealthSession healthSession = healthSessionExist.get();
+      healthSession.setStatus(HealthSessionStatus.CANCELED);
+      healthSessionRepository.save(healthSession);
+      CancelSessionMeetingEvent event = CancelSessionMeetingEvent.builder()
+        .eventIdOrReference(healthSession.getEventReferenceOrId())
+        .otherEventReference(healthSession.getOtherEventReference())
+        .sessionReference(healthSession.getReference())
+        .build();
+      eventService.publishCancelSession(event);
       return;
     }
     throw new NoAssociatedHealthSessionException(healthSessionId);

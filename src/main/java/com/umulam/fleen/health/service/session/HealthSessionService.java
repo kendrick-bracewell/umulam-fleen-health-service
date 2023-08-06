@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.service.session;
 
+import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.dto.healthsession.AddHealthSessionReviewDto;
 import com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto;
 import com.umulam.fleen.health.model.dto.healthsession.ReScheduleHealthSessionDto;
@@ -11,6 +12,8 @@ import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.professional.ProfessionalViewBasic;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 public interface HealthSessionService {
 
@@ -37,4 +40,7 @@ public interface HealthSessionService {
 
   @Transactional
   void addSessionReview(AddHealthSessionReviewDto dto, FleenUser user, Integer healthSessionId);
+
+  @Transactional
+  void cancelSession(Optional<HealthSession> healthSessionExist, Integer healthSessionId);
 }

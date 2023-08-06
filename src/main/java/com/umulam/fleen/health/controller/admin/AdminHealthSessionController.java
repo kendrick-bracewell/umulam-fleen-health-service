@@ -3,6 +3,8 @@ package com.umulam.fleen.health.controller.admin;
 import com.umulam.fleen.health.model.request.search.HealthSessionSearchRequest;
 import com.umulam.fleen.health.model.request.search.SessionTransactionSearchRequest;
 import com.umulam.fleen.health.model.request.search.base.SearchRequest;
+import com.umulam.fleen.health.model.response.FleenHealthResponse;
+import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.healthsession.HealthSessionView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.model.view.transaction.SessionTransactionView;
@@ -10,10 +12,10 @@ import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.admin.AdminHealthSessionService;
 import com.umulam.fleen.health.service.admin.AdminTransactionService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.HEALTH_SESSION_CANCELED;
 
 @Slf4j
 @RestController
@@ -52,5 +54,11 @@ public class AdminHealthSessionController {
   @GetMapping(value = "/transaction/{id}")
   public SessionTransactionView viewSessionTransaction(@PathVariable(name = "id") Integer sessionTransactionId) {
     return transactionService.viewSessionTransaction(sessionTransactionId);
+  }
+
+  @PutMapping(value = "/cancel-session/{id}")
+  public FleenHealthResponse cancelSession(@PathVariable(name = "id") Integer healthSessionId) {
+    healthSessionService.cancelSession(healthSessionId);
+    return new FleenHealthResponse(HEALTH_SESSION_CANCELED);
   }
 }

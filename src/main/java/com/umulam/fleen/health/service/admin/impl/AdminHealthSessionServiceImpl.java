@@ -9,12 +9,23 @@ import com.umulam.fleen.health.model.view.healthsession.HealthSessionReviewView;
 import com.umulam.fleen.health.model.view.healthsession.HealthSessionView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
+import com.umulam.fleen.health.repository.jpa.HealthSessionProfessionalJpaRepository;
 import com.umulam.fleen.health.repository.jpa.HealthSessionReviewJpaRepository;
+import com.umulam.fleen.health.repository.jpa.ProfessionalAvailabilityJpaRepository;
 import com.umulam.fleen.health.repository.jpa.admin.AdminHealthSessionJpaRepository;
+import com.umulam.fleen.health.repository.jpa.transaction.TransactionJpaRepository;
+import com.umulam.fleen.health.service.ExchangeRateService;
+import com.umulam.fleen.health.service.MemberService;
+import com.umulam.fleen.health.service.ProfessionalService;
 import com.umulam.fleen.health.service.admin.AdminHealthSessionService;
+import com.umulam.fleen.health.service.impl.ConfigService;
+import com.umulam.fleen.health.service.impl.FleenHealthEventService;
+import com.umulam.fleen.health.service.session.impl.HealthSessionServiceImpl;
+import com.umulam.fleen.health.util.UniqueReferenceGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +39,7 @@ import static java.util.Objects.nonNull;
 
 @Slf4j
 @Service
-public class AdminHealthSessionServiceImpl implements AdminHealthSessionService {
+public class AdminHealthSessionServiceImpl extends HealthSessionServiceImpl implements AdminHealthSessionService {
 
   private final AdminHealthSessionJpaRepository adminHealthSessionJpaRepository;
   private final HealthSessionJpaRepository healthSessionJpaRepository;
@@ -36,7 +47,18 @@ public class AdminHealthSessionServiceImpl implements AdminHealthSessionService 
 
   public AdminHealthSessionServiceImpl(AdminHealthSessionJpaRepository adminHealthSessionJpaRepository,
                                        HealthSessionJpaRepository healthSessionJpaRepository,
-                                       HealthSessionReviewJpaRepository healthSessionReviewJpaRepository) {
+                                       HealthSessionReviewJpaRepository healthSessionReviewJpaRepository,
+                                       FleenHealthEventService eventService,
+                                       HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository,
+                                       ProfessionalService professionalService,
+                                       UniqueReferenceGenerator referenceGenerator,
+                                       TransactionJpaRepository transactionJpaRepository,
+                                       ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository,
+                                       MemberService memberService,
+                                       ExchangeRateService exchangeRateService,
+                                       ConfigService configService) {
+    super(sessionProfessionalJpaRepository, healthSessionJpaRepository, professionalService, referenceGenerator, transactionJpaRepository,
+      professionalAvailabilityJpaRepository, healthSessionReviewJpaRepository, eventService, memberService, exchangeRateService, configService);
     this.adminHealthSessionJpaRepository = adminHealthSessionJpaRepository;
     this.healthSessionJpaRepository = healthSessionJpaRepository;
     this.healthSessionReviewJpaRepository = healthSessionReviewJpaRepository;
@@ -82,5 +104,12 @@ public class AdminHealthSessionServiceImpl implements AdminHealthSessionService 
     Page<HealthSessionReview> page = healthSessionReviewJpaRepository.findAll(req.getPage());
     List<HealthSessionReviewView> views = toHealthSessionReviewViews(page.getContent());
     return toSearchResult(views, page);
+  }
+
+  @Override
+  @Transactional
+  public void cancelSession(Integer healthSessionId) {
+    Optional<HealthSession> healthSessionExist = healthSessionJpaRepository.findById(healthSessionId);
+    cancelSession(healthSessionExist, healthSessionId);
   }
 }
