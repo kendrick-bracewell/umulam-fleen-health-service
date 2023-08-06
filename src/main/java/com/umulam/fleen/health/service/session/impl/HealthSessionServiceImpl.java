@@ -179,9 +179,9 @@ public class HealthSessionServiceImpl implements HealthSessionService {
             bookedSession.getStatus() == HealthSessionStatus.RESCHEDULED ||
             bookedSession.getStatus() == HealthSessionStatus.PENDING) {
           if (bookedSession.getPatient().getId().equals(user.getId())) {
-            throw new PatientProfessionalAlreadyBookSessionException(professionalName, healthSession.getDate(), healthSession.getTime());
+            throw new PatientProfessionalAlreadyBookSessionException(professionalName, bookedSession.getDate(), bookedSession.getTime());
           } else  {
-            throw new HealthSessionDateAlreadyBookedException(professionalName, healthSession.getDate(), healthSession.getTime());
+            throw new HealthSessionDateAlreadyBookedException(professionalName, bookedSession.getDate(), bookedSession.getTime());
           }
         }
       }
