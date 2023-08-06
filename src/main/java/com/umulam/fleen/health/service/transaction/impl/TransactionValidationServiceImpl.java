@@ -3,6 +3,7 @@ package com.umulam.fleen.health.service.transaction.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umulam.fleen.health.constant.externalsystem.flutterwave.FlutterwaveWebhookEventType;
 import com.umulam.fleen.health.constant.externalsystem.paystack.PaystackWebhookEventType;
 import com.umulam.fleen.health.constant.session.HealthSessionStatus;
 import com.umulam.fleen.health.constant.session.TransactionStatus;
@@ -72,8 +73,8 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
       }
 
       FlutterwaveWebhookEvent flutterwaveEvent = mapper.readValue(body, FlutterwaveWebhookEvent.class);
-      if (Objects.equals(flutterwaveEvent.getEvent(), null)) {
-
+      if (Objects.equals(flutterwaveEvent.getEvent(), FlutterwaveWebhookEventType.CHARGE_COMPLETED.getValue())) {
+        validateAndCompleteSessionTransaction(body);
       }
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);

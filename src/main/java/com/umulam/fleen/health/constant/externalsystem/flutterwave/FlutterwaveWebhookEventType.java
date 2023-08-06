@@ -6,7 +6,7 @@ public enum FlutterwaveWebhookEventType implements ApiParameter {
 
   CHARGE_COMPLETED("charge.completed"),
   TRANSFER_COMPLETED("transfer.completed");
-  
+
   private final String value;
 
   FlutterwaveWebhookEventType(String value) {
