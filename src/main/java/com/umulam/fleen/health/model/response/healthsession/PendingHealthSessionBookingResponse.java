@@ -16,9 +16,6 @@ import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME;
 @AllArgsConstructor
 public class PendingHealthSessionBookingResponse {
 
-  @JsonProperty("session_reference")
-  private String sessionReference;
-
   @JsonProperty("transaction_reference")
   private String transactionReference;
 
