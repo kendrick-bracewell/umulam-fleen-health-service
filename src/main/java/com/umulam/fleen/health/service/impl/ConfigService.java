@@ -14,11 +14,11 @@ public class ConfigService {
     this.healthSessionConfig = healthSessionConfig;
   }
 
-  public String getPricingCurrency() {
+  public String getHealthSessionPricingCurrency() {
     return healthSessionConfig.getPricingCurrency();
   }
 
-  public String getPaymentCurrency() {
+  public String getHealthSessionPaymentCurrency() {
     return healthSessionConfig.getPaymentCurrency();
   }
 }

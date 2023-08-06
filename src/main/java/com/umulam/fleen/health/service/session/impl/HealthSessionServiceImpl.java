@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.REFERENCE_PREFIX;
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.TRANSACTION_REFERENCE_PREFIX;
@@ -191,26 +192,34 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     if (professionalExist.isPresent()) {
       Professional professional = professionalExist.get();
       Member member = professional.getMember();
+      String professionalName = getFullName(member.getFirstName(), member.getLastName());
 
       if (professional.getAvailabilityStatus() == ProfessionalAvailabilityStatus.UNAVAILABLE
           || member.getVerificationStatus() != ProfileVerificationStatus.APPROVED) {
-        throw new ProfessionalNotAvailableForSessionException(getFullName(member.getFirstName(), member.getLastName()));
+        throw new ProfessionalNotAvailableForSessionException(professionalName);
+      }
+
+      List<ProfessionalAvailability> availabilities = professionalAvailabilityJpaRepository.findAllByMember(member);
+      if (availabilities.isEmpty()) {
+        throw new ProfessionalNotAvailableForSessionException(professionalName);
       }
 
       for (SessionPeriod sessionPeriod: dto.getPeriods()) {
         LocalDate proposedDateForSession = requireNonNull(toDate(sessionPeriod.getDate()));
         LocalTime proposedTimeForSession = requireNonNull(toTime(sessionPeriod.getTime()));
-        String professionalName = getFullName(member.getFirstName(), member.getLastName());
 
         DayOfWeek dayOfWeek = proposedDateForSession.getDayOfWeek();
         AvailabilityDayOfTheWeek availabilityDayOfTheWeek = AvailabilityDayOfTheWeek.valueOf(dayOfWeek.toString());
+        List<ProfessionalAvailability> proposedDayOfAvailability = availabilities
+          .stream()
+          .filter(availability -> availability.getDayOfWeek() == availabilityDayOfTheWeek)
+          .collect(Collectors.toList());
 
-        List<ProfessionalAvailability> availabilities = professionalAvailabilityJpaRepository.findByMemberAndDayOfWeek(member, availabilityDayOfTheWeek);
-        if (availabilities.isEmpty()) {
+        if (proposedDayOfAvailability.isEmpty()) {
           throw new ProfessionalNotAvailableForSessionDayException(professionalName, dayOfWeek.toString());
         } else {
           boolean timeAvailableForSession = false;
-          for (ProfessionalAvailability availability : availabilities) {
+          for (ProfessionalAvailability availability : proposedDayOfAvailability) {
             if (availability.isTimeInRange(proposedTimeForSession)) {
               timeAvailableForSession = true;
               break;
@@ -226,7 +235,6 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     }
 
     Member patient = user.toMember();
-    healthSession.setPatient(patient);
     List<HealthSession> healthSessions = new ArrayList<>();
     for (SessionPeriod period : dto.getPeriods()) {
       HealthSession newHealthSession = HealthSession.builder()
@@ -262,7 +270,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         .amount(professionalPrice)
         .totalSessions(totalNumberOfSessions)
         .status(TransactionStatus.PENDING)
-        .gateway(PaymentGateway.PAYSTACK)
+        .gateway(PaymentGateway.FLUTTERWAVE)
         .type(TransactionType.SESSION)
         .subType(TransactionSubType.DEBIT)
         .build();
@@ -292,8 +300,8 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       .transactionReference(groupTransactionReference)
       .professionalPrice(professionalPrice)
       .actualPriceToPay(actualPriceToPayForSession)
-      .professionalPriceCurrency(configService.getPricingCurrency())
-      .actualPriceCurrency(configService.getPaymentCurrency())
+      .professionalPriceCurrency(configService.getHealthSessionPricingCurrency())
+      .actualPriceCurrency(configService.getHealthSessionPaymentCurrency())
       .build();
   }
 
