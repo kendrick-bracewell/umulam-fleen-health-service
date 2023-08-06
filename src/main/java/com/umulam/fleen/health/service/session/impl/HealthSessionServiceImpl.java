@@ -247,6 +247,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         .date(toDate(period.getDate()))
         .time(toTime(period.getTime()))
         .reference(generateSessionReference())
+        .status(HealthSessionStatus.PENDING)
         .build();
 
       healthSessions.add(newHealthSession);
