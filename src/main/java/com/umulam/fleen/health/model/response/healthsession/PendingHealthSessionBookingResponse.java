@@ -33,14 +33,6 @@ public class PendingHealthSessionBookingResponse {
 
   private String timezone;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
-  @JsonProperty("start_date")
-  private LocalDateTime startDate;
-
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
-  @JsonProperty("end_date")
-  private LocalDateTime endDate;
-
   @JsonProperty("professional_price")
   private Double professionalPrice;
 
