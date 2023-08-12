@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.repository.jpa;
 
 import com.umulam.fleen.health.constant.base.ProfileType;
+import com.umulam.fleen.health.constant.session.HealthSessionStatus;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.response.healthsession.GetUpdateHealthSessionNote;
@@ -54,5 +55,7 @@ public interface HealthSessionJpaRepository extends JpaRepository<HealthSession,
 
   @Query(value ="SELECT note AS note, professional_id AS professionalId FROM health_session WHERE id = :healthSessionId", nativeQuery = true)
   Optional<GetUpdateHealthSessionNote> getUpdateHealthSessionNote(@Param("healthSessionId") Integer healthSessionId);
+
+  List<HealthSession> findByStatusOrStatusAndDate(HealthSessionStatus status, HealthSessionStatus status1, LocalDate date);
 
 }

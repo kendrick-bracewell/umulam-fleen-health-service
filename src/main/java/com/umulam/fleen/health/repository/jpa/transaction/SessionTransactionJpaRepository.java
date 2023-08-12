@@ -18,6 +18,9 @@ public interface SessionTransactionJpaRepository extends JpaRepository<SessionTr
   @Query(value = "SELECT st FROM SessionTransaction st WHERE st.reference = :reference")
   Optional<SessionTransaction> findByReference(@Param("reference") String reference);
 
+  @Query(value = "SELECT st FROM SessionTransaction st WHERE st.sessionReference = :reference")
+  Optional<SessionTransaction> findBySessionReference(@Param("reference") String reference);
+
   @Query(value = "SELECT st FROM SessionTransaction st WHERE st.groupTransactionReference = :reference")
   List<SessionTransaction> findByGroupReference(@Param("reference") String reference);
 

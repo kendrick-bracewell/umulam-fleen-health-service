@@ -156,7 +156,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
 
   @RetryOnFailure
   public FwGetExchangeRateResponse createTransfer(FwCreateTransferRequest request) {
-    if (!isMandatoryFieldAvailable(request.getDestinationAmount(), request.getSourceCurrency(), request.getDestinationCurrency())) {
+    if (!isMandatoryFieldAvailable(request.getAmount(), request.getSourceCurrency(), request.getDestinationCurrency())) {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
     }
 
