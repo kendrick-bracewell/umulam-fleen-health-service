@@ -21,7 +21,7 @@ import com.umulam.fleen.health.service.admin.AdminHealthSessionService;
 import com.umulam.fleen.health.service.impl.ConfigService;
 import com.umulam.fleen.health.service.impl.FleenHealthEventService;
 import com.umulam.fleen.health.service.session.impl.HealthSessionServiceImpl;
-import com.umulam.fleen.health.util.UniqueReferenceGenerator;
+import com.umulam.fleen.health.util.FleenHealthReferenceGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
@@ -53,7 +53,7 @@ public class AdminHealthSessionServiceImpl extends HealthSessionServiceImpl impl
                                        FleenHealthEventService eventService,
                                        HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository,
                                        ProfessionalService professionalService,
-                                       UniqueReferenceGenerator referenceGenerator,
+                                       FleenHealthReferenceGenerator referenceGenerator,
                                        TransactionJpaRepository transactionJpaRepository,
                                        ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository,
                                        MemberService memberService,
