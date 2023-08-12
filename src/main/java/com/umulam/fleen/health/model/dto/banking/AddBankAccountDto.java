@@ -1,7 +1,7 @@
 package com.umulam.fleen.health.model.dto.banking;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.umulam.fleen.health.adapter.paystack.model.enums.PsRecipientType;
+import com.umulam.fleen.health.adapter.banking.model.PaymentRecipientType;
 import com.umulam.fleen.health.constant.session.BankAccountType;
 import com.umulam.fleen.health.constant.session.CurrencyType;
 import com.umulam.fleen.health.model.domain.MemberBankAccount;
@@ -35,7 +35,7 @@ public class AddBankAccountDto {
   private String accountType;
 
   @NotNull(message = "{banking.recipientType.notNull}")
-  @EnumValid(enumClass = PsRecipientType.class, message = "{banking.recipientType.type}")
+  @EnumValid(enumClass = PaymentRecipientType.class, message = "{banking.recipientType.type}")
   @JsonProperty("recipient_type")
   private String recipientType;
 

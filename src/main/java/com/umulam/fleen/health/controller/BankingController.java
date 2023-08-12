@@ -39,8 +39,14 @@ public class BankingController {
     return flutterwaveService.getBanks(country);
   }
 
-  @PostMapping(value = "/add-account")
-  public Object addBankAccount(@Valid @RequestBody AddBankAccountDto dto, @AuthenticationPrincipal FleenUser user) {
+  @PostMapping(value = "/add-account-ps")
+  public Object addBankAccountPs(@Valid @RequestBody AddBankAccountDto dto, @AuthenticationPrincipal FleenUser user) {
+    paystackService.addBankAccount(dto, user);
+    return new FleenHealthResponse(BANK_ACCOUNT_DETAILS_SAVED);
+  }
+
+  @PostMapping(value = "/add-account-fw")
+  public Object addBankAccountFw(@Valid @RequestBody AddBankAccountDto dto, @AuthenticationPrincipal FleenUser user) {
     paystackService.addBankAccount(dto, user);
     return new FleenHealthResponse(BANK_ACCOUNT_DETAILS_SAVED);
   }

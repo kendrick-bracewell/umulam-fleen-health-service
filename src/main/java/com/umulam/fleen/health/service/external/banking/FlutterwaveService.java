@@ -1,11 +1,11 @@
 package com.umulam.fleen.health.service.external.banking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umulam.fleen.health.adapter.flutterwave.FlutterwaveAdapter;
-import com.umulam.fleen.health.adapter.flutterwave.model.enums.FwBankCountryType;
-import com.umulam.fleen.health.adapter.flutterwave.model.request.FwGetExchangeRateRequest;
-import com.umulam.fleen.health.adapter.flutterwave.model.response.FwGetBanksResponse;
-import com.umulam.fleen.health.adapter.flutterwave.model.response.FwGetExchangeRateResponse;
+import com.umulam.fleen.health.adapter.banking.flutterwave.FlutterwaveAdapter;
+import com.umulam.fleen.health.adapter.banking.flutterwave.model.enums.FwBankCountryType;
+import com.umulam.fleen.health.adapter.banking.flutterwave.model.request.FwGetExchangeRateRequest;
+import com.umulam.fleen.health.adapter.banking.flutterwave.model.response.FwGetBanksResponse;
+import com.umulam.fleen.health.adapter.banking.flutterwave.model.response.FwGetExchangeRateResponse;
 import com.umulam.fleen.health.repository.jpa.BankAccountJpaRepository;
 import com.umulam.fleen.health.service.BankingService;
 import com.umulam.fleen.health.service.MemberService;

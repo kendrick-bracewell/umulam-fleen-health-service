@@ -1,13 +1,13 @@
 package com.umulam.fleen.health.service.external.banking;
 
-import com.umulam.fleen.health.adapter.paystack.PaystackAdapter;
-import com.umulam.fleen.health.adapter.paystack.model.enums.PsRecipientType;
-import com.umulam.fleen.health.adapter.paystack.model.request.CreateTransferRecipientRequest;
-import com.umulam.fleen.health.adapter.paystack.model.request.CreateTransferRecipientRequest.CreateTransferRecipientMetadata;
-import com.umulam.fleen.health.adapter.paystack.model.request.ResolveBankAccountRequest;
-import com.umulam.fleen.health.adapter.paystack.response.CreateTransferRecipientResponse;
-import com.umulam.fleen.health.adapter.paystack.response.PsGetBanksResponse;
-import com.umulam.fleen.health.adapter.paystack.response.ResolveBankAccountResponse;
+import com.umulam.fleen.health.adapter.banking.paystack.PaystackAdapter;
+import com.umulam.fleen.health.adapter.banking.model.PaymentRecipientType;
+import com.umulam.fleen.health.adapter.banking.paystack.model.request.CreateTransferRecipientRequest;
+import com.umulam.fleen.health.adapter.banking.paystack.model.request.CreateTransferRecipientRequest.CreateTransferRecipientMetadata;
+import com.umulam.fleen.health.adapter.banking.paystack.model.request.ResolveBankAccountRequest;
+import com.umulam.fleen.health.adapter.banking.paystack.response.CreateTransferRecipientResponse;
+import com.umulam.fleen.health.adapter.banking.paystack.response.PsGetBanksResponse;
+import com.umulam.fleen.health.adapter.banking.paystack.response.ResolveBankAccountResponse;
 import com.umulam.fleen.health.constant.session.CurrencyType;
 import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
 import com.umulam.fleen.health.exception.banking.BankAccountNotFoundException;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.umulam.fleen.health.adapter.paystack.response.PsGetBanksResponse.PsBankData;
+import static com.umulam.fleen.health.adapter.banking.paystack.response.PsGetBanksResponse.PsBankData;
 import static com.umulam.fleen.health.constant.base.GeneralConstant.PAYSTACK_GET_BANKS_CACHE_PREFIX;
 import static java.util.Objects.isNull;
 
@@ -161,7 +161,7 @@ public class PaystackService {
   }
 
   public static boolean isAccountTypePsCombinationValid(String recipientType, String currencyType) {
-    PsRecipientType recipient = PsRecipientType.valueOf(recipientType.toUpperCase());
+    PaymentRecipientType recipient = PaymentRecipientType.valueOf(recipientType.toUpperCase());
     CurrencyType currency = CurrencyType.valueOf(currencyType.toUpperCase());
 
     switch (recipient) {
