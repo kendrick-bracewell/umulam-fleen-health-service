@@ -1,10 +1,7 @@
 package com.umulam.fleen.health.exception.handler;
 
 import com.umulam.fleen.health.exception.authentication.*;
-import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
-import com.umulam.fleen.health.exception.banking.BankAccountNotFoundException;
-import com.umulam.fleen.health.exception.banking.InvalidAccountTypeCombinationException;
-import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
+import com.umulam.fleen.health.exception.banking.*;
 import com.umulam.fleen.health.exception.business.BusinessNotFoundException;
 import com.umulam.fleen.health.exception.country.CountryCodeDuplicateException;
 import com.umulam.fleen.health.exception.country.CountryDuplicateException;
@@ -69,7 +66,8 @@ public class FleenHealthExceptionHandler {
           ProfileVerificationMessageNotFoundException.class,
           HealthSessionNotFoundException.class,
           SessionTransactionNotFound.class,
-          BankAccountNotFoundException.class
+          BankAccountNotFoundException.class,
+          EarningsAccountNotFoundException.class
   })
   public Object handleNotFound(Exception ex) {
     log.error(ex.getMessage(), ex);
@@ -117,7 +115,9 @@ public class FleenHealthExceptionHandler {
           AddReviewAfterSessionCompleteException.class,
           ExternalSystemException.class,
           InvalidBankCodeException.class,
-          InvalidAccountTypeCombinationException.class
+          InvalidAccountTypeCombinationException.class,
+          InsufficientEarningsBalance.class,
+          WithdrawalAmountGreaterThanEarningsBalanceException.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);

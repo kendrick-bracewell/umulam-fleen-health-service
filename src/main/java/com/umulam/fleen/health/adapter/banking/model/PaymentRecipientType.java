@@ -6,8 +6,7 @@ public enum PaymentRecipientType implements ApiParameter {
 
   NUBAN("nuban"),
   MOBILE_MONEY("mobile_money"),
-  BASA("basa"),
-  FLUTTERWAVE("flutterwave");
+  BASA("basa");
 
   private final String value;
 

@@ -6,12 +6,8 @@ import com.umulam.fleen.health.adapter.banking.model.PaymentRecipientType;
 import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
 import com.umulam.fleen.health.constant.session.CurrencyType;
 import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
-import com.umulam.fleen.health.exception.banking.BankAccountNotFoundException;
 import com.umulam.fleen.health.exception.banking.InvalidAccountTypeCombinationException;
 import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
-import com.umulam.fleen.health.exception.base.FleenHealthException;
-import com.umulam.fleen.health.model.domain.Earnings;
-import com.umulam.fleen.health.model.domain.MemberBankAccount;
 import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
 import com.umulam.fleen.health.model.dto.banking.CreateWithdrawalDto;
 import com.umulam.fleen.health.model.event.InternalPaymentValidation;
@@ -28,7 +24,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -91,6 +86,11 @@ public class BankingServiceImpl implements BankingService {
     return false;
   }
 
+  @Override
+  public void createWithdrawal(CreateWithdrawalDto dto, FleenUser user) {
+
+  }
+
   public static boolean isAccountTypeCombinationValid(String recipientType, String currencyType) {
     PaymentRecipientType recipient = PaymentRecipientType.valueOf(recipientType.toUpperCase());
     CurrencyType currency = CurrencyType.valueOf(currencyType.toUpperCase());
@@ -122,27 +122,5 @@ public class BankingServiceImpl implements BankingService {
     if (accountNumberExist) {
       throw new BankAccountAlreadyExists(dto.getAccountNumber());
     }
-  }
-
-  @Override
-  public void createWithdrawal(CreateWithdrawalDto dto, FleenUser user) {
-    Optional<MemberBankAccount> bankAccountExists = bankAccountJpaRepository.findById(Integer.parseInt(dto.getBankAccount()));
-    if (bankAccountExists.isEmpty()) {
-      throw new BankAccountNotFoundException(dto.getBankAccount());
-    }
-
-    MemberBankAccount bankAccount = bankAccountExists.get();
-    Optional<Earnings> earningsExists = earningsJpaRepository.findByMember(user.toMember());
-    if (earningsExists.isEmpty()) {
-      throw new FleenHealthException("Earnings not found");
-    }
-
-    Earnings earnings = earningsExists.get();
-    int canWithdraw = dto.getAmount().compareTo(earnings.getTotalEarnings());
-    if (canWithdraw < 0) {
-      throw new FleenHealthException("Insufficient balance");
-    }
-
-
   }
 }

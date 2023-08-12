@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.model.domain;
 
 
+import com.umulam.fleen.health.adapter.banking.model.PaymentRecipientType;
 import com.umulam.fleen.health.constant.session.BankAccountType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -39,12 +40,16 @@ public class MemberBankAccount {
   @Column(name = "external_system_recipient_code")
   private String externalSystemRecipientCode;
 
-  @Column(name = "banking_detail_type", nullable = false)
+  @Column(name = "bank_account_type", nullable = false)
   @Enumerated(EnumType.STRING)
   private BankAccountType bankAccountType;
 
   @Column(name = "currency", nullable = false, length = 5)
   private String currency;
+
+  @Column(name = "bank_account_sub_type", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private PaymentRecipientType bankAccountSubType;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id")

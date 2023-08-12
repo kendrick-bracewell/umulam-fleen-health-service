@@ -13,7 +13,9 @@ import com.umulam.fleen.health.adapter.banking.flutterwave.model.response.FwGetT
 import com.umulam.fleen.health.adapter.banking.flutterwave.model.response.FwResolveBankAccountResponse;
 import com.umulam.fleen.health.constant.session.*;
 import com.umulam.fleen.health.exception.banking.BankAccountNotFoundException;
-import com.umulam.fleen.health.exception.base.FleenHealthException;
+import com.umulam.fleen.health.exception.banking.EarningsAccountNotFoundException;
+import com.umulam.fleen.health.exception.banking.InsufficientEarningsBalance;
+import com.umulam.fleen.health.exception.banking.WithdrawalAmountGreaterThanEarningsBalanceException;
 import com.umulam.fleen.health.model.domain.Earnings;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.MemberBankAccount;
@@ -182,14 +184,13 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
     MemberBankAccount bankAccount = bankAccountExists.get();
     Optional<Earnings> earningsExists = earningsJpaRepository.findByMember(user.toMember());
     if (earningsExists.isEmpty()) {
-      throw new FleenHealthException("Earnings not found");
+      throw new EarningsAccountNotFoundException();
     }
 
     Earnings earnings = earningsExists.get();
-    Member member = earnings.getMember();
     int canWithdraw = dto.getAmount().compareTo(earnings.getTotalEarnings());
     if (canWithdraw < 0) {
-      throw new FleenHealthException("Insufficient balance");
+      throw new InsufficientEarningsBalance(dto.getAmount().doubleValue(), earnings.getTotalEarnings().doubleValue());
     }
 
     FwGetTransferFeeRequest request = FwGetTransferFeeRequest.builder()
@@ -199,11 +200,12 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
 
     FwGetTransferFeeResponse transferFeeResponse = flutterwaveAdapter.getTransferFee(request);
     double balance = earnings.getTotalEarnings().doubleValue() - dto.getAmount().doubleValue();
-    double amountToTransfer = 0.0;
+    double amountToTransfer;
+    double transferFee = transferFeeResponse.getData().get(0).getFee();
     if (configService.getPaymentIssuingCurrency().equalsIgnoreCase(bankAccount.getCurrency())) {
-      amountToTransfer = dto.getAmount().doubleValue() - transferFeeResponse.getData().get(0).getFee();
+      amountToTransfer = dto.getAmount().doubleValue() - transferFee;
       if (amountToTransfer < 0) {
-        throw new FleenHealthException("Amount to transfer less than balance in earnings");
+        throw new WithdrawalAmountGreaterThanEarningsBalanceException(dto.getAmount().doubleValue(), transferFee);
       }
     }
     else {
@@ -211,6 +213,7 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
       amountToTransfer = exchangeRate.getData().getSource().getAmount() - transferFeeResponse.getData().get(0).getFee();
     }
 
+    Member member = earnings.getMember();
     FwCreateTransferRequest transferRequest = FwCreateTransferRequest.builder()
       .amount(amountToTransfer)
       .bankCode(bankAccount.getBankCode())
