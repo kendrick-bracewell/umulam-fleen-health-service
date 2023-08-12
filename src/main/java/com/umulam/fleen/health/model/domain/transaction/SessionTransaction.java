@@ -31,4 +31,10 @@ public class SessionTransaction extends Transaction {
 
   @Column(name = "group_transaction_reference", nullable = false)
   private String groupTransactionReference;
+
+  @Column(name = "payment_currency")
+  private String paymentCurrency;
+
+  @Column(name = "amount_in_payment_currency")
+  private Double amountInPaymentCurrency;
 }

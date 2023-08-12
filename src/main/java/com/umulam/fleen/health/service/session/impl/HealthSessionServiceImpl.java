@@ -40,7 +40,6 @@ import com.umulam.fleen.health.service.impl.ConfigService;
 import com.umulam.fleen.health.service.impl.FleenHealthEventService;
 import com.umulam.fleen.health.service.session.HealthSessionService;
 import com.umulam.fleen.health.util.FleenHealthReferenceGenerator;
-import com.umulam.fleen.health.util.UniqueReferenceGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -261,6 +260,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     int totalNumberOfSessions = dto.getPeriods().size();
     double totalAmountToCharge = professionalPrice * totalNumberOfSessions;
     String groupTransactionReference = referenceGenerator.generateGroupTransactionReference();
+    Double actualPriceToPayForSession = exchangeRateService.getConvertedHealthSessionPrice(totalAmountToCharge);
 
     List<SessionTransaction> transactions = new ArrayList<>();
     for (HealthSession session : savedHealthSessions) {
@@ -276,6 +276,8 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         .type(TransactionType.SESSION)
         .subType(TransactionSubType.DEBIT)
         .currency(CurrencyType.NGN.getValue())
+        .paymentCurrency(configService.getHealthSessionPaymentCurrency())
+        .amountInPaymentCurrency(actualPriceToPayForSession)
         .build();
       transactions.add(transaction);
     }
@@ -293,7 +295,6 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       bookedPeriods.add(sessionPeriod);
     }
 
-    Double actualPriceToPayForSession = exchangeRateService.getConvertedHealthSessionPrice(totalAmountToCharge);
     return PendingHealthSessionBookingResponse.builder()
       .timezone(healthSession.getTimezone())
       .bookedPeriods(bookedPeriods)
