@@ -1,7 +1,7 @@
 package com.umulam.fleen.health.service.external.banking;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.adapter.banking.paystack.PaystackAdapter;
-import com.umulam.fleen.health.adapter.banking.model.PaymentRecipientType;
 import com.umulam.fleen.health.adapter.banking.paystack.model.request.CreateTransferRecipientRequest;
 import com.umulam.fleen.health.adapter.banking.paystack.model.request.CreateTransferRecipientRequest.CreateTransferRecipientMetadata;
 import com.umulam.fleen.health.adapter.banking.paystack.model.request.ResolveBankAccountRequest;
@@ -9,10 +9,7 @@ import com.umulam.fleen.health.adapter.banking.paystack.response.CreateTransferR
 import com.umulam.fleen.health.adapter.banking.paystack.response.PsGetBanksResponse;
 import com.umulam.fleen.health.adapter.banking.paystack.response.ResolveBankAccountResponse;
 import com.umulam.fleen.health.constant.session.CurrencyType;
-import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
 import com.umulam.fleen.health.exception.banking.BankAccountNotFoundException;
-import com.umulam.fleen.health.exception.banking.InvalidAccountTypeCombinationException;
-import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.MemberBankAccount;
 import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
@@ -20,6 +17,7 @@ import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsRespo
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.repository.jpa.BankAccountJpaRepository;
 import com.umulam.fleen.health.service.MemberService;
+import com.umulam.fleen.health.service.impl.BankingServiceImpl;
 import com.umulam.fleen.health.service.impl.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -38,7 +36,7 @@ import static java.util.Objects.isNull;
 
 @Slf4j
 @Service
-public class PaystackService {
+public class PaystackService extends BankingServiceImpl {
 
   private final PaystackAdapter paystackAdapter;
   private final CacheService cacheService;
@@ -48,7 +46,9 @@ public class PaystackService {
   public PaystackService(PaystackAdapter paystackAdapter,
                          CacheService cacheService,
                          BankAccountJpaRepository bankAccountJpaRepository,
-                         MemberService memberService) {
+                         MemberService memberService,
+                         ObjectMapper mapper) {
+    super(bankAccountJpaRepository, mapper);
     this.paystackAdapter = paystackAdapter;
     this.cacheService = cacheService;
     this.bankAccountJpaRepository = bankAccountJpaRepository;
@@ -76,18 +76,7 @@ public class PaystackService {
     String recipientType = dto.getRecipientType().toUpperCase();
     String currency = dto.getCurrency().toUpperCase();
 
-    if (!isBankCodeExists(dto.getBankCode(), currency)) {
-      throw new InvalidBankCodeException(dto.getBankCode());
-    }
-
-    if (!isAccountTypePsCombinationValid(recipientType, currency)) {
-      throw new InvalidAccountTypeCombinationException(recipientType, currency);
-    }
-
-    boolean accountNumberExist = bankAccountJpaRepository.existsByAccountNumber(dto.getAccountNumber());
-    if (accountNumberExist) {
-      throw new BankAccountAlreadyExists(dto.getAccountNumber());
-    }
+    checkAccountDetails(dto, currency, recipientType);
 
     ResolveBankAccountResponse bankAccountResponse = paystackAdapter.resolveBankAccount(request);
     GetMemberUpdateDetailsResponse member = memberService.getMemberGetUpdateDetailsResponse(user);
@@ -152,28 +141,13 @@ public class PaystackService {
     return PAYSTACK_GET_BANKS_CACHE_PREFIX;
   }
 
-  private boolean isBankCodeExists(String bankCode, String currency) {
+  @Override
+  public boolean isBankCodeExists(String bankCode, String currency) {
     List<PsBankData> banks = getBanks(currency);
     return banks
       .stream()
       .anyMatch(bank -> bank.getCode().equalsIgnoreCase(bankCode)
                      && bank.getCurrency().equalsIgnoreCase(currency));
-  }
-
-  public static boolean isAccountTypePsCombinationValid(String recipientType, String currencyType) {
-    PaymentRecipientType recipient = PaymentRecipientType.valueOf(recipientType.toUpperCase());
-    CurrencyType currency = CurrencyType.valueOf(currencyType.toUpperCase());
-
-    switch (recipient) {
-      case NUBAN:
-        return currency == CurrencyType.NGN;
-      case MOBILE_MONEY:
-        return currency == CurrencyType.GHS;
-      case BASA:
-        return currency == CurrencyType.ZAR;
-      default:
-        return false;
-    }
   }
 
 }

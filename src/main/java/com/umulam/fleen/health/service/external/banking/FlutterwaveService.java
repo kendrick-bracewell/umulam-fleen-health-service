@@ -4,8 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.adapter.banking.flutterwave.FlutterwaveAdapter;
 import com.umulam.fleen.health.adapter.banking.flutterwave.model.enums.FwBankCountryType;
 import com.umulam.fleen.health.adapter.banking.flutterwave.model.request.FwGetExchangeRateRequest;
+import com.umulam.fleen.health.adapter.banking.flutterwave.model.request.FwResolveBankAccountRequest;
 import com.umulam.fleen.health.adapter.banking.flutterwave.model.response.FwGetBanksResponse;
 import com.umulam.fleen.health.adapter.banking.flutterwave.model.response.FwGetExchangeRateResponse;
+import com.umulam.fleen.health.adapter.banking.flutterwave.model.response.FwResolveBankAccountResponse;
+import com.umulam.fleen.health.constant.session.CurrencyType;
+import com.umulam.fleen.health.model.domain.Member;
+import com.umulam.fleen.health.model.domain.MemberBankAccount;
+import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
+import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.repository.jpa.BankAccountJpaRepository;
 import com.umulam.fleen.health.service.BankingService;
 import com.umulam.fleen.health.service.MemberService;
@@ -17,10 +24,12 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 
+import static com.umulam.fleen.health.adapter.banking.flutterwave.model.response.FwGetBanksResponse.FwBankData;
 import static com.umulam.fleen.health.constant.base.GeneralConstant.FLUTTERWAVE_GET_BANKS_CACHE_PREFIX;
 import static java.util.Objects.isNull;
 
@@ -40,7 +49,7 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
                          BankAccountJpaRepository bankAccountJpaRepository,
                          MemberService memberService,
                          ObjectMapper mapper) {
-    super(mapper);
+    super(bankAccountJpaRepository, mapper);
     this.flutterwaveAdapter = flutterwaveAdapter;
     this.cacheService = cacheService;
     this.bankAccountJpaRepository = bankAccountJpaRepository;
@@ -48,7 +57,7 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
     this.mapper = mapper;
   }
 
-  public List<FwGetBanksResponse.FwBankData> getBanks(String country) {
+  public List<FwBankData> getBanks(String country) {
     String cacheKey = getBanksCacheKey().concat(country.toUpperCase());
     if (cacheService.exists(cacheKey)) {
       return cacheService.get(cacheKey, FwGetBanksResponse.class).getData();
@@ -92,9 +101,45 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
     return flutterwaveAdapter.getExchangeRate(request);
   }
 
+  @Transactional
+  public void addBankAccount(AddBankAccountDto dto, FleenUser user) {
+    FwResolveBankAccountRequest request = FwResolveBankAccountRequest.builder()
+      .accountNumber(dto.getAccountNumber())
+      .bankCode(dto.getBankCode())
+      .build();
+
+    String recipientType = dto.getRecipientType().toUpperCase();
+    String currency = dto.getCurrency().toUpperCase();
+    CurrencyType currencyType = CurrencyType.valueOf(currency);
+    List<FwBankData> banks = getBanks(currencyType.getCountry());
+
+    checkAccountDetails(dto, currency, recipientType);
+    FwResolveBankAccountResponse bankAccountResponse = flutterwaveAdapter.resolveBankAccount(request);
+
+    FwBankData bankDetails = banks
+      .stream()
+      .filter(bank -> Objects.equals(bank.getCode(), dto.getBankCode()))
+      .findFirst()
+      .orElse(null);
+
+    MemberBankAccount bankAccount = dto.toBankAccount();
+    bankAccount.setAccountName(bankAccountResponse.getData().getAccountName());
+    bankAccount.setBankName(Objects.nonNull(bankDetails) ? bankDetails.getName(): "UNKNOWN");
+    bankAccount.setMember(Member.builder().id(user.getId()).build());
+    bankAccountJpaRepository.save(bankAccount);
+  }
+
   @Override
   public String getTransactionStatusByReference(String transactionReference) {
     return flutterwaveAdapter.verifyTransactionByReference(transactionReference).getData().getStatus();
+  }
+
+  @Override
+  public boolean isBankCodeExists(String bankCode, String country) {
+    List<FwBankData> banks = getBanks(country);
+    return banks
+      .stream()
+      .anyMatch(bank -> bank.getCode().equalsIgnoreCase(bankCode));
   }
 
 }

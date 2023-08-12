@@ -4,6 +4,7 @@ import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
 import com.umulam.fleen.health.model.dto.banking.CreateWithdrawalDto;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.service.BankingService;
 import com.umulam.fleen.health.service.external.banking.FlutterwaveService;
 import com.umulam.fleen.health.service.external.banking.PaystackService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,16 +23,24 @@ public class BankingController {
 
   private final PaystackService paystackService;
   private final FlutterwaveService flutterwaveService;
+  private final BankingService bankingService;
 
   public BankingController(PaystackService paystackService,
-                           FlutterwaveService flutterwaveService) {
+                           FlutterwaveService flutterwaveService,
+                           BankingService bankingService) {
     this.paystackService = paystackService;
     this.flutterwaveService = flutterwaveService;
+    this.bankingService = bankingService;
   }
 
   @GetMapping(value = "/get-banks-ps")
   public Object getBanksPs(@RequestParam(name = "currency", defaultValue = "NGN") String currency) {
     return paystackService.getBanks(currency);
+  }
+
+  @GetMapping(value = "/get-supported-countries")
+  public Object getSupportedCountries() {
+    return null;
   }
 
   @GetMapping(value = "/get-banks-fw")
@@ -47,7 +56,7 @@ public class BankingController {
 
   @PostMapping(value = "/add-account-fw")
   public Object addBankAccountFw(@Valid @RequestBody AddBankAccountDto dto, @AuthenticationPrincipal FleenUser user) {
-    paystackService.addBankAccount(dto, user);
+    flutterwaveService.addBankAccount(dto, user);
     return new FleenHealthResponse(BANK_ACCOUNT_DETAILS_SAVED);
   }
 

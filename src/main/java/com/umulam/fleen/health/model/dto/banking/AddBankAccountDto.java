@@ -40,7 +40,6 @@ public class AddBankAccountDto {
   private String recipientType;
 
   @NotBlank(message = "{banking.currency.notNull}")
-  @Size(min = 2, max = 5, message = "{banking.currency.size}")
   @EnumValid(enumClass = CurrencyType.class, message = "{banking.currency.type}")
   @JsonProperty("currency")
   private String currency;

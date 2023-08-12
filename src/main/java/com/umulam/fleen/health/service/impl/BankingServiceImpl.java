@@ -2,21 +2,37 @@ package com.umulam.fleen.health.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umulam.fleen.health.adapter.banking.model.PaymentRecipientType;
 import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
+import com.umulam.fleen.health.constant.session.CurrencyType;
+import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
+import com.umulam.fleen.health.exception.banking.InvalidAccountTypeCombinationException;
+import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
+import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
 import com.umulam.fleen.health.model.event.InternalPaymentValidation;
 import com.umulam.fleen.health.model.event.flutterwave.FwChargeEvent;
 import com.umulam.fleen.health.model.event.paystack.PsChargeEvent;
+import com.umulam.fleen.health.model.response.SupportedCountry;
+import com.umulam.fleen.health.repository.jpa.BankAccountJpaRepository;
 import com.umulam.fleen.health.service.BankingService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Component
+@Primary
 public class BankingServiceImpl implements BankingService {
 
+  private final BankAccountJpaRepository bankAccountJpaRepository;
   private final ObjectMapper mapper;
 
-  public BankingServiceImpl(ObjectMapper mapper) {
+  public BankingServiceImpl(BankAccountJpaRepository bankAccountJpaRepository,
+                            ObjectMapper mapper) {
+    this.bankAccountJpaRepository = bankAccountJpaRepository;
     this.mapper = mapper;
   }
 
@@ -48,5 +64,52 @@ public class BankingServiceImpl implements BankingService {
       log.error(ex.getMessage(), ex);
     }
     return null;
+  }
+
+  @Override
+  public List<SupportedCountry> getSupportedCountries() {
+    List<SupportedCountry> supportedCountries = new ArrayList<>();
+    for (CurrencyType currencyType : CurrencyType.values()) {
+      supportedCountries.add(SupportedCountry.builder().currency(null).build());
+    }
+    return null;
+  }
+
+  @Override
+  public boolean isBankCodeExists(String bankCode, String countryOrCurrency) {
+    return false;
+  }
+
+  public static boolean isAccountTypeCombinationValid(String recipientType, String currencyType) {
+    PaymentRecipientType recipient = PaymentRecipientType.valueOf(recipientType.toUpperCase());
+    CurrencyType currency = CurrencyType.valueOf(currencyType.toUpperCase());
+
+    switch (recipient) {
+      case NUBAN:
+        return currency == CurrencyType.NGN;
+      case MOBILE_MONEY:
+        return currency == CurrencyType.GHS;
+      case BASA:
+        return currency == CurrencyType.ZAR;
+      case FLUTTERWAVE:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  public void checkAccountDetails(AddBankAccountDto dto, String currency, String recipientType) {
+    if (!isBankCodeExists(dto.getBankCode(), currency)) {
+      throw new InvalidBankCodeException(dto.getBankCode());
+    }
+
+    if (!isAccountTypeCombinationValid(recipientType, currency)) {
+      throw new InvalidAccountTypeCombinationException(recipientType, currency);
+    }
+
+    boolean accountNumberExist = bankAccountJpaRepository.existsByAccountNumber(dto.getAccountNumber());
+    if (accountNumberExist) {
+      throw new BankAccountAlreadyExists(dto.getAccountNumber());
+    }
   }
 }

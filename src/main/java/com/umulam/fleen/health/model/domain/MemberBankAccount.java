@@ -15,8 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "bank_account", uniqueConstraints = {
-  @UniqueConstraint(columnNames = {"account_number"}),
-  @UniqueConstraint(columnNames = {"external_system_recipient_code"})
+  @UniqueConstraint(columnNames = {"account_number"})
 })
 public class MemberBankAccount {
 
@@ -34,7 +33,7 @@ public class MemberBankAccount {
   @Column(name = "bank_name", nullable = false)
   private String bankName;
 
-  @Column(name = "external_system_recipient_code", nullable = false)
+  @Column(name = "external_system_recipient_code")
   private String externalSystemRecipientCode;
 
   @Column(name = "banking_detail_type", nullable = false)
