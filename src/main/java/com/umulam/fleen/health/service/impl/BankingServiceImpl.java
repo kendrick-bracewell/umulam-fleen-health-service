@@ -97,13 +97,11 @@ public class BankingServiceImpl implements BankingService {
 
     switch (recipient) {
       case NUBAN:
-        return currency == CurrencyType.NGN;
+        return currency == CurrencyType.NGN || currency == CurrencyType.KES || currency == CurrencyType.UGX;
       case MOBILE_MONEY:
         return currency == CurrencyType.GHS;
       case BASA:
         return currency == CurrencyType.ZAR;
-      case FLUTTERWAVE:
-        return true;
       default:
         return false;
     }

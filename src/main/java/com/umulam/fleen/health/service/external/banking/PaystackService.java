@@ -48,7 +48,7 @@ public class PaystackService extends BankingServiceImpl {
                          BankAccountJpaRepository bankAccountJpaRepository,
                          MemberService memberService,
                          ObjectMapper mapper) {
-    super(bankAccountJpaRepository, mapper);
+    super(bankAccountJpaRepository, mapper, null);
     this.paystackAdapter = paystackAdapter;
     this.cacheService = cacheService;
     this.bankAccountJpaRepository = bankAccountJpaRepository;
