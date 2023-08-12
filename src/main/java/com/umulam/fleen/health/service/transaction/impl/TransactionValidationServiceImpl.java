@@ -10,6 +10,7 @@ import com.umulam.fleen.health.constant.session.HealthSessionStatus;
 import com.umulam.fleen.health.constant.session.TransactionStatus;
 import com.umulam.fleen.health.constant.session.WithdrawalStatus;
 import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
+import com.umulam.fleen.health.event.CreateSessionMeetingEvents;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
@@ -91,7 +92,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
     List<SessionTransaction> transactions = sessionTransactionJpaRepository.findByGroupReference(event.getTransactionReference());
     List<SessionTransaction> updatedTransactions = new ArrayList<>();
 
-    if (verifyTransactionStatus(event.getStatus(), event.getTransactionReference())) {
+    if (verifyTransactionSuccessStatus(event.getStatus(), event.getTransactionReference())) {
       if (transactions != null && !transactions.isEmpty()) {
         List<CreateSessionMeetingEvent> meetingEvents = new ArrayList<>();
 
@@ -137,8 +138,10 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
                }
               updatedTransactions.add(transaction);
             }
-            eventService.publishCreateSession(meetingEvents);
           }
+        }
+        if (!meetingEvents.isEmpty()) {
+          eventService.publishCreateSession(CreateSessionMeetingEvents.builder().meetingEvents(meetingEvents).build());
         }
       }
     } else {
@@ -150,7 +153,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
       }
     }
 
-    if (Objects.nonNull(transactions) && !transactions.isEmpty()) {
+    if (!updatedTransactions.isEmpty()) {
       sessionTransactionJpaRepository.saveAll(updatedTransactions);
     }
   }
@@ -194,7 +197,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
     return mapper.convertValue(metadata, new TypeReference<>() {});
   }
 
-  private boolean verifyTransactionStatus(String status, String transactionReference) {
+  private boolean verifyTransactionSuccessStatus(String status, String transactionReference) {
     boolean successful = false;
     if (ExternalTransactionStatus.SUCCESSFUL.getValue().equalsIgnoreCase(status) &&
       ExternalTransactionStatus.SUCCESSFUL.getValue().equalsIgnoreCase(bankingService.getTransactionStatusByReference(transactionReference))) {

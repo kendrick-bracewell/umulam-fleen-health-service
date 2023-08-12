@@ -23,6 +23,7 @@ import com.umulam.fleen.health.service.impl.FleenHealthEventService;
 import com.umulam.fleen.health.service.session.impl.HealthSessionServiceImpl;
 import com.umulam.fleen.health.util.UniqueReferenceGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,7 @@ import static java.util.Objects.nonNull;
 
 @Slf4j
 @Service
+@Qualifier("adminHealthSessionService")
 public class AdminHealthSessionServiceImpl extends HealthSessionServiceImpl implements AdminHealthSessionService {
 
   private final AdminHealthSessionJpaRepository adminHealthSessionJpaRepository;

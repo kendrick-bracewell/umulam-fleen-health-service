@@ -61,7 +61,7 @@ public class BaseAdapter {
     }
   }
 
-  protected String getPayloadBodyAsString(Object body) {
+  public String getPayloadBodyAsString(Object body) {
     String payloadAsString = "";
     if (body instanceof String) {
       payloadAsString = (String) body;

@@ -47,7 +47,7 @@ public class TransactionController {
   @PostMapping(value = "/payment/verification/fw")
   public CompletableFuture<FleenHealthResponse> validateAndCompletePaymentTransactionFw(@RequestBody String body, HttpServletRequest request) {
     if (fwConfig.getSecretHash().equalsIgnoreCase(request.getHeader(fwConfig.getVerificationHeader()))) {
-      System.out.println("Hello World");
+      transactionValidationService.validateAndCompleteTransaction(body);
     }
     return CompletableFuture.completedFuture(new FleenHealthResponse(SUCCESS_MESSAGE));
   }

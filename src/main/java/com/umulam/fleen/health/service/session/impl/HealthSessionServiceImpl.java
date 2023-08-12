@@ -41,6 +41,7 @@ import com.umulam.fleen.health.service.impl.FleenHealthEventService;
 import com.umulam.fleen.health.service.session.HealthSessionService;
 import com.umulam.fleen.health.util.UniqueReferenceGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,6 +70,7 @@ import static java.util.Objects.requireNonNull;
 
 @Slf4j
 @Service
+@Primary
 public class HealthSessionServiceImpl implements HealthSessionService {
 
   protected final HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository;

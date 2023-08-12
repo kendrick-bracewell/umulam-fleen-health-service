@@ -12,6 +12,7 @@ import com.umulam.fleen.health.resolver.SearchParam;
 import com.umulam.fleen.health.service.admin.AdminHealthSessionService;
 import com.umulam.fleen.health.service.admin.AdminTransactionService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class AdminHealthSessionController {
   private final AdminHealthSessionService healthSessionService;
   private final AdminTransactionService transactionService;
 
-  public AdminHealthSessionController(AdminHealthSessionService healthSessionService,
+  public AdminHealthSessionController(@Qualifier("adminHealthSessionService") AdminHealthSessionService healthSessionService,
                                       AdminTransactionService transactionService) {
     this.healthSessionService = healthSessionService;
     this.transactionService = transactionService;

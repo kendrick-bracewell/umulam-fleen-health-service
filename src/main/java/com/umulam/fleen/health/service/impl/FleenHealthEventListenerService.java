@@ -4,6 +4,7 @@ import com.google.api.services.calendar.model.Event;
 import com.umulam.fleen.health.constant.session.HealthSessionStatus;
 import com.umulam.fleen.health.event.CancelSessionMeetingEvent;
 import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
+import com.umulam.fleen.health.event.CreateSessionMeetingEvents;
 import com.umulam.fleen.health.event.RescheduleSessionMeetingEvent;
 import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.umulam.fleen.health.service.external.google.CalendarService.EVENT_SUMMARY_KEY;
@@ -33,8 +33,8 @@ public class FleenHealthEventListenerService {
 
   @TransactionalEventListener(phase = AFTER_COMMIT)
   @Transactional(propagation = REQUIRES_NEW)
-  public void createMeetingSession(List<CreateSessionMeetingEvent> events) {
-    for (CreateSessionMeetingEvent meetingEvent : events) {
+  public void createMeetingSession(CreateSessionMeetingEvents meetingEvents) {
+    for (CreateSessionMeetingEvent meetingEvent : meetingEvents.getMeetingEvents()) {
       meetingEvent.getMetadata().put(EVENT_SUMMARY_KEY, getMeetingEventSummary(meetingEvent.getPatientName(), meetingEvent.getProfessionalName()));
       Event event = calendarService.createEvent(meetingEvent.getStartDate(), meetingEvent.getEndDate(), meetingEvent.getAttendees(), meetingEvent.getMetadata());
       Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(meetingEvent.getSessionReference());
