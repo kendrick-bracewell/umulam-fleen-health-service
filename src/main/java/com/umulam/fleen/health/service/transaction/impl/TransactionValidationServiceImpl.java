@@ -3,6 +3,7 @@ package com.umulam.fleen.health.service.transaction.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
 import com.umulam.fleen.health.constant.externalsystem.flutterwave.FlutterwaveWebhookEventType;
 import com.umulam.fleen.health.constant.externalsystem.paystack.PaystackWebhookEventType;
 import com.umulam.fleen.health.constant.session.ExternalTransactionStatus;
@@ -69,10 +70,9 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
   @Transactional
   public void validateAndCompleteTransaction(String body) {
     try {
-      log.info("Payment validation for {} on {} ", body, LocalDateTime.now());
       PaystackWebhookEvent paystackEvent = mapper.readValue(body, PaystackWebhookEvent.class);
       if (Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.CHARGE_SUCCESS.getValue())) {
-        log.info("In progress and development");
+        validateAndCompleteSessionTransaction(bankingService.getInternalPaymentValidationByChargeEvent(body, PaymentGatewayType.PAYSTACK));
       } else if (Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.TRANSFER_SUCCESS.getValue()) ||
           Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.TRANSFER_FAILED.getValue()) ||
           Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.TRANSFER_REVERSED.getValue())) {
@@ -81,7 +81,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
 
       FlutterwaveWebhookEvent flutterwaveEvent = mapper.readValue(body, FlutterwaveWebhookEvent.class);
       if (Objects.equals(flutterwaveEvent.getEvent(), FlutterwaveWebhookEventType.CHARGE_COMPLETED.getValue())) {
-        validateAndCompleteSessionTransaction(bankingService.getInternalPaymentValidationByChargeEvent(body));
+        validateAndCompleteSessionTransaction(bankingService.getInternalPaymentValidationByChargeEvent(body, PaymentGatewayType.FLUTTERWAVE));
       }
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);
