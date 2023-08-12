@@ -175,6 +175,7 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
   }
 
   @Override
+  @Transactional
   public void createWithdrawal(CreateWithdrawalDto dto, FleenUser user) {
     Optional<MemberBankAccount> bankAccountExists = bankAccountJpaRepository.findById(Integer.parseInt(dto.getBankAccount()));
     if (bankAccountExists.isEmpty()) {
@@ -197,11 +198,13 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
       .amount(dto.getAmount().toString())
       .currency(bankAccount.getCurrency())
       .build();
+    request.setTransferType(bankAccount);
 
     FwGetTransferFeeResponse transferFeeResponse = flutterwaveAdapter.getTransferFee(request);
+    double transferFee = transferFeeResponse.getData().get(0).getFee();
     double balance = earnings.getTotalEarnings().doubleValue() - dto.getAmount().doubleValue();
     double amountToTransfer;
-    double transferFee = transferFeeResponse.getData().get(0).getFee();
+
     if (configService.getPaymentIssuingCurrency().equalsIgnoreCase(bankAccount.getCurrency())) {
       amountToTransfer = dto.getAmount().doubleValue() - transferFee;
       if (amountToTransfer < 0) {
@@ -210,7 +213,7 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
     }
     else {
       FwGetExchangeRateResponse exchangeRate = getExchangeRate(dto.getAmount().doubleValue(), configService.getPaymentIssuingCurrency(), bankAccount.getCurrency());
-      amountToTransfer = exchangeRate.getData().getSource().getAmount() - transferFeeResponse.getData().get(0).getFee();
+      amountToTransfer = exchangeRate.getData().getSource().getAmount() - transferFee;
     }
 
     Member member = earnings.getMember();
@@ -236,31 +239,28 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
       .emailAddress(member.getEmailAddress())
       .recipientAddress(member.getAddress())
       .build();
-
     transferRequest.setMeta(transferMetadata);
-    flutterwaveAdapter.createTransfer(transferRequest);
-
 
     WithdrawalTransaction transaction = WithdrawalTransaction.builder()
-      .withdrawalStatus(WithdrawalStatus.PENDING)
-      .reference(referenceGenerator.generateTransactionReference())
       .recipient(member)
+      .withdrawalStatus(WithdrawalStatus.PENDING)
+      .status(TransactionStatus.PENDING)
+      .gateway(PaymentGateway.FLUTTERWAVE)
+      .type(TransactionType.WITHDRAWAL)
+      .subType(TransactionSubType.DEBIT)
+      .reference(referenceGenerator.generateTransactionReference())
+      .currency(configService.getPaymentIssuingCurrency())
       .accountName(bankAccount.getAccountName())
       .accountNumber(bankAccount.getAccountNumber())
       .bankName(bankAccount.getBankName())
       .bankCode(bankAccount.getBankCode())
       .amount(dto.getAmount().doubleValue())
-      .currency(configService.getPaymentIssuingCurrency())
-      .status(TransactionStatus.PENDING)
-      .gateway(PaymentGateway.FLUTTERWAVE)
-      .type(TransactionType.WITHDRAWAL)
-      .subType(TransactionSubType.DEBIT)
       .build();
-
     withdrawalTransactionJpaRepository.save(transaction);
 
     earnings.setTotalEarnings(new BigDecimal(balance));
     earningsJpaRepository.save(earnings);
+    flutterwaveAdapter.createTransfer(transferRequest);
   }
 
 }

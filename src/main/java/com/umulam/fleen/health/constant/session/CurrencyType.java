@@ -10,7 +10,7 @@ public enum CurrencyType implements ApiParameter {
   GHS("GHS", "GH", "Ghana"),
   ZAR("ZAR", "ZA", "South Africa"),
   KES("KES", "KE", "Kenya"),
-  UGx("UGx", "UG", "Uganda");
+  UGX("UGX", "UG", "Uganda");
 
   private final String value;
   private final String country;
