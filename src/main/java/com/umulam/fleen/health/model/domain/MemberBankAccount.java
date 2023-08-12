@@ -33,6 +33,9 @@ public class MemberBankAccount {
   @Column(name = "bank_name", nullable = false)
   private String bankName;
 
+  @Column(name = "bank_code", nullable = false)
+  private String bankCode;
+
   @Column(name = "external_system_recipient_code")
   private String externalSystemRecipientCode;
 

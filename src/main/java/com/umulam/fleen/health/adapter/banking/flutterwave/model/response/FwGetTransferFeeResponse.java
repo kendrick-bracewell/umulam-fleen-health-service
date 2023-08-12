@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FxGetTransferFeeResponse extends FlutterwaveResponse {
+public class FwGetTransferFeeResponse extends FlutterwaveResponse {
 
   private List<TransferFeeData> data;
 

@@ -298,6 +298,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
     member.setLastName(capitalize(dto.getLastName()));
     member.setGender(MemberGender.valueOf(dto.getGender()));
     member.setDateOfBirth(toLocalDateTime(dto.getDateOfBirth()));
+    member.setAddress(dto.getAddress());
   }
 
   protected Member getMember(String emailAddress) {

@@ -27,6 +27,11 @@ public class UpdateMemberDetailsDto {
   @JsonProperty("last_name")
   private String lastName;
 
+  @NotBlank(message = "{member.address.notEmpty}")
+  @Size(min = 10, max = 500, message = "{member.address.size}")
+  @JsonProperty("address")
+  private String address;
+
   @NotNull(message = "{member.gender.notNull}")
   @EnumValid(enumClass = MemberGender.class, message = "{member.gender}")
   @JsonProperty("gender")

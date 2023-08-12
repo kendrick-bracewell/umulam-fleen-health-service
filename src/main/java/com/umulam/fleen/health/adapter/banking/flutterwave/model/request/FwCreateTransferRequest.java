@@ -25,7 +25,7 @@ public class FwCreateTransferRequest {
   private String destinationCurrency;
 
   @JsonProperty("amount")
-  private Double destinationAmount;
+  private Double amount;
 
   @JsonProperty("reference")
   private String transactionReference;
@@ -39,9 +39,13 @@ public class FwCreateTransferRequest {
   @JsonProperty("destination_branch_code")
   private String destinationBranchCode;
 
+  private CreateTransferMetadata meta;
+
+  @Builder
   @Getter
   @Setter
   @NoArgsConstructor
+  @AllArgsConstructor
   @JsonInclude(JsonInclude.Include.NON_NULL)
   public static class CreateTransferMetadata {
 

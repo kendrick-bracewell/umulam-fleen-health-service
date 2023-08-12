@@ -1,11 +1,13 @@
 package com.umulam.fleen.health.model.dto.banking;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.umulam.fleen.health.validator.BankAccountExist;
+import com.umulam.fleen.health.validator.IsNumber;
 import lombok.*;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Builder
@@ -16,12 +18,12 @@ import java.math.BigDecimal;
 public class CreateWithdrawalDto {
 
   @NotNull(message = "{banking.withdrawal.amount.notNull}")
-  @DecimalMin(value = "1000.00", message = "{banking.withdrawal.amount.min}")
+  @DecimalMin(value = "20.00", message = "{banking.withdrawal.amount.min}")
   private BigDecimal amount;
 
-  @NotBlank(message = "{banking.accountNumber.notNull}")
-  @Size(min = 10, max = 10, message = "{banking.accountNumber.size}")
-  private String accountNumber;
-
-
+  @NotBlank(message = "{banking.bankAccount.notNull}")
+  @IsNumber(message = "{banking.bankAccount.isNumber}")
+  @BankAccountExist(message = "{banking.bankAccount.exists}")
+  @JsonProperty("bank_account")
+  private String bankAccount;
 }

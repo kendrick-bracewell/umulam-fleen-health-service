@@ -213,7 +213,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
   }
 
   @RetryOnFailure
-  public FxGetTransferFeeResponse getTransferFee(FxGetTransferFeeRequest request) {
+  public FwGetTransferFeeResponse getTransferFee(FwGetTransferFeeRequest request) {
     if (!isMandatoryFieldAvailable(request.getAmount(), request.getCurrency())) {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
     }
@@ -223,8 +223,8 @@ public class FlutterwaveAdapter extends BaseAdapter {
     parameters.put(FlutterwaveParameter.CURRENCY, request.getCurrency());
 
     URI uri = buildUri(parameters, FlutterwaveEndpointBlock.TRANSFERS, FlutterwaveEndpointBlock.FEE);
-    ResponseEntity<FxGetTransferFeeResponse> response = doCall(uri, HttpMethod.GET,
-      getAuthHeaderWithBearerToken(config.getSecretKey()), null, FxGetTransferFeeResponse.class);
+    ResponseEntity<FwGetTransferFeeResponse> response = doCall(uri, HttpMethod.GET,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), null, FwGetTransferFeeResponse.class);
 
     if (response.getStatusCode().is2xxSuccessful()) {
       return response.getBody();

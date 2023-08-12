@@ -32,4 +32,5 @@ public class FleenHealthConstant {
   public static final String BANK_ACCOUNT_DETAILS_DELETED = "Bank account details deleted";
   public static final String TRANSACTION_REFERENCE_PREFIX = "FLEENHEALTH-TX-";
   public static final String UNABLE_TO_COMPLETE_OPERATION = "Unable to complete operation";
+  public static final String TRANSFER_NARRATION_OR_DESCRIPTION = "Transfer and Withdrawal";
 }

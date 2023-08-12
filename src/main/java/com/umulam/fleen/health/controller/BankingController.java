@@ -68,6 +68,6 @@ public class BankingController {
 
   @PutMapping(value = "/withdraw")
   public void withdraw(@Valid @RequestBody CreateWithdrawalDto dto, @AuthenticationPrincipal FleenUser user) {
-
+    bankingService.createWithdrawal(dto, user);
   }
 }

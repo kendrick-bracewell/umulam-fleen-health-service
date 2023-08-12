@@ -1,15 +1,14 @@
 package com.umulam.fleen.health.model.domain;
 
+import com.umulam.fleen.health.constant.authentication.MfaType;
 import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.constant.member.MemberGender;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
-import com.umulam.fleen.health.constant.authentication.MfaType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -70,6 +69,9 @@ public class Member {
 
   @Column(name = "mfa_secret")
   private String mfaSecret;
+
+  @Column(name = "address", length = 500)
+  private String address;
 
   @Builder.Default
   @Column(name = "mfa_type")

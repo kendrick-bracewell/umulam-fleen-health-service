@@ -6,14 +6,21 @@ import com.umulam.fleen.health.adapter.banking.model.PaymentRecipientType;
 import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
 import com.umulam.fleen.health.constant.session.CurrencyType;
 import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
+import com.umulam.fleen.health.exception.banking.BankAccountNotFoundException;
 import com.umulam.fleen.health.exception.banking.InvalidAccountTypeCombinationException;
 import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
+import com.umulam.fleen.health.exception.base.FleenHealthException;
+import com.umulam.fleen.health.model.domain.Earnings;
+import com.umulam.fleen.health.model.domain.MemberBankAccount;
 import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
+import com.umulam.fleen.health.model.dto.banking.CreateWithdrawalDto;
 import com.umulam.fleen.health.model.event.InternalPaymentValidation;
 import com.umulam.fleen.health.model.event.flutterwave.FwChargeEvent;
 import com.umulam.fleen.health.model.event.paystack.PsChargeEvent;
 import com.umulam.fleen.health.model.response.SupportedCountry;
+import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.repository.jpa.BankAccountJpaRepository;
+import com.umulam.fleen.health.repository.jpa.EarningsJpaRepository;
 import com.umulam.fleen.health.service.BankingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -21,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -28,12 +36,15 @@ import java.util.List;
 public class BankingServiceImpl implements BankingService {
 
   private final BankAccountJpaRepository bankAccountJpaRepository;
+  private final EarningsJpaRepository earningsJpaRepository;
   private final ObjectMapper mapper;
 
   public BankingServiceImpl(BankAccountJpaRepository bankAccountJpaRepository,
-                            ObjectMapper mapper) {
+                            ObjectMapper mapper,
+                            EarningsJpaRepository earningsJpaRepository) {
     this.bankAccountJpaRepository = bankAccountJpaRepository;
     this.mapper = mapper;
+    this.earningsJpaRepository = earningsJpaRepository;
   }
 
   @Override
@@ -111,5 +122,27 @@ public class BankingServiceImpl implements BankingService {
     if (accountNumberExist) {
       throw new BankAccountAlreadyExists(dto.getAccountNumber());
     }
+  }
+
+  @Override
+  public void createWithdrawal(CreateWithdrawalDto dto, FleenUser user) {
+    Optional<MemberBankAccount> bankAccountExists = bankAccountJpaRepository.findById(Integer.parseInt(dto.getBankAccount()));
+    if (bankAccountExists.isEmpty()) {
+      throw new BankAccountNotFoundException(dto.getBankAccount());
+    }
+
+    MemberBankAccount bankAccount = bankAccountExists.get();
+    Optional<Earnings> earningsExists = earningsJpaRepository.findByMember(user.toMember());
+    if (earningsExists.isEmpty()) {
+      throw new FleenHealthException("Earnings not found");
+    }
+
+    Earnings earnings = earningsExists.get();
+    int canWithdraw = dto.getAmount().compareTo(earnings.getTotalEarnings());
+    if (canWithdraw < 0) {
+      throw new FleenHealthException("Insufficient balance");
+    }
+
+
   }
 }

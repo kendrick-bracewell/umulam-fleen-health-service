@@ -39,6 +39,7 @@ import com.umulam.fleen.health.service.ProfessionalService;
 import com.umulam.fleen.health.service.impl.ConfigService;
 import com.umulam.fleen.health.service.impl.FleenHealthEventService;
 import com.umulam.fleen.health.service.session.HealthSessionService;
+import com.umulam.fleen.health.util.FleenHealthReferenceGenerator;
 import com.umulam.fleen.health.util.UniqueReferenceGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -56,8 +57,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.REFERENCE_PREFIX;
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.TRANSACTION_REFERENCE_PREFIX;
 import static com.umulam.fleen.health.model.dto.healthsession.BookHealthSessionDto.SessionPeriod;
 import static com.umulam.fleen.health.model.response.healthsession.PendingHealthSessionBookingResponse.BookedSessionPeriod;
 import static com.umulam.fleen.health.util.DateTimeUtil.toDate;
@@ -76,7 +75,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   protected final HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository;
   protected final HealthSessionJpaRepository healthSessionRepository;
   protected final ProfessionalService professionalService;
-  protected final UniqueReferenceGenerator referenceGenerator;
+  protected final FleenHealthReferenceGenerator referenceGenerator;
   protected final TransactionJpaRepository transactionJpaRepository;
   protected final ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository;
   protected final HealthSessionReviewJpaRepository healthSessionReviewJpaRepository;
@@ -89,7 +88,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
           HealthSessionProfessionalJpaRepository sessionProfessionalJpaRepository,
           HealthSessionJpaRepository healthSessionRepository,
           ProfessionalService professionalService,
-          UniqueReferenceGenerator referenceGenerator,
+          FleenHealthReferenceGenerator referenceGenerator,
           TransactionJpaRepository transactionJpaRepository,
           ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository,
           HealthSessionReviewJpaRepository healthSessionReviewJpaRepository,
@@ -248,7 +247,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         .comment(healthSession.getComment())
         .date(toDate(period.getDate()))
         .time(toTime(period.getTime()))
-        .reference(generateSessionReference())
+        .reference(referenceGenerator.generateSessionReference())
         .status(HealthSessionStatus.PENDING)
         .build();
 
@@ -261,12 +260,12 @@ public class HealthSessionServiceImpl implements HealthSessionService {
     Double professionalPrice = professionalService.getProfessionalPrice(healthSession.getProfessional().getId());
     int totalNumberOfSessions = dto.getPeriods().size();
     double totalAmountToCharge = professionalPrice * totalNumberOfSessions;
-    String groupTransactionReference = generateGroupTransactionReference();
+    String groupTransactionReference = referenceGenerator.generateGroupTransactionReference();
 
     List<SessionTransaction> transactions = new ArrayList<>();
     for (HealthSession session : savedHealthSessions) {
       SessionTransaction transaction = SessionTransaction.builder()
-        .reference(generateTransactionReference())
+        .reference(referenceGenerator.generateTransactionReference())
         .sessionReference(session.getReference())
         .groupTransactionReference(groupTransactionReference)
         .payer(patient)
@@ -413,18 +412,6 @@ public class HealthSessionServiceImpl implements HealthSessionService {
       return;
     }
     throw new NoAssociatedHealthSessionException(healthSessionId);
-  }
-
-  private String generateSessionReference() {
-    return REFERENCE_PREFIX.concat(referenceGenerator.generateUniqueReference());
-  }
-
-  private String generateTransactionReference() {
-    return TRANSACTION_REFERENCE_PREFIX.concat(referenceGenerator.generateUniqueReference());
-  }
-
-  private String generateGroupTransactionReference() {
-    return TRANSACTION_REFERENCE_PREFIX.concat(referenceGenerator.generateUniqueReferenceLong());
   }
 
   public static int getMaxMeetingSessionHourDuration() {

@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FxGetTransferFeeRequest {
+public class FwGetTransferFeeRequest {
 
   private String amount;
   private String currency;

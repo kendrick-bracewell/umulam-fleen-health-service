@@ -11,7 +11,9 @@ import javax.validation.ConstraintValidatorContext;
 @Slf4j
 @Component
 public class BankAccountExistValidator implements ConstraintValidator<BankAccountExist, String> {
+
   private final BankAccountJpaRepository bankAccountJpaRepository;
+
   public BankAccountExistValidator(BankAccountJpaRepository bankAccountJpaRepository) {
     this.bankAccountJpaRepository = bankAccountJpaRepository;
   }
