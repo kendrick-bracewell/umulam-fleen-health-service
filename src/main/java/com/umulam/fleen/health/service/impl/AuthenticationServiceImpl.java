@@ -29,6 +29,7 @@ import com.umulam.fleen.health.service.*;
 import com.umulam.fleen.health.service.external.aws.EmailServiceImpl;
 import com.umulam.fleen.health.service.external.aws.MobileTextService;
 import com.umulam.fleen.health.util.JwtProvider;
+import com.umulam.fleen.health.validator.EmailAddressExist;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -267,7 +268,7 @@ public class AuthenticationServiceImpl implements
    * <br/>
    *
    * <p>Necessary validation checks for example if the email address or phone number has been used by another user is performed on the dto {@link SignUpDto}
-   * and this process is aided by the {@link com.umulam.fleen.health.validator.EmailAddressExists EmailAddressExists} and
+   * and this process is aided by the {@link EmailAddressExist EmailAddressExists} and
    * {@link com.umulam.fleen.health.validator.PhoneNumberExists PhoneNumberExists} annotations.</p>
    * <br/>
    *

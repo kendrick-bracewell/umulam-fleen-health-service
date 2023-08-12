@@ -5,7 +5,7 @@ import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
 import com.umulam.fleen.health.constant.member.ProfessionalType;
 import com.umulam.fleen.health.model.domain.Country;
 import com.umulam.fleen.health.model.domain.Professional;
-import com.umulam.fleen.health.validator.CountryExists;
+import com.umulam.fleen.health.validator.CountryExist;
 import com.umulam.fleen.health.validator.EnumValid;
 import com.umulam.fleen.health.validator.IsNumber;
 import lombok.*;
@@ -38,7 +38,7 @@ public class UpdateProfessionalDetailsDto {
 
   @NotBlank(message = "{professional.country.notEmpty}")
   @IsNumber(message = "{professional.country.isNumber}")
-  @CountryExists(message = "{professional.country.exists}")
+  @CountryExist(message = "{professional.country.exists}")
   private String country;
 
   @NotBlank(message = "{professional.languagesSpoken.notEmpty}")

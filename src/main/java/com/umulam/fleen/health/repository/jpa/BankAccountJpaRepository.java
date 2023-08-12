@@ -10,4 +10,7 @@ public interface BankAccountJpaRepository extends JpaRepository<MemberBankAccoun
 
   boolean existsByAccountNumber(String accountNumber);
   Optional<MemberBankAccount> findByAccountNumberAndMember(String accountNumber, Member member);
+
+  boolean existsById(Integer id);
+
 }

@@ -1,7 +1,7 @@
 package com.umulam.fleen.health.validator.impl;
 
 import com.umulam.fleen.health.service.MemberService;
-import com.umulam.fleen.health.validator.EmailAddressExists;
+import com.umulam.fleen.health.validator.EmailAddressExist;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -12,16 +12,16 @@ import static java.util.Objects.isNull;
 
 @Slf4j
 @Component
-public class EmailAddressExistsValidator implements ConstraintValidator<EmailAddressExists, String> {
+public class EmailAddressExistValidator implements ConstraintValidator<EmailAddressExist, String> {
 
   private final MemberService service;
 
-  public EmailAddressExistsValidator(MemberService service) {
+  public EmailAddressExistValidator(MemberService service) {
     this.service = service;
   }
 
   @Override
-  public void initialize(EmailAddressExists constraintAnnotation) {}
+  public void initialize(EmailAddressExist constraintAnnotation) {}
 
   @Override
   public boolean isValid(String emailAddress, ConstraintValidatorContext context) {

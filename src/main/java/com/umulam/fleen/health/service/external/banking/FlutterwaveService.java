@@ -19,6 +19,7 @@ import com.umulam.fleen.health.service.MemberService;
 import com.umulam.fleen.health.service.impl.BankingServiceImpl;
 import com.umulam.fleen.health.service.impl.CacheService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.event.EventListener;
@@ -35,7 +36,7 @@ import static java.util.Objects.isNull;
 
 @Slf4j
 @Service
-@Primary
+@Qualifier("flutterwaveService")
 public class FlutterwaveService extends BankingServiceImpl implements BankingService {
 
   private final FlutterwaveAdapter flutterwaveAdapter;

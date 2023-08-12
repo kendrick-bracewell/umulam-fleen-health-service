@@ -1,7 +1,7 @@
 package com.umulam.fleen.health.model.dto.country;
 
 import com.umulam.fleen.health.model.domain.Country;
-import com.umulam.fleen.health.validator.CountryCodeExists;
+import com.umulam.fleen.health.validator.CountryCodeExist;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -20,7 +20,7 @@ public class CountryDto {
 
   @NotBlank(message = "{country.code.notEmpty}")
   @Size(min = 2, max = 5, message = "{country.code.size}")
-  @CountryCodeExists(message = "{country.code.exists}")
+  @CountryCodeExist(message = "{country.code.exists}")
   private String code;
 
   public Country toCountry() {

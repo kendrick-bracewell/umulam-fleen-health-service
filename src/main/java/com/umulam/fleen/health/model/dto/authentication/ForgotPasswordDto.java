@@ -2,7 +2,6 @@ package com.umulam.fleen.health.model.dto.authentication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.constant.authentication.VerificationType;
-import com.umulam.fleen.health.validator.EmailAddressExists;
 import com.umulam.fleen.health.validator.EmailValid;
 import com.umulam.fleen.health.validator.EnumValid;
 import lombok.*;

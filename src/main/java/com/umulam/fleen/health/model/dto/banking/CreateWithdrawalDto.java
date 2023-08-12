@@ -22,4 +22,6 @@ public class CreateWithdrawalDto {
   @NotBlank(message = "{banking.accountNumber.notNull}")
   @Size(min = 10, max = 10, message = "{banking.accountNumber.size}")
   private String accountNumber;
+
+
 }

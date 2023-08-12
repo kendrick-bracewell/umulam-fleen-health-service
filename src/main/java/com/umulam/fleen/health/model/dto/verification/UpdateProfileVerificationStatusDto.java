@@ -2,7 +2,6 @@ package com.umulam.fleen.health.model.dto.verification;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
-import com.umulam.fleen.health.validator.CountryExists;
 import com.umulam.fleen.health.validator.EnumValid;
 import com.umulam.fleen.health.validator.IsNumber;
 import com.umulam.fleen.health.validator.VerificationMessageTemplateExists;

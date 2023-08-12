@@ -3,7 +3,7 @@ package com.umulam.fleen.health.model.dto.business;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.model.domain.Business;
 import com.umulam.fleen.health.model.domain.Country;
-import com.umulam.fleen.health.validator.CountryExists;
+import com.umulam.fleen.health.validator.CountryExist;
 import com.umulam.fleen.health.validator.IsNumber;
 import lombok.*;
 
@@ -44,7 +44,7 @@ public class UpdateBusinessDetailDto {
 
   @NotBlank(message = "{business.country.notEmpty}")
   @IsNumber(message = "{business.country.isNumber}")
-  @CountryExists(message = "{business.country.exists}")
+  @CountryExist(message = "{business.country.exists}")
   private String country;
 
   public Business toBusiness() {

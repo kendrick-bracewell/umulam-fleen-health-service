@@ -35,7 +35,7 @@ public class CreateMemberDto {
   @Size(min = 1, max = 150, message = "{signUp.emailAddress.size}")
   @Email(message = "{signUp.emailAddress.format}")
   @EmailValid(message = "{signUp.emailAddress.format}")
-  @EmailAddressExists(message = "{signUp.emailAddress.exists}")
+  @EmailAddressExist(message = "{signUp.emailAddress.exists}")
   @JsonProperty("email_address")
   private String emailAddress;
 

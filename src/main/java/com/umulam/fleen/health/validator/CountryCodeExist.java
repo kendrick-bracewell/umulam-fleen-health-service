@@ -1,17 +1,17 @@
 package com.umulam.fleen.health.validator;
 
-import com.umulam.fleen.health.validator.impl.VerificationMessageTemplateExistsValidator;
+import com.umulam.fleen.health.validator.impl.CountryCodeExistValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = VerificationMessageTemplateExistsValidator.class)
+@Constraint(validatedBy = CountryCodeExistValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface VerificationMessageTemplateExists {
-  String message() default "Verification Message Template does not exists";
+public @interface CountryCodeExist {
+  String message() default "Country code already exists";
 
   Class<?>[] groups() default {};
 

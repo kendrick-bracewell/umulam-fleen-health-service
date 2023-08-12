@@ -1,7 +1,7 @@
 package com.umulam.fleen.health.model.dto.memberstatus;
 
 import com.umulam.fleen.health.model.domain.MemberStatus;
-import com.umulam.fleen.health.validator.CountryCodeExists;
+import com.umulam.fleen.health.validator.CountryCodeExist;
 import lombok.*;
 import org.springframework.util.StringUtils;
 
@@ -26,7 +26,7 @@ public class UpdateMemberStatusDto {
 
   @NotBlank(message = "{memberStatus.code.notEmpty}")
   @Size(min = 2, max = 5, message = "{memberStatus.code.size}")
-  @CountryCodeExists(message = "{memberStatus.code.exists}")
+  @CountryCodeExist(message = "{memberStatus.code.exists}")
   private String code;
 
   public MemberStatus toMemberStatus() {
