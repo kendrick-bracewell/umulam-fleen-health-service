@@ -3,7 +3,6 @@ package com.umulam.fleen.health.adapter.banking.flutterwave;
 import com.umulam.fleen.health.adapter.ApiParameter;
 import com.umulam.fleen.health.adapter.banking.flutterwave.config.FlutterwaveConfig;
 import com.umulam.fleen.health.adapter.banking.flutterwave.model.enums.FlutterwaveEndpointBlock;
-import com.umulam.fleen.health.adapter.banking.flutterwave.model.enums.FlutterwaveParameter;
 import com.umulam.fleen.health.adapter.banking.flutterwave.model.request.*;
 import com.umulam.fleen.health.adapter.banking.flutterwave.model.response.*;
 import com.umulam.fleen.health.adapter.base.BaseAdapter;
@@ -18,6 +17,9 @@ import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.util.HashMap;
+
+import static com.umulam.fleen.health.adapter.banking.flutterwave.model.enums.FlutterwaveEndpointBlock.*;
+import static com.umulam.fleen.health.adapter.banking.flutterwave.model.enums.FlutterwaveParameter.*;
 
 @Slf4j
 @Component
@@ -36,7 +38,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
     }
 
-    URI uri = buildUri(FlutterwaveEndpointBlock.ACCOUNTS, FlutterwaveEndpointBlock.RESOLVE);
+    URI uri = buildUri(ACCOUNTS, RESOLVE);
     ResponseEntity<FwResolveBankAccountResponse> response = doCall(uri, HttpMethod.POST,
       getAuthHeaderWithBearerToken(config.getSecretKey()), request, FwResolveBankAccountResponse.class);
 
@@ -55,7 +57,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
     }
 
-    URI uri = buildUri(FlutterwaveEndpointBlock.BANKS, buildPathVar(country.toUpperCase()));
+    URI uri = buildUri(BANKS, buildPathVar(country.toUpperCase()));
     ResponseEntity<FwGetBanksResponse> response = doCall(uri, HttpMethod.GET,
       getAuthHeaderWithBearerToken(config.getSecretKey()), null, FwGetBanksResponse.class);
     if (response.getStatusCode().is2xxSuccessful()) {
@@ -73,7 +75,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
     }
 
-    URI uri = buildUri(FlutterwaveEndpointBlock.TRANSACTIONS, buildPathVar(transactionId), FlutterwaveEndpointBlock.VERIFY);
+    URI uri = buildUri(TRANSACTIONS, buildPathVar(transactionId), FlutterwaveEndpointBlock.VERIFY);
     ResponseEntity<FwVerifyTransactionResponse> response = doCall(uri, HttpMethod.GET,
       getAuthHeaderWithBearerToken(config.getSecretKey()), null, FwVerifyTransactionResponse.class);
 
@@ -94,9 +96,9 @@ public class FlutterwaveAdapter extends BaseAdapter {
     }
 
     HashMap<ApiParameter, String> parameters = new HashMap<>();
-    parameters.put(FlutterwaveParameter.TRANSACTION_REFERENCE, transactionReference);
+    parameters.put(TRANSACTION_REFERENCE, transactionReference);
 
-    URI uri = buildUri(parameters, FlutterwaveEndpointBlock.TRANSACTIONS, FlutterwaveEndpointBlock.VERIFY_BY_REFERENCE);
+    URI uri = buildUri(parameters, TRANSACTIONS, VERIFY_BY_REFERENCE);
     ResponseEntity<FwVerifyTransactionResponse> response = doCall(uri, HttpMethod.GET,
       getAuthHeaderWithBearerToken(config.getSecretKey()), null, FwVerifyTransactionResponse.class);
 
@@ -115,7 +117,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
     }
 
-    URI uri = buildUri(FlutterwaveEndpointBlock.TRANSACTIONS, buildPathVar(request.getTransactionId()), FlutterwaveEndpointBlock.REFUND);
+    URI uri = buildUri(TRANSACTIONS, buildPathVar(request.getTransactionId()), FlutterwaveEndpointBlock.REFUND);
     ResponseEntity<FwCreateRefundResponse> response = doCall(uri, HttpMethod.POST,
       getAuthHeaderWithBearerToken(config.getSecretKey()), request, FwCreateRefundResponse.class);
 
@@ -136,11 +138,11 @@ public class FlutterwaveAdapter extends BaseAdapter {
     }
 
     HashMap<ApiParameter, String> parameters = new HashMap<>();
-    parameters.put(FlutterwaveParameter.AMOUNT, request.getAmount());
-    parameters.put(FlutterwaveParameter.SOURCE_CURRENCY, request.getSourceCurrency());
-    parameters.put(FlutterwaveParameter.DESTINATION_CURRENCY, request.getDestinationCurrency());
+    parameters.put(AMOUNT, request.getAmount());
+    parameters.put(SOURCE_CURRENCY, request.getSourceCurrency());
+    parameters.put(DESTINATION_CURRENCY, request.getDestinationCurrency());
 
-    URI uri = buildUri(parameters, FlutterwaveEndpointBlock.TRANSFERS, FlutterwaveEndpointBlock.RATES);
+    URI uri = buildUri(parameters, TRANSFERS, FlutterwaveEndpointBlock.RATES);
     ResponseEntity<FwGetExchangeRateResponse> response = doCall(uri, HttpMethod.GET,
       getAuthHeaderWithBearerToken(config.getSecretKey()), null, FwGetExchangeRateResponse.class);
 
@@ -160,7 +162,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
     }
 
-    URI uri = buildUri(FlutterwaveEndpointBlock.TRANSFERS);
+    URI uri = buildUri(TRANSFERS);
     ResponseEntity<FwGetExchangeRateResponse> response = doCall(uri, HttpMethod.POST,
       getAuthHeaderWithBearerToken(config.getSecretKey()), request, FwGetExchangeRateResponse.class);
 
@@ -180,7 +182,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
     }
 
-    URI uri = buildUri(FlutterwaveEndpointBlock.TRANSFERS, buildPathVar(transferId), FlutterwaveEndpointBlock.RETRIES);
+    URI uri = buildUri(TRANSFERS, buildPathVar(transferId), FlutterwaveEndpointBlock.RETRIES);
     ResponseEntity<FwRetryTransferResponse> response = doCall(uri, HttpMethod.POST,
       getAuthHeaderWithBearerToken(config.getSecretKey()), null, FwRetryTransferResponse.class);
 
@@ -199,7 +201,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
     }
 
-    URI uri = buildUri(FlutterwaveEndpointBlock.BANKS, buildPathVar(bankId), FlutterwaveEndpointBlock.BRANCHES);
+    URI uri = buildUri(BANKS, buildPathVar(bankId), BRANCHES);
     ResponseEntity<FwGetBankBranchesResponse> response = doCall(uri, HttpMethod.GET,
       getAuthHeaderWithBearerToken(config.getSecretKey()), null, FwGetBankBranchesResponse.class);
     if (response.getStatusCode().is2xxSuccessful()) {
@@ -219,10 +221,10 @@ public class FlutterwaveAdapter extends BaseAdapter {
     }
 
     HashMap<ApiParameter, String> parameters = new HashMap<>();
-    parameters.put(FlutterwaveParameter.AMOUNT, request.getAmount());
-    parameters.put(FlutterwaveParameter.CURRENCY, request.getCurrency());
+    parameters.put(AMOUNT, request.getAmount());
+    parameters.put(CURRENCY, request.getCurrency());
 
-    URI uri = buildUri(parameters, FlutterwaveEndpointBlock.TRANSFERS, FlutterwaveEndpointBlock.FEE);
+    URI uri = buildUri(parameters, TRANSFERS, FlutterwaveEndpointBlock.FEE);
     ResponseEntity<FwGetTransferFeeResponse> response = doCall(uri, HttpMethod.GET,
       getAuthHeaderWithBearerToken(config.getSecretKey()), null, FwGetTransferFeeResponse.class);
 

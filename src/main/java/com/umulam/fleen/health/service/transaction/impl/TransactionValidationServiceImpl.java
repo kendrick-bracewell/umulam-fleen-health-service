@@ -181,7 +181,6 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
         transaction.setAccountNumber(event.getData().getRecipient().getDetails().getAccountNumber());
         transaction.setAccountName(event.getData().getRecipient().getDetails().getAccountName());
         transaction.setBankCode(event.getData().getRecipient().getDetails().getBankCode());
-        transaction.setCurrency(event.getData().getCurrency());
 
         if (SUCCESS.getValue().equalsIgnoreCase(event.getData().getStatus())) {
           if (transaction.getStatus() != SUCCESS) {
