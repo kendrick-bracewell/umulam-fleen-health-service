@@ -16,7 +16,6 @@ import com.umulam.fleen.health.exception.banking.BankAccountNotFoundException;
 import com.umulam.fleen.health.exception.banking.EarningsAccountNotFoundException;
 import com.umulam.fleen.health.exception.banking.InsufficientEarningsBalanceException;
 import com.umulam.fleen.health.exception.banking.WithdrawalAmountGreaterThanEarningsBalanceException;
-import com.umulam.fleen.health.exception.healthsession.HealthSessionInvalidTransactionException;
 import com.umulam.fleen.health.model.domain.Earnings;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.MemberBankAccount;
@@ -272,10 +271,6 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
     }
 
     MemberBankAccount bankAccount = bankAccountExist.get();
-
-    if (bankAccount.getMember().getId().equals(user.getId())) {
-      throw new HealthSessionInvalidTransactionException();
-    }
     bankAccount.setActive(true);
     bankAccountJpaRepository.save(bankAccount);
   }

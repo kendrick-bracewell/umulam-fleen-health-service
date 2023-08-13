@@ -115,7 +115,8 @@ public class PaystackService extends BankingServiceImpl {
     MemberBankAccount bankAccount = bankAccountExist.get();
     String recipientCode = bankAccount.getExternalSystemRecipientCode();
     paystackAdapter.deleteTransferRecipient(recipientCode);
-    bankAccountJpaRepository.delete(bankAccount);
+    bankAccount.setActive(false);
+    bankAccountJpaRepository.save(bankAccount);
   }
 
   @EventListener(ApplicationReadyEvent.class)
