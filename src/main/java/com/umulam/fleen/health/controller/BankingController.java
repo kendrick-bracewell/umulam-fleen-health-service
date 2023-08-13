@@ -4,6 +4,7 @@ import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
 import com.umulam.fleen.health.model.dto.banking.CreateWithdrawalDto;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.model.view.BankAccountView;
 import com.umulam.fleen.health.service.BankingService;
 import com.umulam.fleen.health.service.external.banking.FlutterwaveService;
 import com.umulam.fleen.health.service.external.banking.PaystackService;
@@ -12,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.BANK_ACCOUNT_DETAILS_DELETED;
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.BANK_ACCOUNT_DETAILS_SAVED;
@@ -46,6 +48,16 @@ public class BankingController {
   @GetMapping(value = "/get-banks-fw")
   public Object getBanksFw(@RequestParam(name = "country", defaultValue = "NG") String country) {
     return flutterwaveService.getBanks(country);
+  }
+
+  @GetMapping(value = "/bank-account/entries")
+  public List<BankAccountView> findBankAccounts(@AuthenticationPrincipal FleenUser user) {
+    return bankingService.getBankAccounts(user);
+  }
+
+  @GetMapping(value = "/bank-account/detail/{id}")
+  public BankAccountView findBankAccount(@PathVariable(name = "id") Integer bankAccountId, @AuthenticationPrincipal FleenUser user) {
+    return bankingService.getBankAccount(user, bankAccountId);
   }
 
   @PostMapping(value = "/add-account-ps")

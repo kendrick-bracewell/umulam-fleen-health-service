@@ -6,8 +6,10 @@ import com.umulam.fleen.health.adapter.banking.model.PaymentRecipientType;
 import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
 import com.umulam.fleen.health.constant.session.CurrencyType;
 import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExistsException;
+import com.umulam.fleen.health.exception.banking.BankAccountNotFoundException;
 import com.umulam.fleen.health.exception.banking.InvalidAccountTypeCombinationException;
 import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
+import com.umulam.fleen.health.model.domain.MemberBankAccount;
 import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
 import com.umulam.fleen.health.model.dto.banking.CreateWithdrawalDto;
 import com.umulam.fleen.health.model.event.base.InternalPaymentValidation;
@@ -18,6 +20,7 @@ import com.umulam.fleen.health.model.event.paystack.PsChargeEvent;
 import com.umulam.fleen.health.model.event.paystack.PsTransferEvent;
 import com.umulam.fleen.health.model.response.SupportedCountry;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.model.view.BankAccountView;
 import com.umulam.fleen.health.repository.jpa.BankAccountJpaRepository;
 import com.umulam.fleen.health.repository.jpa.EarningsJpaRepository;
 import com.umulam.fleen.health.service.BankingService;
@@ -27,6 +30,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import static com.umulam.fleen.health.model.mapper.BankAccountMapper.toBankAccountView;
+import static com.umulam.fleen.health.model.mapper.BankAccountMapper.toBankAccountViews;
 
 @Slf4j
 @Component
@@ -149,5 +156,22 @@ public abstract class BankingServiceImpl implements BankingService {
     if (accountNumberExist) {
       throw new BankAccountAlreadyExistsException(dto.getAccountNumber());
     }
+  }
+
+  @Override
+  public List<BankAccountView> getBankAccounts(FleenUser user) {
+    List<MemberBankAccount> bankAccounts = bankAccountJpaRepository.findAllByMember(user.toMember());
+    return toBankAccountViews(bankAccounts);
+  }
+
+  @Override
+  public BankAccountView getBankAccount(FleenUser user, Integer bankAccountId) {
+    Optional<MemberBankAccount> bankAccountExists = bankAccountJpaRepository.findByIdAndMember(bankAccountId, user.toMember());
+
+    if (bankAccountExists.isEmpty()) {
+      throw new BankAccountNotFoundException(bankAccountId);
+    }
+
+    return toBankAccountView(bankAccountExists.get());
   }
 }

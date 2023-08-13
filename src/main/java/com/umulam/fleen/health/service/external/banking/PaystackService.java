@@ -107,7 +107,7 @@ public class PaystackService extends BankingServiceImpl {
 
   @Transactional
   public void deleteBankAccount(String accountNumber, FleenUser user) {
-    Optional<MemberBankAccount> bankAccountExist = bankAccountJpaRepository.findByAccountNumberAndMember(accountNumber, Member.builder().id(user.getId()).build());
+    Optional<MemberBankAccount> bankAccountExist = bankAccountJpaRepository.findByAccountNumberAndMember(accountNumber, user.toMember());
     if (bankAccountExist.isEmpty()) {
       throw new BankAccountNotFoundException(accountNumber);
     }

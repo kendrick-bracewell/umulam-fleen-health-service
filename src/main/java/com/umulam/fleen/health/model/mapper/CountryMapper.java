@@ -9,12 +9,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
+
 public class CountryMapper {
 
   private CountryMapper() {}
 
   public static CountryView toCountryView(Country entry) {
-    if (Objects.nonNull(entry)) {
+    if (nonNull(entry)) {
       return CountryView.builder()
               .id(entry.getId())
               .title(entry.getTitle())
@@ -27,7 +29,7 @@ public class CountryMapper {
   }
 
   public static CountryViewBasic toCountryViewBasic(Country entry) {
-    if (Objects.nonNull(entry)) {
+    if (nonNull(entry)) {
       return CountryViewBasic.builder()
               .title(entry.getTitle())
               .build();
