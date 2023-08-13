@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
 import com.umulam.fleen.health.constant.externalsystem.flutterwave.FlutterwaveWebhookEventType;
 import com.umulam.fleen.health.constant.externalsystem.paystack.PaystackWebhookEventType;
-import com.umulam.fleen.health.constant.session.ExternalTransactionStatus;
-import com.umulam.fleen.health.constant.session.HealthSessionStatus;
-import com.umulam.fleen.health.constant.session.TransactionStatus;
-import com.umulam.fleen.health.constant.session.WithdrawalStatus;
+import com.umulam.fleen.health.constant.session.*;
 import com.umulam.fleen.health.event.CreateSessionMeetingEvent;
 import com.umulam.fleen.health.event.CreateSessionMeetingEvents;
 import com.umulam.fleen.health.model.domain.HealthSession;
@@ -24,6 +21,7 @@ import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.SessionTransactionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.WithdrawalTransactionJpaRepository;
 import com.umulam.fleen.health.service.BankingService;
+import com.umulam.fleen.health.service.EarningsService;
 import com.umulam.fleen.health.service.external.banking.FlutterwaveService;
 import com.umulam.fleen.health.service.external.banking.PaystackService;
 import com.umulam.fleen.health.service.impl.FleenHealthEventService;
@@ -53,6 +51,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
   private final BankingService bankingService;
   private final FlutterwaveService flutterwaveService;
   private final PaystackService paystackService;
+  private final EarningsService earningsService;
 
   public TransactionValidationServiceImpl(
                         HealthSessionJpaRepository healthSessionRepository,
@@ -62,7 +61,8 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
                         ObjectMapper mapper,
                         BankingService bankingService,
                         FlutterwaveService flutterwaveService,
-                        PaystackService paystackService) {
+                        PaystackService paystackService,
+                        EarningsService earningsService) {
     this.healthSessionRepository = healthSessionRepository;
     this.sessionTransactionJpaRepository = sessionTransactionJpaRepository;
     this.withdrawalTransactionJpaRepository = withdrawalTransactionJpaRepository;
@@ -71,6 +71,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
     this.bankingService = bankingService;
     this.flutterwaveService = flutterwaveService;
     this.paystackService = paystackService;
+    this.earningsService = earningsService;
   }
 
   @Override
@@ -86,7 +87,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
           Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.TRANSFER_FAILED.getValue()) ||
           Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.TRANSFER_REVERSED.getValue())) {
         paymentGatewayType = PaymentGatewayType.PAYSTACK;
-        log.info("In development");
+        validateAndCompleteWithdrawalTransaction(bankingService.getWithdrawalTransferValidationByTransferEvent(body, paymentGatewayType));
       }
 
       FlutterwaveWebhookEvent flutterwaveEvent = mapper.readValue(body, FlutterwaveWebhookEvent.class);
@@ -94,7 +95,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
         paymentGatewayType = PaymentGatewayType.FLUTTERWAVE;
         validateAndCompleteSessionTransaction(bankingService.getInternalPaymentValidationByChargeEvent(body, paymentGatewayType), paymentGatewayType);
       } else if (Objects.equals(flutterwaveEvent.getEvent(), FlutterwaveWebhookEventType.TRANSFER_COMPLETED.getValue())) {
-        paymentGatewayType = PaymentGatewayType.FLUTTERWAVE
+        paymentGatewayType = PaymentGatewayType.FLUTTERWAVE;
         validateAndCompleteWithdrawalTransaction(bankingService.getWithdrawalTransferValidationByTransferEvent(body, paymentGatewayType));
       }
     } catch (JsonProcessingException ex) {
@@ -197,6 +198,10 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
         } else {
           transaction.setStatus(TransactionStatus.REVERSED);
           transaction.setWithdrawalStatus(WithdrawalStatus.REVERSED);
+        }
+
+        if (transaction.getType() == TransactionType.EARNINGS_WITHDRAWAL) {
+          earningsService.reverseTransactionAndUpdateEarnings(transaction);
         }
       }
       withdrawalTransactionJpaRepository.save(transaction);

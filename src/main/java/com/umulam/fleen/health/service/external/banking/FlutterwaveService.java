@@ -246,7 +246,7 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
       .withdrawalStatus(WithdrawalStatus.PENDING)
       .status(TransactionStatus.PENDING)
       .gateway(PaymentGateway.FLUTTERWAVE)
-      .type(TransactionType.WITHDRAWAL)
+      .type(TransactionType.EARNINGS_WITHDRAWAL)
       .subType(TransactionSubType.DEBIT)
       .reference(referenceGenerator.generateTransactionReference())
       .currency(configService.getPaymentIssuingCurrency())

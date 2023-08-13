@@ -273,7 +273,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
         .totalSessions(totalNumberOfSessions)
         .status(TransactionStatus.PENDING)
         .gateway(PaymentGateway.FLUTTERWAVE)
-        .type(TransactionType.SESSION)
+        .type(TransactionType.HEALTH_SESSION)
         .subType(TransactionSubType.DEBIT)
         .currency(CurrencyType.NGN.getValue())
         .paymentCurrency(configService.getHealthSessionPaymentCurrency())
