@@ -60,9 +60,15 @@ public class BankingController {
     return new FleenHealthResponse(BANK_ACCOUNT_DETAILS_SAVED);
   }
 
-  @DeleteMapping(value = "/delete-account/{accountNumber}")
-  public Object deleteBankAccount(@PathVariable(name = "accountNumber") String accountNumber, @AuthenticationPrincipal FleenUser user) {
+  @DeleteMapping(value = "/delete-account/{accountNumber}/ps")
+  public Object deleteBankAccountPs(@PathVariable(name = "accountNumber") String accountNumber, @AuthenticationPrincipal FleenUser user) {
     paystackService.deleteBankAccount(accountNumber, user);
+    return new FleenHealthResponse(BANK_ACCOUNT_DETAILS_DELETED);
+  }
+
+  @DeleteMapping(value = "/delete-account/{accountNumber}/fw")
+  public Object deleteBankAccountFw(@PathVariable(name = "accountNumber") String accountNumber, @AuthenticationPrincipal FleenUser user) {
+    flutterwaveService.deleteBankAccount(accountNumber, user);
     return new FleenHealthResponse(BANK_ACCOUNT_DETAILS_DELETED);
   }
 

@@ -116,8 +116,9 @@ public class FleenHealthExceptionHandler {
           ExternalSystemException.class,
           InvalidBankCodeException.class,
           InvalidAccountTypeCombinationException.class,
-          InsufficientEarningsBalance.class,
-          WithdrawalAmountGreaterThanEarningsBalanceException.class
+          InsufficientEarningsBalanceException.class,
+          WithdrawalAmountGreaterThanEarningsBalanceException.class,
+          InvalidBankAccountOperationException.class
   })
   public Object handleInvalid(Exception ex) {
     log.error(ex.getMessage(), ex);
@@ -126,7 +127,7 @@ public class FleenHealthExceptionHandler {
 
   @ResponseStatus(value = ACCEPTED)
   @ExceptionHandler(value = {
-    BankAccountAlreadyExists.class
+    BankAccountAlreadyExistsException.class
   })
   public Object handleAccepted(Exception ex) {
     log.error(ex.getMessage(), ex);

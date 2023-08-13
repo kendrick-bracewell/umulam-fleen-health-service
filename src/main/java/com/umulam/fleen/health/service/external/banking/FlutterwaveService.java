@@ -14,8 +14,9 @@ import com.umulam.fleen.health.adapter.banking.flutterwave.model.response.FwReso
 import com.umulam.fleen.health.constant.session.*;
 import com.umulam.fleen.health.exception.banking.BankAccountNotFoundException;
 import com.umulam.fleen.health.exception.banking.EarningsAccountNotFoundException;
-import com.umulam.fleen.health.exception.banking.InsufficientEarningsBalance;
+import com.umulam.fleen.health.exception.banking.InsufficientEarningsBalanceException;
 import com.umulam.fleen.health.exception.banking.WithdrawalAmountGreaterThanEarningsBalanceException;
+import com.umulam.fleen.health.exception.healthsession.HealthSessionInvalidTransactionException;
 import com.umulam.fleen.health.model.domain.Earnings;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.MemberBankAccount;
@@ -191,7 +192,7 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
     Earnings earnings = earningsExists.get();
     int canWithdraw = dto.getAmount().compareTo(earnings.getTotalEarnings());
     if (canWithdraw < 0) {
-      throw new InsufficientEarningsBalance(dto.getAmount().doubleValue(), earnings.getTotalEarnings().doubleValue());
+      throw new InsufficientEarningsBalanceException(dto.getAmount().doubleValue(), earnings.getTotalEarnings().doubleValue());
     }
 
     FwGetTransferFeeRequest request = FwGetTransferFeeRequest.builder()
@@ -261,6 +262,22 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
     earnings.setTotalEarnings(new BigDecimal(balance));
     earningsJpaRepository.save(earnings);
     flutterwaveAdapter.createTransfer(transferRequest);
+  }
+
+  @Transactional
+  public void deleteBankAccount(String accountNumber, FleenUser user) {
+    Optional<MemberBankAccount> bankAccountExist = bankAccountJpaRepository.findByAccountNumberAndMember(accountNumber, Member.builder().id(user.getId()).build());
+    if (bankAccountExist.isEmpty()) {
+      throw new BankAccountNotFoundException(accountNumber);
+    }
+
+    MemberBankAccount bankAccount = bankAccountExist.get();
+
+    if (bankAccount.getMember().getId().equals(user.getId())) {
+      throw new HealthSessionInvalidTransactionException();
+    }
+    bankAccount.setActive(true);
+    bankAccountJpaRepository.save(bankAccount);
   }
 
 }

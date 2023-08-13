@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umulam.fleen.health.adapter.banking.model.PaymentRecipientType;
 import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
 import com.umulam.fleen.health.constant.session.CurrencyType;
-import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
+import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExistsException;
 import com.umulam.fleen.health.exception.banking.InvalidAccountTypeCombinationException;
 import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
 import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
@@ -147,7 +147,7 @@ public abstract class BankingServiceImpl implements BankingService {
 
     boolean accountNumberExist = bankAccountJpaRepository.existsByAccountNumber(dto.getAccountNumber());
     if (accountNumberExist) {
-      throw new BankAccountAlreadyExists(dto.getAccountNumber());
+      throw new BankAccountAlreadyExistsException(dto.getAccountNumber());
     }
   }
 }
