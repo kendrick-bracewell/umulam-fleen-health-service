@@ -24,6 +24,8 @@ import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.SessionTransactionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.WithdrawalTransactionJpaRepository;
 import com.umulam.fleen.health.service.BankingService;
+import com.umulam.fleen.health.service.external.banking.FlutterwaveService;
+import com.umulam.fleen.health.service.external.banking.PaystackService;
 import com.umulam.fleen.health.service.impl.FleenHealthEventService;
 import com.umulam.fleen.health.service.transaction.TransactionValidationService;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +52,8 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
   private final FleenHealthEventService eventService;
   private final ObjectMapper mapper;
   private final BankingService bankingService;
+  private final FlutterwaveService flutterwaveService;
+  private final PaystackService paystackService;
 
   public TransactionValidationServiceImpl(
                         HealthSessionJpaRepository healthSessionRepository,
@@ -57,13 +61,17 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
                         WithdrawalTransactionJpaRepository withdrawalTransactionJpaRepository,
                         FleenHealthEventService eventService,
                         ObjectMapper mapper,
-                        BankingService bankingService) {
+                        BankingService bankingService,
+                        FlutterwaveService flutterwaveService,
+                        PaystackService paystackService) {
     this.healthSessionRepository = healthSessionRepository;
     this.sessionTransactionJpaRepository = sessionTransactionJpaRepository;
     this.withdrawalTransactionJpaRepository = withdrawalTransactionJpaRepository;
     this.eventService = eventService;
     this.mapper = mapper;
     this.bankingService = bankingService;
+    this.flutterwaveService = flutterwaveService;
+    this.paystackService = paystackService;
   }
 
   @Override
@@ -95,7 +103,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
     List<SessionTransaction> transactions = sessionTransactionJpaRepository.findByGroupReference(event.getTransactionReference());
     List<SessionTransaction> updatedTransactions = new ArrayList<>();
 
-    if (verifyTransactionSuccessStatus(event.getStatus(), event.getTransactionReference())) {
+    if (verifyTransactionSuccessStatus(event.getStatus(), event.getTransactionReference(), paymentGatewayType)) {
       if (transactions != null && !transactions.isEmpty()) {
         List<CreateSessionMeetingEvent> meetingEvents = new ArrayList<>();
 
@@ -200,13 +208,20 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
     return mapper.convertValue(metadata, new TypeReference<>() {});
   }
 
-  private boolean verifyTransactionSuccessStatus(String status, String transactionReference) {
+  private boolean verifyTransactionSuccessStatus(String status, String transactionReference, PaymentGatewayType paymentGatewayType) {
     boolean successful = false;
+    String actualStatus = "";
+    if (paymentGatewayType == PaymentGatewayType.FLUTTERWAVE) {
+      actualStatus = flutterwaveService.getTransactionStatusByReference(transactionReference);
+    } else if (paymentGatewayType == PaymentGatewayType.PAYSTACK) {
+      actualStatus = paystackService.getTransactionStatusByReference(transactionReference);
+    }
+
     if (ExternalTransactionStatus.SUCCESSFUL.getValue().equalsIgnoreCase(status) &&
-      ExternalTransactionStatus.SUCCESSFUL.getValue().equalsIgnoreCase(bankingService.getTransactionStatusByReference(transactionReference))) {
+      ExternalTransactionStatus.SUCCESSFUL.getValue().equalsIgnoreCase(actualStatus)) {
       successful = true;
     } else if (ExternalTransactionStatus.SUCCESS.getValue().equalsIgnoreCase(status) &&
-      ExternalTransactionStatus.SUCCESS.getValue().equalsIgnoreCase(bankingService.getTransactionStatusByReference(transactionReference))) {
+      ExternalTransactionStatus.SUCCESS.getValue().equalsIgnoreCase(actualStatus)) {
       successful = true;
     }
     return successful;

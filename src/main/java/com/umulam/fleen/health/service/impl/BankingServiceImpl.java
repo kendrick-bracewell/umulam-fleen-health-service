@@ -9,12 +9,10 @@ import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
 import com.umulam.fleen.health.exception.banking.InvalidAccountTypeCombinationException;
 import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
 import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
-import com.umulam.fleen.health.model.dto.banking.CreateWithdrawalDto;
 import com.umulam.fleen.health.model.event.InternalPaymentValidation;
 import com.umulam.fleen.health.model.event.flutterwave.FwChargeEvent;
 import com.umulam.fleen.health.model.event.paystack.PsChargeEvent;
 import com.umulam.fleen.health.model.response.SupportedCountry;
-import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.repository.jpa.BankAccountJpaRepository;
 import com.umulam.fleen.health.repository.jpa.EarningsJpaRepository;
 import com.umulam.fleen.health.service.BankingService;
@@ -28,7 +26,7 @@ import java.util.List;
 @Slf4j
 @Component
 @Primary
-public class BankingServiceImpl implements BankingService {
+public abstract class BankingServiceImpl implements BankingService {
 
   private final BankAccountJpaRepository bankAccountJpaRepository;
   private final EarningsJpaRepository earningsJpaRepository;
@@ -40,11 +38,6 @@ public class BankingServiceImpl implements BankingService {
     this.bankAccountJpaRepository = bankAccountJpaRepository;
     this.mapper = mapper;
     this.earningsJpaRepository = earningsJpaRepository;
-  }
-
-  @Override
-  public String getTransactionStatusByReference(String transactionReference) {
-    return null;
   }
 
   public InternalPaymentValidation getInternalPaymentValidationByChargeEvent(String body, PaymentGatewayType paymentGatewayType) {
@@ -79,16 +72,6 @@ public class BankingServiceImpl implements BankingService {
       supportedCountries.add(SupportedCountry.builder().currency(null).build());
     }
     return null;
-  }
-
-  @Override
-  public boolean isBankCodeExists(String bankCode, String countryOrCurrency) {
-    return false;
-  }
-
-  @Override
-  public void createWithdrawal(CreateWithdrawalDto dto, FleenUser user) {
-
   }
 
   public static boolean isAccountTypeCombinationValid(String recipientType, String currencyType) {
