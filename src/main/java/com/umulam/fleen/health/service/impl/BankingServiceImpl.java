@@ -9,10 +9,12 @@ import com.umulam.fleen.health.exception.banking.BankAccountAlreadyExists;
 import com.umulam.fleen.health.exception.banking.InvalidAccountTypeCombinationException;
 import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
 import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
+import com.umulam.fleen.health.model.dto.banking.CreateWithdrawalDto;
 import com.umulam.fleen.health.model.event.InternalPaymentValidation;
 import com.umulam.fleen.health.model.event.flutterwave.FwChargeEvent;
 import com.umulam.fleen.health.model.event.paystack.PsChargeEvent;
 import com.umulam.fleen.health.model.response.SupportedCountry;
+import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.repository.jpa.BankAccountJpaRepository;
 import com.umulam.fleen.health.repository.jpa.EarningsJpaRepository;
 import com.umulam.fleen.health.service.BankingService;
@@ -72,6 +74,11 @@ public abstract class BankingServiceImpl implements BankingService {
       supportedCountries.add(SupportedCountry.builder().currency(null).build());
     }
     return null;
+  }
+
+  @Override
+  public void createWithdrawal(CreateWithdrawalDto dto, FleenUser user) {
+
   }
 
   public static boolean isAccountTypeCombinationValid(String recipientType, String currencyType) {

@@ -111,7 +111,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
           if (transaction.getStatus() != SUCCESS) {
             transaction.setStatus(SUCCESS);
             transaction.setExternalSystemReference(event.getExternalSystemTransactionReference());
-            transaction.setCurrency(event.getCurrency().toUpperCase());
+            transaction.setCurrency(event.getCurrency());
 
             Optional<HealthSession> healthSessionExist = healthSessionRepository.findByReference(transaction.getSessionReference());
             if (healthSessionExist.isPresent()) {
@@ -159,7 +159,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
       for (SessionTransaction transaction : transactions) {
           transaction.setStatus(TransactionStatus.FAILED);
           transaction.setExternalSystemReference(event.getExternalSystemTransactionReference());
-          transaction.setCurrency(event.getCurrency().toUpperCase());
+          transaction.setCurrency(event.getCurrency());
           updatedTransactions.add(transaction);
       }
     }
