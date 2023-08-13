@@ -157,7 +157,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
   }
 
   @RetryOnFailure
-  public FwGetExchangeRateResponse createTransfer(FwCreateTransferRequest request) {
+  public void createTransfer(FwCreateTransferRequest request) {
     if (!isMandatoryFieldAvailable(request.getAmount(), request.getSourceCurrency(), request.getDestinationCurrency())) {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
     }
@@ -167,12 +167,11 @@ public class FlutterwaveAdapter extends BaseAdapter {
       getAuthHeaderWithBearerToken(config.getSecretKey()), request, FwGetExchangeRateResponse.class);
 
     if (response.getStatusCode().is2xxSuccessful()) {
-      return response.getBody();
+      response.getBody();
     } else {
       String message = String.format("An error occurred while calling createTransfer method of %s: %s", getClass().getSimpleName(), response.getBody());
       log.error(message);
       handleResponseError(response);
-      return null;
     }
   }
 
@@ -196,7 +195,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
     }
   }
 
-  public FwGetBankBranchesResponse getBankBranches(String bankId) {
+  public FwGetBankBranchesResponse getBankBranches(Integer bankId) {
     if (!isMandatoryFieldAvailable(bankId)) {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
     }

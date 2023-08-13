@@ -89,4 +89,9 @@ public class BankingController {
   public void withdraw(@Valid @RequestBody CreateWithdrawalDto dto, @AuthenticationPrincipal FleenUser user) {
     bankingService.createWithdrawal(dto, user);
   }
+
+  @GetMapping(value = "/get-bank-branches-fw/{id}")
+  public Object getBanksBranchesFw(@PathVariable(name = "id") Integer bankId) {
+    return flutterwaveService.getBankBranches(bankId);
+  }
 }

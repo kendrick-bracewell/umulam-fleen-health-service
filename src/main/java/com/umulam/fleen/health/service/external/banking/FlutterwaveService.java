@@ -27,7 +27,6 @@ import com.umulam.fleen.health.repository.jpa.BankAccountJpaRepository;
 import com.umulam.fleen.health.repository.jpa.EarningsJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.WithdrawalTransactionJpaRepository;
 import com.umulam.fleen.health.service.BankingService;
-import com.umulam.fleen.health.service.MemberService;
 import com.umulam.fleen.health.service.impl.BankingServiceImpl;
 import com.umulam.fleen.health.service.impl.CacheService;
 import com.umulam.fleen.health.service.impl.ConfigService;
@@ -68,7 +67,6 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
   public FlutterwaveService(FlutterwaveAdapter flutterwaveAdapter,
                          CacheService cacheService,
                          BankAccountJpaRepository bankAccountJpaRepository,
-                         MemberService memberService,
                          ObjectMapper mapper,
                          EarningsJpaRepository earningsJpaRepository,
                          FleenHealthReferenceGenerator referenceGenerator,
@@ -269,6 +267,10 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
     MemberBankAccount bankAccount = bankAccountExist.get();
     bankAccount.setActive(true);
     bankAccountJpaRepository.save(bankAccount);
+  }
+
+  public Object getBankBranches(Integer bankId) {
+    return flutterwaveAdapter.getBankBranches(bankId);
   }
 
 }

@@ -21,7 +21,9 @@ public interface BankingService {
   List<SupportedCountry> getSupportedCountries();
 
   boolean isBankCodeExists(String bankCode, String countryOrCurrency);
+
   void createWithdrawal(CreateWithdrawalDto dto, FleenUser user);
+
   List<BankAccountView> getBankAccounts(FleenUser user);
 
   BankAccountView getBankAccount(FleenUser user, Integer bankAccountId);
