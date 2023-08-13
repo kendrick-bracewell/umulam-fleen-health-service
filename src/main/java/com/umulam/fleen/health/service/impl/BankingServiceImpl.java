@@ -10,9 +10,12 @@ import com.umulam.fleen.health.exception.banking.InvalidAccountTypeCombinationEx
 import com.umulam.fleen.health.exception.banking.InvalidBankCodeException;
 import com.umulam.fleen.health.model.dto.banking.AddBankAccountDto;
 import com.umulam.fleen.health.model.dto.banking.CreateWithdrawalDto;
-import com.umulam.fleen.health.model.event.InternalPaymentValidation;
+import com.umulam.fleen.health.model.event.base.InternalPaymentValidation;
+import com.umulam.fleen.health.model.event.base.WithdrawalTransferValidation;
 import com.umulam.fleen.health.model.event.flutterwave.FwChargeEvent;
+import com.umulam.fleen.health.model.event.flutterwave.FwTransferEvent;
 import com.umulam.fleen.health.model.event.paystack.PsChargeEvent;
+import com.umulam.fleen.health.model.event.paystack.PsTransferEvent;
 import com.umulam.fleen.health.model.response.SupportedCountry;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.repository.jpa.BankAccountJpaRepository;
@@ -59,6 +62,41 @@ public abstract class BankingServiceImpl implements BankingService {
           .transactionReference(event.getData().getMetadata().getTransactionReference())
           .externalSystemTransactionReference(event.getData().getReference())
           .currency(event.getData().getCurrency().toUpperCase())
+          .build();
+      }
+    } catch (JsonProcessingException ex) {
+      log.error(ex.getMessage(), ex);
+    }
+    return null;
+  }
+
+  public WithdrawalTransferValidation getWithdrawalTransferValidationByTransferEvent(String body, PaymentGatewayType paymentGatewayType) {
+    try {
+      if (paymentGatewayType == PaymentGatewayType.FLUTTERWAVE) {
+        FwTransferEvent event = mapper.readValue(body, FwTransferEvent.class);
+        return WithdrawalTransferValidation.builder()
+          .reference(event.getData().getTransferReference())
+          .amount(event.getData().getAmount())
+          .bankCode(event.getData().getBankCode())
+          .accountNumber(event.getData().getAccountNumber())
+          .bankName(event.getData().getBankName())
+          .fullName(event.getData().getFullName())
+          .status(event.getData().getStatus())
+          .fee(event.getData().getFee())
+          .currency(event.getData().getCurrency())
+          .build();
+      } else if (paymentGatewayType == PaymentGatewayType.PAYSTACK) {
+        PsTransferEvent event = mapper.readValue(body, PsTransferEvent.class);
+        return WithdrawalTransferValidation.builder()
+          .reference(event.getData().getReference())
+          .amount(event.getData().getAmount())
+          .bankCode(event.getData().getRecipient().getDetails().getBankCode())
+          .accountNumber(event.getData().getRecipient().getDetails().getAccountNumber())
+          .bankName(event.getData().getRecipient().getDetails().getBankName())
+          .fullName(event.getData().getRecipient().getName())
+          .status(event.getData().getStatus())
+          .fee(0.00)
+          .currency(event.getData().getCurrency())
           .build();
       }
     } catch (JsonProcessingException ex) {

@@ -28,9 +28,7 @@ public class FwTransferEvent {
   @Setter
   @NoArgsConstructor
   public static class TransferData {
-
-    @JsonProperty("id")
-    private String transferId;
+    private Long transferId;
 
     @JsonProperty("account_number")
     private String accountNumber;
@@ -48,14 +46,13 @@ public class FwTransferEvent {
     @JsonProperty("created_at")
     private LocalDateTime createdAt;
 
-    @JsonProperty("currency")
     private String currency;
 
     @JsonProperty("debit_currency")
     private String debitCurrency;
 
-    private String amount;
-    private String fee;
+    private Double amount;
+    private Double fee;
     private String status;
 
     @JsonProperty("reference")

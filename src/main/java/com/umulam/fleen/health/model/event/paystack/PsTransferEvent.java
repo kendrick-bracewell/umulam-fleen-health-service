@@ -22,7 +22,7 @@ public class PsTransferEvent {
   @NoArgsConstructor
   public static class TransferEventData {
     private String id;
-    private String amount;
+    private Double amount;
     private String currency;
     private String reason;
     private String reference;
@@ -51,7 +51,7 @@ public class PsTransferEvent {
     @NoArgsConstructor
     public static class TransferRecipientData {
       private boolean active;
-      private String id;
+      private Long id;
       private String email;
       private String type;
       private String currency;

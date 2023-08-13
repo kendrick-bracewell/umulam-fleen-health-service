@@ -16,7 +16,7 @@ import com.umulam.fleen.health.model.domain.HealthSession;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.domain.transaction.WithdrawalTransaction;
-import com.umulam.fleen.health.model.event.InternalPaymentValidation;
+import com.umulam.fleen.health.model.event.base.InternalPaymentValidation;
 import com.umulam.fleen.health.model.event.flutterwave.base.FlutterwaveWebhookEvent;
 import com.umulam.fleen.health.model.event.paystack.PsTransferEvent;
 import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
@@ -93,6 +93,8 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
       if (Objects.equals(flutterwaveEvent.getEvent(), FlutterwaveWebhookEventType.CHARGE_COMPLETED.getValue())) {
         paymentGatewayType = PaymentGatewayType.FLUTTERWAVE;
         validateAndCompleteSessionTransaction(bankingService.getInternalPaymentValidationByChargeEvent(body, paymentGatewayType), paymentGatewayType);
+      } else if (Objects.equals(flutterwaveEvent.getEvent(), FlutterwaveWebhookEventType.TRANSFER_COMPLETED.getValue())) {
+        validateAndCompleteWithdrawalTransaction(body);
       }
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);

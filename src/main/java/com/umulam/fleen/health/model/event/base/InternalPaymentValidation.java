@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.model.event;
+package com.umulam.fleen.health.model.event.base;
 
 import lombok.*;
 
