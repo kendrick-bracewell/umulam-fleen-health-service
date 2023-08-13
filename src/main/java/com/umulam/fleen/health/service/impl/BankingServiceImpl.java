@@ -37,7 +37,7 @@ import static com.umulam.fleen.health.model.mapper.BankAccountMapper.toBankAccou
 @Slf4j
 @Component
 @Primary
-public abstract class BankingServiceImpl implements BankingService {
+public class BankingServiceImpl implements BankingService {
 
   private final BankAccountJpaRepository bankAccountJpaRepository;
   private final ObjectMapper mapper;
@@ -46,6 +46,11 @@ public abstract class BankingServiceImpl implements BankingService {
                             ObjectMapper mapper) {
     this.bankAccountJpaRepository = bankAccountJpaRepository;
     this.mapper = mapper;
+  }
+
+  @Override
+  public String getTransactionStatusByReference(String transactionReference) {
+    return null;
   }
 
   public InternalPaymentValidation getInternalPaymentValidationByChargeEvent(String body, PaymentGatewayType paymentGatewayType) {
@@ -116,6 +121,11 @@ public abstract class BankingServiceImpl implements BankingService {
       supportedCountries.add(SupportedCountry.builder().currency(null).build());
     }
     return null;
+  }
+
+  @Override
+  public boolean isBankCodeExists(String bankCode, String countryOrCurrency) {
+    return false;
   }
 
   @Override

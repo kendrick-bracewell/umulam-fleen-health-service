@@ -65,13 +65,13 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
   private final ConfigService configService;
 
   public FlutterwaveService(FlutterwaveAdapter flutterwaveAdapter,
-                         CacheService cacheService,
-                         BankAccountJpaRepository bankAccountJpaRepository,
-                         ObjectMapper mapper,
-                         EarningsJpaRepository earningsJpaRepository,
-                         FleenHealthReferenceGenerator referenceGenerator,
-                         ConfigService configService,
-                         WithdrawalTransactionJpaRepository withdrawalTransactionJpaRepository) {
+                           CacheService cacheService,
+                           BankAccountJpaRepository bankAccountJpaRepository,
+                           ObjectMapper mapper,
+                           EarningsJpaRepository earningsJpaRepository,
+                           FleenHealthReferenceGenerator referenceGenerator,
+                           ConfigService configService,
+                           WithdrawalTransactionJpaRepository withdrawalTransactionJpaRepository) {
     super(bankAccountJpaRepository, mapper);
     this.flutterwaveAdapter = flutterwaveAdapter;
     this.cacheService = cacheService;
