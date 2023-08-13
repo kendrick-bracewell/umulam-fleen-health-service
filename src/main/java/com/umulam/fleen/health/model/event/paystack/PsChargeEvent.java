@@ -29,7 +29,7 @@ public class PsChargeEvent {
 
     private String status;
     private String reference;
-    private String amount;
+    private Double amount;
 
     @JsonProperty("gateway_response")
     private String gatewayResponse;

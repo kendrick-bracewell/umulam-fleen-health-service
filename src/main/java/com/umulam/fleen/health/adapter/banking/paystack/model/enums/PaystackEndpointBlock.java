@@ -7,7 +7,9 @@ public enum PaystackEndpointBlock implements EndpointBlock {
   RESOLVE("/resolve"),
   TRANSFER("/transfer"),
   TRANSFER_RECIPIENT("/transferrecipient"),
-  BANK("/bank");
+  BANK("/bank"),
+  TRANSACTION("/transaction"),
+  VERIFY("/verify");
 
 
   private final String value;

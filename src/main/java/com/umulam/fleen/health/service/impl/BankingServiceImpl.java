@@ -52,18 +52,18 @@ public class BankingServiceImpl implements BankingService {
       if (paymentGatewayType == PaymentGatewayType.FLUTTERWAVE) {
         FwChargeEvent event = mapper.readValue(body, FwChargeEvent.class);
         return InternalPaymentValidation.builder()
-          .status(event.getData().getStatus())
+          .status(event.getData().getStatus().toUpperCase())
           .transactionReference(event.getData().getTransactionReference())
           .externalSystemTransactionReference(event.getData().getExternalSystemReference())
-          .currency(event.getData().getCurrency())
+          .currency(event.getData().getCurrency().toUpperCase())
           .build();
       } else if (paymentGatewayType == PaymentGatewayType.PAYSTACK) {
         PsChargeEvent event = mapper.readValue(body, PsChargeEvent.class);
         return InternalPaymentValidation.builder()
-          .status(event.getData().getStatus())
-          .transactionReference(event.getData().getReference())
-          .externalSystemTransactionReference(event.getData().getMetadata().getTransactionReference())
-          .currency(event.getData().getCurrency())
+          .status(event.getData().getStatus().toUpperCase())
+          .transactionReference(event.getData().getMetadata().getTransactionReference())
+          .externalSystemTransactionReference(event.getData().getReference())
+          .currency(event.getData().getCurrency().toUpperCase())
           .build();
       }
     } catch (JsonProcessingException ex) {

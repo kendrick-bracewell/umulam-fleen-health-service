@@ -69,10 +69,12 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
   @Override
   @Transactional
   public void validateAndCompleteTransaction(String body) {
+    PaymentGatewayType paymentGatewayType;
     try {
       PaystackWebhookEvent paystackEvent = mapper.readValue(body, PaystackWebhookEvent.class);
       if (Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.CHARGE_SUCCESS.getValue())) {
-        validateAndCompleteSessionTransaction(bankingService.getInternalPaymentValidationByChargeEvent(body, PaymentGatewayType.PAYSTACK));
+        paymentGatewayType = PaymentGatewayType.PAYSTACK;
+        validateAndCompleteSessionTransaction(bankingService.getInternalPaymentValidationByChargeEvent(body, paymentGatewayType), paymentGatewayType);
       } else if (Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.TRANSFER_SUCCESS.getValue()) ||
           Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.TRANSFER_FAILED.getValue()) ||
           Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.TRANSFER_REVERSED.getValue())) {
@@ -81,14 +83,15 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
 
       FlutterwaveWebhookEvent flutterwaveEvent = mapper.readValue(body, FlutterwaveWebhookEvent.class);
       if (Objects.equals(flutterwaveEvent.getEvent(), FlutterwaveWebhookEventType.CHARGE_COMPLETED.getValue())) {
-        validateAndCompleteSessionTransaction(bankingService.getInternalPaymentValidationByChargeEvent(body, PaymentGatewayType.FLUTTERWAVE));
+        paymentGatewayType = PaymentGatewayType.FLUTTERWAVE;
+        validateAndCompleteSessionTransaction(bankingService.getInternalPaymentValidationByChargeEvent(body, paymentGatewayType), paymentGatewayType);
       }
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);
     }
   }
 
-  private void validateAndCompleteSessionTransaction(InternalPaymentValidation event) {
+  private void validateAndCompleteSessionTransaction(InternalPaymentValidation event, PaymentGatewayType paymentGatewayType) {
     List<SessionTransaction> transactions = sessionTransactionJpaRepository.findByGroupReference(event.getTransactionReference());
     List<SessionTransaction> updatedTransactions = new ArrayList<>();
 

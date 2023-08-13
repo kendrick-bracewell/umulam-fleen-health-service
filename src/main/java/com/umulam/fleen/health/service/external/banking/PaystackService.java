@@ -150,4 +150,9 @@ public class PaystackService extends BankingServiceImpl {
                      && bank.getCurrency().equalsIgnoreCase(currency));
   }
 
+  @Override
+  public String getTransactionStatusByReference(String transactionReference) {
+    return paystackAdapter.verifyTransactionByReference(transactionReference).getData().getStatus();
+  }
+
 }

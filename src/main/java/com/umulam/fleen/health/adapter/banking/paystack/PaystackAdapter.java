@@ -137,4 +137,24 @@ public class PaystackAdapter extends BaseAdapter {
     log.error(message);
     handleResponseError(response);
   }
+
+  @RetryOnFailure
+  public PsVerifyTransactionResponse verifyTransactionByReference(String transactionReference) {
+    if (!isMandatoryFieldAvailable(transactionReference)) {
+      throw new ExternalSystemException(PaymentGatewayType.PAYSTACK.getValue());
+    }
+
+    URI uri = buildUri(TRANSACTION, VERIFY, buildPathVar(transactionReference));
+    ResponseEntity<PsVerifyTransactionResponse> response = doCall(uri, HttpMethod.GET,
+      getAuthHeaderWithBearerToken(config.getSecretKey()), null, PsVerifyTransactionResponse.class);
+
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response.getBody();
+    } else {
+      String message = String.format("An error occurred while calling verifyTransactionByReference method of %s: %s", getClass().getSimpleName(), response.getBody());
+      log.error(message);
+      handleResponseError(response);
+      return null;
+    }
+  }
 }
