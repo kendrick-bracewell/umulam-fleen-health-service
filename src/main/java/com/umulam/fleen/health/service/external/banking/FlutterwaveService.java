@@ -64,8 +64,6 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
   private final FleenHealthReferenceGenerator referenceGenerator;
   private final WithdrawalTransactionJpaRepository withdrawalTransactionJpaRepository;
   private final ConfigService configService;
-  private final MemberService memberService;
-  private final ObjectMapper mapper;
 
   public FlutterwaveService(FlutterwaveAdapter flutterwaveAdapter,
                          CacheService cacheService,
@@ -76,13 +74,11 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
                          FleenHealthReferenceGenerator referenceGenerator,
                          ConfigService configService,
                          WithdrawalTransactionJpaRepository withdrawalTransactionJpaRepository) {
-    super(bankAccountJpaRepository, mapper, earningsJpaRepository);
+    super(bankAccountJpaRepository, mapper);
     this.flutterwaveAdapter = flutterwaveAdapter;
     this.cacheService = cacheService;
     this.bankAccountJpaRepository = bankAccountJpaRepository;
-    this.memberService = memberService;
     this.referenceGenerator = referenceGenerator;
-    this.mapper = mapper;
     this.earningsJpaRepository = earningsJpaRepository;
     this.configService = configService;
     this.withdrawalTransactionJpaRepository = withdrawalTransactionJpaRepository;

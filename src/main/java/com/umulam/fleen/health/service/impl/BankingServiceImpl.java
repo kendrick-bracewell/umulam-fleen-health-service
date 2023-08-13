@@ -22,7 +22,6 @@ import com.umulam.fleen.health.model.response.SupportedCountry;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.BankAccountView;
 import com.umulam.fleen.health.repository.jpa.BankAccountJpaRepository;
-import com.umulam.fleen.health.repository.jpa.EarningsJpaRepository;
 import com.umulam.fleen.health.service.BankingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -41,15 +40,12 @@ import static com.umulam.fleen.health.model.mapper.BankAccountMapper.toBankAccou
 public abstract class BankingServiceImpl implements BankingService {
 
   private final BankAccountJpaRepository bankAccountJpaRepository;
-  private final EarningsJpaRepository earningsJpaRepository;
   private final ObjectMapper mapper;
 
   public BankingServiceImpl(BankAccountJpaRepository bankAccountJpaRepository,
-                            ObjectMapper mapper,
-                            EarningsJpaRepository earningsJpaRepository) {
+                            ObjectMapper mapper) {
     this.bankAccountJpaRepository = bankAccountJpaRepository;
     this.mapper = mapper;
-    this.earningsJpaRepository = earningsJpaRepository;
   }
 
   public InternalPaymentValidation getInternalPaymentValidationByChargeEvent(String body, PaymentGatewayType paymentGatewayType) {

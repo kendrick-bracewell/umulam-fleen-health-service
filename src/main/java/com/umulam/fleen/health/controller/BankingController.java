@@ -9,6 +9,7 @@ import com.umulam.fleen.health.service.BankingService;
 import com.umulam.fleen.health.service.external.banking.FlutterwaveService;
 import com.umulam.fleen.health.service.external.banking.PaystackService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +28,8 @@ public class BankingController {
   private final FlutterwaveService flutterwaveService;
   private final BankingService bankingService;
 
-  public BankingController(PaystackService paystackService,
-                           FlutterwaveService flutterwaveService,
+  public BankingController(@Qualifier("paystackService") PaystackService paystackService,
+                           @Qualifier("flutterwaveService") FlutterwaveService flutterwaveService,
                            BankingService bankingService) {
     this.paystackService = paystackService;
     this.flutterwaveService = flutterwaveService;
