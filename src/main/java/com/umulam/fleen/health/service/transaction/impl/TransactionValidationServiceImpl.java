@@ -17,8 +17,8 @@ import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.transaction.SessionTransaction;
 import com.umulam.fleen.health.model.domain.transaction.WithdrawalTransaction;
 import com.umulam.fleen.health.model.event.base.InternalPaymentValidation;
+import com.umulam.fleen.health.model.event.base.WithdrawalTransferValidation;
 import com.umulam.fleen.health.model.event.flutterwave.base.FlutterwaveWebhookEvent;
-import com.umulam.fleen.health.model.event.paystack.PsTransferEvent;
 import com.umulam.fleen.health.model.event.paystack.base.PaystackWebhookEvent;
 import com.umulam.fleen.health.repository.jpa.HealthSessionJpaRepository;
 import com.umulam.fleen.health.repository.jpa.transaction.SessionTransactionJpaRepository;
@@ -37,7 +37,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
-import static com.umulam.fleen.health.constant.session.TransactionStatus.FAILED;
 import static com.umulam.fleen.health.constant.session.TransactionStatus.SUCCESS;
 import static com.umulam.fleen.health.service.session.impl.HealthSessionServiceImpl.getMaxMeetingSessionHourDuration;
 import static com.umulam.fleen.health.util.StringUtil.getFullName;
@@ -86,6 +85,7 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
       } else if (Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.TRANSFER_SUCCESS.getValue()) ||
           Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.TRANSFER_FAILED.getValue()) ||
           Objects.equals(paystackEvent.getEvent(), PaystackWebhookEventType.TRANSFER_REVERSED.getValue())) {
+        paymentGatewayType = PaymentGatewayType.PAYSTACK;
         log.info("In development");
       }
 
@@ -94,7 +94,8 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
         paymentGatewayType = PaymentGatewayType.FLUTTERWAVE;
         validateAndCompleteSessionTransaction(bankingService.getInternalPaymentValidationByChargeEvent(body, paymentGatewayType), paymentGatewayType);
       } else if (Objects.equals(flutterwaveEvent.getEvent(), FlutterwaveWebhookEventType.TRANSFER_COMPLETED.getValue())) {
-        validateAndCompleteWithdrawalTransaction(body);
+        paymentGatewayType = PaymentGatewayType.FLUTTERWAVE
+        validateAndCompleteWithdrawalTransaction(bankingService.getWithdrawalTransferValidationByTransferEvent(body, paymentGatewayType));
       }
     } catch (JsonProcessingException ex) {
       log.error(ex.getMessage(), ex);
@@ -171,37 +172,34 @@ public class TransactionValidationServiceImpl implements TransactionValidationSe
     }
   }
 
-  private void validateAndCompleteWithdrawalTransaction(String body) {
-    try {
-      PsTransferEvent event = mapper.readValue(body, PsTransferEvent.class);
-      Optional<WithdrawalTransaction> transactionExist = withdrawalTransactionJpaRepository.findByReference(event.getData().getReference());
-      if (transactionExist.isPresent()) {
-        WithdrawalTransaction transaction = transactionExist.get();
-        transaction.setExternalSystemReference(event.getData().getTransferCode());
-        transaction.setCurrency(event.getData().getCurrency().toUpperCase());
-        transaction.setBankName(event.getData().getRecipient().getDetails().getBankName());
-        transaction.setAccountNumber(event.getData().getRecipient().getDetails().getAccountNumber());
-        transaction.setAccountName(event.getData().getRecipient().getDetails().getAccountName());
-        transaction.setBankCode(event.getData().getRecipient().getDetails().getBankCode());
+  private void validateAndCompleteWithdrawalTransaction(WithdrawalTransferValidation event) {
+    Optional<WithdrawalTransaction> transactionExist = withdrawalTransactionJpaRepository.findByReference(event.getReference());
+    if (transactionExist.isPresent()) {
+      WithdrawalTransaction transaction = transactionExist.get();
+      transaction.setExternalSystemReference(event.getExternalTransferReferenceOrCode());
+      transaction.setCurrency(event.getCurrency().toUpperCase());
+      transaction.setBankName(event.getBankName());
+      transaction.setAccountNumber(event.getAccountNumber());
+      transaction.setAccountName(event.getFullName());
+      transaction.setBankCode(event.getBankCode());
+      transaction.setFee(event.getFee());
 
-        if (SUCCESS.getValue().equalsIgnoreCase(event.getData().getStatus())) {
-          if (transaction.getStatus() != SUCCESS) {
-            transaction.setStatus(SUCCESS);
-            transaction.setWithdrawalStatus(WithdrawalStatus.SUCCESSFUL);
-          }
-        } else {
-          if (FAILED.getValue().equalsIgnoreCase(event.getData().getStatus())) {
-            transaction.setStatus(TransactionStatus.FAILED);
-            transaction.setWithdrawalStatus(WithdrawalStatus.FAILED);
-          } else {
-            transaction.setStatus(TransactionStatus.REVERSED);
-            transaction.setWithdrawalStatus(WithdrawalStatus.REVERSED);
-          }
+      if (ExternalTransactionStatus.SUCCESS.getValue().equalsIgnoreCase(event.getStatus()) ||
+          ExternalTransactionStatus.SUCCESSFUL.getValue().equalsIgnoreCase(event.getStatus())) {
+        if (transaction.getStatus() != SUCCESS) {
+          transaction.setStatus(SUCCESS);
+          transaction.setWithdrawalStatus(WithdrawalStatus.SUCCESSFUL);
         }
-        withdrawalTransactionJpaRepository.save(transaction);
+      } else {
+        if (ExternalTransactionStatus.FAILED.getValue().equalsIgnoreCase(event.getStatus())) {
+          transaction.setStatus(TransactionStatus.FAILED);
+          transaction.setWithdrawalStatus(WithdrawalStatus.FAILED);
+        } else {
+          transaction.setStatus(TransactionStatus.REVERSED);
+          transaction.setWithdrawalStatus(WithdrawalStatus.REVERSED);
+        }
       }
-    } catch (JsonProcessingException ex) {
-      log.error(ex.getMessage(), ex);
+      withdrawalTransactionJpaRepository.save(transaction);
     }
   }
 

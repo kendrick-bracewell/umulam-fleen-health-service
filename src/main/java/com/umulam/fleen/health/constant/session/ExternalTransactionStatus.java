@@ -5,7 +5,8 @@ import com.umulam.fleen.health.adapter.ApiParameter;
 public enum ExternalTransactionStatus implements ApiParameter {
 
   SUCCESSFUL("Successful"),
-  SUCCESS("Success");
+  SUCCESS("Success"),
+  FAILED("Failed");
 
   private final String value;
 

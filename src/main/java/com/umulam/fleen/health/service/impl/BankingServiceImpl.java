@@ -70,6 +70,7 @@ public abstract class BankingServiceImpl implements BankingService {
     return null;
   }
 
+  @Override
   public WithdrawalTransferValidation getWithdrawalTransferValidationByTransferEvent(String body, PaymentGatewayType paymentGatewayType) {
     try {
       if (paymentGatewayType == PaymentGatewayType.FLUTTERWAVE) {

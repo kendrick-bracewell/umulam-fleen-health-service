@@ -3,6 +3,7 @@ package com.umulam.fleen.health.service;
 import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
 import com.umulam.fleen.health.model.dto.banking.CreateWithdrawalDto;
 import com.umulam.fleen.health.model.event.base.InternalPaymentValidation;
+import com.umulam.fleen.health.model.event.base.WithdrawalTransferValidation;
 import com.umulam.fleen.health.model.response.SupportedCountry;
 import com.umulam.fleen.health.model.security.FleenUser;
 
@@ -13,6 +14,8 @@ public interface BankingService {
   String getTransactionStatusByReference(String transactionReference);
 
   InternalPaymentValidation getInternalPaymentValidationByChargeEvent(String body, PaymentGatewayType paymentGatewayType);
+
+  WithdrawalTransferValidation getWithdrawalTransferValidationByTransferEvent(String body, PaymentGatewayType paymentGatewayType);
 
   List<SupportedCountry> getSupportedCountries();
 

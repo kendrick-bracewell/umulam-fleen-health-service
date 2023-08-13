@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.model.domain.transaction;
 
+import com.umulam.fleen.health.constant.authentication.PaymentGatewayType;
 import com.umulam.fleen.health.constant.session.WithdrawalStatus;
 import com.umulam.fleen.health.model.domain.Member;
 import lombok.Getter;
@@ -42,4 +43,11 @@ public class WithdrawalTransaction extends Transaction {
 
   @Column(name = "currency", nullable = false)
   private String currency;
+
+  @Column(name = "fee", nullable = false)
+  private Double fee;
+
+  @Column(name = "payment_gateway", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private PaymentGatewayType paymentGatewayType;
 }
