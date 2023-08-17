@@ -2,9 +2,11 @@ package com.umulam.fleen.health.controller;
 
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
 import com.umulam.fleen.health.model.response.authentication.CreateEncodedPasswordResponse;
+import com.umulam.fleen.health.model.response.other.EntityExistsResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.service.AuthenticationService;
 import com.umulam.fleen.health.service.CountryService;
+import com.umulam.fleen.health.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,11 +23,20 @@ public class FleenHealthController {
 
   private final AuthenticationService authenticationService;
   private final CountryService countryService;
+  private final MemberService memberService;
 
   public FleenHealthController(AuthenticationService authenticationService,
+                               MemberService memberService,
                                CountryService countryService) {
     this.authenticationService = authenticationService;
     this.countryService = countryService;
+    this.memberService = memberService;
+  }
+
+  @GetMapping(value = "/email-address/exists")
+  public EntityExistsResponse emailExists(@RequestParam(name = "emailAddress") String emailAddress) {
+    boolean exists = memberService.isEmailAddressExists(emailAddress);
+    return new EntityExistsResponse(exists);
   }
 
   @GetMapping(value = "/sign-out")
