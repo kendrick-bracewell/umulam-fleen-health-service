@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -31,11 +30,10 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @AllArgsConstructor
 public class SecurityConfiguration {
 
-  private final UserDetailsService userDetailsService;
   private final JwtAuthenticationFilter authenticationFilter;
   private final CustomAuthenticationProvider authenticationProvider;
 
-  private static final String[] WHITELIST = {
+  public static final String[] WHITELIST = {
     "/auth/**",
     "/v2/api-docs",
     "/swagger-resources",
