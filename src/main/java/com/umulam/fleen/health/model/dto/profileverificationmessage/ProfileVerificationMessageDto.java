@@ -1,7 +1,6 @@
 package com.umulam.fleen.health.model.dto.profileverificationmessage;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.umulam.fleen.health.constant.authentication.MfaType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import com.umulam.fleen.health.model.domain.ProfileVerificationMessage;
 import com.umulam.fleen.health.validator.EnumValid;

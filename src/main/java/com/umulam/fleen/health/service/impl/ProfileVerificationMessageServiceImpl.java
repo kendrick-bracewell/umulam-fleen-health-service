@@ -50,7 +50,7 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
   @Override
   public ProfileVerificationMessage getProfileVerificationMessageByType(@NonNull ProfileVerificationMessageType messageType) {
     return repository
-            .findByVerificationMessageType(messageType)
+            .findFirstByVerificationMessageType(messageType)
             .orElse(null);
   }
 

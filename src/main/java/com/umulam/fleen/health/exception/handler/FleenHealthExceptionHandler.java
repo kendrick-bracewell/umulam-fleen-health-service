@@ -243,7 +243,7 @@ public class FleenHealthExceptionHandler {
 
     Map<String, Object> error = new HashMap<>(buildErrorMap(INVALID_REQUEST_BODY, BAD_REQUEST));
     error.put("fields", values);
-    error.put("type", "DataValidation");
+    error.put("type", "DATA_VALIDATION");
     return error;
   }
 
