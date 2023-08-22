@@ -8,10 +8,7 @@ import com.umulam.fleen.health.exception.country.CountryDuplicateException;
 import com.umulam.fleen.health.exception.country.CountryNotFoundException;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
 import com.umulam.fleen.health.exception.healthsession.*;
-import com.umulam.fleen.health.exception.member.MemberAlreadyOnboarded;
-import com.umulam.fleen.health.exception.member.MemberNotFoundException;
-import com.umulam.fleen.health.exception.member.UpdatePasswordFailedException;
-import com.umulam.fleen.health.exception.member.UserNotFoundException;
+import com.umulam.fleen.health.exception.member.*;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusCodeDuplicateException;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusNotFoundException;
 import com.umulam.fleen.health.exception.professional.*;
@@ -67,7 +64,8 @@ public class FleenHealthExceptionHandler {
           HealthSessionNotFoundException.class,
           SessionTransactionNotFound.class,
           BankAccountNotFoundException.class,
-          EarningsAccountNotFoundException.class
+          EarningsAccountNotFoundException.class,
+          EmailAddressNotFoundException.class
   })
   public Object handleNotFound(Exception ex) {
     log.error(ex.getMessage(), ex);
