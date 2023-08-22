@@ -1,4 +1,4 @@
-package com.umulam.fleen.health.model.dto.authentication;
+package com.umulam.fleen.health.model.response.authentication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

@@ -6,6 +6,8 @@ import com.umulam.fleen.health.constant.authentication.VerificationType;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.dto.authentication.*;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
+import com.umulam.fleen.health.model.response.authentication.ForgotPasswordResponse;
+import com.umulam.fleen.health.model.response.authentication.InitiatePasswordChangeResponse;
 import com.umulam.fleen.health.model.response.authentication.SignInResponse;
 import com.umulam.fleen.health.model.response.authentication.SignUpResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
@@ -47,7 +49,7 @@ public interface AuthenticationService {
   void saveRefreshToken(String subject, String token);
 
   @Transactional
-  void forgotPassword(ForgotPasswordDto dto);
+  ForgotPasswordResponse forgotPassword(ForgotPasswordDto dto);
 
   @Transactional(readOnly = true)
   InitiatePasswordChangeResponse validateResetPasswordCode(ResetPasswordDto dto);

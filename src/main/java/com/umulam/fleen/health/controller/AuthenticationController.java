@@ -1,7 +1,11 @@
 package com.umulam.fleen.health.controller;
 
-import com.umulam.fleen.health.model.dto.authentication.*;
-import com.umulam.fleen.health.model.response.FleenHealthResponse;
+import com.umulam.fleen.health.model.dto.authentication.ForgotPasswordDto;
+import com.umulam.fleen.health.model.dto.authentication.ResetPasswordDto;
+import com.umulam.fleen.health.model.dto.authentication.SignInDto;
+import com.umulam.fleen.health.model.dto.authentication.SignUpDto;
+import com.umulam.fleen.health.model.response.authentication.ForgotPasswordResponse;
+import com.umulam.fleen.health.model.response.authentication.InitiatePasswordChangeResponse;
 import com.umulam.fleen.health.model.response.authentication.SignInResponse;
 import com.umulam.fleen.health.model.response.authentication.SignUpResponse;
 import com.umulam.fleen.health.service.AuthenticationService;
@@ -12,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-
-import static com.umulam.fleen.health.constant.base.FleenHealthConstant.VERIFICATION_CODE_SENT_MESSAGE;
 
 @Slf4j
 @RestController
@@ -37,9 +39,8 @@ public class AuthenticationController {
   }
 
   @PostMapping(value = "/forgot-password")
-  public FleenHealthResponse forgotPassword(@Valid @RequestBody ForgotPasswordDto dto) {
-    authenticationService.forgotPassword(dto);
-    return new FleenHealthResponse(VERIFICATION_CODE_SENT_MESSAGE);
+  public ForgotPasswordResponse forgotPassword(@Valid @RequestBody ForgotPasswordDto dto) {
+    return authenticationService.forgotPassword(dto);
   }
 
   @PostMapping(value = "/verify-reset-password-code")

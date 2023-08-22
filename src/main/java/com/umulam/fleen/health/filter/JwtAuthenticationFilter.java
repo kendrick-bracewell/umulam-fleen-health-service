@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.filter;
 
+import com.umulam.fleen.health.exception.authentication.InvalidAuthenticationException;
 import com.umulam.fleen.health.model.dto.authentication.JwtTokenDetails;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.service.MemberService;
@@ -54,58 +55,63 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                   FilterChain filterChain)
             throws ServletException, IOException {
-    final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-    if (header == null || !StringUtils.startsWithIgnoreCase(header, AUTH_HEADER_PREFIX)) {
-      filterChain.doFilter(request, response);
-      return;
-    }
-
-    int index = AUTH_HEADER_PREFIX.length() + 1;
-    final String token = header.substring(index);
-
-    String emailAddress;
     try {
-      emailAddress = jwtProvider.getUsernameFromToken(token);
-    } catch (IllegalArgumentException | ExpiredJwtException | MalformedJwtException | SignatureException ex) {
-      log.error(ex.getMessage(), ex);
-      resolver.resolveException(request, response, null, ex);
-      return;
-    }
+      final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+      if (header == null || !StringUtils.startsWithIgnoreCase(header, AUTH_HEADER_PREFIX)) {
+        filterChain.doFilter(request, response);
+        return;
+      }
 
-    if (!StringUtils.isNotEmpty(emailAddress)) {
-      filterChain.doFilter(request, response);
-      return;
-    }
+      int index = AUTH_HEADER_PREFIX.length() + 1;
+      final String token = header.substring(index);
 
-    try {
-      if (SecurityContextHolder.getContext().getAuthentication() == null) {
-        JwtTokenDetails details = jwtProvider.getBasicDetails(token);
-        UserDetails userDetails = FleenUser.fromToken(details);
-        String key = getAuthCacheKey(details.getSub());
-        String savedToken = (String) cacheService.get(key);
+      String emailAddress;
+      try {
+        emailAddress = jwtProvider.getUsernameFromToken(token);
+      } catch (IllegalArgumentException | ExpiredJwtException | MalformedJwtException | SignatureException ex) {
+        log.error(ex.getMessage(), ex);
+        resolver.resolveException(request, response, null, ex);
+        return;
+      }
 
-        if (jwtProvider.isTokenValid(token, userDetails)) {
-          UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-            userDetails,
-            null,
-            userDetails.getAuthorities());
-          authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+      if (!StringUtils.isNotEmpty(emailAddress)) {
+        filterChain.doFilter(request, response);
+        return;
+      }
 
-          if (cacheService.exists(key) && Objects.nonNull(savedToken)) {
-            if (!memberService.isEmailAddressExists(userDetails.getUsername())) {
-              filterChain.doFilter(request, response);
-              return;
+      try {
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+          JwtTokenDetails details = jwtProvider.getBasicDetails(token);
+          UserDetails userDetails = FleenUser.fromToken(details);
+          String key = getAuthCacheKey(details.getSub());
+          String savedToken = (String) cacheService.get(key);
+
+          if (jwtProvider.isTokenValid(token, userDetails)) {
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+              userDetails,
+              null,
+              userDetails.getAuthorities());
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            if (cacheService.exists(key) && Objects.nonNull(savedToken)) {
+              if (!memberService.isEmailAddressExists(userDetails.getUsername())) {
+                filterChain.doFilter(request, response);
+                return;
+              }
+              SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else if (isAuthorityWhitelisted(userDetails.getAuthorities())) {
+              SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-          } else if (isAuthorityWhitelisted(userDetails.getAuthorities())) {
-            SecurityContextHolder.getContext().setAuthentication(authentication);
           }
         }
+      } catch (Exception ex) {
+        log.error(ex.getMessage(), ex);
       }
-    } catch (Exception ex) {
-      log.error(ex.getMessage(), ex);
-    }
 
-    filterChain.doFilter(request, response);
+      filterChain.doFilter(request, response);
+    } catch (Exception ex) {
+      InvalidAuthenticationException exception = new InvalidAuthenticationException(null);
+      resolver.resolveException(request, response, null, exception);
+    }
   }
 }
