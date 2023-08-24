@@ -59,8 +59,10 @@ public class FleenHealthExceptionHandler {
     ResourceNotFoundException.class,
     NoHandlerFoundException.class
   })
-  public Object handleNoResource(Exception ex) {
-    return buildErrorMap(ResourceNotFoundException.message, NOT_FOUND);
+  public Object handleNotFound(HttpServletRequest request) {
+    var body = buildErrorMap(ResourceNotFoundException.message, NOT_FOUND);
+    body.put(PATH_URL, request.getServletPath());
+    return body;
   }
 
   @ResponseStatus(value = NOT_FOUND)
@@ -170,9 +172,9 @@ public class FleenHealthExceptionHandler {
   })
   public Object forbidden(AccessDeniedException ex, HttpServletRequest request) {
     log.error(ex.getMessage(), ex);
-    var map = buildErrorMap(FORBIDDEN_ACCESS, FORBIDDEN);
-    map.put(PATH_URL, request.getServletPath());
-    return map;
+    var body = buildErrorMap(FORBIDDEN_ACCESS, FORBIDDEN);
+    body.put(PATH_URL, request.getServletPath());
+    return body;
   }
 
   @ResponseStatus(value = BAD_REQUEST)
