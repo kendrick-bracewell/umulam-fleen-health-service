@@ -2,6 +2,7 @@ package com.umulam.fleen.health.exception.handler;
 
 import com.umulam.fleen.health.exception.authentication.*;
 import com.umulam.fleen.health.exception.banking.*;
+import com.umulam.fleen.health.exception.base.ResourceNotFoundException;
 import com.umulam.fleen.health.exception.business.BusinessNotFoundException;
 import com.umulam.fleen.health.exception.country.CountryCodeDuplicateException;
 import com.umulam.fleen.health.exception.country.CountryDuplicateException;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -54,6 +56,15 @@ public class FleenHealthExceptionHandler {
 
   @ResponseStatus(value = NOT_FOUND)
   @ExceptionHandler(value = {
+    ResourceNotFoundException.class,
+    NoHandlerFoundException.class
+  })
+  public Object handleNoResource(Exception ex) {
+    return buildErrorMap(ResourceNotFoundException.message, NOT_FOUND);
+  }
+
+  @ResponseStatus(value = NOT_FOUND)
+  @ExceptionHandler(value = {
           CountryNotFoundException.class,
           RoleNotFoundException.class,
           MemberStatusNotFoundException.class,
@@ -65,7 +76,7 @@ public class FleenHealthExceptionHandler {
           SessionTransactionNotFound.class,
           BankAccountNotFoundException.class,
           EarningsAccountNotFoundException.class,
-          EmailAddressNotFoundException.class
+          EmailAddressNotFoundException.class,
   })
   public Object handleNotFound(Exception ex) {
     log.error(ex.getMessage(), ex);
