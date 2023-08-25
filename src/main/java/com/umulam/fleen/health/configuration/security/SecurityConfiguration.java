@@ -86,5 +86,4 @@ public class SecurityConfiguration {
     web.ignoring()
             .antMatchers("/resources/**", "/static/**");
   }
-
 }

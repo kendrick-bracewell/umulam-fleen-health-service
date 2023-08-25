@@ -38,6 +38,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ import java.util.stream.Collectors;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.umulam.fleen.health.constant.base.ExceptionConstant.*;
+import static com.umulam.fleen.health.filter.SimpleCorsFilter.setHeaders;
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
@@ -56,8 +58,18 @@ public class FleenHealthExceptionHandler {
 
   @ResponseStatus(value = NOT_FOUND)
   @ExceptionHandler(value = {
-    ResourceNotFoundException.class,
     NoHandlerFoundException.class
+  })
+  public Object handleNotFound(HttpServletResponse res) {
+    setHeaders(res);
+    var body = buildErrorMap(ResourceNotFoundException.message, NOT_FOUND);
+    body.put(PATH_URL, "/game");
+    return body;
+  }
+
+  @ResponseStatus(value = NOT_FOUND)
+  @ExceptionHandler(value = {
+    ResourceNotFoundException.class,
   })
   public Object handleNotFound(HttpServletRequest request) {
     var body = buildErrorMap(ResourceNotFoundException.message, NOT_FOUND);
