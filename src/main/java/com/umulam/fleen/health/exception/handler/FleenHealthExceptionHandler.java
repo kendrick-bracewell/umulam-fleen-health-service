@@ -49,6 +49,7 @@ import java.util.stream.Collectors;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.umulam.fleen.health.constant.base.ExceptionConstant.*;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.RESOURCE_NOT_FOUND;
 import static com.umulam.fleen.health.filter.SimpleCorsFilter.setHeaders;
 import static org.springframework.http.HttpStatus.*;
 
@@ -60,11 +61,9 @@ public class FleenHealthExceptionHandler {
   @ExceptionHandler(value = {
     NoHandlerFoundException.class
   })
-  public Object handleNotFound(HttpServletResponse res) {
+  public Object handleNotFound(HttpServletResponse res, HttpServletRequest req) {
     setHeaders(res);
-    var body = buildErrorMap(ResourceNotFoundException.message, NOT_FOUND);
-    body.put(PATH_URL, "/game");
-    return body;
+    return buildErrorMap(RESOURCE_NOT_FOUND, NOT_FOUND, req);
   }
 
   @ResponseStatus(value = NOT_FOUND)
@@ -275,6 +274,15 @@ public class FleenHealthExceptionHandler {
     error.put("message", message);
     error.put("status", status.value());
     error.put("timestamp", LocalDateTime.now().toString());
+    return error;
+  }
+
+  private Map<String, Object> buildErrorMap(String message, HttpStatus status, HttpServletRequest req) {
+    Map<String, Object> error = new HashMap<>();
+    error.put("message", message);
+    error.put("status", status.value());
+    error.put("timestamp", LocalDateTime.now().toString());
+    error.put(PATH_URL, req.getServletPath());
     return error;
   }
 }
