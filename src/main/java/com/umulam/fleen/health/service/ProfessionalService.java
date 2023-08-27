@@ -21,7 +21,7 @@ import java.util.Optional;
 public interface ProfessionalService {
 
   @Transactional(readOnly = true)
-  ProfessionalView findProfessionalById(Integer id);
+  ProfessionalView findProfessionalById(Long id);
 
   @Transactional
   Professional updateDetails(UpdateProfessionalDetailsDto dto, FleenUser user);
@@ -48,12 +48,12 @@ public interface ProfessionalService {
   void updateAvailabilityStatus(UpdateProfessionalAvailabilityStatusDto dto, FleenUser user);
 
   @Transactional(readOnly = true)
-  ProfessionalViewBasic findProfessionalBasicById(Integer id);
+  ProfessionalViewBasic findProfessionalBasicById(Long id);
 
   @Transactional
   Professional save(Professional professional);
 
-  Professional getProfessional(Integer id);
+  Professional getProfessional(Long id);
 
   GetProfessionalUpdateVerificationDetailResponse getUpdateVerificationDetail();
 
@@ -63,7 +63,7 @@ public interface ProfessionalService {
 
   Optional<Professional> findProfessionalByMember(Member member);
 
-  List<Professional> findProfessionalsById(List<Integer> ids);
+  List<Professional> findProfessionalsById(List<Long> ids);
 
-  Double getProfessionalPrice(Integer memberId);
+  Double getProfessionalPrice(Long memberId);
 }

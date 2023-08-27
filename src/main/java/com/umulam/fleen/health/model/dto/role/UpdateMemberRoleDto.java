@@ -13,5 +13,5 @@ import java.util.List;
 public class UpdateMemberRoleDto {
 
   @NotEmpty(message = "{entity.ids.notEmpty}")
-  private List<Integer> ids;
+  private List<Long> ids;
 }

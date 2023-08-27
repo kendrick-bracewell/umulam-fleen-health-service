@@ -39,13 +39,13 @@ public class AdminProfessionalController {
   }
 
   @GetMapping(value = "/detail/{id}")
-  public ProfessionalView findProfessionalDetail(@PathVariable(name = "id") Integer professionalId) {
+  public ProfessionalView findProfessionalDetail(@PathVariable(name = "id") Long professionalId) {
     return service.findProfessionalById(professionalId);
   }
 
   @PutMapping(value = "/update/{id}")
   public ProfessionalView updateProfessionalDetail(
-          @PathVariable(name = "id") Integer professionalId,
+          @PathVariable(name = "id") Long professionalId,
           @Valid @RequestBody UpdateProfessionalDetailsDto dto) {
     return service.updateProfessionalDetail(dto, professionalId);
   }
@@ -53,7 +53,7 @@ public class AdminProfessionalController {
   @PutMapping(value = "/update-verification-status/{id}")
   public FleenHealthResponse updateProfessionalVerificationStatus(
           @Valid @RequestBody UpdateProfileVerificationStatusDto dto,
-          @PathVariable(name = "id") Integer professionalId) {
+          @PathVariable(name = "id") Long professionalId) {
     service.updateProfessionalVerificationStatus(dto, professionalId);
     return new FleenHealthResponse(SUCCESS_MESSAGE);
   }

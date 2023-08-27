@@ -11,7 +11,7 @@ public interface VerificationDocumentService {
 
   List<VerificationDocument> getByMemberEmailAddress(String emailAddress);
 
-  Optional<VerificationDocument> getVerificationDocument(Integer verificationDocumentId);
+  Optional<VerificationDocument> getVerificationDocument(Long verificationDocumentId);
 
   List<VerificationDocument> getVerificationDocumentsByMember(Member member);
 

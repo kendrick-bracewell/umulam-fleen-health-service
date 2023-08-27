@@ -44,7 +44,7 @@ public class AdminMemberController {
   }
 
   @GetMapping(value = "/detail/{id}")
-  public MemberView findMemberDetail(@PathVariable(name = "id") Integer memberId) {
+  public MemberView findMemberDetail(@PathVariable(name = "id") Long memberId) {
     return service.findMemberById(memberId);
   }
 
@@ -57,33 +57,33 @@ public class AdminMemberController {
   @PutMapping(value = "/update/{id}")
   public UpdateMemberDetailsResponse updateMemberDetail(
           @Valid @RequestBody UpdateMemberDetailsDto dto,
-          @PathVariable(name = "id") Integer memberId) {
+          @PathVariable(name = "id") Long memberId) {
     return service.updateMemberDetails(dto, memberId);
   }
 
   @PutMapping(value = "/update-member-status/{id}")
   public FleenHealthResponse updateMemberProfileStatus(
           @Valid @RequestBody UpdateMemberStatusDto dto,
-          @PathVariable(name = "id") Integer memberId) {
+          @PathVariable(name = "id") Long memberId) {
     service.updateMemberStatus(dto, memberId);
     return new FleenHealthResponse(MEMBER_STATUS_UPDATED);
   }
 
   @GetMapping(value = "/update-role/{id}")
-  public List<RoleView> getUpdateMemberRole(@PathVariable(name = "id") Integer memberId) {
+  public List<RoleView> getUpdateMemberRole(@PathVariable(name = "id") Long memberId) {
     return service.getMemberRoles(memberId);
   }
 
   @PutMapping(value = "/update-role/{id}")
   public FleenHealthResponse updateMemberRole(
           @Valid @RequestBody UpdateMemberRoleDto dto,
-          @PathVariable(name = "id") Integer memberId) {
+          @PathVariable(name = "id") Long memberId) {
     service.updateMemberRole(dto, memberId);
     return new FleenHealthResponse(MEMBER_ROLE_UPDATED);
   }
 
   @PutMapping(value = "/resend-onboarding-details/{id}")
-  public FleenHealthResponse resendOnboardingDetails(@PathVariable(name = "id") Integer memberId) {
+  public FleenHealthResponse resendOnboardingDetails(@PathVariable(name = "id") Long memberId) {
     service.resendOnboardingDetails(memberId);
     return new FleenHealthResponse(RESEND_ONBOARDING_DETAILS);
   }

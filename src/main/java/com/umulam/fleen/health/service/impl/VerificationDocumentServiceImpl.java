@@ -27,7 +27,7 @@ public class VerificationDocumentServiceImpl implements VerificationDocumentServ
   }
 
   @Override
-  public Optional<VerificationDocument> getVerificationDocument(Integer verificationDocumentId) {
+  public Optional<VerificationDocument> getVerificationDocument(Long verificationDocumentId) {
     return repository.findById(verificationDocumentId);
   }
 

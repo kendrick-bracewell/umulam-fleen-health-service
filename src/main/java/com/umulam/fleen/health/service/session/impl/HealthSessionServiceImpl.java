@@ -135,13 +135,13 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   @Override
   @Transactional(readOnly = true)
-  public ProfessionalViewBasic viewProfessionalDetail(Integer professionalId) {
+  public ProfessionalViewBasic viewProfessionalDetail(Long professionalId) {
     return professionalService.findProfessionalBasicById(professionalId);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public ProfessionalCheckAvailabilityResponse viewProfessionalAvailability(FleenUser user, Integer professionalId) {
+  public ProfessionalCheckAvailabilityResponse viewProfessionalAvailability(FleenUser user, Long professionalId) {
     Professional professional = professionalService.getProfessional(professionalId);
     if (professional.getAvailabilityStatus() == ProfessionalAvailabilityStatus.AVAILABLE) {
       return new ProfessionalCheckAvailabilityResponse(true);
@@ -152,7 +152,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   @Override
   @Transactional(readOnly = true)
-  public GetProfessionalBookSessionResponse getProfessionalBookSession(Integer professionalId) {
+  public GetProfessionalBookSessionResponse getProfessionalBookSession(Long professionalId) {
     Professional professional = professionalService.getProfessional(professionalId);
     List<ProfessionalAvailability> availabilities = professionalAvailabilityJpaRepository.findAllByMember(professional.getMember());
     List<ProfessionalAvailabilityView> availabilityPeriod = ProfessionalAvailabilityMapper.toProfessionalAvailabilityViews(availabilities);
@@ -311,7 +311,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   @Override
   @Transactional
-  public void cancelSession(FleenUser user, Integer healthSessionId) {
+  public void cancelSession(FleenUser user, Long healthSessionId) {
     Member member = memberService.getMemberById(user.getId());
     Optional<HealthSession> healthSessionExist = healthSessionRepository.findByPatientAndId(member, healthSessionId);
     cancelSession(healthSessionExist, healthSessionId);
@@ -319,7 +319,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   @Override
   @Transactional
-  public void rescheduleSession(ReScheduleHealthSessionDto dto, FleenUser user, Integer healthSessionId) {
+  public void rescheduleSession(ReScheduleHealthSessionDto dto, FleenUser user, Long healthSessionId) {
     boolean healthSessionExist = healthSessionRepository.existsById(healthSessionId);
     if (!healthSessionExist) {
       throw new HealthSessionNotFoundException(healthSessionId);
@@ -379,7 +379,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   @Override
   @Transactional
-  public void addSessionReview(AddHealthSessionReviewDto dto, FleenUser user, Integer healthSessionId) {
+  public void addSessionReview(AddHealthSessionReviewDto dto, FleenUser user, Long healthSessionId) {
     Optional<HealthSession> existingHealthSession = healthSessionRepository.findById(healthSessionId);
     if (existingHealthSession.isPresent()) {
       HealthSession healthSession = existingHealthSession.get();
@@ -399,7 +399,7 @@ public class HealthSessionServiceImpl implements HealthSessionService {
 
   @Override
   @Transactional
-  public void cancelSession(Optional<HealthSession> healthSessionExist, Integer healthSessionId) {
+  public void cancelSession(Optional<HealthSession> healthSessionExist, Long healthSessionId) {
     if (healthSessionExist.isPresent()) {
       HealthSession healthSession = healthSessionExist.get();
       healthSession.setStatus(HealthSessionStatus.CANCELED);

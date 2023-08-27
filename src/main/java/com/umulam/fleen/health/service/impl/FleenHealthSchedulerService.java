@@ -45,7 +45,7 @@ public class FleenHealthSchedulerService {
     }
 
     Earnings earnings = Earnings.builder().build();
-    HashMap<Integer, Earnings> memberEarningsAccount = new HashMap<>();
+    HashMap<Long, Earnings> memberEarningsAccount = new HashMap<>();
     List<HealthSession> updatedHealthSessions = new ArrayList<>();
     for (HealthSession healthSession : healthSessions) {
       Member professional = healthSession.getProfessional();

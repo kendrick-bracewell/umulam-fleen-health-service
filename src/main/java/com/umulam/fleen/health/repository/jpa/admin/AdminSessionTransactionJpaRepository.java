@@ -13,7 +13,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public interface AdminSessionTransactionJpaRepository extends JpaRepository<SessionTransaction, Integer> {
+public interface AdminSessionTransactionJpaRepository extends JpaRepository<SessionTransaction, Long> {
 
   @Query(value = "SELECT st FROM SessionTransaction st WHERE st.reference = :reference")
   Page<SessionTransaction> findByReference(@Param("reference") String reference, Pageable pageable);

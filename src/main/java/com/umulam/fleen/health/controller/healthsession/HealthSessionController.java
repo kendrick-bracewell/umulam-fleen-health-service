@@ -38,17 +38,17 @@ public class HealthSessionController {
   }
 
   @GetMapping(value = "/professional/detail/{id}")
-  public ProfessionalViewBasic viewProfessionalDetail(@PathVariable(name = "id") Integer professionalId) {
+  public ProfessionalViewBasic viewProfessionalDetail(@PathVariable(name = "id") Long professionalId) {
     return healthSessionService.viewProfessionalDetail(professionalId);
   }
 
   @GetMapping(value = "/professional/check-availability/{id}")
-  public ProfessionalCheckAvailabilityResponse viewProfessionalAvailability(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer professionalId) {
+  public ProfessionalCheckAvailabilityResponse viewProfessionalAvailability(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Long professionalId) {
     return healthSessionService.viewProfessionalAvailability(user, professionalId);
   }
 
   @GetMapping(value = "/book-session/{id}")
-  public GetProfessionalBookSessionResponse getProfessionalBookSession(@PathVariable(name = "id") Integer professionalId) {
+  public GetProfessionalBookSessionResponse getProfessionalBookSession(@PathVariable(name = "id") Long professionalId) {
     return healthSessionService.getProfessionalBookSession(professionalId);
   }
 
@@ -60,13 +60,13 @@ public class HealthSessionController {
   @PutMapping(value = "/reschedule-session/{id}")
   public FleenHealthResponse rescheduleSession(@Valid @RequestBody ReScheduleHealthSessionDto dto,
                                   @AuthenticationPrincipal FleenUser user,
-                                  @PathVariable(name = "id") Integer healthSessionId) {
+                                  @PathVariable(name = "id") Long healthSessionId) {
     healthSessionService.rescheduleSession(dto, user, healthSessionId);
     return new FleenHealthResponse(HEALTH_SESSION_RESCHEDULED);
   }
 
   @PutMapping(value = "/cancel-session/{id}")
-  public FleenHealthResponse cancelSession(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer healthSessionId) {
+  public FleenHealthResponse cancelSession(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Long healthSessionId) {
     healthSessionService.cancelSession(user, healthSessionId);
     return new FleenHealthResponse(HEALTH_SESSION_CANCELED);
   }
@@ -74,7 +74,7 @@ public class HealthSessionController {
   @PutMapping(value = "/session/add-review/{id}")
   public FleenHealthResponse addSessionReview(@Valid @RequestBody AddHealthSessionReviewDto dto,
                                @AuthenticationPrincipal FleenUser user,
-                               @PathVariable(name = "id") Integer sessionId) {
+                               @PathVariable(name = "id") Long sessionId) {
     healthSessionService.addSessionReview(dto, user, sessionId);
     return new FleenHealthResponse(HEALTH_SESSION_REVIEW_ADDED);
   }

@@ -13,7 +13,7 @@ import static java.util.Objects.isNull;
 @Slf4j
 public class EnumOrdinalValidValidator implements ConstraintValidator<EnumOrdinalValid, String> {
 
-  private List<Integer> acceptedValues;
+  private List<Long> acceptedValues;
 
   @Override
   public void initialize(EnumOrdinalValid constraintAnnotation) {
@@ -24,7 +24,7 @@ public class EnumOrdinalValidValidator implements ConstraintValidator<EnumOrdina
   public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
     if (!isNull(value)) {
       try {
-        Integer number = Integer.parseInt(value);
+        Long number = Long.parseLong(value);
         return acceptedValues.contains(number);
       } catch (NumberFormatException ex) {
         log.error(ex.getMessage(), ex);

@@ -17,13 +17,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProfessionalJpaRepository extends JpaRepository<Professional, Integer> {
+public interface ProfessionalJpaRepository extends JpaRepository<Professional, Long> {
 
   @Query("SELECT b FROM Professional b WHERE b.member.emailAddress = :emailAddress")
   Optional<Professional> findProfessionalByEmailAddress(String emailAddress);
 
   @Query(value ="SELECT availability_status as availabilityStatus from professional where id = :id", nativeQuery = true)
-  GetProfessionalUpdateAvailabilityStatusResponse getProfessionalAvailabilityStatus(@Param("id") Integer professionalId);
+  GetProfessionalUpdateAvailabilityStatusResponse getProfessionalAvailabilityStatus(@Param("id") Long professionalId);
 
   @Query(value = "SELECT COUNT(*) FROM Professional p")
   int countAll();
@@ -66,8 +66,8 @@ public interface ProfessionalJpaRepository extends JpaRepository<Professional, I
   Optional<Professional> findByMember(Member member);
 
   @Query(value = "SELECT DISTINCT p FROM Professional p WHERE p.member.id IN (:ids)")
-  List<Professional> findProfessionalsByIds(@Param("ids") List<Integer> ids);
+  List<Professional> findProfessionalsByIds(@Param("ids") List<Long> ids);
 
   @Query(value ="SELECT price from professional where member_id = :id", nativeQuery = true)
-  Double findProfessionalPrice(@Param("id") Integer memberId);
+  Double findProfessionalPrice(@Param("id") Long memberId);
 }

@@ -67,7 +67,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
 
   @Override
   @Transactional(readOnly = true)
-  public ProfessionalView findProfessionalById(Integer id) {
+  public ProfessionalView findProfessionalById(Long id) {
     Professional professional = getProfessional(id);
     ProfessionalView view = toProfessionalView(professional);
     setVerificationDocument(view);
@@ -76,7 +76,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
 
   @Override
   @Transactional(readOnly = true)
-  public ProfessionalViewBasic findProfessionalBasicById(Integer id) {
+  public ProfessionalViewBasic findProfessionalBasicById(Long id) {
     Professional professional = getProfessional(id);
     return ProfessionalMapper.toProfessionalViewBasic(professional);
   }
@@ -198,7 +198,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   }
 
   @Override
-  public Professional getProfessional(Integer id) {
+  public Professional getProfessional(Long id) {
     Optional<Professional> professionalExists = repository.findById(id);
     if (professionalExists.isEmpty()) {
       throw new ProfessionalNotFoundException(id);
@@ -257,7 +257,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   }
 
   @Override
-  public List<Professional> findProfessionalsById(List<Integer> ids) {
+  public List<Professional> findProfessionalsById(List<Long> ids) {
     return repository.findProfessionalsByIds(ids);
   }
 
@@ -277,7 +277,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   }
 
   @Override
-  public Double getProfessionalPrice(Integer memberId) {
+  public Double getProfessionalPrice(Long memberId) {
     return repository.findProfessionalPrice(memberId);
   }
 }

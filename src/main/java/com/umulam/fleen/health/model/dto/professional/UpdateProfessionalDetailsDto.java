@@ -62,7 +62,7 @@ public class UpdateProfessionalDetailsDto {
             .yearsOfExperience(Integer.parseInt(yearsOfExperience))
             .areaOfExpertise(areaOfExpertise)
             .country(Country.builder()
-                    .id(Integer.parseInt(country)).build())
+                    .id(Long.parseLong(country)).build())
             .languagesSpoken(languagesSpoken)
             .professionalType(ProfessionalType.valueOf(professionalType))
             .qualificationType(ProfessionalQualificationType.valueOf(qualificationType))

@@ -195,7 +195,7 @@ public class FlutterwaveAdapter extends BaseAdapter {
     }
   }
 
-  public FwGetBankBranchesResponse getBankBranches(Integer bankId) {
+  public FwGetBankBranchesResponse getBankBranches(Long bankId) {
     if (!isMandatoryFieldAvailable(bankId)) {
       throw new ExternalSystemException(PaymentGatewayType.FLUTTERWAVE.getValue());
     }

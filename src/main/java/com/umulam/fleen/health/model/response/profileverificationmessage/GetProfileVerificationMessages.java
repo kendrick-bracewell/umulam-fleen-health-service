@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import static com.umulam.fleen.health.util.DateFormatUtil.DATE;
 
 public interface GetProfileVerificationMessages {
-  Integer getId();
+  Long getId();
   String getTitle();
   String getVerificationMessageType();
 

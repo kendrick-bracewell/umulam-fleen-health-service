@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface MemberStatusService {
 
-  MemberStatus getMemberStatus(Integer id);
+  MemberStatus getMemberStatus(Long id);
 
   List<MemberStatus> getMemberStatuses();
 
@@ -18,18 +18,18 @@ public interface MemberStatusService {
   MemberStatus getMemberStatusByCode(String code);
 
   @Transactional(readOnly = true)
-  MemberStatus getReference(Integer id);
+  MemberStatus getReference(Long id);
 
   MemberStatus saveMemberStatus(MemberStatusDto dto);
 
   @Transactional
-  MemberStatus updateMemberStatus(Integer id, UpdateMemberStatusDto dto);
+  MemberStatus updateMemberStatus(Long id, UpdateMemberStatusDto dto);
 
   void deleteMany(DeleteIdsDto ids);
 
   void deleteAllMemberStatus();
 
-  boolean isMemberStatusExists(Integer id);
+  boolean isMemberStatusExists(Long id);
 
   boolean isMemberStatusExistsByCode(String code);
 }

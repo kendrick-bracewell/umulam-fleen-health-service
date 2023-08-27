@@ -20,7 +20,7 @@ public class ProfileVerificationMessage {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private Integer id;
+  private Long id;
 
   @Column(name = "title", nullable = false, length = 300)
   private String title;

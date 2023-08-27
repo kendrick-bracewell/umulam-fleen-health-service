@@ -19,7 +19,7 @@ public class HealthSessionReview {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private Integer id;
+  private Long id;
 
   @Column(name = "review", nullable = false, length = 1000)
   private String review;

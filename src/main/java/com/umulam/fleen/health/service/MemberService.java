@@ -22,10 +22,10 @@ public interface MemberService {
 
   Member getMemberByEmailAddress(String emailAddress);
 
-  Member getMemberById(Integer memberId);
+  Member getMemberById(Long memberId);
 
   @Transactional(readOnly = true)
-  MemberView findMemberById(Integer id);
+  MemberView findMemberById(Long id);
 
   List<MemberView> toMemberViews(List<Member> members);
 
@@ -44,23 +44,23 @@ public interface MemberService {
   void disableMfa(FleenUser user);
 
   @Transactional
-  MfaDetail setupMfa(Integer memberId, MfaTypeDto mfaTypeDto);
+  MfaDetail setupMfa(Long memberId, MfaTypeDto mfaTypeDto);
 
-  String getTwoFaSecret(Integer memberId);
+  String getTwoFaSecret(Long memberId);
 
   @Transactional
   boolean confirmMfaSetup(String username, ConfirmMfaDto dto);
 
   void updatePassword(String username, UpdatePasswordDto dto);
 
-  ProfileVerificationStatus getVerificationStatus(Integer memberId);
+  ProfileVerificationStatus getVerificationStatus(Long memberId);
 
   GetMemberUpdateDetailsResponse getMemberGetUpdateDetailsResponse(FleenUser user);
 
   UpdateMemberDetailsResponse updateMemberDetails(UpdateMemberDetailsDto dto, FleenUser user);
 
   @Transactional
-  UpdateMemberDetailsResponse updateMemberDetails(UpdateMemberDetailsDto dto, Integer memberId);
+  UpdateMemberDetailsResponse updateMemberDetails(UpdateMemberDetailsDto dto, Long memberId);
 
   void sendUpdateEmailAddressOrPhoneNumberCode(UpdateEmailAddressOrPhoneNumberDto dto, FleenUser user);
 
@@ -81,11 +81,11 @@ public interface MemberService {
   void saveUpdatePhoneNumberOtp(String subject, String otp);
 
   @Transactional
-  void updateMemberStatus(UpdateMemberStatusDto dto, Integer memberId);
+  void updateMemberStatus(UpdateMemberStatusDto dto, Long memberId);
 
   @Transactional
-  void updateMemberRole(UpdateMemberRoleDto dto, Integer memberId);
+  void updateMemberRole(UpdateMemberRoleDto dto, Long memberId);
 
   @Transactional(readOnly = true)
-  List<RoleView> getMemberRoles(Integer memberId);
+  List<RoleView> getMemberRoles(Long memberId);
 }

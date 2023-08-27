@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-public interface CountryJpaRepository extends JpaRepository<Country, Integer> {
+public interface CountryJpaRepository extends JpaRepository<Country, Long> {
 
   Optional<Country> findByCode(String code);
 

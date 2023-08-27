@@ -25,7 +25,7 @@ public class FleenUser implements UserDetails {
 
   private static final long serialVersionUID = 1L;
 
-  private Integer id;
+  private Long id;
   private String emailAddress;
   private String phoneNumber;
   private String password;

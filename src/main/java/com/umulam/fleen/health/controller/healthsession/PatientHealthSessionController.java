@@ -38,7 +38,7 @@ public class PatientHealthSessionController {
   }
 
   @GetMapping(value = "/session/detail/{id}")
-  public HealthSessionView viewSessionDetail(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer healthSessionId) {
+  public HealthSessionView viewSessionDetail(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Long healthSessionId) {
     return patientHealthSessionService.viewSessionDetail(user, healthSessionId);
   }
 
@@ -48,7 +48,7 @@ public class PatientHealthSessionController {
   }
 
   @GetMapping(value = "/professional/detail/{id}")
-  public Object viewProfessionalDetail(@PathVariable(name = "id") Integer professionalId) {
+  public Object viewProfessionalDetail(@PathVariable(name = "id") Long professionalId) {
     return patientHealthSessionService.viewProfessionalDetail(professionalId);
   }
 
@@ -58,7 +58,7 @@ public class PatientHealthSessionController {
   }
 
   @GetMapping(value = "/transaction/detail/{id}")
-  public SessionTransactionView viewTransactionDetail(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer transactionId) {
+  public SessionTransactionView viewTransactionDetail(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Long transactionId) {
     return sessionTransactionService.viewUserTransactionDetail(user, transactionId);
   }
 

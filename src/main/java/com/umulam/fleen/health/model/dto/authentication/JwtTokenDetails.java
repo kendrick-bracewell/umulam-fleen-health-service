@@ -13,7 +13,7 @@ public class JwtTokenDetails {
 
   private String sub;
   private String[] authorities;
-  private Integer userId;
+  private Long userId;
   private String status;
   private String firstName;
   private String lastName;

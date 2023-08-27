@@ -32,7 +32,7 @@ public class MemberStatusServiceImpl implements MemberStatusService {
 
   @Override
   @Transactional(readOnly = true)
-  public MemberStatus getMemberStatus(Integer id) {
+  public MemberStatus getMemberStatus(Long id) {
     return repository
             .findById(id)
             .orElseThrow(() -> new MemberStatusNotFoundException(id));
@@ -48,7 +48,7 @@ public class MemberStatusServiceImpl implements MemberStatusService {
 
   @Override
   @Transactional(readOnly = true)
-  public MemberStatus getReference(Integer id) {
+  public MemberStatus getReference(Long id) {
     return Optional
             .of(repository.getReferenceById(id))
             .orElseThrow(() -> new MemberStatusNotFoundException(id));
@@ -68,7 +68,7 @@ public class MemberStatusServiceImpl implements MemberStatusService {
 
   @Override
   @Transactional
-  public MemberStatus updateMemberStatus(Integer id, UpdateMemberStatusDto dto) {
+  public MemberStatus updateMemberStatus(Long id, UpdateMemberStatusDto dto) {
     getMemberStatus(id);
     MemberStatus memberStatus = getMemberStatusByCode(dto.getCode());
     if (isMemberStatusExistsByCode(dto.getCode()) && !(memberStatus.getId().intValue() == id.intValue())) {
@@ -98,7 +98,7 @@ public class MemberStatusServiceImpl implements MemberStatusService {
   }
 
   @Override
-  public boolean isMemberStatusExists(Integer id) {
+  public boolean isMemberStatusExists(Long id) {
     return repository
             .findById(id)
             .isPresent();

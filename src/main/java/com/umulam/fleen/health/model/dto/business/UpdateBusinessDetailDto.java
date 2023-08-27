@@ -56,7 +56,7 @@ public class UpdateBusinessDetailDto {
             .city(city)
             .websiteLink(websiteLink)
             .country(Country.builder()
-                    .id(Integer.parseInt(country)).build())
+                    .id(Long.parseLong(country)).build())
             .build();
 
   }

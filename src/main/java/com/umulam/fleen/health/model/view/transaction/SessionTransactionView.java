@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class SessionTransactionView extends FleenHealthView {
 
-  private Integer id;
+  private Long id;
   private String reference;
   private String status;
 

@@ -35,7 +35,7 @@ public class AdminProfileVerificationMessageController {
   }
 
   @GetMapping(value = "/detail/{id}")
-  public ProfileVerificationMessageView getById(@PathVariable(name = "id") Integer profileVerificationMessageId) {
+  public ProfileVerificationMessageView getById(@PathVariable(name = "id") Long profileVerificationMessageId) {
     return service.getById(profileVerificationMessageId);
   }
   
@@ -52,7 +52,7 @@ public class AdminProfileVerificationMessageController {
 
   @PutMapping(value ="/update/{id}")
   public FleenHealthResponse updateProfileVerificationMessage(
-          @PathVariable(name = "id") Integer id,
+          @PathVariable(name = "id") Long id,
           @Valid @RequestBody ProfileVerificationMessageDto dto) {
     service.updateProfileVerificationMessage(id, dto);
     return new FleenHealthResponse(PROFILE_VERIFICATION_MESSAGE_SAVED);

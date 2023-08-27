@@ -15,17 +15,17 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProfileVerificationMessageJpaRepository extends JpaRepository<ProfileVerificationMessage, Integer> {
+public interface ProfileVerificationMessageJpaRepository extends JpaRepository<ProfileVerificationMessage, Long> {
 
   Optional<ProfileVerificationMessage> findFirstByVerificationMessageType(ProfileVerificationMessageType messageType);
 
-  boolean existsById(Integer id);
+  boolean existsById(Long id);
 
   @Query(value ="SELECT id, title from profile_verification_message", nativeQuery = true)
   List<GetProfileVerificationMessagesBasic> getBasicDetails();
 
   @Query(value ="SELECT id from profile_verification_message WHERE id = :id", nativeQuery = true)
-  GetProfileVerificationMessageId getId(@Param("id") Integer id);
+  GetProfileVerificationMessageId getId(@Param("id") Long id);
 
   @Query(
           value = "SELECT m.id, m.title, m.verification_message_type as verificationMessageType, m.created_on as createdOn, m.updated_on as updatedOn" +

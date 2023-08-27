@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface AdminMemberStatisticJpaRepository extends JpaRepository<Member, Integer> {
+public interface AdminMemberStatisticJpaRepository extends JpaRepository<Member, Long> {
 
   @Query("SELECT COUNT(m) FROM Member m")
   long countTotalNumberOfMembers();

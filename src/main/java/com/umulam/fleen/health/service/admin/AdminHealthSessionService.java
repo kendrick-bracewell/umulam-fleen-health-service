@@ -11,10 +11,10 @@ public interface AdminHealthSessionService extends HealthSessionService {
 
   SearchResultView viewSessions(HealthSessionSearchRequest searchRequest);
 
-  HealthSessionView viewSession(Integer healthSessionId);
+  HealthSessionView viewSession(Long healthSessionId);
 
   SearchResultView viewSessionReviews(SearchRequest searchRequest);
 
   @Transactional
-  void cancelSession(Integer sessionId);
+  void cancelSession(Long sessionId);
 }

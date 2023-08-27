@@ -27,7 +27,7 @@ public class DownloadController {
   }
 
   @GetMapping(value = "/member/document/{id}")
-  public SignedUrlResponse generateMemberDocumentSignedUrl(@PathVariable(name = "id") Integer id) {
+  public SignedUrlResponse generateMemberDocumentSignedUrl(@PathVariable(name = "id") Long id) {
     String signedUrl = s3Service.generateSignedUrl(bucketNames.getMemberDocument(), "", HttpMethod.GET, 1);
     return SignedUrlResponse.builder().signedUrl(signedUrl).build();
   }

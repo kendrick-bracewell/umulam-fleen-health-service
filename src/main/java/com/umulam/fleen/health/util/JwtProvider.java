@@ -135,7 +135,7 @@ public class JwtProvider {
     return claims;
   }
 
-  private void setBasicUserClaims(Map<String, Object> claims, Integer userId, String[] authorities) {
+  private void setBasicUserClaims(Map<String, Object> claims, Long userId, String[] authorities) {
     claims.put(CLAIMS_USER_ID_KEY, userId);
     claims.put(CLAIMS_AUTHORITY_KEY, authorities);
   }

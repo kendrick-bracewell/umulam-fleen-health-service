@@ -19,7 +19,7 @@ import static com.umulam.fleen.health.util.DateFormatUtil.*;
 @AllArgsConstructor
 public class HealthSessionView extends FleenHealthView {
 
-  private Integer id;
+  private Long id;
   private String reference;
   private MemberViewBasic patient;
   private MemberViewBasic professional;

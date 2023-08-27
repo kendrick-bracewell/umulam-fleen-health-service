@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionView;
 import static com.umulam.fleen.health.model.mapper.HealthSessionMapper.toHealthSessionViewBasicPatient;
@@ -66,7 +65,7 @@ public class PatientHealthSessionServiceImpl implements PatientHealthSessionServ
 
   @Override
   @Transactional(readOnly = true)
-  public HealthSessionView viewSessionDetail(FleenUser user, Integer healthSessionId) {
+  public HealthSessionView viewSessionDetail(FleenUser user, Long healthSessionId) {
     Optional<HealthSession> healthSessionExist = healthSessionJpaRepository.findSessionByUser(user.getId(), ProfileType.USER, healthSessionId);
     if (healthSessionExist.isPresent()) {
       return toHealthSessionView(healthSessionExist.get());
@@ -78,18 +77,14 @@ public class PatientHealthSessionServiceImpl implements PatientHealthSessionServ
   @Transactional(readOnly = true)
   public SearchResultView viewProfessionalsOfPatient(FleenUser user) {
     List<Long> professionalIds = healthSessionJpaRepository.findAllProfessionalIdsOfUser(user.getId());
-    List<Integer> ids = professionalIds
-      .stream()
-      .map(Long::intValue)
-      .collect(Collectors.toList());
-    List<Professional> professionals = professionalService.findProfessionalsById(ids);
+    List<Professional> professionals = professionalService.findProfessionalsById(professionalIds);
     List<ProfessionalView> views = toProfessionalViews(professionals);
     return toSearchResult(views, null);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public ProfessionalView viewProfessionalDetail(Integer id) {
+  public ProfessionalView viewProfessionalDetail(Long id) {
     Professional professional = professionalService.getProfessional(id);
     return toProfessionalViewBasic(professional);
   }

@@ -17,44 +17,44 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface HealthSessionJpaRepository extends JpaRepository<HealthSession, Integer> {
+public interface HealthSessionJpaRepository extends JpaRepository<HealthSession, Long> {
 
   Optional<HealthSession> findByReference(String reference);
 
-  Optional<HealthSession> findByPatientAndId(Member member, Integer healthSessionId);
+  Optional<HealthSession> findByPatientAndId(Member member, Long healthSessionId);
 
   List<HealthSession> findByProfessionalAndDateAfter(Member member, LocalDate date);
 
-  boolean existsById(Integer healthSessionId);
+  boolean existsById(Long healthSessionId);
 
   Optional<HealthSession> findByProfessionalAndDateAndTime(Member member, LocalDate date, LocalTime time);
 
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.patient.id = :memberId AND hs.patient.userType = :userType")
-  Page<HealthSession> findSessionsByUser(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType,  Pageable pageable);
+  Page<HealthSession> findSessionsByUser(@Param("memberId") Long memberId, @Param("userType") ProfileType profileType,  Pageable pageable);
 
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.patient.id = :memberId AND hs.patient.userType = :userType AND hs.createdOn BETWEEN :startDate AND :endDate")
-  Page<HealthSession> findSessionsByUserAndDateBetween(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType,
+  Page<HealthSession> findSessionsByUserAndDateBetween(@Param("memberId") Long memberId, @Param("userType") ProfileType profileType,
                                                        @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.professional.id = :memberId AND hs.professional.userType = :userType")
-  Page<HealthSession> findSessionsByProfessional(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType, Pageable pageable);
+  Page<HealthSession> findSessionsByProfessional(@Param("memberId") Long memberId, @Param("userType") ProfileType profileType, Pageable pageable);
 
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.patient.id = :memberId AND hs.patient.userType = :userType AND hs.createdOn BETWEEN :startDate AND :endDate")
-  Page<HealthSession> findSessionsByProfessionalAndDateBetween(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType,
+  Page<HealthSession> findSessionsByProfessionalAndDateBetween(@Param("memberId") Long memberId, @Param("userType") ProfileType profileType,
                                                                @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.patient.id = :memberId AND hs.patient.userType = :userType AND hs.id = :healthSessionId")
-  Optional<HealthSession> findSessionByUser(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType, @Param("healthSessionId") Integer healthSessionId);
+  Optional<HealthSession> findSessionByUser(@Param("memberId") Long memberId, @Param("userType") ProfileType profileType, @Param("healthSessionId") Long healthSessionId);
 
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.professional.id = :memberId AND hs.professional.userType = :userType AND hs.id = :healthSessionId")
-  Optional<HealthSession> findSessionByProfessional(@Param("memberId") Integer memberId, @Param("userType") ProfileType profileType, @Param("healthSessionId") Integer healthSessionId);
+  Optional<HealthSession> findSessionByProfessional(@Param("memberId") Long memberId, @Param("userType") ProfileType profileType, @Param("healthSessionId") Long healthSessionId);
 
 
   @Query(value = "SELECT DISTINCT hs.professional.id FROM HealthSession hs WHERE hs.patient.id = :memberId")
-  List<Long> findAllProfessionalIdsOfUser(@Param("memberId") Integer memberId);
+  List<Long> findAllProfessionalIdsOfUser(@Param("memberId") Long memberId);
 
   @Query(value ="SELECT note AS note, professional_id AS professionalId FROM health_session WHERE id = :healthSessionId", nativeQuery = true)
-  Optional<GetUpdateHealthSessionNote> getUpdateHealthSessionNote(@Param("healthSessionId") Integer healthSessionId);
+  Optional<GetUpdateHealthSessionNote> getUpdateHealthSessionNote(@Param("healthSessionId") Long healthSessionId);
 
   List<HealthSession> findByStatusOrStatusAndDate(HealthSessionStatus status, HealthSessionStatus status1, LocalDate date);
 

@@ -36,17 +36,17 @@ public class ProfessionalHealthSessionController {
   }
 
   @GetMapping(value = "/session/detail/{id}")
-  public HealthSessionView viewSessionDetail(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer healthSessionId) {
+  public HealthSessionView viewSessionDetail(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Long healthSessionId) {
     return professionalHealthSessionService.viewSessionDetail(user, healthSessionId);
   }
 
   @GetMapping(value = "/session/update-note/{id}")
-  public GetUpdateHealthSessionNote getUpdateHealthSessionNote(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer healthSessionId) {
+  public GetUpdateHealthSessionNote getUpdateHealthSessionNote(@AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Long healthSessionId) {
     return professionalHealthSessionService.getUpdateSessionNote(user, healthSessionId);
   }
 
   @PutMapping(value = "/session/update-note/{id}")
-  public FleenHealthResponse addNoteToSession(@Valid @RequestBody AddNoteHealthSessionDto dto, @AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Integer healthSessionId) {
+  public FleenHealthResponse addNoteToSession(@Valid @RequestBody AddNoteHealthSessionDto dto, @AuthenticationPrincipal FleenUser user, @PathVariable(name = "id") Long healthSessionId) {
     professionalHealthSessionService.addSessionNote(dto, user, healthSessionId);
     return new FleenHealthResponse(HEALTH_SESSION_NOTE_UPDATED);
   }

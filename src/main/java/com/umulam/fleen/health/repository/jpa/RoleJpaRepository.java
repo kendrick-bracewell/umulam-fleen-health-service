@@ -8,10 +8,10 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface RoleJpaRepository extends JpaRepository<Role, Integer> {
+public interface RoleJpaRepository extends JpaRepository<Role, Long> {
 
   Optional<Role> findByCode(String code);
 
   @Query("SELECT r FROM Role r WHERE r.id IN (:ids)")
-  List<Role> findManyByIds(@Param("ids") List<Integer> ids);
+  List<Role> findManyByIds(@Param("ids") List<Long> ids);
 }

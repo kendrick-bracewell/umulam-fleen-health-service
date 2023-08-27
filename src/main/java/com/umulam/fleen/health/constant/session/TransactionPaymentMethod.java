@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class TransactionPaymentMethod {
 
   @Column
-  private Integer id;
+  private Long id;
 
   @Column
   private Member member;

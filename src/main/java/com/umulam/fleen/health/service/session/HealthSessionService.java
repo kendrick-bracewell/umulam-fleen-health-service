@@ -21,26 +21,26 @@ public interface HealthSessionService {
   SearchResultView viewProfessionals(ProfessionalSearchRequest searchRequest);
 
   @Transactional(readOnly = true)
-  ProfessionalViewBasic viewProfessionalDetail(Integer professionalId);
+  ProfessionalViewBasic viewProfessionalDetail(Long professionalId);
 
   @Transactional
   PendingHealthSessionBookingResponse bookSession(BookHealthSessionDto dto, FleenUser user);
 
   @Transactional
-  void cancelSession(FleenUser user, Integer sessionId);
+  void cancelSession(FleenUser user, Long sessionId);
 
   @Transactional(readOnly = true)
-  ProfessionalCheckAvailabilityResponse viewProfessionalAvailability(FleenUser user, Integer professionalId);
+  ProfessionalCheckAvailabilityResponse viewProfessionalAvailability(FleenUser user, Long professionalId);
 
   @Transactional(readOnly = true)
-  GetProfessionalBookSessionResponse getProfessionalBookSession(Integer professionalId);
+  GetProfessionalBookSessionResponse getProfessionalBookSession(Long professionalId);
 
   @Transactional
-  void rescheduleSession(ReScheduleHealthSessionDto dto, FleenUser user, Integer healthSessionId);
+  void rescheduleSession(ReScheduleHealthSessionDto dto, FleenUser user, Long healthSessionId);
 
   @Transactional
-  void addSessionReview(AddHealthSessionReviewDto dto, FleenUser user, Integer healthSessionId);
+  void addSessionReview(AddHealthSessionReviewDto dto, FleenUser user, Long healthSessionId);
 
   @Transactional
-  void cancelSession(Optional<HealthSession> healthSessionExist, Integer healthSessionId);
+  void cancelSession(Optional<HealthSession> healthSessionExist, Long healthSessionId);
 }

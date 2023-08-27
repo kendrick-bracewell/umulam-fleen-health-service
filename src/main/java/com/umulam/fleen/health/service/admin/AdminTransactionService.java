@@ -8,5 +8,5 @@ public interface AdminTransactionService {
 
   SearchResultView viewSessionTransactions(SessionTransactionSearchRequest searchRequest);
 
-  SessionTransactionView viewSessionTransaction(Integer sessionTransactionId);
+  SessionTransactionView viewSessionTransaction(Long sessionTransactionId);
 }
