@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public interface AdminHealthSessionJpaRepository extends JpaRepository<HealthSession, Integer> {
+public interface AdminHealthSessionJpaRepository extends JpaRepository<HealthSession, Long> {
 
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.reference = :reference")
   Page<HealthSession> findByReference(@Param("reference") String reference, Pageable pageable);

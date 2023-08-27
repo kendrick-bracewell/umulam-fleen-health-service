@@ -20,7 +20,7 @@ public class VerificationDocument {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private Integer id;
+  private Long id;
 
   @Column(name = "document_type")
   @Enumerated(EnumType.STRING)

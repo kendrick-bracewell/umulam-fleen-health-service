@@ -58,7 +58,7 @@ public class AdminTransactionServiceImpl implements AdminTransactionService {
   }
 
   @Override
-  public SessionTransactionView viewSessionTransaction(Integer sessionTransactionId) {
+  public SessionTransactionView viewSessionTransaction(Long sessionTransactionId) {
     Optional<SessionTransaction> existingSessionTransaction = sessionTransactionJpaRepository.findById(sessionTransactionId);
     if (existingSessionTransaction.isPresent()) {
       return toSessionTransactionView(existingSessionTransaction.get());

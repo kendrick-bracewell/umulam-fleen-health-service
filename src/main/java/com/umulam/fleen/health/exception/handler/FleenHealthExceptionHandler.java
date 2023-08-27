@@ -2,16 +2,14 @@ package com.umulam.fleen.health.exception.handler;
 
 import com.umulam.fleen.health.exception.authentication.*;
 import com.umulam.fleen.health.exception.banking.*;
+import com.umulam.fleen.health.exception.base.ResourceNotFoundException;
 import com.umulam.fleen.health.exception.business.BusinessNotFoundException;
 import com.umulam.fleen.health.exception.country.CountryCodeDuplicateException;
 import com.umulam.fleen.health.exception.country.CountryDuplicateException;
 import com.umulam.fleen.health.exception.country.CountryNotFoundException;
 import com.umulam.fleen.health.exception.externalsystem.ExternalSystemException;
 import com.umulam.fleen.health.exception.healthsession.*;
-import com.umulam.fleen.health.exception.member.MemberAlreadyOnboarded;
-import com.umulam.fleen.health.exception.member.MemberNotFoundException;
-import com.umulam.fleen.health.exception.member.UpdatePasswordFailedException;
-import com.umulam.fleen.health.exception.member.UserNotFoundException;
+import com.umulam.fleen.health.exception.member.*;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusCodeDuplicateException;
 import com.umulam.fleen.health.exception.memberstatus.MemberStatusNotFoundException;
 import com.umulam.fleen.health.exception.professional.*;
@@ -37,8 +35,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,11 +49,32 @@ import java.util.stream.Collectors;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.umulam.fleen.health.constant.base.ExceptionConstant.*;
+import static com.umulam.fleen.health.constant.base.FleenHealthConstant.RESOURCE_NOT_FOUND;
+import static com.umulam.fleen.health.filter.SimpleCorsFilter.setHeaders;
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @RestControllerAdvice
 public class FleenHealthExceptionHandler {
+
+  @ResponseStatus(value = NOT_FOUND)
+  @ExceptionHandler(value = {
+    NoHandlerFoundException.class
+  })
+  public Object handleNotFound(HttpServletResponse res, HttpServletRequest req) {
+    setHeaders(res);
+    return buildErrorMap(RESOURCE_NOT_FOUND, NOT_FOUND, req);
+  }
+
+  @ResponseStatus(value = NOT_FOUND)
+  @ExceptionHandler(value = {
+    ResourceNotFoundException.class,
+  })
+  public Object handleNotFound(HttpServletRequest request) {
+    var body = buildErrorMap(ResourceNotFoundException.message, NOT_FOUND);
+    body.put(PATH_URL, request.getServletPath());
+    return body;
+  }
 
   @ResponseStatus(value = NOT_FOUND)
   @ExceptionHandler(value = {
@@ -67,7 +88,8 @@ public class FleenHealthExceptionHandler {
           HealthSessionNotFoundException.class,
           SessionTransactionNotFound.class,
           BankAccountNotFoundException.class,
-          EarningsAccountNotFoundException.class
+          EarningsAccountNotFoundException.class,
+          EmailAddressNotFoundException.class,
   })
   public Object handleNotFound(Exception ex) {
     log.error(ex.getMessage(), ex);
@@ -161,9 +183,9 @@ public class FleenHealthExceptionHandler {
   })
   public Object forbidden(AccessDeniedException ex, HttpServletRequest request) {
     log.error(ex.getMessage(), ex);
-    var map = buildErrorMap(FORBIDDEN_ACCESS, FORBIDDEN);
-    map.put(PATH_URL, request.getServletPath());
-    return map;
+    var body = buildErrorMap(FORBIDDEN_ACCESS, FORBIDDEN);
+    body.put(PATH_URL, request.getServletPath());
+    return body;
   }
 
   @ResponseStatus(value = BAD_REQUEST)
@@ -243,7 +265,7 @@ public class FleenHealthExceptionHandler {
 
     Map<String, Object> error = new HashMap<>(buildErrorMap(INVALID_REQUEST_BODY, BAD_REQUEST));
     error.put("fields", values);
-    error.put("type", "DataValidation");
+    error.put("type", "DATA_VALIDATION");
     return error;
   }
 
@@ -252,6 +274,15 @@ public class FleenHealthExceptionHandler {
     error.put("message", message);
     error.put("status", status.value());
     error.put("timestamp", LocalDateTime.now().toString());
+    return error;
+  }
+
+  private Map<String, Object> buildErrorMap(String message, HttpStatus status, HttpServletRequest req) {
+    Map<String, Object> error = new HashMap<>();
+    error.put("message", message);
+    error.put("status", status.value());
+    error.put("timestamp", LocalDateTime.now().toString());
+    error.put(PATH_URL, req.getServletPath());
     return error;
   }
 }

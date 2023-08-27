@@ -171,7 +171,7 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
   @Override
   @Transactional
   public void createWithdrawal(CreateWithdrawalDto dto, FleenUser user) {
-    Optional<MemberBankAccount> bankAccountExists = bankAccountJpaRepository.findById(Integer.parseInt(dto.getBankAccount()));
+    Optional<MemberBankAccount> bankAccountExists = bankAccountJpaRepository.findById(Long.parseLong(dto.getBankAccount()));
     if (bankAccountExists.isEmpty()) {
       throw new BankAccountNotFoundException(dto.getBankAccount());
     }
@@ -269,7 +269,7 @@ public class FlutterwaveService extends BankingServiceImpl implements BankingSer
     bankAccountJpaRepository.save(bankAccount);
   }
 
-  public Object getBankBranches(Integer bankId) {
+  public Object getBankBranches(Long bankId) {
     return flutterwaveAdapter.getBankBranches(bankId);
   }
 

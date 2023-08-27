@@ -33,7 +33,7 @@ public class CountryController {
   }
 
   @GetMapping(value = "/detail/{id}")
-  public CountryView findOne(@PathVariable(name = "id") Integer id) {
+  public CountryView findOne(@PathVariable(name = "id") Long id) {
     return toCountryView(countryService.getCountry(id));
   }
 
@@ -43,7 +43,7 @@ public class CountryController {
   }
 
   @PutMapping(value ="/update/{id}")
-  public CountryView updateCountry(@PathVariable(name = "id") Integer id, @Valid @RequestBody UpdateCountryDto dto) {
+  public CountryView updateCountry(@PathVariable(name = "id") Long id, @Valid @RequestBody UpdateCountryDto dto) {
     return toCountryView(countryService.updateCountry(id, dto));
   }
 

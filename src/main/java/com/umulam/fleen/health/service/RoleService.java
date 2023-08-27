@@ -8,21 +8,21 @@ import java.util.List;
 
 public interface RoleService {
 
-  Role getRole(Integer id);
+  Role getRole(Long id);
 
   Role getRoleByCode(String code);
 
   List<Role> getRoles();
 
-  List<Role> getRolesById(List<Integer> ids);
+  List<Role> getRolesById(List<Long> ids);
 
   Role saveRole(RoleDto dto);
 
-  Role updateRole(Integer id, RoleDto dto);
+  Role updateRole(Long id, RoleDto dto);
 
   void deleteMany(DeleteIdsDto dto);
 
   void deleteAllRole();
 
-  boolean isRoleExists(Integer id);
+  boolean isRoleExists(Long id);
 }

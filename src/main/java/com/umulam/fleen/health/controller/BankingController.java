@@ -57,7 +57,7 @@ public class BankingController {
   }
 
   @GetMapping(value = "/bank-account/detail/{id}")
-  public BankAccountView findBankAccount(@PathVariable(name = "id") Integer bankAccountId, @AuthenticationPrincipal FleenUser user) {
+  public BankAccountView findBankAccount(@PathVariable(name = "id") Long bankAccountId, @AuthenticationPrincipal FleenUser user) {
     return bankingService.getBankAccount(user, bankAccountId);
   }
 
@@ -91,7 +91,7 @@ public class BankingController {
   }
 
   @GetMapping(value = "/get-bank-branches-fw/{id}")
-  public Object getBanksBranchesFw(@PathVariable(name = "id") Integer bankId) {
+  public Object getBanksBranchesFw(@PathVariable(name = "id") Long bankId) {
     return flutterwaveService.getBankBranches(bankId);
   }
 }

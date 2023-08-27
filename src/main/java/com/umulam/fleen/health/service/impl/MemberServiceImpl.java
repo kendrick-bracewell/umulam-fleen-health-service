@@ -105,7 +105,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
 
   @Override
   @Transactional(readOnly = true)
-  public MemberView findMemberById(Integer id) {
+  public MemberView findMemberById(Long id) {
     Optional<Member> memberExists = repository.findById(id);
     if (memberExists.isEmpty()) {
       throw new MemberNotFoundException(id);
@@ -148,7 +148,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   }
 
   @Override
-  public String getTwoFaSecret(Integer memberId) {
+  public String getTwoFaSecret(Long memberId) {
     return repository.getTwoFaSecret(memberId);
   }
 
@@ -160,7 +160,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
 
   @Override
   @Transactional
-  public MfaDetail setupMfa(Integer memberId, MfaTypeDto mfaTypeDto) {
+  public MfaDetail setupMfa(Long memberId, MfaTypeDto mfaTypeDto) {
     MfaType mfaType = MfaType.valueOf(mfaTypeDto.getMfaType());
     Member member = repository
             .findById(memberId)
@@ -262,7 +262,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   }
 
   @Override
-  public ProfileVerificationStatus getVerificationStatus(Integer memberId) {
+  public ProfileVerificationStatus getVerificationStatus(Long memberId) {
     return repository.getProfileVerificationStatus(memberId);
   }
 
@@ -286,7 +286,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
 
   @Override
   @Transactional
-  public UpdateMemberDetailsResponse updateMemberDetails(UpdateMemberDetailsDto dto, Integer memberId) {
+  public UpdateMemberDetailsResponse updateMemberDetails(UpdateMemberDetailsDto dto, Long memberId) {
     Member member = getMember(memberId);
     setUpdateMemberDetails(member, dto);
     save(member);
@@ -448,7 +448,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   }
 
   @Override
-  public void updateMemberStatus(UpdateMemberStatusDto dto, Integer memberId) {
+  public void updateMemberStatus(UpdateMemberStatusDto dto, Long memberId) {
     getMember(memberId);
     MemberStatusType memberStatusType = MemberStatusType.valueOf(dto.getMemberStatus());
     MemberStatus memberStatus = memberStatusService.getMemberStatusByCode(memberStatusType.name());
@@ -457,7 +457,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
 
   @Override
   @Transactional
-  public void updateMemberRole(UpdateMemberRoleDto dto, Integer memberId) {
+  public void updateMemberRole(UpdateMemberRoleDto dto, Long memberId) {
     Member member = getMember(memberId);
     List<Role> roles = roleService.getRolesById(dto.getIds());
     member.getRoles().addAll(roles);
@@ -466,7 +466,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
 
   @Override
   @Transactional(readOnly = true)
-  public List<RoleView> getMemberRoles(Integer memberId) {
+  public List<RoleView> getMemberRoles(Long memberId) {
     getMember(memberId);
     List<Role> roles = new ArrayList<>(repository.getMemberRole(memberId));
     return RoleMapper.toRoleViews(roles);
@@ -483,7 +483,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
     return request;
   }
 
-  protected Member getMember(Integer memberId) {
+  protected Member getMember(Long memberId) {
     Optional<Member> memberExists = repository.findById(memberId);
 
     if (memberExists.isEmpty()) {
@@ -493,7 +493,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   }
 
   @Override
-  public Member getMemberById(Integer memberId) {
+  public Member getMemberById(Long memberId) {
     Optional<Member> memberExists = repository.findById(memberId);
 
     if (memberExists.isEmpty()) {

@@ -20,7 +20,7 @@ public class Earnings {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private Integer id;
+  private Long id;
 
   @Column(name = "total_earnings", nullable = false)
   private BigDecimal totalEarnings;

@@ -135,7 +135,7 @@ public class AdminMemberServiceImpl extends MemberServiceImpl implements AdminMe
 
   @Override
   @Transactional
-  public void resendOnboardingDetails(Integer memberId) {
+  public void resendOnboardingDetails(Long memberId) {
     Member member = getMember(memberId);
 
     if (MemberStatusType.ACTIVE.name().equals(member.getMemberStatus().getCode())) {

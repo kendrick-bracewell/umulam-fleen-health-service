@@ -11,11 +11,11 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface HealthSessionReviewJpaRepository extends JpaRepository<HealthSessionReview, Integer> {
+public interface HealthSessionReviewJpaRepository extends JpaRepository<HealthSessionReview, Long> {
 
   @Query(value = "SELECT hsr FROM HealthSessionReview hsr WHERE hsr.patient.id = :memberId")
-  List<HealthSessionReview> findPatientReviews(@Param("memberId") Integer memberId);
+  List<HealthSessionReview> findPatientReviews(@Param("memberId") Long memberId);
 
   @Query(value = "SELECT hsr FROM HealthSessionReview hsr WHERE hsr.professional.id = :memberId")
-  List<HealthSessionReview> findProfessionalReviews(@Param("memberId") Integer memberId);
+  List<HealthSessionReview> findProfessionalReviews(@Param("memberId") Long memberId);
 }

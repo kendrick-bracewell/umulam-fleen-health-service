@@ -26,5 +26,5 @@ public interface BankingService {
 
   List<BankAccountView> getBankAccounts(FleenUser user);
 
-  BankAccountView getBankAccount(FleenUser user, Integer bankAccountId);
+  BankAccountView getBankAccount(FleenUser user, Long bankAccountId);
 }

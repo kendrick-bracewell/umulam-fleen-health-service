@@ -60,7 +60,7 @@ public class BookHealthSessionDto {
   public HealthSession toHealthSession() {
     return HealthSession.builder()
       .professional(Member.builder()
-        .id(Integer.parseInt(professional)).build())
+        .id(Long.parseLong(professional)).build())
       .location(SessionLocation.REMOTE)
       .status(HealthSessionStatus.PENDING)
       .timezone("WAT")

@@ -22,6 +22,8 @@ import com.umulam.fleen.health.model.request.CompleteUserSignUpRequest;
 import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequest;
 import com.umulam.fleen.health.model.request.SaveProfileVerificationMessageRequest;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
+import com.umulam.fleen.health.model.response.authentication.ForgotPasswordResponse;
+import com.umulam.fleen.health.model.response.authentication.InitiatePasswordChangeResponse;
 import com.umulam.fleen.health.model.response.authentication.SignInResponse;
 import com.umulam.fleen.health.model.response.authentication.SignUpResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
@@ -46,7 +48,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.umulam.fleen.health.constant.base.GeneralConstant.*;
 import static com.umulam.fleen.health.constant.authentication.AuthenticationStatus.COMPLETED;
 import static com.umulam.fleen.health.constant.authentication.AuthenticationStatus.IN_PROGRESS;
 import static com.umulam.fleen.health.constant.authentication.MfaType.*;
@@ -54,6 +55,7 @@ import static com.umulam.fleen.health.constant.authentication.RoleType.*;
 import static com.umulam.fleen.health.constant.authentication.TokenType.ACCESS_TOKEN;
 import static com.umulam.fleen.health.constant.authentication.TokenType.REFRESH_TOKEN;
 import static com.umulam.fleen.health.constant.base.FleenHealthConstant.VERIFICATION_CODE_SENT_MESSAGE;
+import static com.umulam.fleen.health.constant.base.GeneralConstant.*;
 import static com.umulam.fleen.health.util.DateTimeUtil.addMinutesFromNow;
 import static com.umulam.fleen.health.util.DateTimeUtil.toHours;
 import static com.umulam.fleen.health.util.FleenAuthorities.*;
@@ -880,7 +882,7 @@ public class AuthenticationServiceImpl implements
    */
   @Override
   @Transactional
-  public void forgotPassword(ForgotPasswordDto dto) {
+  public ForgotPasswordResponse forgotPassword(ForgotPasswordDto dto) {
     Member member = memberService.getMemberByEmailAddress(dto.getEmailAddress());
     if (isNull(member)) {
       throw new UserNotFoundException(dto.getEmailAddress());
@@ -909,6 +911,10 @@ public class AuthenticationServiceImpl implements
 
     sendVerificationMessage(request, verificationType);
     saveResetPasswordOtp(member.getEmailAddress(), code);
+    return ForgotPasswordResponse.builder()
+      .emailAddress(user.getEmailAddress())
+      .phoneNumber(user.getPhoneNumber())
+      .build();
   }
 
   /**

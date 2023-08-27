@@ -15,8 +15,8 @@ public interface AdminProfessionalService extends ProfessionalService {
   SearchResultView findProfessionalsByVerificationStatus(ProfessionalSearchRequest searchRequest);
 
   @Transactional
-  ProfessionalView updateProfessionalDetail(UpdateProfessionalDetailsDto dto, Integer professionalId);
+  ProfessionalView updateProfessionalDetail(UpdateProfessionalDetailsDto dto, Long professionalId);
 
   @Transactional
-  void updateProfessionalVerificationStatus(UpdateProfileVerificationStatusDto dto, Integer professionalId);
+  void updateProfessionalVerificationStatus(UpdateProfileVerificationStatusDto dto, Long professionalId);
 }

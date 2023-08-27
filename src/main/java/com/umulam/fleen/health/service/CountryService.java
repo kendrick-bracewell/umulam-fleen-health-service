@@ -12,25 +12,25 @@ import java.util.List;
 
 public interface CountryService {
 
-  Country getCountry(Integer id);
+  Country getCountry(Long id);
 
   @Transactional(readOnly = true)
   Country getCountryByCode(String code);
 
   @Transactional(readOnly = true)
-  Country getReference(Integer id);
+  Country getReference(Long id);
 
   SearchResultView findCountries(CountrySearchRequest searchRequest);
 
   Country saveCountry(CountryDto dto);
 
-  Country updateCountry(Integer id, UpdateCountryDto dto);
+  Country updateCountry(Long id, UpdateCountryDto dto);
 
   void deleteMany(DeleteIdsDto dto);
 
   void deleteAllCountry();
 
-  boolean isCountryExists(Integer id);
+  boolean isCountryExists(Long id);
 
   boolean isCountryExistsByCode(String code);
 

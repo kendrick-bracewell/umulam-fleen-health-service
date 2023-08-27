@@ -7,5 +7,5 @@ public interface GetUpdateHealthSessionNote {
   String getNote();
 
   @JsonProperty("professional_id")
-  Integer getProfessionalId();
+  Long getProfessionalId();
 }

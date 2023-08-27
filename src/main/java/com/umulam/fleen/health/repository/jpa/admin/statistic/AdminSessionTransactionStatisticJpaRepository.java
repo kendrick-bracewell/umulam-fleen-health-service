@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface AdminSessionTransactionStatisticJpaRepository extends JpaRepository<SessionTransaction, Integer> {
+public interface AdminSessionTransactionStatisticJpaRepository extends JpaRepository<SessionTransaction, Long> {
 
   @Query("SELECT COUNT(st) FROM SessionTransaction st")
   long countTotalNumberOfSessionTransactions();

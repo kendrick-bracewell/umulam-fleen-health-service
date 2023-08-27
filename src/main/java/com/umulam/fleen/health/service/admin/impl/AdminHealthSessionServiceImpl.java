@@ -93,7 +93,7 @@ public class AdminHealthSessionServiceImpl extends HealthSessionServiceImpl impl
   }
 
   @Override
-  public HealthSessionView viewSession(Integer healthSessionId) {
+  public HealthSessionView viewSession(Long healthSessionId) {
     Optional<HealthSession> existingHealthSession = healthSessionJpaRepository.findById(healthSessionId);
     if (existingHealthSession.isPresent()) {
       return toHealthSessionView(existingHealthSession.get());
@@ -110,7 +110,7 @@ public class AdminHealthSessionServiceImpl extends HealthSessionServiceImpl impl
 
   @Override
   @Transactional
-  public void cancelSession(Integer healthSessionId) {
+  public void cancelSession(Long healthSessionId) {
     Optional<HealthSession> healthSessionExist = healthSessionJpaRepository.findById(healthSessionId);
     cancelSession(healthSessionExist, healthSessionId);
   }

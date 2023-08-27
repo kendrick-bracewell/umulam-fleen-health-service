@@ -20,7 +20,7 @@ public class MemberStatus {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private Integer id;
+  private Long id;
 
   @Column(name = "title", nullable = false, length = 200)
   private String title;

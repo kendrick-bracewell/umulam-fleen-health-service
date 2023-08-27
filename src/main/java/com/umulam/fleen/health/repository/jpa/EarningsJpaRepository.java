@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface EarningsJpaRepository extends JpaRepository<Earnings, Integer> {
+public interface EarningsJpaRepository extends JpaRepository<Earnings, Long> {
 
   Optional<Earnings> findByMember(Member member);
 }

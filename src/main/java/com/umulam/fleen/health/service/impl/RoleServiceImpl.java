@@ -25,7 +25,7 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
-  public Role getRole(Integer id) {
+  public Role getRole(Long id) {
     return repository.findById(id)
             .orElseThrow(() -> new RoleNotFoundException(id));
   }
@@ -42,7 +42,7 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
-  public List<Role> getRolesById(List<Integer> ids) {
+  public List<Role> getRolesById(List<Long> ids) {
     return repository.findManyByIds(ids);
   }
 
@@ -53,7 +53,7 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
-  public Role updateRole(Integer id, RoleDto dto) {
+  public Role updateRole(Long id, RoleDto dto) {
     getRole(id);
     Role Role = dto.toRole();
     Role.setId(id);
@@ -77,7 +77,7 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
-  public boolean isRoleExists(Integer id) {
+  public boolean isRoleExists(Long id) {
     return repository.findById(id).isPresent();
   }
 

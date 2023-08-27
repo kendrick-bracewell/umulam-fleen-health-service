@@ -37,7 +37,7 @@ public class ProfessionalValidValidator implements ConstraintValidator<Professio
   @Override
   public boolean isValid(String id, ConstraintValidatorContext constraintValidatorContext) {
     try {
-      Member member = service.getMemberById(Integer.parseInt(id));
+      Member member = service.getMemberById(Long.parseLong(id));
       if (nonNull(member) && member.getUserType() == PROFESSIONAL && member.getVerificationStatus() == APPROVED) {
         Optional<Professional> professionalExists = professionalService.findProfessionalByMember(member);
         if (professionalExists.isPresent()) {

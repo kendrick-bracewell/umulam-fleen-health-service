@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
-public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
+public interface MemberJpaRepository extends JpaRepository<Member, Long> {
 
   Optional<Member> findByEmailAddress(String emailAddress);
 
@@ -26,23 +26,23 @@ public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
   @Modifying
   @Transactional
   @Query("UPDATE Member m SET m.mfaEnabled = true WHERE m.id = :id")
-  void reEnableTwoFa(@Param("id") Integer memberId);
+  void reEnableTwoFa(@Param("id") Long memberId);
 
   @Modifying
   @Transactional
   @Query("UPDATE Member m SET m.mfaEnabled = false WHERE m.id = :id")
-  void disableTwoFa(@Param("id") Integer memberId);
+  void disableTwoFa(@Param("id") Long memberId);
 
   @Query("SELECT m.mfaSecret FROM Member m WHERE m.id = :id")
-  String getTwoFaSecret(@Param("id") Integer memberId);
+  String getTwoFaSecret(@Param("id") Long memberId);
 
   @Modifying
   @Transactional
   @Query("UPDATE Member m SET m.password = :password WHERE m.id = :id")
-  void updatePassword(@Param("id") Integer memberId, String password);
+  void updatePassword(@Param("id") Long memberId, String password);
 
   @Query("SELECT m.verificationStatus FROM Member m WHERE m.id = :id")
-  ProfileVerificationStatus getProfileVerificationStatus(@Param("id") Integer memberId);
+  ProfileVerificationStatus getProfileVerificationStatus(@Param("id") Long memberId);
 
   boolean existsByEmailAddress(String emailAddress);
 
@@ -51,15 +51,15 @@ public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
   @Query(value =
           "SELECT first_name AS firstName, last_name AS lastName, email_address AS emailAddress," +
           "phone_number AS phoneNumber, gender AS gender, date_of_birth AS dateOfBirth FROM member WHERE id = :id", nativeQuery = true)
-  GetMemberUpdateDetailsResponse findMemberDetailsById(@Param("id") Integer memberId);
+  GetMemberUpdateDetailsResponse findMemberDetailsById(@Param("id") Long memberId);
 
   @Modifying
   @Transactional
   @Query(value = "UPDATE Member m SET m.memberStatus = :memberStatus WHERE m.id = :id")
-  void updateMemberStatus(@Param("id") Integer memberId, @Param("memberStatus") MemberStatus memberStatus);
+  void updateMemberStatus(@Param("id") Long memberId, @Param("memberStatus") MemberStatus memberStatus);
   @Transactional(readOnly = true)
   @Query(value = "SELECT m.roles FROM Member m where m.id = :id")
-  Set<Role> getMemberRole(@Param("id") Integer memberId);
+  Set<Role> getMemberRole(@Param("id") Long memberId);
 
   @Query(value = "SELECT m FROM Member m WHERE m.emailAddress = :emailAddress")
   Page<Member> findByEmailAddress(@Param("emailAddress") String emailAddress, Pageable pageable);
@@ -82,5 +82,5 @@ public interface MemberJpaRepository extends JpaRepository<Member, Integer> {
   @Query("SELECT m FROM Member m JOIN m.roles r WHERE r.code = :code")
   Page<Member> findAllPreOnboardedMembers(@Param("code") String roleType, Pageable pageable);
 
-  boolean existsById(Integer id);
+  boolean existsById(Long id);
 }

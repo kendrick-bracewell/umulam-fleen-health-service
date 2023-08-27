@@ -15,13 +15,13 @@ public interface ProfessionalHealthSessionService {
 
   SearchResultView viewSessions(FleenUser user, SearchRequest searchRequest);
 
-  HealthSessionView viewSessionDetail(FleenUser user, Integer healthSessionId);
+  HealthSessionView viewSessionDetail(FleenUser user, Long healthSessionId);
 
   @Transactional(readOnly = true)
-  GetUpdateHealthSessionNote getUpdateSessionNote(FleenUser user, Integer healthSessionId);
+  GetUpdateHealthSessionNote getUpdateSessionNote(FleenUser user, Long healthSessionId);
 
   @Transactional
-  void addSessionNote(AddNoteHealthSessionDto dto, FleenUser user, Integer healthSessionId);
+  void addSessionNote(AddNoteHealthSessionDto dto, FleenUser user, Long healthSessionId);
 
   List<HealthSessionReviewView> viewReviews(FleenUser user);
 }

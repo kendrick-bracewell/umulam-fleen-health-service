@@ -61,7 +61,7 @@ public class ProfessionalHealthSessionServiceImpl implements ProfessionalHealthS
 
   @Override
   @Transactional(readOnly = true)
-  public HealthSessionView viewSessionDetail(FleenUser user, Integer healthSessionId) {
+  public HealthSessionView viewSessionDetail(FleenUser user, Long healthSessionId) {
     Optional<HealthSession> healthSessionExist = healthSessionJpaRepository.findSessionByProfessional(user.getId(), ProfileType.PROFESSIONAL, healthSessionId);
     if (healthSessionExist.isPresent()) {
       return toHealthSessionView(healthSessionExist.get());
@@ -71,7 +71,7 @@ public class ProfessionalHealthSessionServiceImpl implements ProfessionalHealthS
 
   @Override
   @Transactional(readOnly = true)
-  public GetUpdateHealthSessionNote getUpdateSessionNote(FleenUser user, Integer healthSessionId) {
+  public GetUpdateHealthSessionNote getUpdateSessionNote(FleenUser user, Long healthSessionId) {
     Optional<GetUpdateHealthSessionNote> sessionNoteExist = healthSessionJpaRepository.getUpdateHealthSessionNote(healthSessionId);
     if (sessionNoteExist.isEmpty()) {
       throw new HealthSessionNotFoundException(healthSessionId);
@@ -86,7 +86,7 @@ public class ProfessionalHealthSessionServiceImpl implements ProfessionalHealthS
 
   @Override
   @Transactional
-  public void addSessionNote(AddNoteHealthSessionDto dto, FleenUser user, Integer healthSessionId) {
+  public void addSessionNote(AddNoteHealthSessionDto dto, FleenUser user, Long healthSessionId) {
     Optional<HealthSession> healthSessionExist = healthSessionJpaRepository.findSessionByProfessional(user.getId(), ProfileType.PROFESSIONAL, healthSessionId);
     if (healthSessionExist.isPresent()) {
       HealthSession healthSession = healthSessionExist.get();

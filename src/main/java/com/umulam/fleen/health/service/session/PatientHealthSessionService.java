@@ -13,11 +13,11 @@ public interface PatientHealthSessionService {
 
   SearchResultView viewSessions(FleenUser user, SearchRequest searchRequest);
 
-  HealthSessionView viewSessionDetail(FleenUser user, Integer healthSessionId);
+  HealthSessionView viewSessionDetail(FleenUser user, Long healthSessionId);
 
   SearchResultView viewProfessionalsOfPatient(FleenUser user);
 
-  ProfessionalView viewProfessionalDetail(Integer id);
+  ProfessionalView viewProfessionalDetail(Long id);
 
   List<HealthSessionReviewView> viewReviews(FleenUser user);
 }

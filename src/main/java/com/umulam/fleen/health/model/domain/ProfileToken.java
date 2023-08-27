@@ -19,7 +19,7 @@ public class ProfileToken {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private Integer id;
+  private Long id;
 
   @Column(name = "reset_password_token", length = 500)
   private String resetPasswordToken;

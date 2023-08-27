@@ -47,7 +47,7 @@ public class CountryServiceImpl implements CountryService {
 
   @Override
   @Transactional(readOnly = true)
-  public Country getCountry(Integer id) {
+  public Country getCountry(Long id) {
     return repository
             .findById(id)
             .orElseThrow(() -> new CountryNotFoundException(id));
@@ -63,7 +63,7 @@ public class CountryServiceImpl implements CountryService {
 
   @Override
   @Transactional(readOnly = true)
-  public Country getReference(Integer id) {
+  public Country getReference(Long id) {
     return Optional
             .of(repository.getReferenceById(id))
             .orElseThrow(() -> new CountryNotFoundException(id));
@@ -92,7 +92,7 @@ public class CountryServiceImpl implements CountryService {
 
   @Override
   @Transactional
-  public Country updateCountry(Integer id, UpdateCountryDto dto) {
+  public Country updateCountry(Long id, UpdateCountryDto dto) {
     getCountry(id);
     Country country = getCountryByCode(dto.getCode());
     if (isCountryExistsByCode(dto.getCode()) && !(country.getId().intValue() == id.intValue())) {
@@ -122,7 +122,7 @@ public class CountryServiceImpl implements CountryService {
   }
 
   @Override
-  public boolean isCountryExists(Integer id) {
+  public boolean isCountryExists(Long id) {
     return repository
             .findById(id)
             .isPresent();

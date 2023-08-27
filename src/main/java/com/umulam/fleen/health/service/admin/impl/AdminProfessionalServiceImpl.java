@@ -118,7 +118,7 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
 
   @Override
   @Transactional
-  public ProfessionalView updateProfessionalDetail(UpdateProfessionalDetailsDto dto, Integer professionalId) {
+  public ProfessionalView updateProfessionalDetail(UpdateProfessionalDetailsDto dto, Long professionalId) {
     Professional professional = dto.toProfessional();
 
     Optional<Professional> professionalExists = repository.findById(professionalId);
@@ -136,8 +136,8 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
 
   @Override
   @Transactional
-  public void updateProfessionalVerificationStatus(UpdateProfileVerificationStatusDto dto, Integer professionalId) {
-    ProfileVerificationMessage verificationMessage = verificationMessageService.getProfileVerificationMessageFromCache(Integer.parseInt(dto.getVerificationMessageTemplateId()));
+  public void updateProfessionalVerificationStatus(UpdateProfileVerificationStatusDto dto, Long professionalId) {
+    ProfileVerificationMessage verificationMessage = verificationMessageService.getProfileVerificationMessageFromCache(Long.parseLong(dto.getVerificationMessageTemplateId()));
     Optional<Professional> professionalExists = repository.findById(professionalId);
 
     if (professionalExists.isEmpty()) {

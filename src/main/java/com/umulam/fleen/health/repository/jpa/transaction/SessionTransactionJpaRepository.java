@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface SessionTransactionJpaRepository extends JpaRepository<SessionTransaction, Integer> {
+public interface SessionTransactionJpaRepository extends JpaRepository<SessionTransaction, Long> {
 
   @Query(value = "SELECT st FROM SessionTransaction st WHERE st.reference = :reference")
   Optional<SessionTransaction> findByReference(@Param("reference") String reference);
@@ -25,11 +25,11 @@ public interface SessionTransactionJpaRepository extends JpaRepository<SessionTr
   List<SessionTransaction> findByGroupReference(@Param("reference") String reference);
 
   @Query(value = "SELECT st FROM SessionTransaction st WHERE st.id = :transactionId AND st.payer.id = :memberId")
-  Optional<SessionTransaction> findByUserAndId(@PathVariable("transactionId") Integer transactionId, @Param("memberId") Integer memberId);
+  Optional<SessionTransaction> findByUserAndId(@PathVariable("transactionId") Long transactionId, @Param("memberId") Long memberId);
 
   @Query(value = "SELECT st FROM SessionTransaction st WHERE st.payer.id = :memberId")
-  Page<SessionTransaction> findAllByPayer(@Param("memberId") Integer memberId, Pageable pageable);
+  Page<SessionTransaction> findAllByPayer(@Param("memberId") Long memberId, Pageable pageable);
 
   @Query(value = "SELECT st FROM SessionTransaction st WHERE st.payer.id = :memberId AND st.createdOn BETWEEN :startDate AND :endDate")
-  Page<SessionTransaction> findByDateBetween(@Param("memberId") Integer memberId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
+  Page<SessionTransaction> findByDateBetween(@Param("memberId") Long memberId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 }

@@ -68,7 +68,7 @@ public class SignUpDto {
   private String verificationType;
 
   @NotNull(message = "{member.profileType.notNull}")
-  @EnumValid(enumClass = ProfileType.class, message = "{platform.entity.type.type}")
+  @EnumValid(enumClass = ProfileType.class, message = "{member.profileType}")
   @JsonProperty("profile_type")
   private String profileType;
 

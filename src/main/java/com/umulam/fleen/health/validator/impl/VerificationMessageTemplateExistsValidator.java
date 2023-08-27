@@ -25,7 +25,7 @@ public class VerificationMessageTemplateExistsValidator implements ConstraintVal
   @Override
   public boolean isValid(String id, ConstraintValidatorContext context) {
     try {
-      return service.existsById(Integer.parseInt(id));
+      return service.existsById(Long.parseLong(id));
     } catch (Exception ex) {
       log.error(ex.getMessage(), ex);
       return false;

@@ -3,7 +3,6 @@ package com.umulam.fleen.health.configuration.security;
 import com.umulam.fleen.health.configuration.security.provider.CustomAuthenticationProvider;
 import com.umulam.fleen.health.filter.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,13 +11,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -31,11 +27,10 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @AllArgsConstructor
 public class SecurityConfiguration {
 
-  private final UserDetailsService userDetailsService;
   private final JwtAuthenticationFilter authenticationFilter;
   private final CustomAuthenticationProvider authenticationProvider;
 
-  private static final String[] WHITELIST = {
+  public static final String[] WHITELIST = {
     "/auth/**",
     "/v2/api-docs",
     "/swagger-resources",
@@ -87,19 +82,8 @@ public class SecurityConfiguration {
     return authenticationManagerBuilder.build();
   }
 
-  @Bean
-  public WebMvcConfigurer corsConfigurer() {
-    return new WebMvcConfigurer() {
-      @Override
-      public void addCorsMappings(@NonNull CorsRegistry registry) {
-        registry.addMapping("/**").allowedMethods("*").allowedOriginPatterns("*");
-      }
-    };
-  }
-
   public void webSecurityCustomizer(WebSecurity web) {
     web.ignoring()
             .antMatchers("/resources/**", "/static/**");
   }
-
 }

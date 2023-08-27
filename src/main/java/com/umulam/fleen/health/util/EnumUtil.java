@@ -10,15 +10,15 @@ import java.util.List;
 @Slf4j
 public class EnumUtil {
 
-  public static List<Integer> getValues(Class<?> enumClass) {
+  public static List<Long> getValues(Class<?> enumClass) {
     try {
-      List<Integer> values = new ArrayList<>();
+      List<Long> values = new ArrayList<>();
       Method valuesMethod = enumClass.getMethod("values");
       Object[] allEnums = (Object[]) valuesMethod.invoke(null);
 
       for (Object enumValue : allEnums) {
         Method ordinalMethod = enumClass.getMethod("ordinal");
-        int ordinalValue = (int) ordinalMethod.invoke(enumValue);
+        Long ordinalValue = (long) ordinalMethod.invoke(enumValue);
         values.add(ordinalValue);
       }
       return values;

@@ -24,7 +24,7 @@ public class BankAccountExistValidator implements ConstraintValidator<BankAccoun
   @Override
   public boolean isValid(String id, ConstraintValidatorContext context) {
     try {
-      return bankAccountJpaRepository.existsById(Integer.parseInt(id));
+      return bankAccountJpaRepository.existsById(Long.parseLong(id));
     } catch (Exception ex) {
       log.error(ex.getMessage(), ex);
       return false;

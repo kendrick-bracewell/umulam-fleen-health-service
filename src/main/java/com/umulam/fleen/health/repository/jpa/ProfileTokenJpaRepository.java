@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface ProfileTokenJpaRepository extends JpaRepository<ProfileToken, Integer> {
+public interface ProfileTokenJpaRepository extends JpaRepository<ProfileToken, Long> {
 
   @Query("SELECT pt FROM ProfileToken pt WHERE pt.member.emailAddress = :emailAddress")
   Optional<ProfileToken> findProfileTokenByEmailAddress(String emailAddress);

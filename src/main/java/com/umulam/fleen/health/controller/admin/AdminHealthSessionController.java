@@ -38,7 +38,7 @@ public class AdminHealthSessionController {
   }
 
   @GetMapping(value = "/detail/{id}")
-  public HealthSessionView viewSession(@PathVariable(name = "id") Integer healthSessionId) {
+  public HealthSessionView viewSession(@PathVariable(name = "id") Long healthSessionId) {
     return healthSessionService.viewSession(healthSessionId);
   }
 
@@ -53,12 +53,12 @@ public class AdminHealthSessionController {
   }
 
   @GetMapping(value = "/transaction/{id}")
-  public SessionTransactionView viewSessionTransaction(@PathVariable(name = "id") Integer sessionTransactionId) {
+  public SessionTransactionView viewSessionTransaction(@PathVariable(name = "id") Long sessionTransactionId) {
     return transactionService.viewSessionTransaction(sessionTransactionId);
   }
 
   @PutMapping(value = "/cancel-session/{id}")
-  public FleenHealthResponse cancelSession(@PathVariable(name = "id") Integer healthSessionId) {
+  public FleenHealthResponse cancelSession(@PathVariable(name = "id") Long healthSessionId) {
     healthSessionService.cancelSession(healthSessionId);
     return new FleenHealthResponse(HEALTH_SESSION_CANCELED);
   }

@@ -9,5 +9,5 @@ public interface SessionTransactionService {
 
   SearchResultView viewUserTransactions(FleenUser user, SearchRequest searchRequest);
 
-  SessionTransactionView viewUserTransactionDetail(FleenUser user, Integer transactionId);
+  SessionTransactionView viewUserTransactionDetail(FleenUser user, Long transactionId);
 }

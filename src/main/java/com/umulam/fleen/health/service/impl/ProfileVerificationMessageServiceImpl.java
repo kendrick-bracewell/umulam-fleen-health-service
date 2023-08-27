@@ -50,12 +50,12 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
   @Override
   public ProfileVerificationMessage getProfileVerificationMessageByType(@NonNull ProfileVerificationMessageType messageType) {
     return repository
-            .findByVerificationMessageType(messageType)
+            .findFirstByVerificationMessageType(messageType)
             .orElse(null);
   }
 
   @Override
-  public ProfileVerificationMessageView getById(Integer profileVerificationMessageId) {
+  public ProfileVerificationMessageView getById(Long profileVerificationMessageId) {
     Optional<ProfileVerificationMessage> messageExists = repository.findById(profileVerificationMessageId);
     if (messageExists.isEmpty()) {
       throw new ProfileVerificationMessageNotFoundException(profileVerificationMessageId);
@@ -80,11 +80,11 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
   }
 
   @Override
-  public boolean existsById(Integer id) {
+  public boolean existsById(Long id) {
     return repository.existsById(id);
   }
 
-  private String getProfileVerificationMessageCacheKey(Integer messageId) {
+  private String getProfileVerificationMessageCacheKey(Long messageId) {
     return PROFILE_VERIFICATION_MESSAGE_TEMPLATE_CACHE_PREFIX.concat(String.valueOf(messageId));
   }
 
@@ -114,13 +114,13 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
   }
 
   @Override
-  public void saveProfileVerificationVerificationMessageToCache(Integer messageId, ProfileVerificationMessage verificationMessage) {
+  public void saveProfileVerificationVerificationMessageToCache(Long messageId, ProfileVerificationMessage verificationMessage) {
     String key = getProfileVerificationMessageCacheKey(messageId);
     cacheService.set(key, verificationMessage);
   }
 
   @Override
-  public ProfileVerificationMessage getProfileVerificationMessageFromCache(Integer messageId) {
+  public ProfileVerificationMessage getProfileVerificationMessageFromCache(Long messageId) {
     String key = getProfileVerificationMessageCacheKey(messageId);
     return cacheService.get(key, ProfileVerificationMessage.class);
   }
@@ -139,7 +139,7 @@ public class ProfileVerificationMessageServiceImpl implements ProfileVerificatio
 
   @Override
   @Transactional
-  public void updateProfileVerificationMessage(Integer id, ProfileVerificationMessageDto dto) {
+  public void updateProfileVerificationMessage(Long id, ProfileVerificationMessageDto dto) {
     GetProfileVerificationMessageId verificationMessageId = repository.getId(id);
     if (Objects.isNull(verificationMessageId)) {
       throw new ProfileVerificationMessageNotFoundException(id);

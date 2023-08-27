@@ -15,21 +15,21 @@ public interface ProfileVerificationMessageService {
 
   ProfileVerificationMessage getProfileVerificationMessageByType(ProfileVerificationMessageType messageType);
 
-  boolean existsById(Integer id);
+  boolean existsById(Long id);
 
-  void saveProfileVerificationVerificationMessageToCache(Integer messageId, ProfileVerificationMessage profileVerificationMessage);
+  void saveProfileVerificationVerificationMessageToCache(Long messageId, ProfileVerificationMessage profileVerificationMessage);
 
-  ProfileVerificationMessage getProfileVerificationMessageFromCache(Integer messageId);
+  ProfileVerificationMessage getProfileVerificationMessageFromCache(Long messageId);
 
   List<GetProfileVerificationMessagesBasic> getBasicDetails();
 
   void saveProfileVerificationMessage(ProfileVerificationMessageDto dto);
 
-  void updateProfileVerificationMessage(Integer id, ProfileVerificationMessageDto dto);
+  void updateProfileVerificationMessage(Long id, ProfileVerificationMessageDto dto);
 
   void deleteMany(DeleteIdsDto dto);
 
   SearchResultView findProfileVerificationMessages(ProfileVerificationMessageSearchRequest searchRequest);
 
-  ProfileVerificationMessageView getById(Integer profileVerificationMessageId);
+  ProfileVerificationMessageView getById(Long profileVerificationMessageId);
 }

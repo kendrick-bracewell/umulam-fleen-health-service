@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface VerificationDocumentJpaRepository extends JpaRepository<VerificationDocument, Integer> {
+public interface VerificationDocumentJpaRepository extends JpaRepository<VerificationDocument, Long> {
 
   @Query("SELECT vd FROM VerificationDocument vd WHERE vd.member.emailAddress = :emailAddress")
   Optional<VerificationDocument> findVerificationDocumentByEmailAddress(String emailAddress);

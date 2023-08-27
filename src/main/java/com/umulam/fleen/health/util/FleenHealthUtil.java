@@ -94,7 +94,7 @@ public class FleenHealthUtil {
         .totalPages(page.getTotalPages())
         .totalEntries(page.getTotalElements())
         .pageNo(page.getNumber())
-        .pageSize(page.getNumber())
+        .pageSize(page.getSize())
         .values(values)
         .build();
     }

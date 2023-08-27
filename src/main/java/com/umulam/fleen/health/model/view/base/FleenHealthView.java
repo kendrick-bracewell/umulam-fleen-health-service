@@ -16,7 +16,7 @@ import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME;
 @AllArgsConstructor
 public class FleenHealthView {
 
-  private Integer id;
+  private Long id;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
   @JsonProperty("created_on")

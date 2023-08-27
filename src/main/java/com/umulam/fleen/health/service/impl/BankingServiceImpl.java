@@ -171,7 +171,7 @@ public class BankingServiceImpl implements BankingService {
   }
 
   @Override
-  public BankAccountView getBankAccount(FleenUser user, Integer bankAccountId) {
+  public BankAccountView getBankAccount(FleenUser user, Long bankAccountId) {
     Optional<MemberBankAccount> bankAccountExists = bankAccountJpaRepository.findByIdAndMember(bankAccountId, user.toMember());
 
     if (bankAccountExists.isEmpty()) {
