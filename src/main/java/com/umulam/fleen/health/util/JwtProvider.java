@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umulam.fleen.health.constant.authentication.AuthenticationStatus;
 import com.umulam.fleen.health.constant.authentication.TokenType;
 import com.umulam.fleen.health.model.dto.authentication.JwtTokenDetails;
 import com.umulam.fleen.health.model.security.FleenUser;
@@ -87,6 +88,14 @@ public class JwtProvider {
   public String generateToken(FleenUser user, TokenType tokenType) {
     Map<String, Object> claims = buildClaims(user);
     claims.put(TOKEN_TYPE_KEY, tokenType.getValue());
+
+    return createToken(user.getUsername(), claims, ACCESS_TOKEN_VALIDITY);
+  }
+
+  public String generateToken(FleenUser user, TokenType tokenType, AuthenticationStatus authenticationStatus) {
+    Map<String, Object> claims = buildClaims(user);
+    claims.put(TOKEN_TYPE_KEY, tokenType.getValue());
+    claims.put(AUTHENTICATION_STATUS_KEY, authenticationStatus.name());
 
     return createToken(user.getUsername(), claims, ACCESS_TOKEN_VALIDITY);
   }

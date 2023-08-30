@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.service;
 
 import com.umulam.fleen.health.adapter.google.recaptcha.model.response.ReCaptchaResponse;
+import com.umulam.fleen.health.constant.authentication.AuthenticationStatus;
 import com.umulam.fleen.health.constant.authentication.MfaType;
 import com.umulam.fleen.health.constant.authentication.VerificationType;
 import com.umulam.fleen.health.model.domain.Member;
@@ -37,6 +38,8 @@ public interface AuthenticationService {
   SignInResponse signIn(SignInDto dto);
 
   String createAccessToken(FleenUser user);
+
+  String createAccessToken(FleenUser user, AuthenticationStatus authenticationStatus);
 
   String createRefreshToken(FleenUser user);
 

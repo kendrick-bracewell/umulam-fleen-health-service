@@ -56,7 +56,7 @@ public class CountryController {
 
   @DeleteMapping(value ="/delete-all")
   public DeleteResponse deleteAll() {
-    countryService.deleteAllCountry();
+//    countryService.deleteAllCountry();
     return new DeleteResponse();
   }
 

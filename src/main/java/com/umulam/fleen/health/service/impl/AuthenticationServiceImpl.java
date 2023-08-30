@@ -5,10 +5,7 @@ import com.umulam.fleen.health.adapter.google.recaptcha.model.response.ReCaptcha
 import com.umulam.fleen.health.constant.CommonEmailMessageTemplateDetails;
 import com.umulam.fleen.health.constant.MemberStatusType;
 import com.umulam.fleen.health.constant.VerificationMessageType;
-import com.umulam.fleen.health.constant.authentication.MfaType;
-import com.umulam.fleen.health.constant.authentication.NextAuthentication;
-import com.umulam.fleen.health.constant.authentication.RoleType;
-import com.umulam.fleen.health.constant.authentication.VerificationType;
+import com.umulam.fleen.health.constant.authentication.*;
 import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationMessageType;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
@@ -252,7 +249,7 @@ public class AuthenticationServiceImpl implements
       return signInResponse;
     }
 
-    accessToken = createAccessToken(user);
+    accessToken = createAccessToken(user, COMPLETED);
     refreshToken = createRefreshToken(user);
 
     setContext(authentication);
@@ -373,13 +370,13 @@ public class AuthenticationServiceImpl implements
       throw new VerificationFailedException();
     }
 
-    FleenUser freshUser = initAuthentication(member);
-    String accessToken = createAccessToken(freshUser);
-    String refreshToken = createRefreshToken(freshUser);
-
     if (MemberStatusType.ACTIVE.getValue().equals(member.getMemberStatus().getCode())) {
       throw new AlreadySignedUpException();
     }
+
+    FleenUser freshUser = initAuthentication(member);
+    String accessToken = createAccessToken(freshUser, COMPLETED);
+    String refreshToken = createRefreshToken(freshUser);
 
     CompleteUserSignUpRequest request = createCompleteUserSignUpRequest(member);
     Role role = request.getRole();
@@ -547,7 +544,7 @@ public class AuthenticationServiceImpl implements
     }
 
     FleenUser user = initAuthentication(member);
-    String accessToken = createAccessToken(user);
+    String accessToken = createAccessToken(user, COMPLETED);
     String refreshToken = createRefreshToken(user);
 
     clearPreAuthenticationOtp(username);
@@ -668,6 +665,18 @@ public class AuthenticationServiceImpl implements
   @Override
   public String createAccessToken(FleenUser user) {
     return jwtProvider.generateToken(user, ACCESS_TOKEN);
+  }
+
+  /**
+   * <p>Create a access token with an authentication status that can be used to perform actions on the application or through the API.</p>
+   * <br/>
+   *
+   * @param user the authenticated user
+   * @return the token to use to access the application or API features
+   */
+  @Override
+  public String createAccessToken(FleenUser user, AuthenticationStatus authenticationStatus) {
+    return jwtProvider.generateToken(user, ACCESS_TOKEN, authenticationStatus);
   }
 
   /**
