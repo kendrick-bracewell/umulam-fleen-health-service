@@ -7,6 +7,7 @@ import com.umulam.fleen.health.model.dto.country.CountryDto;
 import com.umulam.fleen.health.model.dto.country.UpdateCountryDto;
 import com.umulam.fleen.health.model.mapper.CountryMapper;
 import com.umulam.fleen.health.model.request.search.CountrySearchRequest;
+import com.umulam.fleen.health.model.response.other.CountAllResponse;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
 import com.umulam.fleen.health.model.view.country.CountryView;
 import com.umulam.fleen.health.model.view.search.SearchResultView;
@@ -119,6 +120,12 @@ public class CountryServiceImpl implements CountryService {
   @Override
   public void deleteAllCountry() {
     repository.deleteAll();
+  }
+
+  @Override
+  public CountAllResponse countAll() {
+    long total = repository.count();
+    return CountAllResponse.builder().total(total).build();
   }
 
   @Override

@@ -3,6 +3,7 @@ package com.umulam.fleen.health.controller;
 import com.umulam.fleen.health.model.dto.country.CountryDto;
 import com.umulam.fleen.health.model.dto.country.UpdateCountryDto;
 import com.umulam.fleen.health.model.request.search.CountrySearchRequest;
+import com.umulam.fleen.health.model.response.other.CountAllResponse;
 import com.umulam.fleen.health.model.response.other.DeleteIdsDto;
 import com.umulam.fleen.health.model.response.other.DeleteResponse;
 import com.umulam.fleen.health.model.view.country.CountryView;
@@ -57,5 +58,10 @@ public class CountryController {
   public DeleteResponse deleteAll() {
     countryService.deleteAllCountry();
     return new DeleteResponse();
+  }
+
+  @GetMapping(value = "/count-all")
+  public CountAllResponse countAll() {
+    return countryService.countAll();
   }
 }
