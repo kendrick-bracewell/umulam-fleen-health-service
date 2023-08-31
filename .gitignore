@@ -34,3 +34,5 @@ build/
 
 /application.properties
 /src/main/resources/application.properties
+/src/main/resources/secret/oauth-credential.json
+/src/main/resources/secret/service-credential.json
