@@ -12,10 +12,7 @@ import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.authentication.InvalidVerificationCodeException;
 import com.umulam.fleen.health.exception.authentication.MfaGenerationFailedException;
 import com.umulam.fleen.health.exception.authentication.MfaVerificationFailed;
-import com.umulam.fleen.health.exception.member.EmailAddressNotFoundException;
-import com.umulam.fleen.health.exception.member.MemberNotFoundException;
-import com.umulam.fleen.health.exception.member.UpdatePasswordFailedException;
-import com.umulam.fleen.health.exception.member.UserNotFoundException;
+import com.umulam.fleen.health.exception.member.*;
 import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.MemberStatus;
 import com.umulam.fleen.health.model.domain.Role;
@@ -342,7 +339,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
     Optional<Member> memberEmailExists = repository.findByEmailAddress(dto.getEmailAddress());
     if (memberEmailExists.isPresent()) {
       Member memberEmail = memberEmailExists.get();
-      if (memberEmail.getId().equals(user.getId())) {
+      if (!(memberEmail.getId().equals(user.getId()))) {
         throw new EmailAddressNotFoundException(dto.getEmailAddress());
       }
     }
@@ -364,6 +361,14 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
 
     validateSmsAndEmailVerificationCode(verificationKey, code);
     Member member = getMember(user.getEmailAddress());
+
+    Optional<Member> memberPhoneExists = repository.findByPhoneNumber(dto.getPhoneNumber());
+    if (memberPhoneExists.isPresent()) {
+      Member memberPhone = memberPhoneExists.get();
+      if (!(memberPhone.getId().equals(user.getId()))) {
+        throw new PhoneNumberAlreadyExistsException(dto.getPhoneNumber());
+      }
+    }
 
     member.setPhoneNumber(dto.getPhoneNumber());
     member.setPhoneNumberVerified(true);

@@ -44,7 +44,7 @@ public class MemberController {
   @GetMapping("/update-details")
   public GetMemberUpdateDetailsResponse getUpdateDetails(@AuthenticationPrincipal FleenUser user) {
     return memberService.getMemberGetUpdateDetailsResponse(user);
-  }u
+  }
 
   @PutMapping(value = "/update-details")
   public UpdateMemberDetailsResponse updateDetails(@Valid @RequestBody UpdateMemberDetailsDto dto, @AuthenticationPrincipal FleenUser user) {
