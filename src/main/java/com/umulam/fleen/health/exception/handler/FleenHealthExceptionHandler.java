@@ -102,6 +102,8 @@ public class FleenHealthExceptionHandler {
           RoleDuplicateException.class,
           CountryCodeDuplicateException.class,
           MemberStatusCodeDuplicateException.class,
+          EmailAddressAlreadyExistsException.class,
+          PhoneNumberAlreadyExistsException.class
   })
   public Object handleDuplicate(Exception ex) {
     log.error(ex.getMessage(), ex);
