@@ -82,7 +82,7 @@ public class MemberController {
   }
 
   @PutMapping(value = "/update-password")
-  public Object updatePassword(@Valid @RequestBody UpdatePasswordDto dto, @AuthenticationPrincipal FleenUser user) {
+  public FleenHealthResponse updatePassword(@Valid @RequestBody UpdatePasswordDto dto, @AuthenticationPrincipal FleenUser user) {
     memberService.updatePassword(user.getUsername(), dto);
     return new FleenHealthResponse(PASSWORD_CHANGED_UPDATED);
   }
