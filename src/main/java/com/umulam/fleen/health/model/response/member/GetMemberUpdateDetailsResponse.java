@@ -27,4 +27,7 @@ public interface GetMemberUpdateDetailsResponse {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE)
   @JsonProperty("date_of_birth")
   LocalDateTime getDateOfBirth();
+
+  @JsonProperty("address")
+  String getAddress();
 }
