@@ -36,6 +36,11 @@ public class MemberController {
     this.authenticationService = authenticationService;
   }
 
+  @GetMapping(value = "/get-details")
+  public GetMemberUpdateDetailsResponse getDetails(@AuthenticationPrincipal FleenUser user) {
+    return memberService.getMemberGetUpdateDetailsResponse(user);
+  }
+
   @GetMapping("/update-details")
   public GetMemberUpdateDetailsResponse getUpdateDetails(@AuthenticationPrincipal FleenUser user) {
     return memberService.getMemberGetUpdateDetailsResponse(user);
