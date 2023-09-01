@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum VerificationType {
 
-  SMS("SMS"),
+  PHONE("PHONE"),
   EMAIL("Email");
 
   private final String value;

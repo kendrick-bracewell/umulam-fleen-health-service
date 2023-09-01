@@ -87,7 +87,7 @@ public interface CommonAuthAndVerificationService {
    * @param verificationType contains the type of verification as decided by the system or user and where to send the OTP or code to
    */
   default void sendVerificationMessage(PreVerificationOrAuthenticationRequest request, VerificationType verificationType) {
-    if (Objects.requireNonNull(verificationType) == VerificationType.SMS) {
+    if (Objects.requireNonNull(verificationType) == VerificationType.PHONE) {
       sendSmsPreVerificationOrPreAuthenticationCode(request);
     } else {
       sendEmailPreVerificationOrPreAuthenticationCode(request);
@@ -98,7 +98,7 @@ public interface CommonAuthAndVerificationService {
    * <p>When a user has not completed the registration or sign-up process, an OTP or random code of a fixed length as defined
    * by the system will be sent to the user's email address which will be use to complete the verification found at
    * {@link AuthenticationService#completeSignUp(VerificationCodeDto, FleenUser) completeSignUp} and there exists a similar method but only delivers
-   * an SMS message of the OTP to a specified phone number found at {@link #sendSmsPreVerificationOrPreAuthenticationCode(PreVerificationOrAuthenticationRequest) sendSmsPreVerificationOrPreAuthenticationCode}</p>
+   * an PHONE message of the OTP to a specified phone number found at {@link #sendSmsPreVerificationOrPreAuthenticationCode(PreVerificationOrAuthenticationRequest) sendSmsPreVerificationOrPreAuthenticationCode}</p>
    * <br/>
    *
    * @param request contains details like the email address to send the OTP code to and the code itself to send to the email address

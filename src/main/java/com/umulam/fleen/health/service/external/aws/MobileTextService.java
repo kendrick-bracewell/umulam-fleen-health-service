@@ -20,8 +20,8 @@ public class MobileTextService {
 
   private final AmazonSNS service;
   private final ObjectMapper objectMapper;
-  private static final String AWS_SNS_SMS_TYPE = "AWS.SNS.SMS.SMSType";
-  private static final String AWS_SNS_SMS_SENDER_ID = "AWS.SNS.SMS.SenderID";
+  private static final String AWS_SNS_SMS_TYPE = "AWS.SNS.PHONE.SMSType";
+  private static final String AWS_SNS_SMS_SENDER_ID = "AWS.SNS.PHONE.SenderID";
   private static final String AWS_SNS_SMS_TYPE_VALUE = "Transactional";
   private static final String AWS_SNS_DATA_TYPE = "String";
   private static final String AWS_SNS_SENDER_ID_VALUE = "FleenHealth";

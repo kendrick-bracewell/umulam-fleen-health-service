@@ -181,7 +181,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
 
     switch (mfaType) {
       case SMS:
-        authenticationService.saveAndSendMfaVerification(member, VerificationType.SMS, MfaType.SMS);
+        authenticationService.saveAndSendMfaVerification(member, VerificationType.PHONE, MfaType.SMS);
         break;
 
       case EMAIL:
@@ -321,7 +321,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
       sendVerificationMessage(request, VerificationType.EMAIL);
       saveUpdateEmailOtp(member.getEmailAddress(), code);
     } else {
-      sendVerificationMessage(request, VerificationType.SMS);
+      sendVerificationMessage(request, VerificationType.PHONE);
       saveUpdatePhoneNumberOtp(member.getEmailAddress(), code);
     }
   }

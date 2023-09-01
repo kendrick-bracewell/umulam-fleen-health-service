@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum MfaType {
 
-  SMS("SMS"),
+  SMS("PHONE"),
   EMAIL("Email"),
   AUTHENTICATOR("Authenticator"),
   NONE("None");

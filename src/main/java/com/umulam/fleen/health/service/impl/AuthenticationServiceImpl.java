@@ -150,8 +150,8 @@ public class AuthenticationServiceImpl implements
    * {@link com.umulam.fleen.health.filter.JwtAuthenticationFilter#doFilter(ServletRequest, ServletResponse, FilterChain) JwtAuthenticationFilter}.</p>
    * <br/>
    *
-   * <p>In cases where the MFA_OR_PRE_AUTHENTICATION enabled on the user's profile is type {@link VerificationType#SMS SMS} or {@link VerificationType#EMAIL EMAIL}. A OTP is sent to
-   * the email address or phone number found on their profile, the process of delivering the SMS or EMAIL message is handled and performed by
+   * <p>In cases where the MFA_OR_PRE_AUTHENTICATION enabled on the user's profile is type {@link VerificationType#PHONE PHONE} or {@link VerificationType#EMAIL EMAIL}. A OTP is sent to
+   * the email address or phone number found on their profile, the process of delivering the PHONE or EMAIL message is handled and performed by
    * {@link #sendVerificationMessage(PreVerificationOrAuthenticationRequest, VerificationType) sendVerificationMessage}.</p>
    * <br/>
    *
@@ -394,7 +394,7 @@ public class AuthenticationServiceImpl implements
     roles.add(role);
     member.setRoles(roles);
 
-    if (verificationType == VerificationType.SMS) {
+    if (verificationType == VerificationType.PHONE) {
       member.setPhoneNumberVerified(true);
     } else {
       member.setEmailAddressVerified(true);
@@ -423,7 +423,7 @@ public class AuthenticationServiceImpl implements
    * <br/>
    *
    * <p>Where the OTP will be sent will be decided by the {@link ResendVerificationCodeDto#getVerificationType() verificationType} and this can be through
-   * {@link VerificationType#EMAIL EMAIL} or {@link VerificationType#SMS SMS}.</p>
+   * {@link VerificationType#EMAIL EMAIL} or {@link VerificationType#PHONE PHONE}.</p>
    * <br/>
    *
    * @param dto contains phone number or email address to send OTP to, to complete the verification process
@@ -448,7 +448,7 @@ public class AuthenticationServiceImpl implements
    * <br/>
    *
    * <p>Where the OTP will be sent will be decided by the {@link ResendVerificationCodeDto#getVerificationType() verificationType} and this can be through
-   * {@link VerificationType#EMAIL EMAIL} or {@link VerificationType#SMS SMS}.</p>
+   * {@link VerificationType#EMAIL EMAIL} or {@link VerificationType#PHONE PHONE}.</p>
    * <br/>
    *
    * @param dto contains phone number or email address to send OTP to, to complete the verification process
