@@ -180,8 +180,8 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
     }
 
     switch (mfaType) {
-      case SMS:
-        authenticationService.saveAndSendMfaVerification(member, VerificationType.PHONE, MfaType.SMS);
+      case PHONE:
+        authenticationService.saveAndSendMfaVerification(member, VerificationType.PHONE, MfaType.PHONE);
         break;
 
       case EMAIL:
@@ -220,9 +220,9 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
     }
 
     authenticationService.validateMfaSetupCode(username, dto.getCode(), mfaType);
-    if (mfaType == MfaType.SMS) {
+    if (mfaType == MfaType.PHONE) {
       member.setPhoneNumberVerified(true);
-      member.setMfaType(MfaType.SMS);
+      member.setMfaType(MfaType.PHONE);
     } else {
       member.setEmailAddressVerified(true);
       member.setMfaType(MfaType.EMAIL);

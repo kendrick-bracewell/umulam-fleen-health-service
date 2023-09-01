@@ -224,7 +224,7 @@ public class AuthenticationServiceImpl implements
     }
 
     if (user.isMfaEnabled()) {
-      if (SMS == user.getMfaType() || EMAIL == user.getMfaType()) {
+      if (PHONE == user.getMfaType() || EMAIL == user.getMfaType()) {
         VerificationType verificationType = VerificationType.valueOf(user.getMfaType().name());
         String otp = generateOtp();
         PreVerificationOrAuthenticationRequest request = createPreAuthenticationRequest(otp, user);
@@ -529,7 +529,7 @@ public class AuthenticationServiceImpl implements
     MfaType mfaType = MfaType.valueOf(dto.getMfaType());
     String code = dto.getCode();
 
-    if (SMS == mfaType || EMAIL == mfaType) {
+    if (PHONE == mfaType || EMAIL == mfaType) {
       String verificationKey = getPreAuthenticationCacheKey(username);
       validateSmsAndEmailVerificationCode(verificationKey, code);
     } else if (AUTHENTICATOR == mfaType) {
