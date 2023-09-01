@@ -340,7 +340,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
     if (memberEmailExists.isPresent()) {
       Member memberEmail = memberEmailExists.get();
       if (!(memberEmail.getId().equals(user.getId()))) {
-        throw new EmailAddressNotFoundException(dto.getEmailAddress());
+        throw new EmailAddressAlreadyExistsException(dto.getEmailAddress());
       }
     }
 
