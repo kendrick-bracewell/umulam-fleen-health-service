@@ -51,6 +51,7 @@ import java.util.Optional;
 import static com.umulam.fleen.health.constant.base.GeneralConstant.UPDATE_EMAIL_CACHE_PREFIX;
 import static com.umulam.fleen.health.constant.base.GeneralConstant.UPDATE_PHONE_NUMBER_CACHE_PREFIX;
 import static com.umulam.fleen.health.util.DateTimeUtil.toLocalDateTime;
+import static java.util.Objects.nonNull;
 import static org.springframework.util.StringUtils.capitalize;
 
 @Slf4j
@@ -267,7 +268,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   @Override
   public GetMemberUpdateDetailsResponse getMemberGetUpdateDetailsResponse(FleenUser user) {
     GetMemberUpdateDetailsResponse response = repository.findMemberDetailsById(user.getId());
-    if (Objects.nonNull(response)) {
+    if (nonNull(response)) {
       return response;
     }
     throw new UserNotFoundException(user.getEmailAddress());
@@ -382,6 +383,9 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   @Transactional
   public void updateProfilePhoto(UpdateProfilePhotoDto dto, FleenUser user) {
     Member member = getMember(user.getEmailAddress());
+    if (nonNull(member.getProfilePhoto())) {
+      s3Service.deleteObject(bucketNames.getProfilePhoto(), s3Service.getObjectKeyFromUrl(member.getProfilePhoto()));
+    }
     member.setProfilePhoto(dto.getProfilePhoto());
     save(member);
   }
