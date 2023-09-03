@@ -30,4 +30,7 @@ public interface GetMemberUpdateDetailsResponse {
 
   @JsonProperty("address")
   String getAddress();
+
+  @JsonProperty("profile_photo")
+  String getProfilePhoto();
 }

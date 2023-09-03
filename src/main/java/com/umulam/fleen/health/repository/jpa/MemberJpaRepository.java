@@ -50,7 +50,8 @@ public interface MemberJpaRepository extends JpaRepository<Member, Long> {
 
   @Query(value =
           "SELECT first_name AS firstName, last_name AS lastName, email_address AS emailAddress," +
-          "phone_number AS phoneNumber, gender AS gender, date_of_birth AS dateOfBirth, address FROM member WHERE id = :id", nativeQuery = true)
+          "phone_number AS phoneNumber, gender AS gender, date_of_birth AS dateOfBirth, address, profile_photo as profilePhoto " +
+          "FROM member WHERE id = :id", nativeQuery = true)
   GetMemberUpdateDetailsResponse findMemberDetailsById(@Param("id") Long memberId);
 
   @Modifying
