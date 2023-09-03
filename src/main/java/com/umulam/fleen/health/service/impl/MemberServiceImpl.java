@@ -391,7 +391,9 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   public void removeProfilePhoto(FleenUser user) {
     Member member = getMember(user.getEmailAddress());
     String key = s3Service.getObjectKeyFromUrl(member.getProfilePhoto());
+    member.setProfilePhoto(null);
     s3Service.deleteObject(bucketNames.getProfilePhoto(), key);
+    save(member);
   }
 
   /**
