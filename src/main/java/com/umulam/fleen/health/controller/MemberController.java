@@ -88,7 +88,8 @@ public class MemberController {
   }
 
   @GetMapping(value = "/sign-out")
-  @PreAuthorize("hasAnyRole('USER', 'PROFESSIONAL', 'ADMINISTRATOR', 'SUPERADMINISTRATOR')")
+  @PreAuthorize("hasAnyRole('USER', 'PROFESSIONAL', 'BUSINESS', 'EMPLOYEE', 'ADMINISTRATOR', 'SUPERADMINISTRATOR', 'PRE_VERIFIED_BUSINESS', 'PRE_VERIFIED_USER', 'PRE_VERIFIED_PROFESSIONAL'," +
+                " 'PRE_APPROVED_PROFESSIONAL', 'PRE_APPROVED_BUSINESS', 'PRE_AUTHENTICATED_USER')")
   public FleenHealthResponse signOut(@AuthenticationPrincipal FleenUser user) {
     authenticationService.signOut(user.getUsername());
     return new FleenHealthResponse(SUCCESS_MESSAGE);

@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum MfaSetupStatus {
 
   COMPLETE("Complete"),
-  IN_PROGRESS("In progress");
+  IN_PROGRESS("In progress"),
+  NOT_SET("Not Set");
 
   private final String value;
 

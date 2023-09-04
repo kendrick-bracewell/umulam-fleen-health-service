@@ -24,6 +24,7 @@ import com.umulam.fleen.health.model.dto.role.UpdateMemberRoleDto;
 import com.umulam.fleen.health.model.mapper.MemberMapper;
 import com.umulam.fleen.health.model.mapper.RoleMapper;
 import com.umulam.fleen.health.model.request.PreVerificationOrAuthenticationRequest;
+import com.umulam.fleen.health.model.response.authentication.MfaStatusResponse;
 import com.umulam.fleen.health.model.response.member.GetMemberUpdateDetailsResponse;
 import com.umulam.fleen.health.model.response.member.UpdateEmailAddressOrPhoneNumberResponse;
 import com.umulam.fleen.health.model.response.member.UpdateMemberDetailsResponse;
@@ -158,12 +159,23 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   }
 
   @Override
+  public MfaStatusResponse getMfaStatus(FleenUser user) {
+    Member member = repository
+      .findById(user.getId())
+      .orElseThrow(() -> new UserNotFoundException(user.getId()));
+    return MfaStatusResponse.builder()
+      .mfaType(member.getMfaType().name())
+      .enabled(member.isMfaEnabled())
+      .build();
+  }
+
+  @Override
   @Transactional
   public MfaDetail setupMfa(Long memberId, MfaTypeDto mfaTypeDto) {
     MfaType mfaType = MfaType.valueOf(mfaTypeDto.getMfaType());
     Member member = repository
             .findById(memberId)
-            .orElseThrow(() -> new UserNotFoundException(String.valueOf(memberId)));
+            .orElseThrow(() -> new UserNotFoundException(memberId));
     MfaDetail mfaDetail = MfaDetail.builder()
             .emailAddress(member.getEmailAddress())
             .phoneNumber(member.getPhoneNumber())

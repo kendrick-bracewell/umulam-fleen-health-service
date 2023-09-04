@@ -3,6 +3,7 @@ package com.umulam.fleen.health.controller;
 import com.umulam.fleen.health.model.dto.authentication.ConfirmMfaDto;
 import com.umulam.fleen.health.model.dto.authentication.MfaTypeDto;
 import com.umulam.fleen.health.model.response.FleenHealthResponse;
+import com.umulam.fleen.health.model.response.authentication.MfaStatusResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.security.MfaDetail;
 import com.umulam.fleen.health.service.MemberService;
@@ -24,6 +25,11 @@ public class MfaController {
   private final MemberService memberService;
   public MfaController(MemberService memberService) {
     this.memberService = memberService;
+  }
+
+  @GetMapping(value = "/status")
+  public MfaStatusResponse getMfaStatus(@AuthenticationPrincipal FleenUser user) {
+    return memberService.getMfaStatus(user);
   }
 
   @PutMapping(value = "/setup")
