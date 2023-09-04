@@ -184,11 +184,20 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
             .enabled(false)
             .build();
 
-    if (member.getMfaType() == mfaType && mfaType != MfaType.AUTHENTICATOR) {
+    if (member.getMfaType() == mfaType && mfaType != MfaType.AUTHENTICATOR && member.getMfaType() != MfaType.NONE) {
       mfaDetail.setEnabled(true);
-      mfaDetail.setMfaType(mfaType.name());
       mfaDetail.setMfaSetupStatus(MfaSetupStatus.COMPLETE);
       mfaDetail.setMfaType(member.getMfaType().name());
+      return mfaDetail;
+    }
+
+    if (mfaType == MfaType.NONE) {
+      mfaDetail.setEnabled(false);
+      mfaDetail.setMfaSetupStatus(MfaSetupStatus.COMPLETE);
+      mfaDetail.setMfaType(mfaType.name());
+      member.setMfaType(MfaType.NONE);
+      member.setMfaEnabled(mfaDetail.isEnabled());
+      save(member);
       return mfaDetail;
     }
 
