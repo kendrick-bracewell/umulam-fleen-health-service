@@ -55,4 +55,20 @@ public class ProfessionalHealthSessionController {
   public List<HealthSessionReviewView> viewSessionReviews(@AuthenticationPrincipal FleenUser user) {
     return professionalHealthSessionService.viewReviews(user);
   }
+
+  @GetMapping(value = "/patient-sessions")
+  public void viewPatientSession() {
+
+  }
+
+  @GetMapping(value = "/patient-session-detail")
+  public void viewPatientSessionDetail() {
+
+  }
+
+  @GetMapping(value = "/patient-detail")
+
+  public void viewPatientDetail() {
+
+  }
 }

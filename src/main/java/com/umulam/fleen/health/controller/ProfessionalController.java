@@ -94,16 +94,4 @@ public class ProfessionalController {
     service.updateAvailabilityOrSchedule(dto, user);
     return new FleenHealthResponse(PROFESSIONAL_AVAILABILITY_OR_SCHEDULED_UPDATED);
   }
-
-  public void viewSessions() {
-
-  }
-
-  public void viewPatientSession() {
-
-  }
-
-  public void viewPatientDetail() {
-
-  }
 }
