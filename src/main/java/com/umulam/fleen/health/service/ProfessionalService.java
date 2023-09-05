@@ -43,7 +43,7 @@ public interface ProfessionalService {
   @Transactional(readOnly = true)
   List<ProfessionalView> toProfessionalViews(List<Professional> entries);
 
-  void setVerificationDocument(ProfessionalView businessView);
+  void setVerificationDocument(ProfessionalView professionalViewView);
 
   GetProfessionalUpdateAvailabilityStatusResponse getProfessionalAvailabilityStatus(FleenUser user);
 
