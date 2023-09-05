@@ -137,7 +137,7 @@ public class MemberServiceImpl implements MemberService, CommonAuthAndVerificati
   @Transactional
   public void reEnableMfa(FleenUser user) {
     Member member = getMember(user.getEmailAddress());
-    if (member.getMfaType() != MfaType.NONE) {
+    if (member.getMfaType() != MfaType.NONE && member.get) {
       repository.reEnableTwoFa(user.getId());
     }
   }
