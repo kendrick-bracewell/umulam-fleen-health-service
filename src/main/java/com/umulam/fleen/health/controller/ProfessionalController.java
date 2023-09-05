@@ -11,8 +11,8 @@ import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdate
 import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateVerificationDetailResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
-import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.model.view.UserVerificationStatusView;
+import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.service.ProfessionalService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,6 +32,12 @@ public class ProfessionalController {
 
   public ProfessionalController(ProfessionalService service) {
     this.service = service;
+  }
+
+  @GetMapping(value = "/get-details")
+  public ProfessionalView getDetails(@Valid @RequestBody UpdateProfessionalDetailsDto dto, @AuthenticationPrincipal FleenUser user) {
+    Professional professional = service.getDetails(user);
+    return service.toProfessionalView(professional);
   }
 
   @GetMapping(value = "/verification/update-details")

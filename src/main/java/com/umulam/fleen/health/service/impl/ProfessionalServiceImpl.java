@@ -5,10 +5,7 @@ import com.umulam.fleen.health.constant.professional.AvailabilityDayOfTheWeek;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
-import com.umulam.fleen.health.exception.professional.NotAProfessionalException;
-import com.umulam.fleen.health.exception.professional.ProfessionalNotFoundException;
-import com.umulam.fleen.health.exception.professional.ProfessionalProfileNotApproved;
-import com.umulam.fleen.health.exception.professional.ProfessionalShouldHaveAtLeastOneAvailabilityPeriod;
+import com.umulam.fleen.health.exception.professional.*;
 import com.umulam.fleen.health.model.domain.*;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalAvailabilityDto;
 import com.umulam.fleen.health.model.dto.professional.UpdateProfessionalAvailabilityStatusDto;
@@ -95,6 +92,15 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   @Override
   public ProfessionalView toProfessionalView(Professional professional) {
     return ProfessionalMapper.toProfessionalView(professional);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Professional getDetails(FleenUser user) {
+    Member member = getMember(user.getEmailAddress());
+
+    Optional<Professional> professionalExists = repository.findProfessionalByEmailAddress(user.getEmailAddress());
+    return professionalExists.orElseThrow(HasNoProfessionalProfileException::new);
   }
 
   @Override

@@ -57,6 +57,8 @@ import static org.springframework.http.HttpStatus.*;
 @RestControllerAdvice
 public class FleenHealthExceptionHandler {
 
+  private static final String ERROR_TYPE_KEY = "type";
+
   @ResponseStatus(value = NOT_FOUND)
   @ExceptionHandler(value = {
     NoHandlerFoundException.class
@@ -191,6 +193,14 @@ public class FleenHealthExceptionHandler {
   }
 
   @ResponseStatus(value = BAD_REQUEST)
+  @ExceptionHandler(value = { HasNoProfessionalProfileException.class })
+  public Object handleNoProfile(HasNoProfessionalProfileException ex) {
+    var body = buildErrorMap(ex.getMessage(), BAD_REQUEST);
+    body.put(ERROR_TYPE_KEY, ex.getTYPE());
+    return body;
+  }
+
+  @ResponseStatus(value = BAD_REQUEST)
   @ExceptionHandler(value = { HttpMediaTypeNotSupportedException.class })
   public Object handleUnsupportedMediaType(HttpMediaTypeNotSupportedException ex) {
     log.error(ex.getMessage(), ex);
@@ -267,7 +277,7 @@ public class FleenHealthExceptionHandler {
 
     Map<String, Object> error = new HashMap<>(buildErrorMap(INVALID_REQUEST_BODY, BAD_REQUEST));
     error.put("fields", values);
-    error.put("type", "DATA_VALIDATION");
+    error.put(ERROR_TYPE_KEY, "DATA_VALIDATION");
     return error;
   }
 

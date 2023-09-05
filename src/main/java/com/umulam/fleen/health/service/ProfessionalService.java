@@ -23,6 +23,9 @@ public interface ProfessionalService {
   @Transactional(readOnly = true)
   ProfessionalView findProfessionalById(Long id);
 
+  @Transactional(readOnly = true)
+  Professional getDetails(FleenUser user);
+
   @Transactional
   Professional updateDetails(UpdateProfessionalDetailsDto dto, FleenUser user);
 
