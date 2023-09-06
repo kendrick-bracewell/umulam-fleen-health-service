@@ -35,7 +35,7 @@ public class ProfessionalController {
   }
 
   @GetMapping(value = "/get-details")
-  public ProfessionalView getDetails(@Valid @RequestBody UpdateProfessionalDetailsDto dto, @AuthenticationPrincipal FleenUser user) {
+  public ProfessionalView getDetails(@AuthenticationPrincipal FleenUser user) {
     Professional professional = service.getDetails(user);
     ProfessionalView view = service.toProfessionalView(professional);
     service.setVerificationDocument(view);
