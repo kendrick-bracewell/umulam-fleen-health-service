@@ -99,8 +99,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   @Override
   @Transactional(readOnly = true)
   public Professional getDetails(FleenUser user) {
-    Member member = getMember(user.getEmailAddress());
-
+    getMember(user.getEmailAddress());
     Optional<Professional> professionalExists = repository.findProfessionalByEmailAddress(user.getEmailAddress());
     return professionalExists.orElseThrow(HasNoProfessionalProfileException::new);
   }
@@ -215,12 +214,25 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   }
 
   @Override
-  public GetProfessionalUpdateVerificationDetailResponse getUpdateVerificationDetail() {
+  public GetProfessionalUpdateVerificationDetailResponse getUpdateVerificationDetail(FleenUser user) {
+    getMember(user.getEmailAddress());
+    Optional<Professional> professionalExists = repository.findProfessionalByEmailAddress(user.getEmailAddress());
+    GetProfessionalUpdateVerificationDetailResponse updateVerificationDetailResponse = GetProfessionalUpdateVerificationDetailResponse.builder().build();
+
+    if (professionalExists.isPresent()) {
+      Professional professional = professionalExists.get();
+      updateVerificationDetailResponse.setTitle(professional.getTitle());
+      updateVerificationDetailResponse.setYearsOfExperience(professional.getYearsOfExperience());
+      updateVerificationDetailResponse.setAreaOfExperience(professional.getAreaOfExpertise());
+      updateVerificationDetailResponse.setLanguagesSpoken(professional.getLanguagesSpoken());
+      updateVerificationDetailResponse.setProfessionalType(professional.getProfessionalType().name());
+      updateVerificationDetailResponse.setQualificationType(professional.getQualificationType().name());
+    }
+
     List<?> countries = countryService.getCountriesFromCache();
-    return GetProfessionalUpdateVerificationDetailResponse.builder()
-            .countries(countries)
-            .professionalTitles(convertEnumToList(ProfessionalTitle.class))
-            .build();
+    updateVerificationDetailResponse.setCountries(countries);
+    updateVerificationDetailResponse.setProfessionalTitles(convertEnumToList(ProfessionalTitle.class));
+    return updateVerificationDetailResponse;
   }
 
   @Override

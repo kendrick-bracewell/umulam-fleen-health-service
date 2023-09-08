@@ -12,6 +12,13 @@ import java.util.List;
 @AllArgsConstructor
 public class GetProfessionalUpdateVerificationDetailResponse {
 
+  private String title;
+  private Integer yearsOfExperience;
+  private String areaOfExperience;
+  private String professionalType;
+  private String languagesSpoken;
+  private String qualificationType;
+  private String country;
   private List<?> countries;
   private List<? extends EnumView> professionalTitles;
 }

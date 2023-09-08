@@ -43,8 +43,8 @@ public class ProfessionalController {
   }
 
   @GetMapping(value = "/verification/update-details")
-  public GetProfessionalUpdateVerificationDetailResponse getUpdateVerificationDetails() {
-    return service.getUpdateVerificationDetail();
+  public GetProfessionalUpdateVerificationDetailResponse getUpdateVerificationDetails(@AuthenticationPrincipal FleenUser user) {
+    return service.getUpdateVerificationDetail(user);
   }
 
   @PutMapping(value = "/verification/update-details")

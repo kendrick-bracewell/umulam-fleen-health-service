@@ -58,7 +58,7 @@ public interface ProfessionalService {
 
   Professional getProfessional(Long id);
 
-  GetProfessionalUpdateVerificationDetailResponse getUpdateVerificationDetail();
+  GetProfessionalUpdateVerificationDetailResponse getUpdateVerificationDetail(FleenUser user);
 
   List<ProfessionalAvailabilityView> getUpdateAvailabilityOrSchedule(FleenUser user);
 
