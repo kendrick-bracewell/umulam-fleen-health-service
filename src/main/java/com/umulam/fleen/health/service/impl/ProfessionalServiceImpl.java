@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.service.impl;
 
 import com.umulam.fleen.health.constant.base.ProfileType;
+import com.umulam.fleen.health.constant.member.ProfessionalTitle;
 import com.umulam.fleen.health.constant.professional.AvailabilityDayOfTheWeek;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
@@ -35,6 +36,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.umulam.fleen.health.util.DateTimeUtil.toTime;
+import static com.umulam.fleen.health.util.EnumUtil.convertEnumToList;
 
 @Slf4j
 @Service
@@ -217,6 +219,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
     List<?> countries = countryService.getCountriesFromCache();
     return GetProfessionalUpdateVerificationDetailResponse.builder()
             .countries(countries)
+            .professionalTitles(convertEnumToList(ProfessionalTitle.class))
             .build();
   }
 

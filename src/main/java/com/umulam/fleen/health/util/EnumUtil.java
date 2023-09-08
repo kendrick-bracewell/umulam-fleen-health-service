@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.util;
 
+import com.umulam.fleen.health.model.view.base.EnumView;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
@@ -37,4 +38,21 @@ public class EnumUtil {
     }
   }
 
+
+    public static List<? extends EnumView> convertEnumToList(Class<? extends Enum<?>> enumClass) {
+    List<EnumView> enumList = new ArrayList<>();
+
+    if (enumClass.isEnum()) {
+      Enum<?>[] enumConstants = enumClass.getEnumConstants();
+
+      for (Enum<?> enumValue : enumConstants) {
+        EnumView enumListView = new EnumView();
+        enumListView.setLabel(enumValue.toString().replaceAll("_", " "));
+        enumListView.setName(enumValue.toString());
+        enumList.add(enumListView);
+      }
+    }
+
+    return enumList;
+  }
 }
