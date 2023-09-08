@@ -18,7 +18,7 @@ public class ProfessionalMapper {
     if (nonNull(entry)) {
       return ProfessionalView.builder()
               .id(entry.getId())
-              .title(entry.getTitle())
+              .title(entry.getTitle().name())
               .yearsOfExperience(entry.getYearsOfExperience())
               .areaOfExpertise(entry.getAreaOfExpertise())
               .createdOn(entry.getCreatedOn())
@@ -38,7 +38,7 @@ public class ProfessionalMapper {
     if (nonNull(entry)) {
       return ProfessionalViewBasic.builder()
               .id(entry.getId())
-              .title(entry.getTitle())
+              .title(entry.getTitle().name())
               .yearsOfExperience(entry.getYearsOfExperience())
               .areaOfExpertise(entry.getAreaOfExpertise())
               .country(CountryMapper.toCountryViewBasic(entry.getCountry()))

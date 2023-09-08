@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.model.response.professional;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.umulam.fleen.health.model.view.base.EnumView;
 import lombok.*;
 
@@ -10,6 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class GetProfessionalUpdateVerificationDetailResponse {
 
   private String title;
