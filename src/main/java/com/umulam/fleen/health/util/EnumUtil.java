@@ -11,6 +11,9 @@ import java.util.List;
 @Slf4j
 public class EnumUtil {
 
+  private static final char ENUM_VALUE_SEPARATOR = '_';
+  private static final char ENUM_VALUE_REPLACE = ' ';
+
   public static List<Long> getValues(Class<?> enumClass) {
     try {
       List<Long> values = new ArrayList<>();
@@ -40,19 +43,20 @@ public class EnumUtil {
 
 
     public static List<? extends EnumView> convertEnumToList(Class<? extends Enum<?>> enumClass) {
-    List<EnumView> enumList = new ArrayList<>();
+    List<EnumView> views = new ArrayList<>();
 
     if (enumClass.isEnum()) {
-      Enum<?>[] enumConstants = enumClass.getEnumConstants();
+      Enum<?>[] constants = enumClass.getEnumConstants();
 
-      for (Enum<?> enumValue : enumConstants) {
-        EnumView enumListView = new EnumView();
-        enumListView.setLabel(enumValue.toString().replaceAll("_", " "));
-        enumListView.setName(enumValue.toString());
-        enumList.add(enumListView);
+      for (Enum<?> enumValue : constants) {
+        EnumView enumView = new EnumView();
+        enumView.setLabel(enumValue.toString()
+          .replaceAll(String.valueOf(ENUM_VALUE_SEPARATOR), String.valueOf(ENUM_VALUE_REPLACE)));
+        enumView.setName(enumValue.toString());
+        views.add(enumView);
       }
     }
 
-    return enumList;
+    return views;
   }
 }

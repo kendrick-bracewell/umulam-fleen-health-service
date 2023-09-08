@@ -14,7 +14,7 @@ public enum ProfessionalTitle implements ApiParameter {
   COGNITIVE_BEHAVIORAL_THERAPIST("Cognitive-Behavioral Therapist"),
   COUNSELOR("Counselor"),
   COUPLES_THERAPIST("Couples Therapist"),
-  DANCE_MOVEMENT_THERAPIST("Dance/Movement Therapist"),
+  DANCE_MOVEMENT_THERAPIST("Dance & Movement Therapist"),
   EDUCATIONAL_PSYCHOLOGIST("Educational Psychologist"),
   FAMILY_THERAPIST("Family Therapist"),
   FORENSIC_PSYCHOLOGIST("Forensic Psychologist"),
