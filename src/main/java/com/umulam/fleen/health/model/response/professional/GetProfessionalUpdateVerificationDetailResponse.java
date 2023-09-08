@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.model.response.professional;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.model.view.base.EnumView;
 import lombok.*;
 
@@ -15,13 +16,25 @@ import java.util.List;
 public class GetProfessionalUpdateVerificationDetailResponse {
 
   private String title;
-  private Integer yearsOfExperience;
-  private String areaOfExperience;
-  private String professionalType;
-  private String languagesSpoken;
-  private String qualificationType;
   private String country;
 
+  @JsonProperty("years_of_experience")
+  private Integer yearsOfExperience;
+
+  @JsonProperty("area_of_experience")
+  private String areaOfExperience;
+
+  @JsonProperty("professional_type")
+  private String professionalType;
+
+  @JsonProperty("languages_spoken")
+  private String languagesSpoken;
+
+  @JsonProperty("qualification_type")
+  private String qualificationType;
+
   private List<?> countries;
+
+  @JsonProperty("professional_titles")
   private List<? extends EnumView> professionalTitles;
 }
