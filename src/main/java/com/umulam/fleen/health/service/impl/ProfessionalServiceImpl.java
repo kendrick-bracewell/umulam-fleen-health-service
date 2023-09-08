@@ -221,7 +221,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
 
     if (professionalExists.isPresent()) {
       Professional professional = professionalExists.get();
-      updateVerificationDetailResponse.setTitle(professional.getTitle());
+      updateVerificationDetailResponse.setTitle(professional.getTitle().name());
       updateVerificationDetailResponse.setYearsOfExperience(professional.getYearsOfExperience());
       updateVerificationDetailResponse.setAreaOfExperience(professional.getAreaOfExpertise());
       updateVerificationDetailResponse.setLanguagesSpoken(professional.getLanguagesSpoken());

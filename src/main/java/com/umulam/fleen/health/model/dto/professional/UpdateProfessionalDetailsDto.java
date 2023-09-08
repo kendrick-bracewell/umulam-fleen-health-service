@@ -2,6 +2,7 @@ package com.umulam.fleen.health.model.dto.professional;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
+import com.umulam.fleen.health.constant.member.ProfessionalTitle;
 import com.umulam.fleen.health.constant.member.ProfessionalType;
 import com.umulam.fleen.health.model.domain.Country;
 import com.umulam.fleen.health.model.domain.Professional;
@@ -22,7 +23,7 @@ import javax.validation.constraints.Size;
 public class UpdateProfessionalDetailsDto {
 
   @NotBlank(message = "{professional.title.notEmpty}")
-  @Size(min = 1, max = 500, message = "{professional.title.size}")
+  @EnumValid(enumClass = ProfessionalTitle.class, message = "{professional.professionalTitle}")
   private String title;
 
   @NotNull(message = "{professional.yearsOfExperience.notNull}")
@@ -58,7 +59,7 @@ public class UpdateProfessionalDetailsDto {
 
   public Professional toProfessional() {
     return Professional.builder()
-            .title(title)
+            .title(ProfessionalTitle.valueOf(title))
             .yearsOfExperience(Integer.parseInt(yearsOfExperience))
             .areaOfExpertise(areaOfExpertise)
             .country(Country.builder()

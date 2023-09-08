@@ -1,6 +1,7 @@
 package com.umulam.fleen.health.model.domain;
 
 import com.umulam.fleen.health.constant.member.ProfessionalQualificationType;
+import com.umulam.fleen.health.constant.member.ProfessionalTitle;
 import com.umulam.fleen.health.constant.member.ProfessionalType;
 import com.umulam.fleen.health.constant.professional.ProfessionalAvailabilityStatus;
 import lombok.*;
@@ -24,8 +25,9 @@ public class Professional {
   @Column(name = "id")
   private Long id;
 
-  @Column(name = "title")
-  private String title;
+  @Column(name = "title", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private ProfessionalTitle title;
 
   @Column(name = "type", nullable = false)
   @Enumerated(EnumType.STRING)

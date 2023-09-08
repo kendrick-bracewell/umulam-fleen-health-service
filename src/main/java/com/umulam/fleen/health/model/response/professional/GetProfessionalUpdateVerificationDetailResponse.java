@@ -19,6 +19,7 @@ public class GetProfessionalUpdateVerificationDetailResponse {
   private String languagesSpoken;
   private String qualificationType;
   private String country;
+
   private List<?> countries;
   private List<? extends EnumView> professionalTitles;
 }
