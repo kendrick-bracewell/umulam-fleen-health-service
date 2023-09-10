@@ -314,6 +314,11 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   }
 
   @Override
+  public S3BucketNames getS3BucketNames() {
+    return s3BucketNames;
+  }
+
+  @Override
   public Double getProfessionalPrice(Long memberId) {
     return repository.findProfessionalPrice(memberId);
   }
