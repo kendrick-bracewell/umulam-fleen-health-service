@@ -19,4 +19,5 @@ public interface AdminProfessionalService extends ProfessionalService {
 
   @Transactional
   void updateProfessionalVerificationStatus(UpdateProfileVerificationStatusDto dto, Long professionalId);
+
 }

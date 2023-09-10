@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.service.admin.impl;
 
+import com.umulam.fleen.health.configuration.aws.s3.S3BucketNames;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.professional.ProfessionalNotFoundException;
 import com.umulam.fleen.health.model.domain.Member;
@@ -57,8 +58,9 @@ public class AdminProfessionalServiceImpl extends ProfessionalServiceImpl implem
                                       EmailServiceImpl emailService,
                                       VerificationHistoryService verificationHistoryService,
                                       ProfileVerificationMessageService verificationMessageService,
-                                      ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository) {
-    super(memberService, s3Service, countryService, verificationDocumentService, repository, professionalAvailabilityJpaRepository);
+                                      ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository,
+                                      S3BucketNames s3BucketNames) {
+    super(memberService, s3Service, countryService, verificationDocumentService, repository, professionalAvailabilityJpaRepository, s3BucketNames);
     this.verificationMessageService = verificationMessageService;
     this.cacheService = cacheService;
     this.mobileTextService = mobileTextService;

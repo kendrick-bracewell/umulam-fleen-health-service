@@ -1,5 +1,7 @@
 package com.umulam.fleen.health.service.impl;
 
+import com.amazonaws.HttpMethod;
+import com.umulam.fleen.health.configuration.aws.s3.S3BucketNames;
 import com.umulam.fleen.health.constant.base.ProfileType;
 import com.umulam.fleen.health.constant.member.ProfessionalTitle;
 import com.umulam.fleen.health.constant.professional.AvailabilityDayOfTheWeek;
@@ -49,19 +51,22 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   protected final VerificationDocumentService verificationDocumentService;
   protected final ProfessionalJpaRepository repository;
   protected final ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository;
+  protected final S3BucketNames s3BucketNames;
 
   public ProfessionalServiceImpl(MemberService memberService,
                              S3Service s3Service,
                              CountryService countryService,
                              VerificationDocumentService verificationDocumentService,
                              ProfessionalJpaRepository repository,
-                             ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository) {
+                             ProfessionalAvailabilityJpaRepository professionalAvailabilityJpaRepository,
+                             S3BucketNames s3BucketNames) {
     this.memberService = memberService;
     this.s3Service = s3Service;
     this.countryService = countryService;
     this.verificationDocumentService = verificationDocumentService;
     this.repository = repository;
     this.professionalAvailabilityJpaRepository = professionalAvailabilityJpaRepository;
+    this.s3BucketNames = s3BucketNames;
   }
 
   @Override
@@ -125,6 +130,16 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
     professional.setCountry(country);
 
     return repository.save(professional);
+  }
+
+  @Override
+  public List<VerificationDocumentView> getUploadDocuments(FleenUser user) {
+    List<VerificationDocument> verificationDocuments = verificationDocumentService.getByMemberEmailAddress(user.getEmailAddress());
+    List<VerificationDocumentView> views = VerificationDocumentMapper.toVerificationDocumentViews(verificationDocuments);
+    views.forEach(document -> {
+      document.setLink(s3Service.generateSignedUrl(s3BucketNames.getMemberDocument(), document.getFilename(), HttpMethod.GET, 1));
+    });
+    return views;
   }
 
   @Override

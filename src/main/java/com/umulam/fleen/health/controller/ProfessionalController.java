@@ -12,6 +12,7 @@ import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdate
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
 import com.umulam.fleen.health.model.view.UserVerificationStatusView;
+import com.umulam.fleen.health.model.view.VerificationDocumentView;
 import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.service.ProfessionalService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,9 +38,7 @@ public class ProfessionalController {
   @GetMapping(value = "/get-details")
   public ProfessionalView getDetails(@AuthenticationPrincipal FleenUser user) {
     Professional professional = service.getDetails(user);
-    ProfessionalView view = service.toProfessionalView(professional);
-    service.setVerificationDocument(view);
-    return view;
+    return service.toProfessionalView(professional);
   }
 
   @GetMapping(value = "/verification/update-details")
@@ -57,8 +56,8 @@ public class ProfessionalController {
   }
 
   @GetMapping(value = "/verification/upload-documents")
-  public Object getUpdateVerificationDocuments(@AuthenticationPrincipal FleenUser user) {
-    return null;
+  public List<VerificationDocumentView> getUpdateVerificationDocuments(@AuthenticationPrincipal FleenUser user) {
+    return service.getUploadDocuments(user);
   }
 
   @PutMapping(value = "/verification/upload-documents")

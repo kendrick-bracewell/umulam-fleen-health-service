@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.model.view.professional;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.umulam.fleen.health.model.view.country.CountryView;
 import com.umulam.fleen.health.model.view.VerificationDocumentView;
@@ -15,6 +16,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProfessionalView extends FleenHealthView {
 
   private String title;

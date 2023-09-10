@@ -11,6 +11,7 @@ import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdate
 import com.umulam.fleen.health.model.response.professional.GetProfessionalUpdateVerificationDetailResponse;
 import com.umulam.fleen.health.model.security.FleenUser;
 import com.umulam.fleen.health.model.view.ProfessionalAvailabilityView;
+import com.umulam.fleen.health.model.view.VerificationDocumentView;
 import com.umulam.fleen.health.model.view.professional.ProfessionalView;
 import com.umulam.fleen.health.model.view.professional.ProfessionalViewBasic;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,9 @@ public interface ProfessionalService {
 
   @Transactional
   Professional updateDetails(UpdateProfessionalDetailsDto dto, FleenUser user);
+
+  @Transactional
+  List<VerificationDocumentView> getUploadDocuments(FleenUser user);
 
   @Transactional
   void uploadDocuments(UploadProfessionalDocumentDto dto, FleenUser user);
