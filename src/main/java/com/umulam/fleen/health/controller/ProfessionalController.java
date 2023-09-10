@@ -50,9 +50,15 @@ public class ProfessionalController {
   @PutMapping(value = "/verification/update-details")
   public ProfessionalView updateDetails(@Valid @RequestBody UpdateProfessionalDetailsDto dto, @AuthenticationPrincipal FleenUser user) {
     Professional professional = service.updateDetails(dto, user);
+
     ProfessionalView professionalView = service.toProfessionalView(professional);
     service.setVerificationDocument(professionalView);
     return professionalView;
+  }
+
+  @GetMapping(value = "/verification/upload-documents")
+  public Object getUpdateVerificationDocuments(@AuthenticationPrincipal FleenUser user) {
+    return null;
   }
 
   @PutMapping(value = "/verification/upload-documents")

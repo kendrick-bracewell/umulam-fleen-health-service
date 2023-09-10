@@ -22,6 +22,7 @@ public class CountryExistValidator implements ConstraintValidator<CountryExist, 
 
   @Override
   public boolean isValid(String id, ConstraintValidatorContext context) {
+    System.out.println("The value is sososososos " + id);
     try {
       return service.isCountryExists(Long.parseLong(id));
     } catch (Exception ex) {

@@ -21,8 +21,8 @@ public class GetProfessionalUpdateVerificationDetailResponse {
   @JsonProperty("years_of_experience")
   private Integer yearsOfExperience;
 
-  @JsonProperty("area_of_experience")
-  private String areaOfExperience;
+  @JsonProperty("area_of_expertise")
+  private String areaOfExpertise;
 
   @JsonProperty("professional_type")
   private String professionalType;

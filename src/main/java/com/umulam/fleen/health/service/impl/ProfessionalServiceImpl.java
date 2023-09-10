@@ -223,10 +223,11 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
       Professional professional = professionalExists.get();
       updateVerificationDetailResponse.setTitle(professional.getTitle().name());
       updateVerificationDetailResponse.setYearsOfExperience(professional.getYearsOfExperience());
-      updateVerificationDetailResponse.setAreaOfExperience(professional.getAreaOfExpertise());
+      updateVerificationDetailResponse.setAreaOfExpertise(professional.getAreaOfExpertise());
       updateVerificationDetailResponse.setLanguagesSpoken(professional.getLanguagesSpoken());
       updateVerificationDetailResponse.setProfessionalType(professional.getProfessionalType().name());
       updateVerificationDetailResponse.setQualificationType(professional.getQualificationType().name());
+      updateVerificationDetailResponse.setCountry(professional.getCountry().getId().toString());
     }
 
     List<?> countries = countryService.getCountriesFromCache();

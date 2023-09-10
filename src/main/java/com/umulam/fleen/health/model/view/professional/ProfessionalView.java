@@ -42,4 +42,5 @@ public class ProfessionalView extends FleenHealthView {
 
   @JsonProperty("verification_documents")
   private List<VerificationDocumentView> verificationDocuments;
+
 }
