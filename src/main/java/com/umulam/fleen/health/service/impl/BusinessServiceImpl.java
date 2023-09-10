@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.service.impl;
 
+import com.umulam.fleen.health.configuration.aws.s3.S3BucketNames;
 import com.umulam.fleen.health.constant.verification.ProfileVerificationStatus;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
 import com.umulam.fleen.health.model.domain.Business;
@@ -32,17 +33,20 @@ public class BusinessServiceImpl implements BusinessService, ProfileService {
   private final CountryService countryService;
   private final VerificationDocumentService verificationDocumentService;
   private final BusinessJpaRepository repository;
+  private final S3BucketNames s3BucketNames;
 
   public BusinessServiceImpl(MemberService memberService,
                              S3Service s3Service,
                              CountryService countryService,
                              VerificationDocumentService verificationDocumentService,
-                             BusinessJpaRepository repository) {
+                             BusinessJpaRepository repository,
+                             S3BucketNames s3BucketNames) {
     this.memberService = memberService;
     this.s3Service = s3Service;
     this.countryService = countryService;
     this.verificationDocumentService = verificationDocumentService;
     this.repository = repository;
+    this.s3BucketNames = s3BucketNames;
   }
 
   @Override
@@ -134,5 +138,10 @@ public class BusinessServiceImpl implements BusinessService, ProfileService {
   @Override
   public VerificationDocumentService getVerificationDocumentService() {
     return verificationDocumentService;
+  }
+
+  @Override
+  public S3BucketNames getS3BucketNames() {
+    return s3BucketNames;
   }
 }
