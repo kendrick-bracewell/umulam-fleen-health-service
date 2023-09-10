@@ -62,7 +62,7 @@ public class ProfessionalController {
     return service.getUploadDocuments(user);
   }
 
-  @PutMapping(value = "/verification/upload-documents")
+  @PutMapping(value = "/verification/upload-document")
   public FleenHealthResponse uploadDocuments(@Valid @RequestBody UploadProfessionalDocumentDto dto, @AuthenticationPrincipal FleenUser user) {
     service.uploadDocuments(dto, user);
     return new FleenHealthResponse(VERIFICATION_DOCUMENT_UPDATED);

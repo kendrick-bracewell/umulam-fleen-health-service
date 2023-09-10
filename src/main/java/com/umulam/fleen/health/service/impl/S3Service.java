@@ -82,7 +82,13 @@ public class S3Service {
   }
 
   public String getObjectKeyFromUrl(@NotNull String objectUrl) {
-    return objectUrl.substring(objectUrl.lastIndexOf("/") + 1);
+    String objectKey = objectUrl.substring(objectUrl.lastIndexOf("/") + 1);
+    int questionMarkIndex = objectKey.lastIndexOf("?");
+
+    if (questionMarkIndex != -1) {
+      objectKey = objectKey.substring(0, questionMarkIndex);
+    }
+    return objectKey;
   }
 
   public DeleteResponse deleteObject(@NotNull String bucketName, @NotNull String objectKey) {
