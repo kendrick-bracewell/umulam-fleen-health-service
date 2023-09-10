@@ -13,4 +13,5 @@ public enum ProfessionalType {
   ProfessionalType(String value) {
     this.value = value;
   }
+
 }

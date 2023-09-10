@@ -18,15 +18,15 @@ public class ProfessionalMapper {
     if (nonNull(entry)) {
       return ProfessionalView.builder()
               .id(entry.getId())
-              .title(entry.getTitle().name())
+              .title(entry.getTitle().getValue())
               .yearsOfExperience(entry.getYearsOfExperience())
               .areaOfExpertise(entry.getAreaOfExpertise())
               .createdOn(entry.getCreatedOn())
               .updatedOn(entry.getUpdatedOn())
               .country(CountryMapper.toCountryView(entry.getCountry()))
               .member(MemberMapper.toMemberView(entry.getMember()))
-              .professionalType(entry.getProfessionalType().name())
-              .qualification(entry.getQualificationType().name())
+              .professionalType(entry.getProfessionalType().getValue())
+              .qualification(entry.getQualificationType().getValue())
               .availabilityStatus(entry.getAvailabilityStatus().name())
               .languagesSpoken(entry.getLanguagesSpoken())
               .build();
@@ -38,13 +38,13 @@ public class ProfessionalMapper {
     if (nonNull(entry)) {
       return ProfessionalViewBasic.builder()
               .id(entry.getId())
-              .title(entry.getTitle().name())
+              .title(entry.getTitle().getValue())
               .yearsOfExperience(entry.getYearsOfExperience())
               .areaOfExpertise(entry.getAreaOfExpertise())
               .country(CountryMapper.toCountryViewBasic(entry.getCountry()))
               .member(MemberMapper.toMemberViewBasic(entry.getMember()))
-              .professionalType(entry.getProfessionalType().name())
-              .qualification(entry.getQualificationType().name())
+              .professionalType(entry.getProfessionalType().getValue())
+              .qualification(entry.getQualificationType().getValue())
               .languagesSpoken(entry.getLanguagesSpoken())
               .build();
     }
