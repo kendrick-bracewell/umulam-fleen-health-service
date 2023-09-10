@@ -29,7 +29,7 @@ public class VerificationDocument {
   @Column(name = "filename", nullable = false, length = 500)
   private String filename;
 
-  @Column(name = "link", nullable = false, length = 500)
+  @Column(name = "link", nullable = false, length = 700)
   private String link;
 
   @ManyToOne(fetch = FetchType.LAZY)

@@ -22,7 +22,7 @@ public interface ProfileService {
         VerificationDocument verificationDocument = VerificationDocument.builder()
                 .verificationDocumentType(request.getVerificationDocumentType())
                 .filename(getS3Service().getObjectKeyFromUrl(request.getDocumentLink()))
-                .link(request.getDocumentLink())
+                .link(getS3Service().getBaseUrlFromUrl(request.getDocumentLink()))
                 .build();
         verificationDocumentMap.put(request.getVerificationDocumentType(), verificationDocument);
       }

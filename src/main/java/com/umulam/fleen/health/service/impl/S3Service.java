@@ -177,4 +177,14 @@ public class S3Service {
     return file;
   }
 
+  public String getBaseUrlFromUrl(@NotNull String url) {
+    int questionMarkIndex = url.indexOf("?");
+    if (questionMarkIndex != -1) {
+      return url.substring(0, questionMarkIndex);
+    } else {
+      return url;
+    }
+  }
+
+
 }
