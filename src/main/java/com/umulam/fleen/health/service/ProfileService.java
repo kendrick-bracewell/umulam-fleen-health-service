@@ -1,5 +1,6 @@
 package com.umulam.fleen.health.service;
 
+import com.amazonaws.HttpMethod;
 import com.umulam.fleen.health.configuration.aws.s3.S3BucketNames;
 import com.umulam.fleen.health.constant.verification.VerificationDocumentType;
 import com.umulam.fleen.health.exception.member.UserNotFoundException;
@@ -7,9 +8,12 @@ import com.umulam.fleen.health.model.domain.Member;
 import com.umulam.fleen.health.model.domain.VerificationDocument;
 import com.umulam.fleen.health.model.request.UpdateVerificationDocumentRequest;
 import com.umulam.fleen.health.model.security.FleenUser;
+import com.umulam.fleen.health.model.view.VerificationDocumentView;
 import com.umulam.fleen.health.service.impl.S3Service;
 
 import java.util.*;
+
+import static java.util.Objects.nonNull;
 
 public interface ProfileService {
 
@@ -17,7 +21,7 @@ public interface ProfileService {
                                                              List<VerificationDocument> existingVerificationDocuments) {
     Map<VerificationDocumentType, VerificationDocument> verificationDocumentMap = new HashMap<>();
     for (UpdateVerificationDocumentRequest request: updateVerificationDocumentRequest) {
-      if (Objects.nonNull(request.getDocumentLink())) {
+      if (nonNull(request.getDocumentLink())) {
         VerificationDocument verificationDocument = VerificationDocument.builder()
                 .verificationDocumentType(request.getVerificationDocumentType())
                 .filename(getS3Service().getObjectKeyFromUrl(request.getDocumentLink()))
@@ -29,7 +33,7 @@ public interface ProfileService {
 
     for (VerificationDocument existingVerificationDocument: existingVerificationDocuments) {
       VerificationDocument verificationDocument = verificationDocumentMap.get(existingVerificationDocument.getVerificationDocumentType());
-      if (Objects.nonNull(verificationDocument)) {
+      if (nonNull(verificationDocument)) {
         existingVerificationDocument.setFilename(verificationDocument.getFilename());
         existingVerificationDocument.setLink(verificationDocument.getLink());
         verificationDocumentMap.put(verificationDocument.getVerificationDocumentType(), existingVerificationDocument);
@@ -43,7 +47,7 @@ public interface ProfileService {
     List<String> objectOrKeysToDelete = new ArrayList<>();
     Map<VerificationDocumentType, Object> verificationDocumentMap = new HashMap<>();
     for (UpdateVerificationDocumentRequest request: updateVerificationDocumentRequest) {
-      if (Objects.nonNull(request.getDocumentLink())) {
+      if (nonNull(request.getDocumentLink())) {
         VerificationDocument verificationDocument = VerificationDocument.builder().build();
         verificationDocumentMap.put(request.getVerificationDocumentType(), verificationDocument);
       }
@@ -51,7 +55,7 @@ public interface ProfileService {
 
     for (VerificationDocument existingVerificationDocument: existingVerificationDocuments) {
       Object verificationDocument = verificationDocumentMap.get(existingVerificationDocument.getVerificationDocumentType());
-      if (Objects.nonNull(verificationDocument)) {
+      if (nonNull(verificationDocument)) {
         objectOrKeysToDelete.add(existingVerificationDocument.getLink());
       }
     }
@@ -72,6 +76,12 @@ public interface ProfileService {
 
     getVerificationDocumentService().saveMany(newOrUpdatedDocument);
     getS3Service().deleteMultipleObjects(getS3BucketNames().getMemberDocument(), staleOrUnusedDocumentsToDelete);
+  }
+
+  default void generateVerificationDocumentSignedUrl(List<VerificationDocumentView> views) {
+    if (nonNull(views) && !views.isEmpty()) {
+      views.forEach(document -> document.setLink(getS3Service().generateSignedUrl(getS3BucketNames().getMemberDocument(), document.getFilename(), HttpMethod.GET, 5)));
+    }
   }
 
   S3Service getS3Service();

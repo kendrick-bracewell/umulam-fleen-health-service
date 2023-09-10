@@ -136,9 +136,6 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   public List<VerificationDocumentView> getUploadDocuments(FleenUser user) {
     List<VerificationDocument> verificationDocuments = verificationDocumentService.getByMemberEmailAddress(user.getEmailAddress());
     List<VerificationDocumentView> views = VerificationDocumentMapper.toVerificationDocumentViews(verificationDocuments);
-    views.forEach(document -> {
-      document.setLink(s3Service.generateSignedUrl(s3BucketNames.getMemberDocument(), document.getFilename(), HttpMethod.GET, 1));
-    });
     return views;
   }
 
@@ -208,6 +205,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
     String emailAddress = professionalView.getMember().getEmailAddress();
     List<VerificationDocument> verificationDocuments = verificationDocumentService.getByMemberEmailAddress(emailAddress);
     List<VerificationDocumentView> verificationDocumentViews = VerificationDocumentMapper.toVerificationDocumentViews(verificationDocuments);
+    generateVerificationDocumentSignedUrl(verificationDocumentViews);
     professionalView.setVerificationDocuments(verificationDocumentViews);
   }
 
