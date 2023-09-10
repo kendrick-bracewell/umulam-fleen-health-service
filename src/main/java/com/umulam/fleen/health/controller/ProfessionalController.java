@@ -38,7 +38,9 @@ public class ProfessionalController {
   @GetMapping(value = "/get-details")
   public ProfessionalView getDetails(@AuthenticationPrincipal FleenUser user) {
     Professional professional = service.getDetails(user);
-    return service.toProfessionalView(professional);
+    ProfessionalView professionalView = service.toProfessionalView(professional);
+    service.setVerificationDocument(professionalView);
+    return professionalView;
   }
 
   @GetMapping(value = "/verification/update-details")

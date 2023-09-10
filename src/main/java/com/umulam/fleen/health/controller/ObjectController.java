@@ -32,6 +32,12 @@ public class ObjectController {
     return s3Service.deleteObject(s3BucketNames.getMemberDocument(), key);
   }
 
+  @GetMapping(value = "/view/member-document")
+  public SignedUrlResponse viewVerificationDocument(@RequestParam(name = "key") String key) {
+    String signedUrl = s3Service.generateSignedUrl(s3BucketNames.getMemberDocument(), key, HttpMethod.GET, 1);
+    return new SignedUrlResponse(signedUrl);
+  }
+
   @DeleteMapping(value = "/delete/profile-photo")
   public DeleteResponse deleteProfilePhoto(@RequestParam(name = "key") String key) {
     return s3Service.deleteObject(s3BucketNames.getProfilePhoto(), key);
