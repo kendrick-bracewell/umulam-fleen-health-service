@@ -53,6 +53,6 @@ public class BusinessController {
   @GetMapping(value = "/check-verification-status")
   public UserVerificationStatusView checkVerificationStatus(@AuthenticationPrincipal FleenUser user) {
     ProfileVerificationStatus status = businessService.checkVerificationStatus(user);
-    return new UserVerificationStatusView(status.name());
+    return new UserVerificationStatusView(status.name(), status.getValue());
   }
 }

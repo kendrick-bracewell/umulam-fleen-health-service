@@ -15,12 +15,14 @@ import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME;
 public class UserVerificationStatusView {
 
   private String status;
+  private String label;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
   private LocalDateTime timestamp;
 
-  public UserVerificationStatusView(String status) {
+  public UserVerificationStatusView(String status, String label) {
     this.status = status;
+    this.label = label;
     this.timestamp = LocalDateTime.now();
   }
 }

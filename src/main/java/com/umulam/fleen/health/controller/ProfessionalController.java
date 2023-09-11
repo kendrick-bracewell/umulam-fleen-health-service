@@ -77,7 +77,7 @@ public class ProfessionalController {
   @GetMapping(value = "/check-verification-status")
   public UserVerificationStatusView checkVerificationStatus(@AuthenticationPrincipal FleenUser user) {
     ProfileVerificationStatus status = service.checkVerificationStatus(user);
-    return new UserVerificationStatusView(status.name());
+    return new UserVerificationStatusView(status.name(), status.getValue());
   }
 
   @GetMapping(value = "/update-availability-status")
