@@ -1,6 +1,5 @@
 package com.umulam.fleen.health.controller;
 
-import com.amazonaws.HttpMethod;
 import com.umulam.fleen.health.configuration.aws.s3.S3BucketNames;
 import com.umulam.fleen.health.model.response.other.SignedUrlResponse;
 import com.umulam.fleen.health.service.ObjectService;

@@ -135,8 +135,7 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   @Override
   public List<VerificationDocumentView> getUploadDocuments(FleenUser user) {
     List<VerificationDocument> verificationDocuments = verificationDocumentService.getByMemberEmailAddress(user.getEmailAddress());
-    List<VerificationDocumentView> views = VerificationDocumentMapper.toVerificationDocumentViews(verificationDocuments);
-    return views;
+    return VerificationDocumentMapper.toVerificationDocumentViews(verificationDocuments);
   }
 
   @Override
