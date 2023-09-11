@@ -53,6 +53,38 @@ public class S3Service {
     return generateSignedUrl(bucketName, fileName, HttpMethod.PUT, 1);
   }
 
+  public String generateSignedUrlWithHeaders(String bucketName, String objectKey, String contentType) {
+    return generateSignedUrlWithHeaders(bucketName, objectKey, contentType, HttpMethod.PUT, 1);
+  }
+
+  public String generateSignedUrl(String bucketName, String fileName, String contentType) {
+    return generateSignedUrlWithHeaders(bucketName, fileName, contentType, HttpMethod.PUT, 2);
+  }
+
+  public String generateSignedUrlWithHeaders(String bucketName, String objectKey, String contentType, HttpMethod httpMethod, int hour) {
+    GeneratePresignedUrlRequest signedUrlRequest = new GeneratePresignedUrlRequest(bucketName, objectKey);
+    signedUrlRequest.withExpiration(getExpirationDate(hour));
+    signedUrlRequest.withMethod(httpMethod);
+    signedUrlRequest.withContentType(contentType);
+    return amazonS3.generatePresignedUrl(signedUrlRequest).toString();
+  }
+
+  public String generateDownloadUrl(String bucketName, String objectKey) {
+    return generateDownloadUrl(bucketName, objectKey, HttpMethod.GET, 5);
+  }
+
+  public String generateDownloadUrl(String bucketName, String objectKey, HttpMethod httpMethod, int hour) {
+    GeneratePresignedUrlRequest signedUrlRequest = new GeneratePresignedUrlRequest(bucketName, objectKey);
+    signedUrlRequest.withExpiration(getExpirationDate(hour));
+    signedUrlRequest.withMethod(httpMethod);
+
+    ResponseHeaderOverrides responseHeaders = new ResponseHeaderOverrides();
+    responseHeaders.setContentDisposition("attachment; filename=\"" + objectKey + "\"");
+    signedUrlRequest.setResponseHeaders(responseHeaders);
+
+    return amazonS3.generatePresignedUrl(signedUrlRequest).toString();
+  }
+
   public String generateSignedUrl(String bucketName, String fileName, HttpMethod httpMethod, Date expirationDate) {
     if (Objects.isNull(expirationDate)) {
       expirationDate = new Date();
@@ -184,6 +216,14 @@ public class S3Service {
     } else {
       return url;
     }
+  }
+
+  private Date getExpirationDate(int hour) {
+    Date expirationDate = new Date();
+    long expirationTimeInMillis = expirationDate.getTime();
+    expirationTimeInMillis += getTimeInMillis(60, 60, hour, 0);
+    expirationDate.setTime(expirationTimeInMillis);
+    return expirationDate;
   }
 
 

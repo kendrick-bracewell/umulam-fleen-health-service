@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URLConnection;
+
 @Slf4j
 @RestController
 @RequestMapping(value = "signed-url")
@@ -33,7 +35,9 @@ public class SignedUrlController {
   @GetMapping("/profile-verification-document")
   @PreAuthorize("hasAnyRole('PRE_APPROVED_PROFESSIONAL', 'PRE_APPROVED_BUSINESS', 'PROFESSIONAL', 'BUSINESS', 'ADMINISTRATOR', 'SUPER_ADMINISTRATOR')")
   public SignedUrlResponse forProfileVerificationDocument(@RequestParam(name = "file_name") String fileName) {
-    String signedUrl = s3Service.generateSignedUrl(s3BucketNames.getMemberDocument(), objectService.generateFilename(fileName));
+    String newFileName = objectService.generateFilename(fileName);
+    System.out.println("The content type is " + URLConnection.guessContentTypeFromName(newFileName));
+    String signedUrl = s3Service.generateSignedUrl(s3BucketNames.getMemberDocument(), newFileName, URLConnection.guessContentTypeFromName(newFileName));
     return new SignedUrlResponse(signedUrl);
   }
 

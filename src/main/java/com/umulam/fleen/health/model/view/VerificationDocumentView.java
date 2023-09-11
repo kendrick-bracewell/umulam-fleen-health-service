@@ -15,6 +15,9 @@ public class VerificationDocumentView extends FleenHealthView {
   private String filename;
   private String link;
 
+  @JsonProperty("download_link")
+  private String downloadLink;
+
   @JsonProperty("document_type")
   private String documentType;
 

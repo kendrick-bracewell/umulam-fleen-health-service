@@ -80,7 +80,10 @@ public interface ProfileService {
 
   default void generateVerificationDocumentSignedUrl(List<VerificationDocumentView> views) {
     if (nonNull(views) && !views.isEmpty()) {
-      views.forEach(document -> document.setLink(getS3Service().generateSignedUrl(getS3BucketNames().getMemberDocument(), document.getFilename(), HttpMethod.GET, 5)));
+      views.forEach(document -> {
+        document.setLink(getS3Service().generateSignedUrl(getS3BucketNames().getMemberDocument(), document.getFilename(), HttpMethod.GET, 5));
+        document.setDownloadLink(getS3Service().generateDownloadUrl(getS3BucketNames().getMemberDocument(), document.getFilename()));
+      });
     }
   }
 
