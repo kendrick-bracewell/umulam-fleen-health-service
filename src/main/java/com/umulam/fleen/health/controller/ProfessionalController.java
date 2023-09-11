@@ -80,7 +80,7 @@ public class ProfessionalController {
     return new UserVerificationStatusView(status.name(), status.getValue());
   }
 
-  @GetMapping(value = "/update-availability-status")
+  @GetMapping(value = "/check-availability-status")
   public GetProfessionalUpdateAvailabilityStatusResponse getUpdateAvailabilityStatus(@AuthenticationPrincipal FleenUser user) {
     return service.getProfessionalAvailabilityStatus(user);
   }

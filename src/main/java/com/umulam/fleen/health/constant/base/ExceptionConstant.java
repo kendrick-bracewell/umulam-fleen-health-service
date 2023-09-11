@@ -12,8 +12,7 @@ public class ExceptionConstant {
   public static final String INVALID_USER = "Invalid User";
   public static final String PATH_URL = "path";
   public static final String MISSING_HTTP_REQUEST_PARAMETERS = "Required parameter '%s' of type '%s' is missing";
-
   public static final String MISSING_PATH_VARIABLE = "Required parameter '%s' is missing";
-
   public static final String INVALID_ARGUMENTS = "Invalid Arguments";
+  public static final String DEFAULT_MESSAGE = "An error has occurred";
 }
