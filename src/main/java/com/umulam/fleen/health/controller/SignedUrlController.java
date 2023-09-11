@@ -36,7 +36,6 @@ public class SignedUrlController {
   @PreAuthorize("hasAnyRole('PRE_APPROVED_PROFESSIONAL', 'PRE_APPROVED_BUSINESS', 'PROFESSIONAL', 'BUSINESS', 'ADMINISTRATOR', 'SUPER_ADMINISTRATOR')")
   public SignedUrlResponse forProfileVerificationDocument(@RequestParam(name = "file_name") String fileName) {
     String newFileName = objectService.generateFilename(fileName);
-    System.out.println("The content type is " + URLConnection.guessContentTypeFromName(newFileName));
     String signedUrl = s3Service.generateSignedUrl(s3BucketNames.getMemberDocument(), newFileName, URLConnection.guessContentTypeFromName(newFileName));
     return new SignedUrlResponse(signedUrl);
   }
