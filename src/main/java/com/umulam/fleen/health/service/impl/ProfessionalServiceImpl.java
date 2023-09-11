@@ -142,13 +142,19 @@ public class ProfessionalServiceImpl implements ProfessionalService, ProfileServ
   @Transactional
   public void uploadDocuments(UploadProfessionalDocumentDto dto, FleenUser user) {
     saveVerificationDocument(user, dto.toUpdateVerificationDocumentRequest());
+    Member member = getMember(user.getEmailAddress());
+    if (member.getVerificationStatus() == ProfileVerificationStatus.APPROVED) {
+      member.setVerificationStatus(ProfileVerificationStatus.IN_PROGRESS);
+      memberService.save(member);
+    }
   }
 
   @Override
   @Transactional
   public void requestForVerification(FleenUser user) {
     Member member = getMember(user.getEmailAddress());
-    if (member.getVerificationStatus() == ProfileVerificationStatus.IN_PROGRESS) {
+    if (member.getVerificationStatus() == ProfileVerificationStatus.IN_PROGRESS
+        || member.getVerificationStatus() == ProfileVerificationStatus.APPROVED) {
       return;
     }
     member.setVerificationStatus(ProfileVerificationStatus.IN_PROGRESS);
