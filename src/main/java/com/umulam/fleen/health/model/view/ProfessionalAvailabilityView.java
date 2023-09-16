@@ -33,4 +33,5 @@ public class ProfessionalAvailabilityView extends FleenHealthView {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TIME)
   @JsonProperty("end_time")
   private LocalTime endTime;
+
 }
