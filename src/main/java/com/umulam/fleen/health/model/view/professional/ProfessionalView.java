@@ -39,6 +39,9 @@ public class ProfessionalView extends FleenHealthView {
   @JsonProperty("languages_spoken")
   private String languagesSpoken;
 
+  @JsonProperty("price")
+  private Double price;
+
   private MemberView member;
   private CountryView country;
 

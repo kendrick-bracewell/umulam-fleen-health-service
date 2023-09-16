@@ -144,9 +144,9 @@ public class HealthSessionServiceImpl implements HealthSessionService {
   public ProfessionalCheckAvailabilityResponse viewProfessionalAvailability(FleenUser user, Long professionalId) {
     Professional professional = professionalService.getProfessional(professionalId);
     if (professional.getAvailabilityStatus() == ProfessionalAvailabilityStatus.AVAILABLE) {
-      return new ProfessionalCheckAvailabilityResponse(true);
+      return new ProfessionalCheckAvailabilityResponse(true, ProfessionalAvailabilityStatus.AVAILABLE.name());
     } else {
-      return new ProfessionalCheckAvailabilityResponse(false);
+      return new ProfessionalCheckAvailabilityResponse(false, ProfessionalAvailabilityStatus.UNAVAILABLE.name());
     }
   }
 

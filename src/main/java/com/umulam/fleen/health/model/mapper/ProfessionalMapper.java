@@ -29,6 +29,7 @@ public class ProfessionalMapper {
               .qualification(entry.getQualificationType().getValue())
               .availabilityStatus(entry.getAvailabilityStatus().name())
               .languagesSpoken(entry.getLanguagesSpoken())
+              .price(entry.getPrice())
               .build();
     }
     return null;
@@ -46,6 +47,7 @@ public class ProfessionalMapper {
               .professionalType(entry.getProfessionalType().getValue())
               .qualification(entry.getQualificationType().getValue())
               .languagesSpoken(entry.getLanguagesSpoken())
+              .price(entry.getPrice())
               .build();
     }
     return null;

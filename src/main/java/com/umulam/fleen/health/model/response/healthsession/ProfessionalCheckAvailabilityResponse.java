@@ -15,6 +15,7 @@ import static com.umulam.fleen.health.util.DateFormatUtil.DATE_TIME;
 public class ProfessionalCheckAvailabilityResponse {
 
   private boolean available;
+  private String availabilityName;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME)
   private final String timestamp;
@@ -22,8 +23,9 @@ public class ProfessionalCheckAvailabilityResponse {
   @JsonProperty("status_code")
   private Integer statusCode;
 
-  public ProfessionalCheckAvailabilityResponse(boolean available) {
+  public ProfessionalCheckAvailabilityResponse(boolean available, String availabilityName) {
     this.available = available;
+    this.availabilityName = availabilityName;
     this.timestamp = LocalDateTime.now().toString();
     this.statusCode = HttpStatus.OK.value();
   }
