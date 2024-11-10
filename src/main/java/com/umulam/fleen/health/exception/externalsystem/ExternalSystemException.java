@@ -10,3 +10,4 @@ public class ExternalSystemException extends FleenHealthException {
     super(String.format(message, externalSystem));
   }
 }
+ 
