@@ -11,3 +11,4 @@ public class CountAllResponse {
 
   private long total;
 }
+ 
