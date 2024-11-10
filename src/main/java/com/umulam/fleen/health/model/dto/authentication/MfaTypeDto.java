@@ -19,3 +19,4 @@ public class MfaTypeDto {
   @JsonProperty("mfa_type")
   private String mfaType;
 }
+ 
