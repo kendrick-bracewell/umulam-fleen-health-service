@@ -10,3 +10,4 @@ public class UpdatePasswordFailedException extends FleenHealthException {
     super(message);
   }
 }
+ 
