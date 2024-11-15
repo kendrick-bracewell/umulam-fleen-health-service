@@ -13,3 +13,5 @@ public class FwGetExchangeRateRequest {
   private String destinationCurrency;
   private String sourceCurrency;
 }
+ 
+ 
