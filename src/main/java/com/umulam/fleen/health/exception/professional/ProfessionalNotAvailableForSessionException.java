@@ -12,3 +12,4 @@ public class ProfessionalNotAvailableForSessionException extends FleenHealthExce
     super(String.format(message, Objects.toString(professionalName, "Unknown")));
   }
 }
+ 
