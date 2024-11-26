@@ -27,3 +27,4 @@ public class VerificationCodeDto {
   @JsonProperty("verification_type")
   private String verificationType;
 }
+ 
