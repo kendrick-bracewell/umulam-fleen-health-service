@@ -23,3 +23,4 @@ public enum PaystackEndpointBlock implements EndpointBlock {
     return value;
   }
 }
+ 
