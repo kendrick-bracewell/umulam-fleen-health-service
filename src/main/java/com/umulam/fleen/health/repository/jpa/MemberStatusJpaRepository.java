@@ -10,3 +10,4 @@ public interface MemberStatusJpaRepository extends JpaRepository<MemberStatus, L
   Optional<MemberStatus> findByCode(String code);
 }
  
+ 
