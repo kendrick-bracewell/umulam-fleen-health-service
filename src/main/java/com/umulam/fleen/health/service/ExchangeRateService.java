@@ -5,3 +5,5 @@ public interface ExchangeRateService {
 
   Double getConvertedHealthSessionPrice(Double amount);
 }
+ 
+ 
