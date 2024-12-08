@@ -20,3 +20,4 @@ public class ForgotPasswordResponse {
   @JsonProperty("phone_number")
   private String phoneNumber;
 }
+ 
