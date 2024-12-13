@@ -40,3 +40,4 @@ public class Role {
   @Column(name = "updated_on")
   private LocalDateTime updatedOn;
 }
+ 
