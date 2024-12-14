@@ -10,3 +10,4 @@ public class MfaVerificationFailed extends FleenHealthException {
     super(message);
   }
 }
+ 
