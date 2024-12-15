@@ -7,3 +7,4 @@ import lombok.experimental.SuperBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SessionTransactionViewBasic extends SessionTransactionView {
 }
+ 
