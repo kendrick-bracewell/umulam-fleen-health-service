@@ -30,3 +30,4 @@ public class ProfessionalCheckAvailabilityResponse {
     this.statusCode = HttpStatus.OK.value();
   }
 }
+ 
