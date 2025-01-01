@@ -49,3 +49,4 @@ public class ProfessionalView extends FleenHealthView {
   private List<VerificationDocumentView> verificationDocuments;
 
 }
+ 
