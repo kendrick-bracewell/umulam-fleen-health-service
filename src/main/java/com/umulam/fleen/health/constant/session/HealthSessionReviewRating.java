@@ -8,3 +8,4 @@ public enum HealthSessionReviewRating {
   VERY_GOOD,
   EXCELLENT;
 }
+ 
