@@ -20,3 +20,5 @@ public class GetProfessionalBookSessionResponse {
   @JsonProperty("scheduled_sessions")
   private List<ProfessionalScheduleHealthSessionView> scheduledSessions;
 }
+ 
+ 
