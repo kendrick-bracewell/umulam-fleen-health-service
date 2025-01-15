@@ -56,3 +56,4 @@ public class SearchRequest {
     this.setPage(pageable);
   }
 }
+ 
