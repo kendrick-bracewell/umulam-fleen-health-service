@@ -18,3 +18,4 @@ public interface AdminHealthSessionService extends HealthSessionService {
   @Transactional
   void cancelSession(Long sessionId);
 }
+ 
