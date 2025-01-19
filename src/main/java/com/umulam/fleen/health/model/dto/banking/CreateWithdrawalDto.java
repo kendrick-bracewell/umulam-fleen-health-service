@@ -27,3 +27,5 @@ public class CreateWithdrawalDto {
   @JsonProperty("bank_account")
   private String bankAccount;
 }
+ 
+ 
