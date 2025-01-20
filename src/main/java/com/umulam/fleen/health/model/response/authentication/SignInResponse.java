@@ -43,3 +43,4 @@ public class SignInResponse {
   private NextAuthentication nextAuthentication;
 
 }
+ 
