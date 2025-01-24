@@ -16,3 +16,4 @@ public enum NextAuthentication {
     this.value = value;
   }
 }
+ 
