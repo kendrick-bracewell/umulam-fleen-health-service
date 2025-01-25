@@ -24,3 +24,4 @@ public class PaystackConfig {
   @NotEmpty
   private List<String> ipWhitelist;
 }
+ 
