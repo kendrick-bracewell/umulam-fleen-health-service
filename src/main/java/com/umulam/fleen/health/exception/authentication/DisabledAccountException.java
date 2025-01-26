@@ -10,3 +10,4 @@ public class DisabledAccountException extends FleenHealthException {
     super(message);
   }
 }
+ 
