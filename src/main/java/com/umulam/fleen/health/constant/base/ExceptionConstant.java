@@ -16,3 +16,4 @@ public class ExceptionConstant {
   public static final String INVALID_ARGUMENTS = "Invalid Arguments";
   public static final String DEFAULT_MESSAGE = "An error has occurred";
 }
+ 
