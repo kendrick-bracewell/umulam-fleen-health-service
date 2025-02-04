@@ -12,3 +12,4 @@ public class InsufficientEarningsBalanceException extends FleenHealthException {
     super(String.format(message, Objects.toString(withdrawAmount, "Unknown"), Objects.toString(balance, "Unknown")));
   }
 }
+ 
