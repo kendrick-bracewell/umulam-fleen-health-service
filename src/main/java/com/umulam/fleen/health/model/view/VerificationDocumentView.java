@@ -22,3 +22,5 @@ public class VerificationDocumentView extends FleenHealthView {
   private String documentType;
 
 }
+ 
+ 
