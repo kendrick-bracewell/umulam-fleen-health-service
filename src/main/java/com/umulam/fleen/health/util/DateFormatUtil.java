@@ -9,3 +9,4 @@ public class DateFormatUtil {
   public static final String DATE_TIME_NO_SECONDS = "yyyy-MM-dd'T'HH:mm";
   public static final String DATE_TIME_NO_PT_SECONDS = "yyyy-MM-dd HH:mm";
 }
+ 
