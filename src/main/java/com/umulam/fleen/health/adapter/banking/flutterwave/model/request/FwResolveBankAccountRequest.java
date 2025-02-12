@@ -16,3 +16,4 @@ public class FwResolveBankAccountRequest {
   @JsonProperty("account_bank")
   private String bankCode;
 }
+ 
