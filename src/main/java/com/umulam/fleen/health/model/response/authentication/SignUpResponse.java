@@ -34,3 +34,4 @@ public class SignUpResponse {
   @JsonProperty("email_address")
   private String emailAddress;
 }
+ 
