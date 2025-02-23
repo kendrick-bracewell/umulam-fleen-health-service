@@ -12,3 +12,5 @@ public class UserNotFoundException extends FleenHealthException {
     super(String.format(message, Objects.toString(id, "Unknown")));
   }
 }
+ 
+ 
