@@ -12,3 +12,4 @@ public class NotAProfessionalException extends FleenHealthException {
     super(String.format(message, Objects.toString(id, "Unknown")));
   }
 }
+ 
