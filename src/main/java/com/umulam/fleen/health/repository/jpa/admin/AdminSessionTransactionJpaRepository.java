@@ -36,3 +36,4 @@ public interface AdminSessionTransactionJpaRepository extends JpaRepository<Sess
   @Query(value = "SELECT hs FROM HealthSession hs WHERE hs.timezone = :timezone")
   Page<HealthSession> findByTimezone(@Param("timezone") String timezone, Pageable pageable);
 }
+ 
