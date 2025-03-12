@@ -26,3 +26,4 @@ public class ResetPasswordDto {
   @Size(min = 1, max = 6, message = "{verification.code.size}")
   private String code;
 }
+ 
