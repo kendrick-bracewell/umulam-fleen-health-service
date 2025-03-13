@@ -15,3 +15,5 @@ public enum MemberStatusType {
     this.value = value;
   }
 }
+ 
+ 
