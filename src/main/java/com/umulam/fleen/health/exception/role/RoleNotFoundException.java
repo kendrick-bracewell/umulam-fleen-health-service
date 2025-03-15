@@ -12,3 +12,5 @@ public class RoleNotFoundException extends FleenHealthException {
     super(String.format(message, Objects.toString(id, "Unknown")));
   }
 }
+ 
+ 
