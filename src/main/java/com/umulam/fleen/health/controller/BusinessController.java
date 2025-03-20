@@ -56,3 +56,4 @@ public class BusinessController {
     return new UserVerificationStatusView(status.name(), status.getValue());
   }
 }
+ 
