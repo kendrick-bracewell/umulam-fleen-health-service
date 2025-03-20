@@ -35,3 +35,4 @@ public interface HealthSessionProfessionalJpaRepository extends JpaRepository<Pr
   @Query(value = "SELECT p FROM Professional p WHERE p.availabilityStatus = :availability AND p.member.verificationStatus = :verificationStatus")
   Page<Professional> findByAvailabilityStatus(@Param("availability") ProfessionalAvailabilityStatus status, @Param("verificationStatus") ProfileVerificationStatus verificationStatus, Pageable pageable);
 }
+ 
