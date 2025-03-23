@@ -16,3 +16,4 @@ public class VerificationFailedException extends FleenHealthException {
     super(Objects.nonNull(message) ? message : VerificationFailedException.message);
   }
 }
+ 
