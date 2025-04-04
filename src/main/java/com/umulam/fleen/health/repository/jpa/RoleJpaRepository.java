@@ -15,3 +15,5 @@ public interface RoleJpaRepository extends JpaRepository<Role, Long> {
   @Query("SELECT r FROM Role r WHERE r.id IN (:ids)")
   List<Role> findManyByIds(@Param("ids") List<Long> ids);
 }
+ 
+ 
