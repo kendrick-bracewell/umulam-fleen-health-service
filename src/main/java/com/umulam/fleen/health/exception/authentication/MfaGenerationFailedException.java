@@ -10,3 +10,4 @@ public class MfaGenerationFailedException extends FleenHealthException {
     super(message);
   }
 }
+ 
