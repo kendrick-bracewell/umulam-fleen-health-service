@@ -27,3 +27,4 @@ public enum CurrencyType implements ApiParameter {
     return value;
   }
 }
+ 
