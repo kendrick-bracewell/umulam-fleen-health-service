@@ -65,3 +65,4 @@ public class ReCaptchaAdapter extends BaseAdapter {
       return requestHeaders;
     }
 }
+ 
