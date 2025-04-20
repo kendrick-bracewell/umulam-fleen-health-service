@@ -12,3 +12,5 @@ public class MemberStatusNotFoundException extends FleenHealthException {
     super(String.format(message, Objects.toString(id, "Unknown")));
   }
 }
+ 
+ 
