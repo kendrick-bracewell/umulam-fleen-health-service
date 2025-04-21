@@ -13,3 +13,4 @@ public class UpdateVerificationDocumentRequest {
   private VerificationDocumentType verificationDocumentType;
   private String documentLink;
 }
+ 
