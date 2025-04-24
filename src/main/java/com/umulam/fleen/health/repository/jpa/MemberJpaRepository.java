@@ -84,4 +84,4 @@ public interface MemberJpaRepository extends JpaRepository<Member, Long> {
   Page<Member> findAllPreOnboardedMembers(@Param("code") String roleType, Pageable pageable);
 
   boolean existsById(Long id);
-}
+} 
