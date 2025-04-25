@@ -46,3 +46,4 @@ public class BankAccountView extends FleenHealthView {
   @JsonProperty("active")
   private boolean active;
 }
+ 
