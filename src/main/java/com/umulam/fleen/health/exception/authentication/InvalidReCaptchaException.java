@@ -19,3 +19,4 @@ public class InvalidReCaptchaException extends FleenHealthException {
     super(StringUtils.isEmpty(message) ? DEFAULT_MESSAGE : message);
   }
 }
+ 
