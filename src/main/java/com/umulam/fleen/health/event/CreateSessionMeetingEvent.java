@@ -33,3 +33,4 @@ public class CreateSessionMeetingEvent {
     private String sessionReference;
   }
 }
+ 
